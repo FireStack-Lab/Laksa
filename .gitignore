@@ -68,3 +68,5 @@ buck-out/
 #lerna
 lerna.json
 lerna-debug.log
+/lerna.json
+/lerna-debug.log
