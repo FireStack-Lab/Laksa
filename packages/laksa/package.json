@@ -1,16 +1,18 @@
 {
-  "name": "webz",
+  "name": "laksa",
   "version": "0.0.1",
-  "description": "webz-core lib for webz.js",
+  "description": "laksa-core lib for webz.js",
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [
+    "laksa",
     "webz",
     "web3",
     "ethereum"
   ],
   "author": "neeboo",
-  "license": "ISC"
+  "license": "ISC",
+  "gitHead": "437d52fc2ede7a3294d22cc177e1076c6cacb9a0"
 }

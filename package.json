@@ -1,15 +1,15 @@
 {
-  "name": "root",
+  "name": "laksa",
   "private": true,
   "devDependencies": {
     "lerna": "^3.2.1"
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/neeboo/webz.js.git"
+    "url": "git+https://github.com/neeboo/laksa.git"
   },
   "keywords": [
-    "webz",
+    "laksa",
     "web3",
     "zilliqa",
     "ethereum",
