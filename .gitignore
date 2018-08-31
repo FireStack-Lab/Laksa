@@ -64,3 +64,7 @@ buck-out/
 
 # Bundle artifact
 *.jsbundle
+
+#lerna
+lerna.json
+lerna-debug.log

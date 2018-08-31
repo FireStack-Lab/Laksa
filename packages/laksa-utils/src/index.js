@@ -12,7 +12,10 @@ export {
   isPrivateKey,
   isAddress,
   isBN,
-  validateArgs
+  isHex,
+  isHexStrict,
+  validateArgs,
+  validateFunctionArgs
 } from "./validator";
 
 export {
@@ -21,5 +24,9 @@ export {
   toUtf8,
   toAscii,
   fromUtf8,
-  fromAscii
+  fromAscii,
+  toBN,
+  toNumber,
+  padLeft,
+  padRight
 } from "./transformer";
