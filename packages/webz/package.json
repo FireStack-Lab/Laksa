@@ -1,0 +1,16 @@
+{
+  "name": "webz",
+  "version": "0.0.1",
+  "description": "webz-core lib for webz.js",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "webz",
+    "web3",
+    "ethereum"
+  ],
+  "author": "neeboo",
+  "license": "ISC"
+}
