@@ -4,7 +4,7 @@
 
 #package.json
 package-lock.json
-/packages/*/package-lock.json
+packages/*/package-lock.json
 
 
 
