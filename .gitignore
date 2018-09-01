@@ -7,7 +7,9 @@ package-lock.json
 packages/*/package-lock.json
 /packages/*/package-lock.json
 
-
+#lerna
+lerna.json
+*.log
 
 # Xcode
 #
@@ -44,6 +46,7 @@ node_modules/
 packages/*/node_modules
 /packages/*/node_modules
 npm-debug.log
+lerna-debug.log
 yarn-error.log
 
 # BUCK
@@ -64,7 +67,3 @@ buck-out/
 
 # Bundle artifact
 *.jsbundle
-
-#lerna
-lerna.json
-*.log
