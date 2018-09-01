@@ -99,11 +99,6 @@ const isAddress = (address) => {
     // If it's all small caps or all all caps, return true
     return true
   }
-  // web3.js use checksumAddress
-  // else {
-  //     // Otherwise check each case
-  //     return isChecksumAddress(address)
-  // }
 }
 // assign validator string
 Object.assign(isAddress, { validator: 'Address' })
