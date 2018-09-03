@@ -1,5 +1,4 @@
 {
-  "private": true,
   "name": "laksa-shared",
   "main": "src/index.js",
   "version": "0.0.3"
