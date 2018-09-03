@@ -31,3 +31,14 @@ export {
 
 export Method from './method'
 export Property from './property'
+
+export {
+  generatePrivateKey,
+  getAddressFromPrivateKey,
+  getPubKeyFromPrivateKey,
+  compressPublicKey,
+  getAddressFromPublicKey,
+  verifyPrivateKey,
+  encodeTransaction,
+  createTransactionJson
+} from 'laksa-core-crypto'

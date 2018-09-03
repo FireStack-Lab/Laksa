@@ -1,13 +1,12 @@
-import { Method, Property } from 'laksa-utils'
-
 import {
+  Method,
+  Property,
+  isString,
   generatePrivateKey,
   getAddressFromPrivateKey,
-  getPubKeyFromPrivateKey,
-  isString
-} from '../util'
+  getPubKeyFromPrivateKey
+} from 'laksa-utils'
 
-import config from '../util/config'
 import methodObjects from './methodObjects'
 import propertyObjects from './propertyObjects'
 
@@ -32,7 +31,7 @@ const mapPropertyToObjects = (main) => {
 class Zil {
   constructor(Webz) {
     this.messanger = Webz.messanger
-    this.config = config
+    this.config = Webz.config
     mapObjectToMethods(this)
     mapPropertyToObjects(this)
   }
