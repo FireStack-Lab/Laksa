@@ -12,11 +12,9 @@ export {
   isPrivateKey,
   isAddress,
   isBN,
-  isHex,
-  isHexStrict,
   validateArgs,
   validateFunctionArgs
-} from "./validator";
+} from './validator'
 
 export {
   intToByteArray,
@@ -29,4 +27,7 @@ export {
   toNumber,
   padLeft,
   padRight
-} from "./transformer";
+} from './transformer'
+
+export Method from './method'
+export Property from './property'

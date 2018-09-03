@@ -1,4 +1,5 @@
-import { isString, isNumber, validateFunctionArgs } from './validator'
+// import BN from 'bn.js'
+import numToBN from 'number-to-bn'
 /**
  * convert number to array representing the padded hex form
  * @param  {[string]} val        [description]
@@ -6,7 +7,6 @@ import { isString, isNumber, validateFunctionArgs } from './validator'
  * @return {[string]}            [description]
  */
 const intToByteArray = (val, paddedSize) => {
-  validateFunctionArgs([val, paddedSize], [isString, isNumber])
   const arr = []
 
   const hexVal = val.toString(16)
@@ -43,7 +43,13 @@ const fromUtf8 = () => {
 const fromAscii = () => {
   // to be implemented
 }
-const toBN = () => {
+
+const toBN = (data) => {
+  try {
+    return numToBN(data)
+  } catch (e) {
+    throw new Error(`${e} of "${data}"`)
+  }
   // to be implemented
 }
 const toNumber = () => {
@@ -60,7 +66,6 @@ const toNumber = () => {
  * @returns {String} right aligned string
  */
 const padLeft = (string, chars, sign) => {
-  validateFunctionArgs([string, chars], [isString, isNumber])
   return new Array(chars - string.length + 1).join(sign || '0') + string
 }
 
@@ -74,7 +79,6 @@ const padLeft = (string, chars, sign) => {
  * @returns {String} right aligned string
  */
 const padRight = (string, chars, sign) => {
-  validateFunctionArgs([string, chars], [isString, isNumber])
   return string + new Array(chars - string.length + 1).join(sign || '0')
 }
 

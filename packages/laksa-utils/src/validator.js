@@ -99,6 +99,11 @@ const isAddress = (address) => {
     // If it's all small caps or all all caps, return true
     return true
   }
+  // web3.js use checksumAddress
+  // else {
+  //     // Otherwise check each case
+  //     return isChecksumAddress(address)
+  // }
 }
 // assign validator string
 Object.assign(isAddress, { validator: 'Address' })
@@ -173,32 +178,6 @@ Object.assign(isHash, { validator: 'Hash' })
 Object.assign(isBN, { validator: 'BN' })
 
 /**
- * Check if string is HEX, requires a 0x in front
- *
- * @method isHexStrict
- * @param {String} hex to be checked
- * @returns {Boolean}
- */
-const isHexStrict = (hex) => {
-  return (isString(hex) || isNumber(hex)) && /^(-)?0x[0-9a-f]*$/i.test(hex)
-}
-// assign validator string
-Object.assign(isHexStrict, { validator: 'HexStrict' })
-
-/**
- * Check if string is HEX
- *
- * @method isHex
- * @param {String} hex to be checked
- * @returns {Boolean}
- */
-const isHex = (hex) => {
-  return (isString(hex) || isNumber(hex)) && /^(-0x|0x)?[0-9a-f]*$/i.test(hex)
-}
-// assign validator string
-Object.assign(isHex, { validator: 'Hex' })
-
-/**
  * make sure each of the keys in requiredArgs is present in args
  * @param  {[type]} args         [description]
  * @param  {[type]} requiredArgs [description]
@@ -264,8 +243,6 @@ export {
   isPrivateKey,
   isAddress,
   isBN,
-  isHex,
-  isHexStrict,
   validateArgs,
   validateFunctionArgs
 }
