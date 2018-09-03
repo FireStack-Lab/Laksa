@@ -1,5 +1,5 @@
+import { InvalidProvider } from 'shared/errors'
 import JsonRpc from './jsonRpc'
-import { InvalidProvider } from './errors'
 
 class Messanger {
   constructor(provider) {
