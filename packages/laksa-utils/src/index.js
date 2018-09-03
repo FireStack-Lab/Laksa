@@ -1,3 +1,8 @@
+import Method from './method'
+import Property from './property'
+
+export { Method, Property }
+
 export {
   isNumber,
   isString,
@@ -28,9 +33,6 @@ export {
   padLeft,
   padRight
 } from './transformer'
-
-export Method from './method'
-export Property from './property'
 
 export {
   generatePrivateKey,

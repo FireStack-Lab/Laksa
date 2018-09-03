@@ -1,0 +1,21 @@
+{
+  "presets": [
+    "env",
+  ],
+  "plugins": [
+    [
+      "transform-runtime",
+      {
+        "polyfill": true,
+        "regenerator": true
+      }
+    ],
+    [
+      "transform-class-properties",
+      {
+        "spec": true
+      }
+    ],
+    "add-module-exports"
+  ]
+}

@@ -1,4 +1,4 @@
-import { InvalidProvider } from 'shared/errors'
+import { InvalidProvider } from 'laksa-shared'
 import JsonRpc from './jsonRpc'
 
 class Messanger {

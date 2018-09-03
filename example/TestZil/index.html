@@ -1,0 +1,47 @@
+
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8" />
+<meta name="apple-mobile-web-app-capable" content="yes"/>
+<meta name="apple-mobile-web-app-status-bar-style" content="black"/>
+<meta name="format-detection" content="telephone=no"/>
+<meta name="format-detection" content="email=no"/>
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, minimum-scale=1, user-scalable=no" />
+<title></title>
+
+</head>
+<body>
+<div id="root">
+<h1>This is Laksa.js simple example</h1>
+
+<h3>Current Provider is:</h3>
+<h4 id="currenProvider">http://localhost:4200 </h4>
+<input id="nodeUrl" value="http://localhost:4200" />
+<button id="setProviderButton">Set Provider</button>
+</div>
+<script src="../../dist/Laksa.browser.js"></script>
+<script>
+
+var currenProvider=document.getElementById('nodeUrl').value
+var setButton=document.getElementById('setProviderButton')
+//For local testing, use URL = 'http://localhost:4200'
+//To connect to the external network, use URL = 'https://api-scilla.zilliqa.com'
+var Laksa =new Laksa(currenProvider)
+
+// var URL = undefined
+
+
+setButton.onclick=function(e){
+  console.log('lll')
+};
+
+var URL ='https://api-scilla.zilliqa.com'
+Laksa.setProvider(URL)
+// webz.isConnected().then(console.log)
+Laksa.zil.getNetworkId((err,data)=>(console.log({err,data})))
+
+
+</script>
+</body>
+</html>

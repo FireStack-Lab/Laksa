@@ -10,7 +10,7 @@ import { HttpProvider, Messanger } from 'laksa-request'
 import Zil from 'laksa-zil'
 import config from './config'
 
-class Webz {
+class Laksa {
   constructor(args) {
     // validateArgs(args, {}, { nodeUrl: [util.isUrl] })
     const url = args || config.defaultNodeUrl
@@ -56,4 +56,4 @@ class Webz {
   }
 }
 
-export default Webz
+export default Laksa
