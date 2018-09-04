@@ -8,7 +8,7 @@ function formatPackagesSettings() {
     return {
       input: `packages/${p}/src/index.js`,
       output: {
-        file: `packages/${p}/lib/bundle.js`,
+        file: `packages/${p}/lib/index.js`,
         format: 'cjs'
       },
       plugins: [babel(babelConfig), commonjs()]

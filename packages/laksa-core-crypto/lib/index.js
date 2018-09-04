@@ -1,25 +1,169 @@
-"use strict";
+'use strict';
 
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-exports.createTransactionJson = exports.encodeTransaction = exports.verifyPrivateKey = exports.getAddressFromPublicKey = exports.compressPublicKey = exports.getPubKeyFromPrivateKey = exports.getAddressFromPrivateKey = exports.generatePrivateKey = void 0;
+Object.defineProperty(exports, '__esModule', { value: true });
 
-var _randombytes = _interopRequireDefault(require("randombytes"));
+function _interopDefault (ex) { return (ex && (typeof ex === 'object') && 'default' in ex) ? ex['default'] : ex; }
 
-var _elliptic = _interopRequireDefault(require("elliptic"));
+var assert = _interopDefault(require('assert'));
+var elliptic = _interopDefault(require('elliptic'));
+var BN = _interopDefault(require('bn.js'));
+var Signature = _interopDefault(require('elliptic/lib/elliptic/ec/signature'));
+var hashjs = _interopDefault(require('hash.js'));
+var DRBG = _interopDefault(require('hmac-drbg'));
+var randomBytes = _interopDefault(require('randombytes'));
 
-var _hash = _interopRequireDefault(require("hash.js"));
+function _classCallCheck(instance, Constructor) {
+  if (!(instance instanceof Constructor)) {
+    throw new TypeError("Cannot call a class as a function");
+  }
+}
 
-var _schnorr = _interopRequireDefault(require("./schnorr"));
+function _defineProperty(obj, key, value) {
+  if (key in obj) {
+    Object.defineProperty(obj, key, {
+      value: value,
+      enumerable: true,
+      configurable: true,
+      writable: true
+    });
+  } else {
+    obj[key] = value;
+  }
 
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+  return obj;
+}
+
+var _elliptic$ec = elliptic.ec('secp256k1'),
+    curve = _elliptic$ec.curve; // Public key is a point (x, y) on the curve.
+// Each coordinate requires 32 bytes.
+// In its compressed form it suffices to store the x co-ordinate
+// and the sign for y.
+// Hence a total of 33 bytes.
+
+
+var PUBKEY_COMPRESSED_SIZE_BYTES = 33;
+
+var Schnorr = function Schnorr() {
+  var _this = this;
+
+  _classCallCheck(this, Schnorr);
+
+  _defineProperty(this, "hash", function (q, pubkey, msg) {
+    var sha256 = hashjs.sha256();
+    var totalLength = PUBKEY_COMPRESSED_SIZE_BYTES * 2 + msg.byteLength; // 33 q + 33 pubkey + variable msgLen
+
+    var Q = q.toArrayLike(Buffer, 'be', 33);
+    var B = Buffer.allocUnsafe(totalLength);
+    Q.copy(B, 0);
+    pubkey.copy(B, 33);
+    msg.copy(B, 66);
+    return new BN(sha256.update(B).digest('hex'), 16);
+  });
+
+  _defineProperty(this, "trySign", function (msg, prv, k, pn, pubKey) {
+    if (prv.isZero()) throw new Error('Bad private key.');
+    if (prv.gte(curve.n)) throw new Error('Bad private key.'); // 1a. check that k is not 0
+
+    if (k.isZero()) return null; // 1b. check that k is < the order of the group
+
+    if (k.gte(curve.n)) return null; // 2. Compute commitment Q = kG, where g is the base point
+
+    var Q = curve.g.mul(k); // convert the commitment to octets first
+
+    var compressedQ = new BN(Q.encodeCompressed()); // 3. Compute the challenge r = H(Q || pubKey || msg)
+
+    var r = _this.hash(compressedQ, pubKey, msg);
+
+    var h = r.clone();
+    if (h.isZero()) return null;
+    if (h.eq(curve.n)) return null; // 4. Compute s = k - r * prv
+    // 4a. Compute r * prv
+
+    var s = h.imul(prv); // 4b. Compute s = k - r * prv mod n
+
+    s = k.isub(s);
+    s = s.umod(curve.n);
+    if (s.isZero()) return null;
+    return new Signature({
+      r: r,
+      s: s
+    });
+  });
+
+  _defineProperty(this, "sign", function (msg, key, pubkey, pubNonce) {
+    var prv = new BN(key);
+
+    var drbg = _this.getDRBG(msg, key, pubNonce);
+
+    var len = curve.n.byteLength();
+    var pn;
+    if (pubNonce) pn = curve.decodePoint(pubNonce);
+    var sig;
+
+    while (!sig) {
+      var k = new BN(drbg.generate(len));
+      sig = _this.trySign(msg, prv, k, pn, pubkey);
+    }
+
+    return sig;
+  });
+
+  _defineProperty(this, "verify", function (msg, signature, key) {
+    var sig = new Signature(signature);
+    if (sig.s.gte(curve.n)) throw new Error('Invalid S value.');
+    if (sig.r.gt(curve.n)) throw new Error('Invalid R value.');
+    var kpub = curve.decodePoint(key);
+    var l = kpub.mul(sig.r);
+    var r = curve.g.mul(sig.s);
+    var Q = l.add(r);
+    var compressedQ = new BN(Q.encodeCompressed());
+
+    var r1 = _this.hash(compressedQ, key, msg);
+
+    if (r1.gte(curve.n)) throw new Error('Invalid hash.');
+    if (r1.isZero()) throw new Error('Invalid hash.');
+    return r1.eq(sig.r);
+  });
+
+  _defineProperty(this, "alg", Buffer.from('Schnorr+SHA256  ', 'ascii'));
+
+  _defineProperty(this, "getDRBG", function (msg, priv, data) {
+    var pers = Buffer.allocUnsafe(48);
+    pers.fill(0);
+
+    if (data) {
+      assert(data.length === 32);
+      data.copy(pers, 0);
+    }
+
+    _this.alg.copy(pers, 32);
+
+    return new DRBG({
+      hash: hashjs.sha256,
+      entropy: priv,
+      nonce: msg,
+      pers: pers
+    });
+  });
+
+  _defineProperty(this, "generateNoncePair", function (msg, priv, data) {
+    var drbg = _this.getDRBG(msg, priv, data);
+
+    var len = curve.n.byteLength();
+    var k = new BN(drbg.generate(len));
+
+    while (k.isZero() && k.gte(curve.n)) {
+      k = new BN(drbg.generate(len));
+    }
+
+    return Buffer.from(curve.g.mul(k).encode('array', true));
+  });
+};
 
 var NUM_BYTES = 32; // const HEX_PREFIX = '0x';
 
-var secp256k1 = _elliptic.default.ec('secp256k1');
-
-var schnorr = new _schnorr.default();
+var secp256k1 = elliptic.ec('secp256k1');
+var schnorr = new Schnorr();
 /**
  * convert number to array representing the padded hex form
  * @param  {[string]} val        [description]
@@ -56,7 +200,7 @@ var intToByteArray = function intToByteArray(val, paddedSize) {
 
 var generatePrivateKey = function generatePrivateKey() {
   var priv = '';
-  var rand = (0, _randombytes.default)(NUM_BYTES);
+  var rand = randomBytes(NUM_BYTES);
 
   for (var i = 0; i < rand.byteLength; i += 1) {
     // add 00 in case we get an empty byte.
@@ -77,13 +221,10 @@ var generatePrivateKey = function generatePrivateKey() {
  * @returns {string}
  */
 
-
-exports.generatePrivateKey = generatePrivateKey;
-
 var getAddressFromPrivateKey = function getAddressFromPrivateKey(privateKey) {
   var keyPair = secp256k1.keyFromPrivate(privateKey, 'hex');
   var pub = keyPair.getPublic(true, 'hex');
-  return _hash.default.sha256().update(pub, 'hex').digest('hex').slice(24);
+  return hashjs.sha256().update(pub, 'hex').digest('hex').slice(24);
 };
 /**
  * getPubKeyFromPrivateKey
@@ -94,9 +235,6 @@ var getAddressFromPrivateKey = function getAddressFromPrivateKey(privateKey) {
  * @param {string} privateKey
  * @returns {string}
  */
-
-
-exports.getAddressFromPrivateKey = getAddressFromPrivateKey;
 
 var getPubKeyFromPrivateKey = function getPubKeyFromPrivateKey(privateKey) {
   var keyPair = secp256k1.keyFromPrivate(privateKey, 'hex');
@@ -110,9 +248,6 @@ var getPubKeyFromPrivateKey = function getPubKeyFromPrivateKey(privateKey) {
  * @returns {string}
  */
 
-
-exports.getPubKeyFromPrivateKey = getPubKeyFromPrivateKey;
-
 var compressPublicKey = function compressPublicKey(publicKey) {
   return secp256k1.keyFromPublic(publicKey, 'hex').getPublic(true, 'hex');
 };
@@ -125,11 +260,8 @@ var compressPublicKey = function compressPublicKey(publicKey) {
  * @returns {string}
  */
 
-
-exports.compressPublicKey = compressPublicKey;
-
 var getAddressFromPublicKey = function getAddressFromPublicKey(pubKey) {
-  return _hash.default.sha256().update(pubKey, 'hex').digest('hex').slice(24);
+  return hashjs.sha256().update(pubKey, 'hex').digest('hex').slice(24);
 };
 /**
  * verifyPrivateKey
@@ -137,9 +269,6 @@ var getAddressFromPublicKey = function getAddressFromPublicKey(pubKey) {
  * @param {string|Buffer} privateKey
  * @returns {boolean}
  */
-
-
-exports.getAddressFromPublicKey = getAddressFromPublicKey;
 
 var verifyPrivateKey = function verifyPrivateKey(privateKey) {
   var keyPair = secp256k1.keyFromPrivate(privateKey, 'hex');
@@ -155,9 +284,6 @@ var verifyPrivateKey = function verifyPrivateKey(privateKey) {
  * @param {any} txn
  * @returns {Buffer}
  */
-
-
-exports.verifyPrivateKey = verifyPrivateKey;
 
 var encodeTransaction = function encodeTransaction(txn) {
   var codeHex = Buffer.from(txn.code).toString('hex');
@@ -178,9 +304,6 @@ var encodeTransaction = function encodeTransaction(txn) {
  *
  * @returns {TxDetails}
  */
-
-
-exports.encodeTransaction = encodeTransaction;
 
 var createTransactionJson = function createTransactionJson(privateKey, txnDetails) {
   var pubKey = getPubKeyFromPrivateKey(privateKey);
@@ -213,4 +336,11 @@ var createTransactionJson = function createTransactionJson(privateKey, txnDetail
   return txn;
 };
 
+exports.generatePrivateKey = generatePrivateKey;
+exports.getAddressFromPrivateKey = getAddressFromPrivateKey;
+exports.getPubKeyFromPrivateKey = getPubKeyFromPrivateKey;
+exports.compressPublicKey = compressPublicKey;
+exports.getAddressFromPublicKey = getAddressFromPublicKey;
+exports.verifyPrivateKey = verifyPrivateKey;
+exports.encodeTransaction = encodeTransaction;
 exports.createTransactionJson = createTransactionJson;

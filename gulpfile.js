@@ -17,29 +17,29 @@ const packages = [
   'laksa'
 ]
 
-const babelConfig = {
-  // runtimeHelpers: true,
-  presets: ['@babel/env'],
-  plugins: [
-    // '@babel/plugin-transform-runtime',
-    '@babel/plugin-proposal-class-properties',
-    'add-module-exports'
-  ]
-}
-
 // const babelConfig = {
-//   presets: ['@babel/env'],
+//   // runtimeHelpers: true,
+//   presets: ['@babel/preset-env'],
 //   plugins: [
-//     ['@babel/plugin-transform-runtime'],
-//     [
-//       'transform-class-properties',
-//       {
-//         spec: true
-//       }
-//     ],
+//     // '@babel/plugin-transform-runtime',
+//     'transform-class-properties',
+//     // '@babel/plugin-proposal-class-properties',
 //     'add-module-exports'
 //   ]
 // }
+
+const babelConfig = {
+  presets: ['@babel/preset-env'],
+  plugins: [
+    [
+      'transform-class-properties',
+      {
+        spec: true
+      }
+    ],
+    'add-module-exports'
+  ]
+}
 
 gulp.task('babel', () => {
   packages.map((p) => {

@@ -1,29 +1,75 @@
-"use strict";
+'use strict';
 
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-exports.default = void 0;
+function _interopDefault (ex) { return (ex && (typeof ex === 'object') && 'default' in ex) ? ex['default'] : ex; }
 
-var util = _interopRequireWildcard(require("laksa-utils"));
+var util = require('laksa-utils');
+var laksaRequest = require('laksa-request');
+var Zil = _interopDefault(require('laksa-zil'));
 
-var _laksaRequest = require("laksa-request");
+function asyncGeneratorStep(gen, resolve, reject, _next, _throw, key, arg) {
+  try {
+    var info = gen[key](arg);
+    var value = info.value;
+  } catch (error) {
+    reject(error);
+    return;
+  }
 
-var _laksaZil = _interopRequireDefault(require("laksa-zil"));
+  if (info.done) {
+    resolve(value);
+  } else {
+    Promise.resolve(value).then(_next, _throw);
+  }
+}
 
-var _config = _interopRequireDefault(require("./config"));
+function _asyncToGenerator(fn) {
+  return function () {
+    var self = this,
+        args = arguments;
+    return new Promise(function (resolve, reject) {
+      var gen = fn.apply(self, args);
 
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+      function _next(value) {
+        asyncGeneratorStep(gen, resolve, reject, _next, _throw, "next", value);
+      }
 
-function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) { var desc = Object.defineProperty && Object.getOwnPropertyDescriptor ? Object.getOwnPropertyDescriptor(obj, key) : {}; if (desc.get || desc.set) { Object.defineProperty(newObj, key, desc); } else { newObj[key] = obj[key]; } } } } newObj.default = obj; return newObj; } }
+      function _throw(err) {
+        asyncGeneratorStep(gen, resolve, reject, _next, _throw, "throw", err);
+      }
 
-function asyncGeneratorStep(gen, resolve, reject, _next, _throw, key, arg) { try { var info = gen[key](arg); var value = info.value; } catch (error) { reject(error); return; } if (info.done) { resolve(value); } else { Promise.resolve(value).then(_next, _throw); } }
+      _next(undefined);
+    });
+  };
+}
 
-function _asyncToGenerator(fn) { return function () { var self = this, args = arguments; return new Promise(function (resolve, reject) { var gen = fn.apply(self, args); function _next(value) { asyncGeneratorStep(gen, resolve, reject, _next, _throw, "next", value); } function _throw(err) { asyncGeneratorStep(gen, resolve, reject, _next, _throw, "throw", err); } _next(undefined); }); }; }
+function _classCallCheck(instance, Constructor) {
+  if (!(instance instanceof Constructor)) {
+    throw new TypeError("Cannot call a class as a function");
+  }
+}
 
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+function _defineProperty(obj, key, value) {
+  if (key in obj) {
+    Object.defineProperty(obj, key, {
+      value: value,
+      enumerable: true,
+      configurable: true,
+      writable: true
+    });
+  } else {
+    obj[key] = value;
+  }
 
-function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
+  return obj;
+}
+
+var config = {
+  version: '0.0.1',
+  mode: 'sync',
+  defaultProviderUrl: 'http://localhost:4200',
+  defaultBlock: 'latest',
+  defaultAccount: undefined
+};
 
 var Laksa = function Laksa(args) {
   var _this = this;
@@ -31,10 +77,10 @@ var Laksa = function Laksa(args) {
   _classCallCheck(this, Laksa);
 
   _defineProperty(this, "providers", {
-    HttpProvider: _laksaRequest.HttpProvider
+    HttpProvider: laksaRequest.HttpProvider
   });
 
-  _defineProperty(this, "config", _config.default);
+  _defineProperty(this, "config", config);
 
   _defineProperty(this, "isConnected",
   /*#__PURE__*/
@@ -88,22 +134,20 @@ var Laksa = function Laksa(args) {
   });
 
   _defineProperty(this, "setProvider", function (provider) {
-    _this.currentProvider = new _laksaRequest.HttpProvider(provider);
+    _this.currentProvider = new laksaRequest.HttpProvider(provider);
 
     _this.messanger.setProvider(_this.currentProvider);
   });
 
   // validateArgs(args, {}, { nodeUrl: [util.isUrl] })
-  var url = args || _config.default.defaultNodeUrl; //
+  var url = args || config.defaultNodeUrl; //
 
   this.util = util; //
 
-  this.currentProvider = new _laksaRequest.HttpProvider(url);
-  this.messanger = new _laksaRequest.Messanger(this.currentProvider); //
+  this.currentProvider = new laksaRequest.HttpProvider(url);
+  this.messanger = new laksaRequest.Messanger(this.currentProvider); //
 
-  this.zil = new _laksaZil.default(this);
+  this.zil = new Zil(this);
 };
 
-var _default = Laksa;
-exports.default = _default;
-module.exports = exports.default;
+module.exports = Laksa;
