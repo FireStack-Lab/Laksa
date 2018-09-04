@@ -2,6 +2,10 @@
   "name": "laksa",
   "private": true,
   "devDependencies": {
+    "@babel/core": "^7.0.0",
+    "@babel/plugin-proposal-class-properties": "^7.0.0",
+    "@babel/plugin-transform-runtime": "^7.0.0",
+    "@babel/preset-env": "^7.0.0",
     "babel-cli": "^6.26.0",
     "babel-eslint": "^8.2.6",
     "babel-loader": "^7.1.5",
@@ -10,6 +14,7 @@
     "babel-plugin-transform-class-properties": "^6.24.1",
     "babel-plugin-transform-runtime": "^6.23.0",
     "babel-preset-env": "^1.7.0",
+    "babel-preset-es2015-rollup": "^3.0.0",
     "babel-preset-latest": "^6.24.1",
     "babel-runtime": "^6.26.0",
     "cross-env": "^5.2.0",
@@ -37,10 +42,10 @@
   },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "babel": "rm -rf lib && babel packages --presets env --plugins transform-class-properties -d lib",
-    "rollup": "rollup --config scripts/rollup/build.js",
+    "babel": "rm -rf libs && babel packages --presets env --plugins transform-class-properties -d libs",
+    "rollup": "rollup --c scripts/rollup/build.js",
     "commit": "yarn babel && git add .&&git commit",
-    "dist": "yarn babel && rm -rf dist && cross-env NODE_ENV=production webpack --config webpack.config.js"
+    "dist": "rm -rf dist && cross-env NODE_ENV=production webpack --config webpack.config.js"
   },
   "keywords": [
     "laksa",
@@ -51,8 +56,5 @@
   ],
   "author": "neeboo",
   "license": "MIT",
-  "dependencies": {
-    "@babel/core": "^7.0.0",
-    "@babel/plugin-proposal-class-properties": "^7.0.0"
-  }
+  "dependencies": {}
 }

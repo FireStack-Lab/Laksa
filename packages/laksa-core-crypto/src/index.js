@@ -1,8 +1,7 @@
-const randomBytes = require('randombytes')
-const elliptic = require('elliptic')
-const hashjs = require('hash.js')
-
-const Schnorr = require('./schnorr.js')
+import randomBytes from 'randombytes'
+import elliptic from 'elliptic'
+import hashjs from 'hash.js'
+import Schnorr from './schnorr'
 
 const NUM_BYTES = 32
 // const HEX_PREFIX = '0x';

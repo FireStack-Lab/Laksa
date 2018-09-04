@@ -1,4 +1,4 @@
-import Laksa from 'laksa-core'
+import * as Laksa from 'laksa-core'
 
 // dont override global variable
 if (typeof window !== 'undefined' && typeof window.Laksa === 'undefined') {

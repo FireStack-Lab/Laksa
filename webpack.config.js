@@ -15,7 +15,7 @@ const UglifyJs = require('uglifyjs-webpack-plugin')
 
 const baseConfig = {
   entry: {
-    Laksa: ['./lib/laksa/index.js']
+    Laksa: ['./packages/laksa/lib/bundle.js']
   },
   mode: 'production',
   module: {

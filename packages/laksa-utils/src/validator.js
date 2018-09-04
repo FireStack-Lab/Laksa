@@ -1,8 +1,6 @@
-import * as validUrl from 'valid-url'
-import * as BN from 'bn.js'
+import { isWebUri } from 'valid-url'
+import { isBN } from 'bn.js'
 
-const { isBN } = BN
-const { isWebUri } = validUrl
 /**
  * [isNumber verify param is a Number]
  * @param  {[type]}  obj [value]

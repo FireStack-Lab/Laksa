@@ -1,8 +1,18 @@
 import Method from './method'
 import Property from './property'
 
-export { Method, Property }
+export {
+  generatePrivateKey,
+  getAddressFromPrivateKey,
+  getPubKeyFromPrivateKey,
+  compressPublicKey,
+  getAddressFromPublicKey,
+  verifyPrivateKey,
+  encodeTransaction,
+  createTransactionJson
+} from 'laksa-core-crypto'
 
+export { Method, Property }
 export {
   isNumber,
   isString,
@@ -20,7 +30,6 @@ export {
   validateArgs,
   validateFunctionArgs
 } from './validator'
-
 export {
   intToByteArray,
   toHex,
@@ -33,14 +42,3 @@ export {
   padLeft,
   padRight
 } from './transformer'
-
-export {
-  generatePrivateKey,
-  getAddressFromPrivateKey,
-  getPubKeyFromPrivateKey,
-  compressPublicKey,
-  getAddressFromPublicKey,
-  verifyPrivateKey,
-  encodeTransaction,
-  createTransactionJson
-} from 'laksa-core-crypto'
