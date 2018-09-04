@@ -2,7 +2,7 @@
   "name": "laksa-zil",
   "version": "0.0.4",
   "description": "laksa-zil for webz.js",
-  "main": "src/index.js",
+  "main": "lib/bundle.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },

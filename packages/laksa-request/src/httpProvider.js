@@ -31,53 +31,35 @@ class HttpProvider {
   }
 
   send = async (payload) => {
-    try {
-      const response = await this.axios.post(this.url, JSON.stringify(payload))
-      const { data, status } = response
-      try {
+    const result = await this.instance()
+      .post(this.url, JSON.stringify(payload))
+      .then((response) => {
+        const { data, status } = response
         if (data.result && status === 200) {
           return data.result
         }
-      } catch (error) {
-        return error
-      }
-    } catch (error) {
-      if (error.response) {
-        return error.response
-      } else if (error.request) {
-        return error.request
-      } else {
-        return error.message
-      }
-    }
+      })
+      .catch(err => err)
+    return result
   }
 
   sendServer = async (endpoint, payload) => {
-    try {
-      const response = await this.axios.post(`${this.url}${endpoint}`, JSON.stringify(payload))
-      const { data, status } = response
-      try {
+    const result = await this.instance()
+      .post(`${this.url}${endpoint}`, JSON.stringify(payload))
+      .then((response) => {
+        const { data, status } = response
         if (data.result && status === 200) {
           return data.result
         }
-      } catch (error) {
-        return error
-      }
-    } catch (error) {
-      if (error.response) {
-        return error.response
-      } else if (error.request) {
-        return error.request
-      } else {
-        return error.message
-      }
-    }
+      })
+      .catch(err => err)
+    return result
   }
 
   sendAsync = (payload, callback) => {
     // const request = this.instance()
     // console.log(JSON.stringify(payload))
-    this.axios
+    this.instance()
       .post(this.url, JSON.stringify(payload))
       .then((response) => {
         const { data, status } = response
@@ -91,7 +73,7 @@ class HttpProvider {
   sendAsyncServer = (endpoint, payload, callback) => {
     // const request = this.instance()
     // console.log(JSON.stringify(payload))
-    this.axios
+    this.instance()
       .post(`${this.url}${endpoint}`, JSON.stringify(payload))
       .then((response) => {
         const { data, status } = response
@@ -100,20 +82,6 @@ class HttpProvider {
         }
       })
       .catch(err => callback(err))
-  }
-
-  isConnected = () => {
-    try {
-      this.send({
-        id: 1,
-        jsonrpc: '2.0',
-        method: 'GetNetworkId',
-        params: []
-      })
-      return true
-    } catch (e) {
-      return false
-    }
   }
 }
 

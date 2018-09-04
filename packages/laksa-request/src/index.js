@@ -1,4 +1,4 @@
-import HttpProvider from './HttpProvider'
+import HttpProvider from './httpProvider'
 import JsonRpc from './jsonRpc'
 import Messanger from './messanger'
 

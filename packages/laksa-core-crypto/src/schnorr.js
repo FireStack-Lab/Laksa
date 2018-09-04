@@ -1,9 +1,9 @@
-import assert from 'assert'
-import elliptic from 'elliptic'
-import BN from 'bn.js'
-import Signature from 'elliptic/lib/elliptic/ec/signature'
-import hashjs from 'hash.js'
-import DRBG from 'hmac-drbg'
+const assert = require('assert')
+const elliptic = require('elliptic')
+const BN = require('bn.js')
+const Signature = require('elliptic/lib/elliptic/ec/signature')
+const hashjs = require('hash.js')
+const DRBG = require('hmac-drbg')
 
 const { curve } = elliptic.ec('secp256k1')
 

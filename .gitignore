@@ -6,7 +6,7 @@
 package-lock.json
 packages/*/package-lock.json
 /packages/*/package-lock.json
-
+packages/*/babel.rc
 #lerna
 lerna.json
 *.log
