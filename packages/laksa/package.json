@@ -2,7 +2,7 @@
   "name": "laksa",
   "version": "0.0.5",
   "description": "laksa-core lib for webz.js",
-  "main": "lib/bundle.js",
+  "main": "lib/index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },

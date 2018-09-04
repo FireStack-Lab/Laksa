@@ -14,7 +14,6 @@ lerna.json
 # Xcode
 #
 build/
-dist/
 *.pbxuser
 !default.pbxuser
 *.mode1v3
@@ -35,6 +34,7 @@ project.xcworkspace
 # Android/IntelliJ
 #
 build/
+dist/
 .idea
 .gradle
 local.properties
