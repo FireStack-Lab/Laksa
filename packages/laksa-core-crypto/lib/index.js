@@ -1,5 +1,7 @@
 "use strict";
 
+var _interopRequireDefault = require("@babel/runtime/helpers/interopRequireDefault");
+
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
@@ -12,8 +14,6 @@ var _elliptic = _interopRequireDefault(require("elliptic"));
 var _hash = _interopRequireDefault(require("hash.js"));
 
 var _schnorr = _interopRequireDefault(require("./schnorr"));
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 var NUM_BYTES = 32; // const HEX_PREFIX = '0x';
 

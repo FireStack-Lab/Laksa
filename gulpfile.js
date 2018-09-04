@@ -3,8 +3,8 @@
 const gulp = require('gulp')
 const babel = require('gulp-babel')
 const del = require('del')
-const rollup = require('rollup')
-const commonjs = require('rollup-plugin-commonjs')
+// const rollup = require('rollup')
+// const commonjs = require('rollup-plugin-commonjs')
 
 // const { exec } = cp
 const packages = [
@@ -22,7 +22,7 @@ const babelConfig = {
   // runtimeHelpers: true,
   presets: ['@babel/preset-env'],
   plugins: [
-    // '@babel/plugin-transform-runtime',
+    '@babel/plugin-transform-runtime',
     '@babel/plugin-proposal-class-properties',
     'add-module-exports'
   ],

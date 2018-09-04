@@ -1,37 +1,36 @@
 "use strict";
 
+var _interopRequireDefault = require("@babel/runtime/helpers/interopRequireDefault");
+
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
 exports.default = void 0;
 
+var _regenerator = _interopRequireDefault(require("@babel/runtime/regenerator"));
+
+var _asyncToGenerator2 = _interopRequireDefault(require("@babel/runtime/helpers/asyncToGenerator"));
+
+var _classCallCheck2 = _interopRequireDefault(require("@babel/runtime/helpers/classCallCheck"));
+
+var _defineProperty2 = _interopRequireDefault(require("@babel/runtime/helpers/defineProperty"));
+
 var _laksaShared = require("laksa-shared");
 
 var _jsonRpc = _interopRequireDefault(require("./jsonRpc"));
 
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-function asyncGeneratorStep(gen, resolve, reject, _next, _throw, key, arg) { try { var info = gen[key](arg); var value = info.value; } catch (error) { reject(error); return; } if (info.done) { resolve(value); } else { Promise.resolve(value).then(_next, _throw); } }
-
-function _asyncToGenerator(fn) { return function () { var self = this, args = arguments; return new Promise(function (resolve, reject) { var gen = fn.apply(self, args); function _next(value) { asyncGeneratorStep(gen, resolve, reject, _next, _throw, "next", value); } function _throw(err) { asyncGeneratorStep(gen, resolve, reject, _next, _throw, "throw", err); } _next(undefined); }); }; }
-
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-
-function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
-
 var Messanger = function Messanger(_provider) {
   var _this = this;
 
-  _classCallCheck(this, Messanger);
-
-  _defineProperty(this, "send",
+  (0, _classCallCheck2.default)(this, Messanger);
+  (0, _defineProperty2.default)(this, "send",
   /*#__PURE__*/
   function () {
-    var _ref = _asyncToGenerator(
+    var _ref = (0, _asyncToGenerator2.default)(
     /*#__PURE__*/
-    regeneratorRuntime.mark(function _callee(data) {
+    _regenerator.default.mark(function _callee(data) {
       var payload, result;
-      return regeneratorRuntime.wrap(function _callee$(_context) {
+      return _regenerator.default.wrap(function _callee$(_context) {
         while (1) {
           switch (_context.prev = _context.next) {
             case 0:
@@ -64,8 +63,7 @@ var Messanger = function Messanger(_provider) {
       return _ref.apply(this, arguments);
     };
   }());
-
-  _defineProperty(this, "sendAsync", function (data, callback) {
+  (0, _defineProperty2.default)(this, "sendAsync", function (data, callback) {
     if (!_this.provider) {
       console.error((0, _laksaShared.InvalidProvider)());
       return null;
@@ -81,8 +79,7 @@ var Messanger = function Messanger(_provider) {
       callback(null, result);
     });
   });
-
-  _defineProperty(this, "sendBatch", function (data, callback) {
+  (0, _defineProperty2.default)(this, "sendBatch", function (data, callback) {
     if (!_this.provider) {
       console.error((0, _laksaShared.InvalidProvider)());
       return null;
@@ -98,15 +95,14 @@ var Messanger = function Messanger(_provider) {
       callback(err, results);
     });
   });
-
-  _defineProperty(this, "sendServer",
+  (0, _defineProperty2.default)(this, "sendServer",
   /*#__PURE__*/
   function () {
-    var _ref2 = _asyncToGenerator(
+    var _ref2 = (0, _asyncToGenerator2.default)(
     /*#__PURE__*/
-    regeneratorRuntime.mark(function _callee2(endpoint, data) {
+    _regenerator.default.mark(function _callee2(endpoint, data) {
       var result;
-      return regeneratorRuntime.wrap(function _callee2$(_context2) {
+      return _regenerator.default.wrap(function _callee2$(_context2) {
         while (1) {
           switch (_context2.prev = _context2.next) {
             case 0:
@@ -138,8 +134,7 @@ var Messanger = function Messanger(_provider) {
       return _ref2.apply(this, arguments);
     };
   }());
-
-  _defineProperty(this, "sendAsyncServer", function (endpoint, data, callback) {
+  (0, _defineProperty2.default)(this, "sendAsyncServer", function (endpoint, data, callback) {
     if (!_this.provider) {
       console.error((0, _laksaShared.InvalidProvider)());
       return null;
@@ -154,8 +149,7 @@ var Messanger = function Messanger(_provider) {
       callback(null, result);
     });
   });
-
-  _defineProperty(this, "sendBatchServer", function (data, callback) {
+  (0, _defineProperty2.default)(this, "sendBatchServer", function (data, callback) {
     if (!_this.provider) {
       console.error((0, _laksaShared.InvalidProvider)());
       return null;
@@ -170,11 +164,9 @@ var Messanger = function Messanger(_provider) {
       callback(err, results);
     });
   });
-
-  _defineProperty(this, "setProvider", function (provider) {
+  (0, _defineProperty2.default)(this, "setProvider", function (provider) {
     _this.provider = provider;
   });
-
   this.provider = _provider;
   this.JsonRpc = new _jsonRpc.default();
 };
