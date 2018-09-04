@@ -1,15 +1,9 @@
 "use strict";
 
-var _interopRequireDefault = require("@babel/runtime/helpers/interopRequireDefault");
-
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
 exports.default = void 0;
-
-var _classCallCheck2 = _interopRequireDefault(require("@babel/runtime/helpers/classCallCheck"));
-
-var _defineProperty2 = _interopRequireDefault(require("@babel/runtime/helpers/defineProperty"));
 
 var _assert = _interopRequireDefault(require("assert"));
 
@@ -22,6 +16,12 @@ var _signature = _interopRequireDefault(require("elliptic/lib/elliptic/ec/signat
 var _hash = _interopRequireDefault(require("hash.js"));
 
 var _hmacDrbg = _interopRequireDefault(require("hmac-drbg"));
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
 
 var _elliptic$ec = _elliptic.default.ec('secp256k1'),
     curve = _elliptic$ec.curve; // Public key is a point (x, y) on the curve.
@@ -36,8 +36,9 @@ var PUBKEY_COMPRESSED_SIZE_BYTES = 33;
 var Schnorr = function Schnorr() {
   var _this = this;
 
-  (0, _classCallCheck2.default)(this, Schnorr);
-  (0, _defineProperty2.default)(this, "hash", function (q, pubkey, msg) {
+  _classCallCheck(this, Schnorr);
+
+  _defineProperty(this, "hash", function (q, pubkey, msg) {
     var sha256 = _hash.default.sha256();
 
     var totalLength = PUBKEY_COMPRESSED_SIZE_BYTES * 2 + msg.byteLength; // 33 q + 33 pubkey + variable msgLen
@@ -49,7 +50,8 @@ var Schnorr = function Schnorr() {
     msg.copy(B, 66);
     return new _bn.default(sha256.update(B).digest('hex'), 16);
   });
-  (0, _defineProperty2.default)(this, "trySign", function (msg, prv, k, pn, pubKey) {
+
+  _defineProperty(this, "trySign", function (msg, prv, k, pn, pubKey) {
     if (prv.isZero()) throw new Error('Bad private key.');
     if (prv.gte(curve.n)) throw new Error('Bad private key.'); // 1a. check that k is not 0
 
@@ -78,7 +80,8 @@ var Schnorr = function Schnorr() {
       s: s
     });
   });
-  (0, _defineProperty2.default)(this, "sign", function (msg, key, pubkey, pubNonce) {
+
+  _defineProperty(this, "sign", function (msg, key, pubkey, pubNonce) {
     var prv = new _bn.default(key);
 
     var drbg = _this.getDRBG(msg, key, pubNonce);
@@ -95,7 +98,8 @@ var Schnorr = function Schnorr() {
 
     return sig;
   });
-  (0, _defineProperty2.default)(this, "verify", function (msg, signature, key) {
+
+  _defineProperty(this, "verify", function (msg, signature, key) {
     var sig = new _signature.default(signature);
     if (sig.s.gte(curve.n)) throw new Error('Invalid S value.');
     if (sig.r.gt(curve.n)) throw new Error('Invalid R value.');
@@ -111,8 +115,10 @@ var Schnorr = function Schnorr() {
     if (r1.isZero()) throw new Error('Invalid hash.');
     return r1.eq(sig.r);
   });
-  (0, _defineProperty2.default)(this, "alg", Buffer.from('Schnorr+SHA256  ', 'ascii'));
-  (0, _defineProperty2.default)(this, "getDRBG", function (msg, priv, data) {
+
+  _defineProperty(this, "alg", Buffer.from('Schnorr+SHA256  ', 'ascii'));
+
+  _defineProperty(this, "getDRBG", function (msg, priv, data) {
     var pers = Buffer.allocUnsafe(48);
     pers.fill(0);
 
@@ -130,7 +136,8 @@ var Schnorr = function Schnorr() {
       pers: pers
     });
   });
-  (0, _defineProperty2.default)(this, "generateNoncePair", function (msg, priv, data) {
+
+  _defineProperty(this, "generateNoncePair", function (msg, priv, data) {
     var drbg = _this.getDRBG(msg, priv, data);
 
     var len = curve.n.byteLength();

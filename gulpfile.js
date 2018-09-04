@@ -18,16 +18,28 @@ const packages = [
 ]
 
 const babelConfig = {
-  babelrc: false,
   // runtimeHelpers: true,
-  presets: ['@babel/preset-env'],
+  presets: ['@babel/env'],
   plugins: [
-    '@babel/plugin-transform-runtime',
+    // '@babel/plugin-transform-runtime',
     '@babel/plugin-proposal-class-properties',
     'add-module-exports'
-  ],
-  exclude: 'packages/**/node_modules/**'
+  ]
 }
+
+// const babelConfig = {
+//   presets: ['@babel/env'],
+//   plugins: [
+//     ['@babel/plugin-transform-runtime'],
+//     [
+//       'transform-class-properties',
+//       {
+//         spec: true
+//       }
+//     ],
+//     'add-module-exports'
+//   ]
+// }
 
 gulp.task('babel', () => {
   packages.map((p) => {

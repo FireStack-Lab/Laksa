@@ -1,7 +1,5 @@
 "use strict";
 
-var _interopRequireDefault = require("@babel/runtime/helpers/interopRequireDefault");
-
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
@@ -15,11 +13,11 @@ Object.defineProperty(exports, "isBN", {
 });
 exports.isAddress = exports.isPrivateKey = exports.isPubkey = exports.isUrl = exports.isHash = exports.isFunction = exports.isObject = exports.isJson = exports.isArray = exports.isBoolean = exports.isString = exports.isNumber = void 0;
 
-var _typeof2 = _interopRequireDefault(require("@babel/runtime/helpers/typeof"));
-
 var _validUrl = require("valid-url");
 
 var _bn = require("bn.js");
+
+function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
 
 /**
  * [isNumber verify param is a Number]
@@ -106,7 +104,7 @@ Object.assign(isJson, {
  */
 
 var isObject = function isObject(obj) {
-  return obj !== null && !Array.isArray(obj) && (0, _typeof2.default)(obj) === 'object';
+  return obj !== null && !Array.isArray(obj) && _typeof(obj) === 'object';
 }; // assign validator string
 
 

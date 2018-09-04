@@ -1,13 +1,13 @@
 "use strict";
 
-var _interopRequireDefault = require("@babel/runtime/helpers/interopRequireDefault");
-
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
 exports.padRight = exports.padLeft = exports.toNumber = exports.toBN = exports.fromAscii = exports.fromUtf8 = exports.toAscii = exports.toUtf8 = exports.toHex = exports.intToByteArray = void 0;
 
 var _numberToBn = _interopRequireDefault(require("number-to-bn"));
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 // import BN from 'bn.js'
 

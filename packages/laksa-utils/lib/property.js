@@ -1,24 +1,24 @@
 "use strict";
 
-var _interopRequireDefault = require("@babel/runtime/helpers/interopRequireDefault");
-
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
 exports.default = void 0;
 
-var _classCallCheck2 = _interopRequireDefault(require("@babel/runtime/helpers/classCallCheck"));
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
-var _defineProperty2 = _interopRequireDefault(require("@babel/runtime/helpers/defineProperty"));
+function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
 
 var Property = function Property(options) {
   var _this = this;
 
-  (0, _classCallCheck2.default)(this, Property);
-  (0, _defineProperty2.default)(this, "setMessanger", function (msg) {
+  _classCallCheck(this, Property);
+
+  _defineProperty(this, "setMessanger", function (msg) {
     _this.messanger = msg;
   });
-  (0, _defineProperty2.default)(this, "assignToObject", function (object) {
+
+  _defineProperty(this, "assignToObject", function (object) {
     var zilName = _this.name;
 
     var asyncGetterName = function asyncGetterName(getName) {
@@ -35,7 +35,8 @@ var Property = function Property(options) {
 
     Object.assign(object, newZilObject);
   });
-  (0, _defineProperty2.default)(this, "propertyBuilder", function () {
+
+  _defineProperty(this, "propertyBuilder", function () {
     if (_this.messanger !== null) {
       return function (callback) {
         if (callback) {
@@ -50,6 +51,7 @@ var Property = function Property(options) {
       };
     }
   });
+
   var name = options.name,
       getter = options.getter,
       setter = options.setter;

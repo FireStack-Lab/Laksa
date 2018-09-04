@@ -1,7 +1,5 @@
 "use strict";
 
-var _interopRequireDefault = require("@babel/runtime/helpers/interopRequireDefault");
-
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
@@ -225,3 +223,5 @@ var _laksaCoreCrypto = require("laksa-core-crypto");
 var _validator = require("./validator");
 
 var _transformer = require("./transformer");
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }

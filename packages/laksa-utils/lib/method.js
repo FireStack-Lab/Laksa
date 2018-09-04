@@ -1,23 +1,21 @@
 "use strict";
 
-var _interopRequireWildcard = require("@babel/runtime/helpers/interopRequireWildcard");
-
-var _interopRequireDefault = require("@babel/runtime/helpers/interopRequireDefault");
-
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
 exports.default = void 0;
-
-var _classCallCheck2 = _interopRequireDefault(require("@babel/runtime/helpers/classCallCheck"));
-
-var _defineProperty2 = _interopRequireDefault(require("@babel/runtime/helpers/defineProperty"));
 
 var R = _interopRequireWildcard(require("ramda"));
 
 var _validator = require("./validator");
 
 var _transformer = require("./transformer");
+
+function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) { var desc = Object.defineProperty && Object.getOwnPropertyDescriptor ? Object.getOwnPropertyDescriptor(obj, key) : {}; if (desc.get || desc.set) { Object.defineProperty(newObj, key, desc); } else { newObj[key] = obj[key]; } } } } newObj.default = obj; return newObj; } }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
 
 var validatorArray = {
   isNumber: [_validator.isNumber],
@@ -47,11 +45,13 @@ var transformerArray = {
 var Method = function Method(options) {
   var _this = this;
 
-  (0, _classCallCheck2.default)(this, Method);
-  (0, _defineProperty2.default)(this, "setMessanger", function (msg) {
+  _classCallCheck(this, Method);
+
+  _defineProperty(this, "setMessanger", function (msg) {
     _this.messanger = msg;
   });
-  (0, _defineProperty2.default)(this, "generateValidateObjects", function () {
+
+  _defineProperty(this, "generateValidateObjects", function () {
     var validatorObject = _this.params;
     var requiredArgs = {};
     var optionalArgs = {};
@@ -75,7 +75,8 @@ var Method = function Method(options) {
       optionalArgs: optionalArgs
     };
   });
-  (0, _defineProperty2.default)(this, "validateArgs", function (args, requiredArgs, optionalArgs) {
+
+  _defineProperty(this, "validateArgs", function (args, requiredArgs, optionalArgs) {
     var reArgs = requiredArgs === undefined ? {} : requiredArgs;
     var opArgs = optionalArgs === undefined ? {} : optionalArgs;
 
@@ -85,7 +86,8 @@ var Method = function Method(options) {
 
     return true;
   });
-  (0, _defineProperty2.default)(this, "extractParams", function (args) {
+
+  _defineProperty(this, "extractParams", function (args) {
     var paramsObject = (0, _validator.isObject)(args) ? args : {};
     var result;
     var keyArrayLength = Object.keys(paramsObject).length;
@@ -101,19 +103,22 @@ var Method = function Method(options) {
 
     return result;
   });
-  (0, _defineProperty2.default)(this, "transformedBeforeSend", function (value, key) {
+
+  _defineProperty(this, "transformedBeforeSend", function (value, key) {
     var transformMethod = _this.transformer[key];
 
     if (transformMethod !== undefined) {
       return transformerArray[transformMethod](value);
     } else return value;
   });
-  (0, _defineProperty2.default)(this, "assignToObject", function (object) {
+
+  _defineProperty(this, "assignToObject", function (object) {
     var newObject = {};
     newObject[_this.name] = _this.methodBuilder();
     return Object.assign(object, newObject);
   });
-  (0, _defineProperty2.default)(this, "methodBuilder", function () {
+
+  _defineProperty(this, "methodBuilder", function () {
     if (_this.messanger !== null && _this.endpoint === 'client') {
       return function (args, callback) {
         var _this$generateValidat = _this.generateValidateObjects(),
@@ -154,6 +159,7 @@ var Method = function Method(options) {
       };
     }
   });
+
   var name = options.name,
       call = options.call,
       _params = options.params,

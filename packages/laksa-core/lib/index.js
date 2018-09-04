@@ -1,21 +1,9 @@
 "use strict";
 
-var _interopRequireWildcard = require("@babel/runtime/helpers/interopRequireWildcard");
-
-var _interopRequireDefault = require("@babel/runtime/helpers/interopRequireDefault");
-
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
 exports.default = void 0;
-
-var _regenerator = _interopRequireDefault(require("@babel/runtime/regenerator"));
-
-var _asyncToGenerator2 = _interopRequireDefault(require("@babel/runtime/helpers/asyncToGenerator"));
-
-var _classCallCheck2 = _interopRequireDefault(require("@babel/runtime/helpers/classCallCheck"));
-
-var _defineProperty2 = _interopRequireDefault(require("@babel/runtime/helpers/defineProperty"));
 
 var util = _interopRequireWildcard(require("laksa-utils"));
 
@@ -25,27 +13,36 @@ var _laksaZil = _interopRequireDefault(require("laksa-zil"));
 
 var _config = _interopRequireDefault(require("./config"));
 
-//
-//
-//  Copyright
-//
-//
-//
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) { var desc = Object.defineProperty && Object.getOwnPropertyDescriptor ? Object.getOwnPropertyDescriptor(obj, key) : {}; if (desc.get || desc.set) { Object.defineProperty(newObj, key, desc); } else { newObj[key] = obj[key]; } } } } newObj.default = obj; return newObj; } }
+
+function asyncGeneratorStep(gen, resolve, reject, _next, _throw, key, arg) { try { var info = gen[key](arg); var value = info.value; } catch (error) { reject(error); return; } if (info.done) { resolve(value); } else { Promise.resolve(value).then(_next, _throw); } }
+
+function _asyncToGenerator(fn) { return function () { var self = this, args = arguments; return new Promise(function (resolve, reject) { var gen = fn.apply(self, args); function _next(value) { asyncGeneratorStep(gen, resolve, reject, _next, _throw, "next", value); } function _throw(err) { asyncGeneratorStep(gen, resolve, reject, _next, _throw, "throw", err); } _next(undefined); }); }; }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
+
 var Laksa = function Laksa(args) {
   var _this = this;
 
-  (0, _classCallCheck2.default)(this, Laksa);
-  (0, _defineProperty2.default)(this, "providers", {
+  _classCallCheck(this, Laksa);
+
+  _defineProperty(this, "providers", {
     HttpProvider: _laksaRequest.HttpProvider
   });
-  (0, _defineProperty2.default)(this, "config", _config.default);
-  (0, _defineProperty2.default)(this, "isConnected",
+
+  _defineProperty(this, "config", _config.default);
+
+  _defineProperty(this, "isConnected",
   /*#__PURE__*/
-  (0, _asyncToGenerator2.default)(
+  _asyncToGenerator(
   /*#__PURE__*/
-  _regenerator.default.mark(function _callee() {
+  regeneratorRuntime.mark(function _callee() {
     var result;
-    return _regenerator.default.wrap(function _callee$(_context) {
+    return regeneratorRuntime.wrap(function _callee$(_context) {
       while (1) {
         switch (_context.prev = _context.next) {
           case 0:
@@ -69,26 +66,33 @@ var Laksa = function Laksa(args) {
       }
     }, _callee, this, [[3, 7]]);
   })));
-  (0, _defineProperty2.default)(this, "getLibraryVersion", function () {
+
+  _defineProperty(this, "getLibraryVersion", function () {
     return _this.config.version;
   });
-  (0, _defineProperty2.default)(this, "getDefaultProviderUrl", function () {
+
+  _defineProperty(this, "getDefaultProviderUrl", function () {
     return _this.config.defaultProviderUrl;
   });
-  (0, _defineProperty2.default)(this, "getDefaultAccount", function () {
+
+  _defineProperty(this, "getDefaultAccount", function () {
     return _this.config.defaultAccount;
   });
-  (0, _defineProperty2.default)(this, "getDefaultBlock", function () {
+
+  _defineProperty(this, "getDefaultBlock", function () {
     return _this.config.defaultBlock;
   });
-  (0, _defineProperty2.default)(this, "getProvider", function () {
+
+  _defineProperty(this, "getProvider", function () {
     return _this.currentProvider;
   });
-  (0, _defineProperty2.default)(this, "setProvider", function (provider) {
+
+  _defineProperty(this, "setProvider", function (provider) {
     _this.currentProvider = new _laksaRequest.HttpProvider(provider);
 
     _this.messanger.setProvider(_this.currentProvider);
   });
+
   // validateArgs(args, {}, { nodeUrl: [util.isUrl] })
   var url = args || _config.default.defaultNodeUrl; //
 

@@ -1,21 +1,20 @@
 "use strict";
 
-var _interopRequireDefault = require("@babel/runtime/helpers/interopRequireDefault");
-
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
 exports.default = void 0;
 
-var _classCallCheck2 = _interopRequireDefault(require("@babel/runtime/helpers/classCallCheck"));
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
-var _defineProperty2 = _interopRequireDefault(require("@babel/runtime/helpers/defineProperty"));
+function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
 
 var JsonRpc = function JsonRpc() {
   var _this = this;
 
-  (0, _classCallCheck2.default)(this, JsonRpc);
-  (0, _defineProperty2.default)(this, "toPayload", function (method, params) {
+  _classCallCheck(this, JsonRpc);
+
+  _defineProperty(this, "toPayload", function (method, params) {
     if (!method) console.error('jsonrpc method should be specified!'); // advance message ID
 
     _this.messageId += 1;
@@ -26,11 +25,13 @@ var JsonRpc = function JsonRpc() {
       params: params || []
     };
   });
-  (0, _defineProperty2.default)(this, "toBatchPayload", function (messages) {
+
+  _defineProperty(this, "toBatchPayload", function (messages) {
     return messages.map(function (message) {
       return _this.toPayload(message.method, message.params);
     });
   });
+
   this.messageId = 0;
 };
 
