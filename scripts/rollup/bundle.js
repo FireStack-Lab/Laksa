@@ -3,7 +3,7 @@ import commonjs from 'rollup-plugin-commonjs'
 import packages from '../packages'
 import babelConfig from '../babel/babel.config.js'
 
-function formatPackagesSettings() {
+function bundles() {
   return packages.map((p) => {
     return {
       input: `packages/${p}/src/index.js`,
@@ -16,4 +16,4 @@ function formatPackagesSettings() {
   })
 }
 
-export default formatPackagesSettings()
+export default bundles()

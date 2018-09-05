@@ -1,6 +1,15 @@
 {
   "presets": [
-    "env",
+    [
+      "env",
+      {
+
+        "babelrcRoots": [
+          ".",
+          "./packages/*"
+        ]
+      }
+    ]
   ],
   "plugins": [
     [
@@ -17,5 +26,12 @@
       }
     ],
     "add-module-exports"
+  ],
+  "overrides": [
+    {
+      "exclude": [
+        "//node_modules$/"
+      ]
+    }
   ],
 }

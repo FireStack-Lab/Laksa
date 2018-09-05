@@ -4,8 +4,6 @@ Object.defineProperty(exports, '__esModule', { value: true });
 
 function _interopDefault (ex) { return (ex && (typeof ex === 'object') && 'default' in ex) ? ex['default'] : ex; }
 
-var _classCallCheck = _interopDefault(require('@babel/runtime/helpers/classCallCheck'));
-var _defineProperty = _interopDefault(require('@babel/runtime/helpers/defineProperty'));
 var assert = _interopDefault(require('assert'));
 var elliptic = _interopDefault(require('elliptic'));
 var BN = _interopDefault(require('bn.js'));
@@ -13,6 +11,27 @@ var Signature = _interopDefault(require('elliptic/lib/elliptic/ec/signature'));
 var hashjs = _interopDefault(require('hash.js'));
 var DRBG = _interopDefault(require('hmac-drbg'));
 var randomBytes = _interopDefault(require('randombytes'));
+
+function _classCallCheck(instance, Constructor) {
+  if (!(instance instanceof Constructor)) {
+    throw new TypeError("Cannot call a class as a function");
+  }
+}
+
+function _defineProperty(obj, key, value) {
+  if (key in obj) {
+    Object.defineProperty(obj, key, {
+      value: value,
+      enumerable: true,
+      configurable: true,
+      writable: true
+    });
+  } else {
+    obj[key] = value;
+  }
+
+  return obj;
+}
 
 var _elliptic$ec = elliptic.ec('secp256k1'),
     curve = _elliptic$ec.curve; // Public key is a point (x, y) on the curve.
