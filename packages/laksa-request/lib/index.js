@@ -4,6 +4,10 @@ Object.defineProperty(exports, '__esModule', { value: true });
 
 function _interopDefault (ex) { return (ex && (typeof ex === 'object') && 'default' in ex) ? ex['default'] : ex; }
 
+require('regenerator-runtime/runtime');
+require('core-js/modules/es6.function.name');
+require('core-js/modules/web.dom.iterable');
+require('core-js/modules/es6.regexp.to-string');
 var axios = _interopDefault(require('axios'));
 var laksaShared = require('laksa-shared');
 

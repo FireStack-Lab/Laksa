@@ -1,7 +1,18 @@
 export default {
   babelrc: false,
   // runtimeHelpers: true,
-  presets: ['@babel/env'],
+  presets: [
+    [
+      '@babel/env',
+      {
+        modules: false,
+        targets: {
+          browsers: ['>0.25%']
+        },
+        useBuiltIns: 'usage'
+      }
+    ]
+  ],
   plugins: [
     // [
     //   '@babel/transform-runtime',

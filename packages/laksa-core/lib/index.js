@@ -2,6 +2,7 @@
 
 function _interopDefault (ex) { return (ex && (typeof ex === 'object') && 'default' in ex) ? ex['default'] : ex; }
 
+require('regenerator-runtime/runtime');
 var util = require('laksa-utils');
 var laksaRequest = require('laksa-request');
 var Zil = _interopDefault(require('laksa-zil'));

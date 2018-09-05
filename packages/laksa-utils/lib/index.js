@@ -4,9 +4,16 @@ Object.defineProperty(exports, '__esModule', { value: true });
 
 function _interopDefault (ex) { return (ex && (typeof ex === 'object') && 'default' in ex) ? ex['default'] : ex; }
 
+require('core-js/modules/es6.object.assign');
 var validUrl = require('valid-url');
 var bn_js = require('bn.js');
+require('core-js/modules/es6.regexp.to-string');
 var numToBN = _interopDefault(require('number-to-bn'));
+require('core-js/modules/es6.function.name');
+require('core-js/modules/web.dom.iterable');
+require('core-js/modules/es6.array.iterator');
+require('core-js/modules/es6.object.keys');
+require('core-js/modules/es6.number.constructor');
 var R = require('ramda');
 var laksaCoreCrypto = require('laksa-core-crypto');
 
@@ -307,7 +314,6 @@ function validateFunctionArgs(ArgsArray, validatorArray) {
   return true;
 }
 
-// import BN from 'bn.js'
 /**
  * convert number to array representing the padded hex form
  * @param  {[string]} val        [description]

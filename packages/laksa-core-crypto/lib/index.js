@@ -4,12 +4,14 @@ Object.defineProperty(exports, '__esModule', { value: true });
 
 function _interopDefault (ex) { return (ex && (typeof ex === 'object') && 'default' in ex) ? ex['default'] : ex; }
 
+require('core-js/modules/es6.array.fill');
 var assert = _interopDefault(require('assert'));
 var elliptic = _interopDefault(require('elliptic'));
 var BN = _interopDefault(require('bn.js'));
 var Signature = _interopDefault(require('elliptic/lib/elliptic/ec/signature'));
 var hashjs = _interopDefault(require('hash.js'));
 var DRBG = _interopDefault(require('hmac-drbg'));
+require('core-js/modules/es6.regexp.to-string');
 var randomBytes = _interopDefault(require('randombytes'));
 
 function _classCallCheck(instance, Constructor) {
