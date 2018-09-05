@@ -49,10 +49,9 @@
     "test": "echo \"Error: no test specified\" && exit 1",
     "packages:clean": "gulp clean",
     "packages:bundle": "yarn packages:clean && rollup --c scripts/rollup/bundle.js",
-    "packages:build": "yarn packages:bundle && rollup --c scripts/rollup/build.js",
     "commit": "yarn packages:bundle && git add .&&git commit",
-    "babel": "rm -rf prebuild && babel packages  --presets env --plugins transform-class-properties -d prebuild",
-    "dist": "yarn babel && rm -rf dist && cross-env NODE_ENV=production webpack --config webpack.config.js && rm -rf prebuild"
+    "babel": "rm -rf prebuild && babel packages --plugins=@babel/plugin-proposal-class-properties --out-dir prebuild",
+    "dist": "yarn packages:bundle && rm -rf dist && cross-env NODE_ENV=production webpack --config webpack.config.js"
   },
   "keywords": [
     "laksa",

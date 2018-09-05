@@ -15,20 +15,20 @@ const UglifyJs = require('uglifyjs-webpack-plugin')
 
 const baseConfig = {
   entry: {
-    Laksa: ['./packages/laksa/src/index.js']
+    Laksa: ['./packages/laksa/lib/index.js']
   },
   mode: 'production',
   module: {
     rules: [
       {
-        test: /\.js$/,
-        use: {
-          loader: 'babel-loader'
-          // options: {
-          //   babelrc: true,
-          //   cacheDirectory: true
-          // }
-        }
+        test: /\.js$/
+        // use: {
+        //   loader: 'babel-loader'
+        // options: {
+        //   babelrc: true,
+        //   cacheDirectory: true
+        // }
+        // }
       }
     ]
   },

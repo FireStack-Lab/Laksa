@@ -1,30 +1,24 @@
 {
   "presets": [
     [
-      "env",
+      "@babel/env",
       {
-
-        "babelrcRoots": [
-          ".",
-          "./packages/*"
-        ]
+        "modules": false,
+        "targets": {
+          "browsers": [">0.25%"]
+        },
+        "useBuiltIns": "usage"
       }
     ]
   ],
   "plugins": [
     [
-      "transform-runtime",
-      {
-        "polyfill": true,
-        "regenerator": true
-      }
+      "@babel/transform-runtime",
     ],
-    [
-      "transform-class-properties",
-      {
-        "spec": true
-      }
-    ],
+    "@babel/proposal-object-rest-spread",
+    "@babel/proposal-export-default-from",
+    "@babel/proposal-export-namespace-from",
+    "@babel/proposal-class-properties",
     "add-module-exports"
   ],
   "overrides": [
