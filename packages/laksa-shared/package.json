@@ -1,5 +1,5 @@
 {
   "name": "laksa-shared",
-  "main": "src/index.js",
+  "main": "lib/index.js",
   "version": "0.0.11"
 }
