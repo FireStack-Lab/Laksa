@@ -1,6 +1,6 @@
 {
   "name": "laksa-zil",
-  "version": "0.0.14",
+  "version": "0.0.15",
   "description": "laksa-zil for webz.js",
   "main": "lib/index.js",
   "scripts": {
@@ -15,6 +15,6 @@
   "author": "neeboo",
   "license": "ISC",
   "dependencies": {
-    "laksa-utils": "^0.0.14"
+    "laksa-utils": "^0.0.15"
   }
 }
