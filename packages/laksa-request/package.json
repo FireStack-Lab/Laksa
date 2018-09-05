@@ -1,6 +1,6 @@
 {
   "name": "laksa-request",
-  "version": "0.0.12",
+  "version": "0.0.13",
   "description": "",
   "main": "lib/index.js",
   "scripts": {
@@ -10,6 +10,6 @@
   "license": "ISC",
   "dependencies": {
     "axios": "^0.18.0",
-    "laksa-shared": "^0.0.12"
+    "laksa-shared": "^0.0.13"
   }
 }
