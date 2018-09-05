@@ -1,6 +1,6 @@
 {
   "name": "laksa-core",
-  "version": "0.0.11",
+  "version": "0.0.12",
   "description": "",
   "main": "lib/index.js",
   "scripts": {
@@ -9,8 +9,8 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "laksa-request": "^0.0.11",
-    "laksa-utils": "^0.0.11",
-    "laksa-zil": "^0.0.11"
+    "laksa-request": "^0.0.12",
+    "laksa-utils": "^0.0.12",
+    "laksa-zil": "^0.0.12"
   }
 }
