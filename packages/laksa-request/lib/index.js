@@ -4,69 +4,16 @@ Object.defineProperty(exports, '__esModule', { value: true });
 
 function _interopDefault (ex) { return (ex && (typeof ex === 'object') && 'default' in ex) ? ex['default'] : ex; }
 
+var _regeneratorRuntime = _interopDefault(require('@babel/runtime/regenerator'));
 require('regenerator-runtime/runtime');
+var _asyncToGenerator = _interopDefault(require('@babel/runtime/helpers/asyncToGenerator'));
 require('core-js/modules/es6.function.name');
 require('core-js/modules/web.dom.iterable');
 require('core-js/modules/es6.regexp.to-string');
+var _classCallCheck = _interopDefault(require('@babel/runtime/helpers/classCallCheck'));
+var _defineProperty = _interopDefault(require('@babel/runtime/helpers/defineProperty'));
 var axios = _interopDefault(require('axios'));
 var laksaShared = require('laksa-shared');
-
-function asyncGeneratorStep(gen, resolve, reject, _next, _throw, key, arg) {
-  try {
-    var info = gen[key](arg);
-    var value = info.value;
-  } catch (error) {
-    reject(error);
-    return;
-  }
-
-  if (info.done) {
-    resolve(value);
-  } else {
-    Promise.resolve(value).then(_next, _throw);
-  }
-}
-
-function _asyncToGenerator(fn) {
-  return function () {
-    var self = this,
-        args = arguments;
-    return new Promise(function (resolve, reject) {
-      var gen = fn.apply(self, args);
-
-      function _next(value) {
-        asyncGeneratorStep(gen, resolve, reject, _next, _throw, "next", value);
-      }
-
-      function _throw(err) {
-        asyncGeneratorStep(gen, resolve, reject, _next, _throw, "throw", err);
-      }
-
-      _next(undefined);
-    });
-  };
-}
-
-function _classCallCheck(instance, Constructor) {
-  if (!(instance instanceof Constructor)) {
-    throw new TypeError("Cannot call a class as a function");
-  }
-}
-
-function _defineProperty(obj, key, value) {
-  if (key in obj) {
-    Object.defineProperty(obj, key, {
-      value: value,
-      enumerable: true,
-      configurable: true,
-      writable: true
-    });
-  } else {
-    obj[key] = value;
-  }
-
-  return obj;
-}
 
 var HttpProvider = function HttpProvider(url, timeout, user, password, headers) {
   var _this = this;
@@ -101,9 +48,9 @@ var HttpProvider = function HttpProvider(url, timeout, user, password, headers) 
   function () {
     var _ref = _asyncToGenerator(
     /*#__PURE__*/
-    regeneratorRuntime.mark(function _callee(payload) {
+    _regeneratorRuntime.mark(function _callee(payload) {
       var result;
-      return regeneratorRuntime.wrap(function _callee$(_context) {
+      return _regeneratorRuntime.wrap(function _callee$(_context) {
         while (1) {
           switch (_context.prev = _context.next) {
             case 0:
@@ -141,9 +88,9 @@ var HttpProvider = function HttpProvider(url, timeout, user, password, headers) 
   function () {
     var _ref2 = _asyncToGenerator(
     /*#__PURE__*/
-    regeneratorRuntime.mark(function _callee2(endpoint, payload) {
+    _regeneratorRuntime.mark(function _callee2(endpoint, payload) {
       var result;
-      return regeneratorRuntime.wrap(function _callee2$(_context2) {
+      return _regeneratorRuntime.wrap(function _callee2$(_context2) {
         while (1) {
           switch (_context2.prev = _context2.next) {
             case 0:
@@ -250,9 +197,9 @@ var Messanger = function Messanger(_provider) {
   function () {
     var _ref = _asyncToGenerator(
     /*#__PURE__*/
-    regeneratorRuntime.mark(function _callee(data) {
+    _regeneratorRuntime.mark(function _callee(data) {
       var payload, result;
-      return regeneratorRuntime.wrap(function _callee$(_context) {
+      return _regeneratorRuntime.wrap(function _callee$(_context) {
         while (1) {
           switch (_context.prev = _context.next) {
             case 0:
@@ -325,9 +272,9 @@ var Messanger = function Messanger(_provider) {
   function () {
     var _ref2 = _asyncToGenerator(
     /*#__PURE__*/
-    regeneratorRuntime.mark(function _callee2(endpoint, data) {
+    _regeneratorRuntime.mark(function _callee2(endpoint, data) {
       var result;
-      return regeneratorRuntime.wrap(function _callee2$(_context2) {
+      return _regeneratorRuntime.wrap(function _callee2$(_context2) {
         while (1) {
           switch (_context2.prev = _context2.next) {
             case 0:

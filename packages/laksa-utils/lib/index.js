@@ -4,6 +4,7 @@ Object.defineProperty(exports, '__esModule', { value: true });
 
 function _interopDefault (ex) { return (ex && (typeof ex === 'object') && 'default' in ex) ? ex['default'] : ex; }
 
+var _typeof = _interopDefault(require('@babel/runtime/helpers/typeof'));
 require('core-js/modules/es6.object.assign');
 var validUrl = require('valid-url');
 var bn_js = require('bn.js');
@@ -13,44 +14,11 @@ require('core-js/modules/es6.function.name');
 require('core-js/modules/web.dom.iterable');
 require('core-js/modules/es6.array.iterator');
 require('core-js/modules/es6.object.keys');
+var _classCallCheck = _interopDefault(require('@babel/runtime/helpers/classCallCheck'));
+var _defineProperty = _interopDefault(require('@babel/runtime/helpers/defineProperty'));
 require('core-js/modules/es6.number.constructor');
 var R = require('ramda');
 var laksaCoreCrypto = require('laksa-core-crypto');
-
-function _typeof(obj) {
-  if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") {
-    _typeof = function (obj) {
-      return typeof obj;
-    };
-  } else {
-    _typeof = function (obj) {
-      return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj;
-    };
-  }
-
-  return _typeof(obj);
-}
-
-function _classCallCheck(instance, Constructor) {
-  if (!(instance instanceof Constructor)) {
-    throw new TypeError("Cannot call a class as a function");
-  }
-}
-
-function _defineProperty(obj, key, value) {
-  if (key in obj) {
-    Object.defineProperty(obj, key, {
-      value: value,
-      enumerable: true,
-      configurable: true,
-      writable: true
-    });
-  } else {
-    obj[key] = value;
-  }
-
-  return obj;
-}
 
 /**
  * [isNumber verify param is a Number]
