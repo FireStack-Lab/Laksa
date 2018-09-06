@@ -51,7 +51,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/neeboo/laksa.git"
+    "url": "git+https://github.com/FireStack-Lab/Laksa.git"
   },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
