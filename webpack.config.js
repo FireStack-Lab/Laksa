@@ -20,7 +20,14 @@ const baseConfig = {
   module: {
     rules: [
       {
-        test: /\.js$/
+        test: /\.js$/,
+        use: {
+          loader: 'babel-loader',
+          options: {
+            babelrc: true,
+            cacheDirectory: true
+          }
+        }
       }
     ]
   },

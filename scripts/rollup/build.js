@@ -1,5 +1,5 @@
-import resolve from 'rollup-plugin-node-resolve'
-import commonjs from 'rollup-plugin-commonjs'
+// import resolve from 'rollup-plugin-node-resolve'
+// import commonjs from 'rollup-plugin-commonjs'
 
 // const envTypes = {
 //   DEV: 'Developement',
@@ -62,22 +62,21 @@ import commonjs from 'rollup-plugin-commonjs'
 //   }
 // }
 
-export default [
-  {
-    input: 'packages/laksa/lib/index.js',
-    output: {
-      name: 'Laksa',
-      file: 'dist/laksa.Developement.cjs.js',
-      format: 'umd'
-    },
-    plugins: [
-      resolve({
-        // pass custom options to the resolve plugin
-        customResolveOptions: {
-          moduleDirectory: 'packages/laksa/node_modules'
-        }
-      }),
-      commonjs()
-    ]
-  }
-]
+export default {
+  // input: 'packages/laksa-core/src/index.js',
+  // output: {
+  //   name: 'Laksa',
+  //   file: 'dist/Laksa.browser.cjs.js',
+  //   format: 'system'
+  // }
+  // plugins: [
+  // resolve(),
+  // {
+  // pass custom options to the resolve plugin
+  // customResolveOptions: {
+  //   moduleDirectory: 'packages/laksa/node_modules'
+  // }
+  // }
+  // commonjs()
+  // ]
+}
