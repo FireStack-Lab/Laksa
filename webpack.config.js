@@ -10,22 +10,17 @@
 // Base webpack configuration - to be used in ALL environments.
 /* eslint import/no-extraneous-dependencies: ["error", { devDependencies: true }] */
 const path = require('path')
-// const webpack = require('webpack')
 const UglifyJs = require('uglifyjs-webpack-plugin')
 
 const baseConfig = {
+  entry: {
+    Laksa: ['./packages/laksa/index.js']
+  },
   mode: 'production',
   module: {
     rules: [
       {
         test: /\.js$/
-        // use: {
-        //   loader: 'babel-loader'
-        // options: {
-        //   babelrc: true,
-        //   cacheDirectory: true
-        // }
-        // }
       }
     ]
   },
@@ -38,9 +33,6 @@ const baseConfig = {
 
 const clientConfig = {
   ...baseConfig,
-  entry: {
-    Laksa: ['./packages/laksa/lib/index.js']
-  },
   optimization: {
     minimizer: [
       new UglifyJs({
@@ -53,7 +45,6 @@ const clientConfig = {
             comments: false
           }
         },
-        // include: /Webz\.js$/,
         parallel: true,
         sourceMap: true
       })
@@ -67,18 +58,4 @@ const clientConfig = {
   }
 }
 
-const serverConfig = {
-  ...baseConfig,
-  entry: {
-    Laksa: ['./packages/laksa/node/index.js']
-  },
-  target: 'node',
-  output: {
-    filename: '[name].server.js',
-    library: 'laksa.js',
-    libraryTarget: 'commonjs2',
-    path: path.join(__dirname, 'dist')
-  }
-}
-
-module.exports = [baseConfig, clientConfig, serverConfig]
+module.exports = [baseConfig, clientConfig]
