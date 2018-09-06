@@ -1,5 +1,4 @@
 import babel from 'rollup-plugin-babel'
-import commonjs from 'rollup-plugin-commonjs'
 import packages from '../packages'
 import serverConfig from '../babel/babel.server.config.js'
 
@@ -9,9 +8,10 @@ function bundles() {
       input: `packages/${p}/src/index.js`,
       output: {
         file: `packages/${p}/node/index.js`,
-        format: 'cjs'
+        format: 'umd',
+        name: 'Laksa'
       },
-      plugins: [babel(serverConfig), commonjs()]
+      plugins: [babel(serverConfig)]
     }
   })
 }
