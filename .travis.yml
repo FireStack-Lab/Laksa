@@ -9,7 +9,7 @@ branches:
 install:
   - yarn install --pure-lockfile
 script:
-  - npm run dist
+  - yarn packages:bundle
 cache:
   directories:
     - '$HOME/.yarn-cache'
