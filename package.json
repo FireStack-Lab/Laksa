@@ -3,6 +3,7 @@
   "private": true,
   "devDependencies": {
     "@babel/cli": "^7.0.0",
+    "@babel/core": "^7.0.0",
     "@babel/plugin-proposal-class-properties": "7.0.0",
     "@babel/plugin-proposal-decorators": "7.0.0",
     "@babel/plugin-proposal-do-expressions": "7.0.0",
@@ -62,8 +63,11 @@
   },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "packages:clean": "gulp clean",
-    "packages:bundle": "yarn packages:clean && rollup --c scripts/rollup/bundle.js",
+    "packages:cleanBrowser": "gulp cleanBrowser",
+    "packages:cleanServer": "gulp cleanServer",
+    "packages:bundleBrowser": "yarn packages:cleanBrowser && rollup --c scripts/rollup/bundleBrowser.js",
+    "packages:bundleServer": "yarn packages:cleanServer && rollup --c scripts/rollup/bundleServer.js",
+    "packages:bundle": "yarn packages:bundleBrowser && yarn packages:bundleServer",
     "commit": "yarn packages:bundle && git add .&&git commit",
     "dist": "yarn packages:bundle && rm -rf dist && cross-env NODE_ENV=production webpack --config webpack.config.js"
   },
@@ -76,7 +80,5 @@
   ],
   "author": "neeboo",
   "license": "MIT",
-  "dependencies": {
-    "@babel/core": "^7.0.0"
-  }
+  "dependencies": {}
 }

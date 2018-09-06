@@ -14,9 +14,6 @@ const path = require('path')
 const UglifyJs = require('uglifyjs-webpack-plugin')
 
 const baseConfig = {
-  entry: {
-    Laksa: ['./packages/laksa/lib/index.js']
-  },
   mode: 'production',
   module: {
     rules: [
@@ -41,6 +38,9 @@ const baseConfig = {
 
 const clientConfig = {
   ...baseConfig,
+  entry: {
+    Laksa: ['./packages/laksa/lib/index.js']
+  },
   optimization: {
     minimizer: [
       new UglifyJs({
@@ -69,6 +69,9 @@ const clientConfig = {
 
 const serverConfig = {
   ...baseConfig,
+  entry: {
+    Laksa: ['./packages/laksa/node/index.js']
+  },
   target: 'node',
   output: {
     filename: '[name].server.js',

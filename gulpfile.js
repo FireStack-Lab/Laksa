@@ -11,10 +11,16 @@ const packages = [
   'laksa'
 ]
 
-gulp.task('clean', () => {
+gulp.task('cleanBrowser', () => {
   packages.map((p) => {
-    const pathToDist = `packages/${p}/dist`
     const pathToLib = `packages/${p}/lib`
-    return del([pathToDist, pathToLib])
+    return del([pathToLib])
+  })
+})
+
+gulp.task('cleanServer', () => {
+  packages.map((p) => {
+    const pathToLib = `packages/${p}/node`
+    return del([pathToLib])
   })
 })
