@@ -1,6 +1,6 @@
 {
   "name": "laksa",
-  "version": "0.0.18",
+  "version": "0.0.19",
   "description": "laksa-core lib for webz.js",
   "main": "index.js",
   "browser": "lib/index.js",
@@ -17,6 +17,6 @@
   "license": "ISC",
   "gitHead": "437d52fc2ede7a3294d22cc177e1076c6cacb9a0",
   "dependencies": {
-    "laksa-core": "^0.0.18"
+    "laksa-core": "^0.0.19"
   }
 }
