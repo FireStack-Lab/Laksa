@@ -1,0 +1,17 @@
+{
+  "name": "laksa-core",
+  "version": "0.0.19",
+  "description": "",
+  "main": "index.js",
+  "browser": "lib/index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "laksa-request": "^0.0.19",
+    "laksa-utils": "^0.0.19",
+    "laksa-zil": "^0.0.19"
+  }
+}

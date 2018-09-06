@@ -1,0 +1,6 @@
+{
+  "name": "laksa-shared",
+  "main": "index.js",
+  "browser": "lib/index.js",
+  "version": "0.0.19"
+}

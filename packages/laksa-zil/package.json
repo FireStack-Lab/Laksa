@@ -1,0 +1,21 @@
+{
+  "name": "laksa-zil",
+  "version": "0.0.19",
+  "description": "laksa-zil for webz.js",
+  "main": "index.js",
+  "browser": "lib/index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "laksa",
+    "webz",
+    "web3",
+    "ethereum"
+  ],
+  "author": "neeboo",
+  "license": "ISC",
+  "dependencies": {
+    "laksa-utils": "^0.0.19"
+  }
+}
