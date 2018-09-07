@@ -4,9 +4,6 @@
   "description": "laksa-utils for webz.js",
   "main": "index.js",
   "browser": "lib/index.js",
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
-  },
   "keywords": [
     "laksa",
     "webz",
