@@ -273,9 +273,9 @@
   const encodeTransaction = txn => {
     const codeHex = Buffer.from(txn.code).toString('hex');
     const dataHex = Buffer.from(txn.data).toString('hex');
-    const encoded = intToByteArray(txn.version, 64).join('') + intToByteArray(txn.nonce, 64).join('') + txn.to + txn.pubKey // + txn.amount.toString('hex', 64)
-    // update later
-    + intToByteArray(txn.amount, 64).join('') + intToByteArray(txn.gasPrice, 64).join('') + intToByteArray(txn.gasLimit, 64).join('') + intToByteArray(txn.code.length, 8).join('') // size of code
+    const encoded = intToByteArray(txn.version, 64).join('') + intToByteArray(txn.nonce, 64).join('') + txn.to + txn.pubKey + txn.amount.toString('hex', 64) // update later
+    // + intToByteArray(txn.amount, 64).join('')
+    + intToByteArray(txn.gasPrice, 64).join('') + intToByteArray(txn.gasLimit, 64).join('') + intToByteArray(txn.code.length, 8).join('') // size of code
     + codeHex + intToByteArray(txn.data.length, 8).join('') // size of data
     + dataHex;
     return Buffer.from(encoded, 'hex');
