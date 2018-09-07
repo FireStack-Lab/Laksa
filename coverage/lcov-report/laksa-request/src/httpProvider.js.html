@@ -1,0 +1,329 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <title>Code coverage report for laksa-request/src/httpProvider.js</title>
+    <meta charset="utf-8" />
+    <link rel="stylesheet" href="../../prettify.css" />
+    <link rel="stylesheet" href="../../base.css" />
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <style type='text/css'>
+        .coverage-summary .sorter {
+            background-image: url(../../sort-arrow-sprite.png);
+        }
+    </style>
+</head>
+<body>
+<div class='wrapper'>
+  <div class='pad1'>
+    <h1>
+      <a href="../../index.html">All files</a> / <a href="index.html">laksa-request/src</a> httpProvider.js
+    </h1>
+    <div class='clearfix'>
+      <div class='fl pad1y space-right2'>
+        <span class="strong">0% </span>
+        <span class="quiet">Statements</span>
+        <span class='fraction'>0/80</span>
+      </div>
+      <div class='fl pad1y space-right2'>
+        <span class="strong">0% </span>
+        <span class="quiet">Branches</span>
+        <span class='fraction'>0/40</span>
+      </div>
+      <div class='fl pad1y space-right2'>
+        <span class="strong">0% </span>
+        <span class="quiet">Functions</span>
+        <span class='fraction'>0/21</span>
+      </div>
+      <div class='fl pad1y space-right2'>
+        <span class="strong">0% </span>
+        <span class="quiet">Lines</span>
+        <span class='fraction'>0/80</span>
+      </div>
+    </div>
+  </div>
+  <div class='status-line low'></div>
+<pre><table class="coverage">
+<tr><td class="line-count quiet">1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+13
+14
+15
+16
+17
+18
+19
+20
+21
+22
+23
+24
+25
+26
+27
+28
+29
+30
+31
+32
+33
+34
+35
+36
+37
+38
+39
+40
+41
+42
+43
+44
+45
+46
+47
+48
+49
+50
+51
+52
+53
+54
+55
+56
+57
+58
+59
+60
+61
+62
+63
+64
+65
+66
+67
+68
+69
+70
+71
+72
+73
+74
+75
+76
+77
+78
+79
+80
+81
+82
+83
+84
+85
+86
+87
+88
+89</td><td class="line-coverage quiet"><span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span></td><td class="text"><pre class="prettyprint lang-js">import axios from 'axios'
+// import errors from 'errors'
+<span class="cstat-no" title="statement not covered" ></span>
+class HttpProvider {
+<span class="cstat-no" title="statement not covered" >  constructor(url, timeout, user, password, headers) {</span>
+    this.url = url || 'http://localhost:4200'
+    this.timeout = timeout || 0
+<span class="cstat-no" title="statement not covered" >    this.user = user || nu</span>ll
+    this.password = password || null
+    this.headers = <span class="cstat-no" title="statement not covered" >headers</span>
+    this.axios = this.instance()
+  }<span class="cstat-no" title="statement not covered" ></span>
+&nbsp;
+  instance = () =&gt; {<span class="cstat-no" title="statement not covered" ></span>
+    const request = axios.create()
+    if (this.user &amp;&amp; th<span class="cstat-no" title="statement not covered" >is.password) {</span>
+      const AUTH_TOKEN = `Basic ${Buffer.from(`${this.user}:${this.password}`).toString('base64')}`
+      request<span class="cstat-no" title="statement not covered" >.defaults.headers.common.Authorization = </span>AUTH_TOKEN
+    }
+    request.defaults.headers.post['Content-Type'] = 'application/json'
+<span class="cstat-no" title="statement not covered" ><span class="fstat-no" title="function not covered" ></span></span>
+    if (this.h<span class="cstat-no" title="statement not covered" >eader</span>s) {
+      this.headers.forEach((header) =&gt; {
+<span class="cstat-no" title="statement not covered" >        request.defaults.headers.post[header.name] = </span>header.value
+<span class="cstat-no" title="statement not covered" >      })<span class="fstat-no" title="function not covered" ></span></span>
+    }<span class="cstat-no" title="statement not covered" ></span>
+    if (this.timeout) {
+<span class="cstat-no" title="statement not covered" >      request.defaults.timeout = this.timeout</span>
+    }<span class="cstat-no" title="statement not covered" ></span>
+    re<span class="cstat-no" title="statement not covered" >turn request</span>
+  }
+&nbsp;
+  se<span class="cstat-no" title="statement not covered" >nd = async (payload) =&gt; {</span>
+    const result = await this.instance()
+<span class="cstat-no" title="statement not covered" >      .post(this.url, JSON.stringify(payload))</span>
+<span class="cstat-no" title="statement not covered" >      .then((response) =&gt; {<span class="fstat-no" title="function not covered" ></span></span>
+<span class="cstat-no" title="statement not covered" >        const { data, status } = response</span>
+        if (data.result &amp;&amp; status === 200) {
+          return data.result
+        }
+<span class="cstat-no" title="statement not covered" >      })</span>
+<span class="cstat-no" title="statement not covered" >      .catch(err =&gt; err)</span>
+    return result
+  }
+<span class="cstat-no" title="statement not covered" ></span>
+  sendServer = async (endpoint, payload) =&gt; {
+<span class="cstat-no" title="statement not covered" >    const result = await this.instance()</span>
+      .post(`${this.url}${endpoint}`, JSON.stringify(payload))
+<span class="fstat-no" title="function not covered" ></span>      .then((response) =&gt; {
+        const {<span class="cstat-no" title="statement not covered" > data, status } = response</span>
+        if (data.result &amp;&amp; status === 200) {
+          return data.result<span class="fstat-no" title="function not covered" ></span>
+        }
+<span class="cstat-no" title="statement not covered" >      })<span class="fstat-no" title="function not covered" ></span></span>
+      .c<span class="cstat-no" title="statement not covered" >atch(err =&gt; err)</span>
+    return<span class="cstat-no" title="statement not covered" > result</span>
+  }
+<span class="cstat-no" title="statement not covered" ></span>
+  sendAsync = <span class="cstat-no" title="statement not covered" >(payload, callback) =&gt; {<span class="fstat-no" title="function not covered" ></span></span>
+    // const request = this<span class="cstat-no" title="statement not covered" >.instance()</span>
+    // console.log(JSON.strin<span class="cstat-no" title="statement not covered" >gify(payload))</span>
+    this.instance()
+      .post(this<span class="cstat-no" title="statement not covered" >.url, JSON.stringify(payload))</span>
+      .then((respo<span class="cstat-no" title="statement not covered" >nse) =&gt; {</span>
+        const { data, status } = response
+        if (data.result<span class="fstat-no" title="function not covered" > &amp;</span>&amp; status === 200) {
+          callba<span class="cstat-no" title="statement not covered" >ck(null, dat</span>a.result)
+        }
+      })
+      .catch(err =&gt; callback(err))
+  }<span class="cstat-no" title="statement not covered" ></span>
+<span class="cstat-no" title="statement not covered" ></span>
+  sendAsyncServer = (endpoint, payload, callback) =&gt; {
+    // const request = this.instance()
+    // console.log(JSON.stringify(payload))
+    this.insta<span class="cstat-no" title="statement not covered" >nce()</span>
+      .post(`${this.url}${endpoint}`, JSON.stringify(payload))
+      .then((response) =&gt; {
+        const { data, status } = response
+        if (data.result &amp;&amp; status === 200) {
+          callback(null, data.result)
+<span class="cstat-no" title="statement not covered" >        }<span class="fstat-no" title="function not covered" ></span></span>
+<span class="cstat-no" title="statement not covered" >      })</span>
+      .catch(err =&gt; callback(err))
+  }
+}<span class="cstat-no" title="statement not covered" ></span>
+&nbsp;
+ex<span class="fstat-no" title="function not covered" >po</span>rt default HttpProvider
+<span class="cstat-no" title="statement not covered" ></span></pre></td></tr>
+</table></pre>
+<div class='push'></div><!-- for sticky footer -->
+</div><!-- /wrapper -->
+<div class='footer quiet pad2 space-top1 center small'>
+  Code coverage
+  generated by <a href="https://istanbul.js.org/" target="_blank">istanbul</a> at Fri Sep 07 2018 15:56:41 GMT+0800 (中国标准时间)
+</div>
+</div>
+<script src="../../prettify.js"></script>
+<script>
+window.onload = function () {
+        if (typeof prettyPrint === 'function') {
+            prettyPrint();
+        }
+};
+</script>
+<script src="../../sorter.js"></script>
+</body>
+</html>

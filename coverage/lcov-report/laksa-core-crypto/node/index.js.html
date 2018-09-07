@@ -1,0 +1,1070 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <title>Code coverage report for laksa-core-crypto/node/index.js</title>
+    <meta charset="utf-8" />
+    <link rel="stylesheet" href="../../prettify.css" />
+    <link rel="stylesheet" href="../../base.css" />
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <style type='text/css'>
+        .coverage-summary .sorter {
+            background-image: url(../../sort-arrow-sprite.png);
+        }
+    </style>
+</head>
+<body>
+<div class='wrapper'>
+  <div class='pad1'>
+    <h1>
+      <a href="../../index.html">All files</a> / <a href="index.html">laksa-core-crypto/node</a> index.js
+    </h1>
+    <div class='clearfix'>
+      <div class='fl pad1y space-right2'>
+        <span class="strong">0% </span>
+        <span class="quiet">Statements</span>
+        <span class='fraction'>0/162</span>
+      </div>
+      <div class='fl pad1y space-right2'>
+        <span class="strong">0% </span>
+        <span class="quiet">Branches</span>
+        <span class='fraction'>0/72</span>
+      </div>
+      <div class='fl pad1y space-right2'>
+        <span class="strong">0% </span>
+        <span class="quiet">Functions</span>
+        <span class='fraction'>0/19</span>
+      </div>
+      <div class='fl pad1y space-right2'>
+        <span class="strong">0% </span>
+        <span class="quiet">Lines</span>
+        <span class='fraction'>0/150</span>
+      </div>
+    </div>
+  </div>
+  <div class='status-line low'></div>
+<pre><table class="coverage">
+<tr><td class="line-count quiet">1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+13
+14
+15
+16
+17
+18
+19
+20
+21
+22
+23
+24
+25
+26
+27
+28
+29
+30
+31
+32
+33
+34
+35
+36
+37
+38
+39
+40
+41
+42
+43
+44
+45
+46
+47
+48
+49
+50
+51
+52
+53
+54
+55
+56
+57
+58
+59
+60
+61
+62
+63
+64
+65
+66
+67
+68
+69
+70
+71
+72
+73
+74
+75
+76
+77
+78
+79
+80
+81
+82
+83
+84
+85
+86
+87
+88
+89
+90
+91
+92
+93
+94
+95
+96
+97
+98
+99
+100
+101
+102
+103
+104
+105
+106
+107
+108
+109
+110
+111
+112
+113
+114
+115
+116
+117
+118
+119
+120
+121
+122
+123
+124
+125
+126
+127
+128
+129
+130
+131
+132
+133
+134
+135
+136
+137
+138
+139
+140
+141
+142
+143
+144
+145
+146
+147
+148
+149
+150
+151
+152
+153
+154
+155
+156
+157
+158
+159
+160
+161
+162
+163
+164
+165
+166
+167
+168
+169
+170
+171
+172
+173
+174
+175
+176
+177
+178
+179
+180
+181
+182
+183
+184
+185
+186
+187
+188
+189
+190
+191
+192
+193
+194
+195
+196
+197
+198
+199
+200
+201
+202
+203
+204
+205
+206
+207
+208
+209
+210
+211
+212
+213
+214
+215
+216
+217
+218
+219
+220
+221
+222
+223
+224
+225
+226
+227
+228
+229
+230
+231
+232
+233
+234
+235
+236
+237
+238
+239
+240
+241
+242
+243
+244
+245
+246
+247
+248
+249
+250
+251
+252
+253
+254
+255
+256
+257
+258
+259
+260
+261
+262
+263
+264
+265
+266
+267
+268
+269
+270
+271
+272
+273
+274
+275
+276
+277
+278
+279
+280
+281
+282
+283
+284
+285
+286
+287
+288
+289
+290
+291
+292
+293
+294
+295
+296
+297
+298
+299
+300
+301
+302
+303
+304
+305
+306
+307
+308
+309
+310
+311
+312
+313
+314
+315
+316
+317
+318
+319
+320
+321
+322
+323
+324
+325
+326
+327
+328
+329
+330
+331
+332
+333
+334
+335
+336</td><td class="line-coverage quiet"><span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span></td><td class="text"><pre class="prettyprint lang-js">(function (global, factory) {
+  typeof exports === 'object' &amp;&amp; typeof module !== 'undefined' ? factory(exports, require('assert'), require('elliptic'), require('bn.js'), require('elliptic/lib/elliptic/ec/signature'), require('hash.js'), require('hmac-drbg'), require('randombytes')) :
+  typeof define === 'function<span class="cstat-no" title="statement not covered" >' &amp;&amp; define.amd ? define(['exports', 'assert', 'elliptic</span>', 'bn.js', 'elliptic/lib/elliptic/ec/signature', 'hash.js', 'hmac-drbg', 'randombytes'], factory) :
+  (factory((global.Laksa = {}),global.assert,global.elliptic,global.BN,global.Signature,global.hashjs,global.DRBG,global.randomBytes));
+}(this, (function (expo<span class="cstat-no" title="statement not covered" >rts,assert,elliptic,BN,Signature,hashjs,DRBG,randomBytes) { 'use strict';</span>
+&nbsp;
+  assert = asse<span class="cstat-no" title="statement not covered" >rt &amp;&amp; assert.hasOwnProperty('default') ? assert['default'] : asse</span>rt;
+  elliptic = elliptic &amp;&amp; elliptic.hasOwnProperty('default') ? elliptic['default'] : elliptic;
+<span class="cstat-no" title="statement not covered" ><span class="fstat-no" title="function not covered" >  B</span>N = BN &amp;&amp; BN.hasOwnProperty('default') ? BN['default'] : BN;</span>
+<span class="cstat-no" title="statement not covered" >  Signature = Signature &amp;&amp; Signature.hasOwnProperty('default') ? Signature['default'] : Signature;</span>
+  hashjs = <span class="fstat-no" title="function not covered" >ha</span>shjs &amp;&amp; hashjs.hasOwnProperty('default') ? hashjs['default'] : hashjs;
+  DRBG = DRBG &amp;&amp; DRBG.hasOwnProperty('default') ? DRBG['default'] : DRBG;
+  randomBytes = randomBytes &amp;&amp; randomBytes.hasOwnProperty('default') ? randomBytes['default'] : randomBytes;
+<span class="cstat-no" title="statement not covered" ></span>
+<span class="cstat-no" title="statement not covered" >  function _defineProperty(obj, key, value) {</span>
+<span class="cstat-no" title="statement not covered" >    if (key in obj) {</span>
+<span class="cstat-no" title="statement not covered" >      Object.defineProperty(obj, key, {</span>
+<span class="cstat-no" title="statement not covered" >        value: value,</span>
+<span class="cstat-no" title="statement not covered" >        enumerable: true,</span>
+<span class="cstat-no" title="statement not covered" >        configurable: true,</span>
+        writable: true
+      });<span class="fstat-no" title="function not covered" ></span>
+<span class="cstat-no" title="statement not covered" >    } else {</span>
+<span class="cstat-no" title="statement not covered" >      obj[key] = value;</span>
+    }
+&nbsp;
+    return obj;
+  }
+&nbsp;
+  const {
+    cu<span class="cstat-no" title="statement not covered" >rve</span>
+  } = elliptic.ec('secp256k1'); // Public key is a point (x, y) on the curve.
+  // Each coordinate requires 32 bytes.
+  //<span class="cstat-no" title="statement not covered" > In its comp</span>ressed form it suffices to store the x co-ordinate
+  // and the sign for y.
+  // Hence a total of 33 bytes.
+<span class="cstat-no" title="statement not covered" ></span>
+  const PUBKEY<span class="cstat-no" title="statement not covered" >_COMPRESSED_SIZE_BY</span>TES = 33;
+&nbsp;
+  class Schnorr {
+    constructor() {
+      _defineProperty(this, "hash", (q, pubkey, msg) =&gt; {
+        const sha256 = hashjs.sha256();
+        const totalLength = PUBKEY_COMPRESSED_SIZE_BYTES * 2 + msg.byteLength; // 33 q + 33 pubkey + variable msgLen
+<span class="cstat-no" title="statement not covered" ></span>
+        const Q = q.toArrayLike(Buffer, 'be', 33);
+        const B <span class="cstat-no" title="statement not covered" >= Buffer.<span class="fstat-no" title="function not covered" >allocUns</span>afe(totalLength);</span>
+        Q.copy(B<span class="cstat-no" title="statement not covered" >, 0);</span>
+        pubkey.copy(B, 33);
+<span class="cstat-no" title="statement not covered" >        msg.copy(B, 66);</span>
+        return new BN(sha256.update(B).digest('hex'), 16);
+<span class="cstat-no" title="statement not covered" >      });<span class="fstat-no" title="function not covered" ></span></span>
+<span class="cstat-no" title="statement not covered" ></span>
+      _defineProperty(th<span class="cstat-no" title="statement not covered" >is, "trySign", (msg, prv, k, pn, pubKey) =&gt; {</span>
+        if (prv.isZero()) throw new Error('Bad private key.');
+        if (pr<span class="cstat-no" title="statement not covered" >v.gte(curve.n)) throw new Error(</span>'Bad private key.'); // 1a. check that k is not 0
+<span class="cstat-no" title="statement not covered" ></span>
+<span class="cstat-no" title="statement not covered" >        if (k.isZero</span>()) return null; // 1b. check that k is &lt; the order of the group
+<span class="cstat-no" title="statement not covered" ></span>
+<span class="cstat-no" title="statement not covered" >        if (k.gte(curve</span>.n)) return null; // 2. Compute commitment Q = kG, where g is the base point
+<span class="cstat-no" title="statement not covered" ></span>
+        const Q = curve.g.mul(k); // convert the commitment to octets first
+&nbsp;
+<span class="cstat-no" title="statement not covered" >        const compressedQ = new BN(Q.<span class="fstat-no" title="function not covered" >en</span>codeCompressed()); // 3. Compute the challenge r = H(Q || pubKey || msg)</span>
+<span class="cstat-no" title="statement not covered" ><span class="cstat-no" title="statement not covered" ></span></span>
+<span class="cstat-no" title="statement not covered" >        const r = this.hash(<span class="cstat-no" title="statement not covered" >compressedQ, pubKey, msg);</span></span>
+        const h = r.clone();
+<span class="cstat-no" title="statement not covered" >        if (h.isZero()<span class="cstat-no" title="statement not covered" >) return null</span></span>;
+        if (h.eq(curve.n)) return null; // 4. Compute s = k - r * prv
+<span class="cstat-no" title="statement not covered" >        // 4a. Compute r *<span class="cstat-no" title="statement not covered" > prv</span></span>
+&nbsp;
+        let s <span class="cstat-no" title="statement not covered" >= h.imul(prv); </span>// 4b. Compute s = k - r * prv mod n
+&nbsp;
+        s = k.isub(s);<span class="cstat-no" title="statement not covered" ></span>
+        s = s.umod(curve.n);
+        if (s.<span class="cstat-no" title="statement not covered" >isZero()) return null;</span>
+        return new Signature({
+          r,<span class="cstat-no" title="statement not covered" ></span>
+<span class="cstat-no" title="statement not covered" >          s<span class="cstat-no" title="statement not covered" ></span></span>
+<span class="cstat-no" title="statement not covered" >        });<span class="cstat-no" title="statement not covered" ></span></span>
+      });
+&nbsp;
+      _defineP<span class="cstat-no" title="statement not covered" >roperty(this</span>, "sign", (msg, key, pubkey, pubNonce) =&gt; {
+        const prv = new BN(key);
+<span class="cstat-no" title="statement not covered" >        const drbg = </span>this.getDRBG(msg, key, pubNonce);
+<span class="cstat-no" title="statement not covered" >        const len = curve.n</span>.byteLength();
+<span class="cstat-no" title="statement not covered" >        let pn;<span class="cstat-no" title="statement not covered" ></span></span>
+<span class="cstat-no" title="statement not covered" >        if (pubNonce) pn = curve.decodePoint(pubNonce);</span>
+        let sig;
+&nbsp;
+        while (!sig) {
+          const k = new BN(drbg.generate(len));
+          sig = this.trySign(msg, prv, k, pn, pubkey);
+<span class="cstat-no" title="statement not covered" >        }<span class="fstat-no" title="function not covered" ></span></span>
+<span class="cstat-no" title="statement not covered" ></span>
+        return sig;
+      });<span class="cstat-no" title="statement not covered" ></span>
+&nbsp;
+      _definePro<span class="cstat-no" title="statement not covered" >perty(this, "verify",</span> (msg, signature, key) =&gt; {
+        const sig = new Signature(signature);
+<span class="cstat-no" title="statement not covered" >        if (sig.s.gt<span class="cstat-no" title="statement not covered" >e(curve.n)) throw new Error('Inval</span></span>id S value.');
+        if (sig.r.gt(curve.n)) throw new Error('Invalid R value.');
+        const kpub = curve.decodePoint(key);
+<span class="cstat-no" title="statement not covered" >        const l = kpub.mul(sig.r);</span>
+        const r <span class="cstat-no" title="statement not covered" >= curve.g.mul(sig.s);</span>
+<span class="cstat-no" title="statement not covered" >        const Q = l.add(r);</span>
+        const compressedQ = new BN(Q.encodeCompressed());
+        const r1 = this.hash(compressedQ, key, msg);
+<span class="cstat-no" title="statement not covered" >        if (r1.gte</span>(curve.n)) throw new Error('Invalid hash.');
+        if (r1.isZero()) throw new Error('Invalid hash.');
+        return r1.eq(sig.r);
+<span class="cstat-no" title="statement not covered" >      });<span class="fstat-no" title="function not covered" ></span></span>
+<span class="cstat-no" title="statement not covered" ></span>
+<span class="cstat-no" title="statement not covered" >      _defineProperty(this, "a<span class="cstat-no" title="statement not covered" >lg", Buffer.from('Schnorr+SHA256  ', </span></span>'ascii'));
+<span class="cstat-no" title="statement not covered" ><span class="cstat-no" title="statement not covered" ></span></span>
+      _defineProp<span class="cstat-no" title="statement not covered" >erty(this, "getDRBG", (</span>msg, priv, data) =&gt; {
+        const <span class="cstat-no" title="statement not covered" >pers = Buffer.al</span>locUnsafe(48);
+        pers.f<span class="cstat-no" title="statement not covered" >ill(0);</span>
+<span class="cstat-no" title="statement not covered" ></span>
+        if (data) {<span class="cstat-no" title="statement not covered" ></span>
+          assert(data.length === 32);
+          data.<span class="cstat-no" title="statement not covered" >copy(pers, 0);</span>
+        }
+<span class="cstat-no" title="statement not covered" ><span class="cstat-no" title="statement not covered" ></span></span>
+<span class="cstat-no" title="statement not covered" >        this.alg.copy(p<span class="cstat-no" title="statement not covered" >ers, 32);</span></span>
+<span class="cstat-no" title="statement not covered" >        return new DRBG({</span>
+          hash: hashjs.sha256,
+          entropy: priv,
+<span class="cstat-no" title="statement not covered" >          nonce: msg,</span>
+          pers
+<span class="cstat-no" title="statement not covered" >        });<span class="fstat-no" title="function not covered" ></span></span>
+      });<span class="cstat-no" title="statement not covered" ></span>
+<span class="cstat-no" title="statement not covered" ></span>
+      _defineProperty(this, "generateNoncePair", (msg, priv, data) =&gt; {
+<span class="cstat-no" title="statement not covered" >        const drbg = this.getDRBG(msg, priv, data);</span>
+<span class="cstat-no" title="statement not covered" >        const len = curve.n.byteLeng</span>th();
+<span class="cstat-no" title="statement not covered" >        let k = new BN(drbg.</span>generate(len));
+&nbsp;
+        while (k.isZero() &amp;&amp; k.gte(curve.n)) {
+<span class="cstat-no" title="statement not covered" >          k = new BN(drbg.genera</span>te(len));
+        }
+<span class="cstat-no" title="statement not covered" ></span>
+        return Buffer.from(curve.g.mul(k).encode('array', true));
+      });
+    }
+&nbsp;
+  }
+&nbsp;
+  const NUM_BYTES = 32; // const HEX_PREFIX = '0x';
+<span class="cstat-no" title="statement not covered" ><span class="fstat-no" title="function not covered" ></span></span>
+  const secp256k1<span class="cstat-no" title="statement not covered" > = elliptic.ec('secp256k1');</span>
+  const schnorr = new Schnorr();
+  /**<span class="cstat-no" title="statement not covered" ></span>
+   * convert n<span class="cstat-no" title="statement not covered" >umber to array representing</span> the padded hex form
+   * @param  {[string]} val        [description]
+   * @<span class="cstat-no" title="statement not covered" >param  {[number]} paddedSize [description]</span>
+   * @re<span class="cstat-no" title="statement not covered" >turn {[string]}            [desc</span>ription]
+   */
+&nbsp;
+  cons<span class="cstat-no" title="statement not covered" >t intToByteArray = (val, paddedSize) =&gt; {</span>
+    const arr = [];
+    const hexVal = val.toString(16);
+    const hexRep = [];
+    let i;<span class="cstat-no" title="statement not covered" ></span>
+&nbsp;
+    for (i = 0; i <span class="cstat-no" title="statement not covered" >&lt; hexVal.length; i += 1) </span>{
+      hexRep[i] <span class="cstat-no" title="statement not covered" >= hexVal[i].to</span>String();
+    }
+&nbsp;
+    for (i = 0; i &lt; paddedSize - hexVal.length; i += 1) {
+      arr.push('0');
+    }
+&nbsp;
+    for (i = 0; i &lt; hexVal.length; i += 1) {
+      arr.push(hexRep[i<span class="cstat-no" title="statement not covered" >]);<span class="fstat-no" title="function not covered" ></span></span>
+    }<span class="cstat-no" title="statement not covered" ></span>
+<span class="cstat-no" title="statement not covered" ></span>
+    return arr;<span class="cstat-no" title="statement not covered" ></span>
+  };
+  /**
+   *<span class="cstat-no" title="statement not covered" > generatePrivateKey</span>
+   *<span class="cstat-no" title="statement not covered" ></span>
+   * @returns {string} - the hex-encoded private key
+   */
+<span class="cstat-no" title="statement not covered" ></span>
+<span class="cstat-no" title="statement not covered" ></span>
+  const generatePrivateKey = () =&gt; {
+    let priv = '';
+<span class="cstat-no" title="statement not covered" >    const rand = randomBytes(NUM_BYTES);</span>
+<span class="cstat-no" title="statement not covered" ></span>
+    for (let i = 0; i &lt; rand.byteLength; i += 1) {
+      // add 00 in case we get an empty byte.
+<span class="cstat-no" title="statement not covered" >      const byte</span> = rand[i];
+      const hexstr = '00'.concat(byte.toString(16)).slice(-2);
+      priv += hexstr;
+    }
+&nbsp;
+    return priv;
+  };
+  /**
+   * getAddressFromPrivateKey
+   *<span class="cstat-no" title="statement not covered" ><span class="fstat-no" title="function not covered" ></span></span>
+   * takes a he<span class="cstat-no" title="statement not covered" >x-e</span>ncoded string (private key) and returns its corresponding
+   * 20-byte he<span class="cstat-no" title="statement not covered" >x-encoded address.</span>
+   *
+   *<span class="cstat-no" title="statement not covered" > @param {string} Key</span>
+   * @returns {string}
+   */<span class="cstat-no" title="statement not covered" ></span>
+<span class="cstat-no" title="statement not covered" ></span>
+  cons<span class="cstat-no" title="statement not covered" >t getAddressFrom</span>PrivateKey = privateKey =&gt; {
+    const keyPair = secp256k1.keyFromPrivate(privateKey, 'hex');
+    const pub = keyPair.getPublic(true, 'hex');
+<span class="cstat-no" title="statement not covered" >    return hashjs</span>.sha256().update(pub, 'hex').digest('hex').slice(24);
+  };
+  /**
+   * getPubKeyFromPrivateKey
+   *
+   * takes a hex-encoded string (private key) and returns its corresponding
+   * hex-encoded 33-byte public key.
+   *
+   * @param {string} privateKey
+   * @returns {string}
+   */
+&nbsp;
+  const getPubKeyFromPrivateKey = privateKey =&gt; {
+    const keyPair = secp256k1.key<span class="cstat-no" title="statement not covered" >FromPriva<span class="fstat-no" title="function not covered" >te(privateKey, 'hex');</span></span>
+    return keyPair<span class="cstat-no" title="statement not covered" >.getPublic(true, 'hex');</span>
+  };<span class="cstat-no" title="statement not covered" ></span>
+  /*<span class="cstat-no" title="statement not covered" >*</span>
+   * compressPublicKey
+   *
+   * @param {string} publicKey - 65-byte public key, a point (x, y)
+   *
+   * @returns {string}
+   */
+&nbsp;
+  const compressPublicKey = publicKey =&gt; {
+    return secp256k1.keyFromPublic(publicKey, 'hex').getPublic(true, 'hex');
+  };
+  /**
+   * getAddressFromPublicKey
+   *<span class="cstat-no" title="statement not covered" ><span class="fstat-no" title="function not covered" ></span></span>
+   * takes hex-enc<span class="cstat-no" title="statement not covered" >oded string and returns the corresponding ad</span>dress
+   *<span class="cstat-no" title="statement not covered" ></span>
+   * @param {string} pubKey
+   * @returns {string}
+   */
+&nbsp;
+  const getAddressFromPublicKey = pubKey =&gt; {
+    return hashjs.sha256().update(pubKey, 'hex').digest('hex').slice(24);
+  };
+  /**
+   * verifyPrivateKey
+   *
+   * @param {string|Buffer<span class="cstat-no" title="statement not covered" >} private<span class="fstat-no" title="function not covered" >Key</span></span>
+   *<span class="cstat-no" title="statement not covered" > @returns {boolean}</span>
+   */
+&nbsp;
+  const verifyPrivateKey = privateKey =&gt; {
+    const keyPair = secp256k1.keyFromPrivate(privateKey, 'hex');
+    const {
+      result
+    } = keyPair.validate();
+    return result;
+  };
+  /**
+   * encodeTransaction
+   *<span class="cstat-no" title="statement not covered" ><span class="fstat-no" title="function not covered" ></span></span>
+   *<span class="cstat-no" title="statement not covered" > @param {any} txn</span>
+   * @returns {Buffer}
+   */
+&nbsp;
+  const encodeTransaction = txn =&gt; {
+    const codeHex = Buffer.from(txn.code).toString('hex');
+    const dataHex = Buffer.from(txn.data).toString('hex');
+    const encoded = intToByteArray(txn.version, 64).join('') + intToByteArray(txn.nonce, 64).join('') + txn.to + txn.pubKey // + txn.amount.toString('hex', 64)
+    // update later
+    + intToByteArray(txn.amount, 64).join('') + intToByteArray(txn.gasPrice, 64).join('') + intToByteArray(txn.gasLimit, 64).join('') + intToByteArray(txn.code.length, 8).join('') // size of code
+    + codeHex + intToByte<span class="cstat-no" title="statement not covered" >Array(txn<span class="fstat-no" title="function not covered" >.data.length, 8).</span>join('') // size of data</span>
+    + dataHex;<span class="cstat-no" title="statement not covered" ></span>
+    return Buffer.from(encoded, 'hex');
+  };<span class="cstat-no" title="statement not covered" ></span>
+  /**<span class="cstat-no" title="statement not covered" ></span>
+   * createTransactionJson
+   *<span class="cstat-no" title="statement not covered" ></span>
+   * @param {string} privateKey
+   * @param {TxDetails} txnDetails
+   * @param {TxDetails}
+   *
+   * @returns {TxDetails}
+   */
+&nbsp;
+  const createTransactionJson = (privateKey, txnDetails) =&gt; {
+    const pubKey = getPubKeyFromPrivateKey(privateKey);
+    const txn = {<span class="cstat-no" title="statement not covered" ><span class="fstat-no" title="function not covered" ></span></span>
+      version: txn<span class="cstat-no" title="statement not covered" >Details.version,</span>
+      nonce: txnDe<span class="cstat-no" title="statement not covered" >tails.nonce,</span>
+      to: txnDetai<span class="cstat-no" title="statement not covered" >ls.to,</span>
+      amount: txnDetails.amount,
+      pubKey,
+      gasPrice: txnDetails.gasPrice,
+      gasLimit: txnDetails.gasLimit,
+<span class="cstat-no" title="statement not covered" >      code: txnDetails.code || '',</span>
+      data: txnDetails.data || ''
+    };
+    const encodedTx = encodeTransaction(txn); // sign using schnorr lib
+&nbsp;
+    const sig = schnorr.sign(encodedTx, Buffer.from(privateKey, 'hex'), Buffer.from(pubKey, 'hex'));
+    let r = sig.r.toString('hex');
+    let s = sig.s.toString('hex');
+&nbsp;
+    while (r.length &lt; 64) {
+      r = `0${r}`;
+    }
+&nbsp;
+    while (s.length &lt; 64) {<span class="cstat-no" title="statement not covered" ><span class="fstat-no" title="function not covered" ></span></span>
+      s = `0${s}`<span class="cstat-no" title="statement not covered" >;</span>
+    }<span class="cstat-no" title="statement not covered" ></span>
+&nbsp;
+    txn.signature = r + s;
+    return txn;
+  };
+&nbsp;
+  exports.generatePrivateKey = generatePrivateKey;
+  exports.getAddressFromPrivateKey = getAddressFromPrivateKey;
+  exports.getPubKeyFromPrivateKey = getPubKeyFromPrivateKey;
+  exports.compressPublicKey = compressPublicKey;
+  exports.getAddressFromPublicKey = getAddressFromPublicKey;
+  exports.verifyPriv<span class="cstat-no" title="statement not covered" >ateKey = verifyPrivateK</span>ey;
+  exports.encodeTransaction = encodeTransaction;
+  exports.crea<span class="cstat-no" title="statement not covered" >teTransactionJson = createTransactionJson;</span>
+<span class="cstat-no" title="statement not covered" ></span>
+  Object.def<span class="cstat-no" title="statement not covered" >ineProperty(exports, '</span>__esModule', { value: true });
+&nbsp;
+})))<span class="cstat-no" title="statement not covered" >;</span>
+<span class="cstat-no" title="statement not covered" ></span></pre></td></tr>
+</table></pre>
+<div class='push'></div><!-- for sticky footer -->
+</div><!-- /wrapper -->
+<div class='footer quiet pad2 space-top1 center small'>
+  Code coverage
+  generated by <a href="https://istanbul.js.org/" target="_blank">istanbul</a> at Fri Sep 07 2018 15:56:41 GMT+0800 (中国标准时间)
+</div>
+</div>
+<script src="../../prettify.js"></script>
+<script>
+window.onload = function () {
+        if (typeof prettyPrint === 'function') {
+            prettyPrint();
+        }
+};
+</script>
+<script src="../../sorter.js"></script>
+</body>
+</html>

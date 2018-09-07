@@ -22,11 +22,11 @@ const baseConfig = {
       {
         test: /\.js$/,
         use: {
-          loader: 'babel-loader',
-          options: {
-            babelrc: true,
-            cacheDirectory: true
-          }
+          loader: 'babel-loader'
+          // options: {
+          //   babelrc: true,
+          //   cacheDirectory: true
+          // }
         }
       }
     ]
