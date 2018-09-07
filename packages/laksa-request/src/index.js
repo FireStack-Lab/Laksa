@@ -1,5 +1,5 @@
 import HttpProvider from './httpProvider'
 import JsonRpc from './jsonRpc'
-import Messanger from './messanger'
+import Messenger from './messenger'
 
-export { HttpProvider, JsonRpc, Messanger }
+export { HttpProvider, JsonRpc, Messenger }

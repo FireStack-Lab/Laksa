@@ -13,7 +13,7 @@ import propertyObjects from './propertyObjects'
 const mapObjectToMethods = (main) => {
   methodObjects.map((data) => {
     const zilMethod = new Method(data)
-    zilMethod.setMessanger(main.messanger)
+    zilMethod.setMessanger(main.messenger)
     zilMethod.assignToObject(main)
     return false
   })
@@ -22,7 +22,7 @@ const mapObjectToMethods = (main) => {
 const mapPropertyToObjects = (main) => {
   propertyObjects.map((data) => {
     const zilProperty = new Property(data)
-    zilProperty.setMessanger(main.messanger)
+    zilProperty.setMessanger(main.messenger)
     zilProperty.assignToObject(main)
     return false
   })
@@ -30,7 +30,7 @@ const mapPropertyToObjects = (main) => {
 
 class Zil {
   constructor(Webz) {
-    this.messanger = Webz.messanger
+    this.messenger = Webz.messenger
     this.config = Webz.config
     mapObjectToMethods(this)
     mapPropertyToObjects(this)

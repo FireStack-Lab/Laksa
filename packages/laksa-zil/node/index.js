@@ -396,7 +396,7 @@
   const mapObjectToMethods = main => {
     methodObjects.map(data => {
       const zilMethod = new laksaUtils.Method(data);
-      zilMethod.setMessanger(main.messanger);
+      zilMethod.setMessanger(main.messenger);
       zilMethod.assignToObject(main);
       return false;
     });
@@ -405,7 +405,7 @@
   const mapPropertyToObjects = main => {
     propertyObjects.map(data => {
       const zilProperty = new laksaUtils.Property(data);
-      zilProperty.setMessanger(main.messanger);
+      zilProperty.setMessanger(main.messenger);
       zilProperty.assignToObject(main);
       return false;
     });
@@ -427,7 +427,7 @@
         return Wallet;
       });
 
-      this.messanger = Webz.messanger;
+      this.messenger = Webz.messenger;
       this.config = Webz.config;
       mapObjectToMethods(this);
       mapPropertyToObjects(this);

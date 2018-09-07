@@ -384,7 +384,7 @@ var propertyObjects = [
 var mapObjectToMethods = function mapObjectToMethods(main) {
   methodObjects.map(function (data) {
     var zilMethod = new laksaUtils.Method(data);
-    zilMethod.setMessanger(main.messanger);
+    zilMethod.setMessanger(main.messenger);
     zilMethod.assignToObject(main);
     return false;
   });
@@ -393,7 +393,7 @@ var mapObjectToMethods = function mapObjectToMethods(main) {
 var mapPropertyToObjects = function mapPropertyToObjects(main) {
   propertyObjects.map(function (data) {
     var zilProperty = new laksaUtils.Property(data);
-    zilProperty.setMessanger(main.messanger);
+    zilProperty.setMessanger(main.messenger);
     zilProperty.assignToObject(main);
     return false;
   });
@@ -419,7 +419,7 @@ function () {
       return Wallet;
     });
 
-    this.messanger = Webz.messanger;
+    this.messenger = Webz.messenger;
     this.config = Webz.config;
     mapObjectToMethods(this);
     mapPropertyToObjects(this);

@@ -2,12 +2,14 @@
 #
 .DS_Store
 
-#package.json
+# package.json
+
 package-lock.json
 packages/*/package-lock.json
 /packages/*/package-lock.json
 packages/*/babel.rc
-#lerna
+
+# lerna
 lerna.json
 *.log
 
@@ -69,5 +71,5 @@ buck-out/
 # Bundle artifact
 *.jsbundle
 
-# Jest coverate
+# Jest coverage
 coverage/

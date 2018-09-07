@@ -84,7 +84,7 @@ var Laksa = function Laksa(args) {
   _defineProperty(this, "setProvider", function (provider) {
     _this.currentProvider = new laksaRequest.HttpProvider(provider);
 
-    _this.messanger.setProvider(_this.currentProvider);
+    _this.messenger.setProvider(_this.currentProvider);
   });
 
   // validateArgs(args, {}, { nodeUrl: [util.isUrl] })
@@ -93,7 +93,7 @@ var Laksa = function Laksa(args) {
   this.util = util; //
 
   this.currentProvider = new laksaRequest.HttpProvider(url);
-  this.messanger = new laksaRequest.Messanger(this.currentProvider); //
+  this.messenger = new laksaRequest.Messenger(this.currentProvider); //
 
   this.zil = new Zil(this);
 };
