@@ -6,7 +6,7 @@
 //
 
 import * as util from 'laksa-utils'
-import { HttpProvider, Messanger } from 'laksa-request'
+import { HttpProvider, Messenger } from 'laksa-request'
 import Zil from 'laksa-zil'
 import config from './config'
 
@@ -18,7 +18,7 @@ class Laksa {
     this.util = util
     //
     this.currentProvider = new HttpProvider(url)
-    this.messanger = new Messanger(this.currentProvider)
+    this.messenger = new Messenger(this.currentProvider)
     //
     this.zil = new Zil(this)
   }
@@ -52,7 +52,7 @@ class Laksa {
 
   setProvider = (provider) => {
     this.currentProvider = new HttpProvider(provider)
-    this.messanger.setProvider(this.currentProvider)
+    this.messenger.setProvider(this.currentProvider)
   }
 }
 

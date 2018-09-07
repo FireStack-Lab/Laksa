@@ -349,4 +349,4 @@ var Messanger = function Messanger(_provider) {
 
 exports.HttpProvider = HttpProvider;
 exports.JsonRpc = JsonRpc;
-exports.Messanger = Messanger;
+exports.Messenger = Messanger;

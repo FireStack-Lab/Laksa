@@ -239,7 +239,7 @@
 
   exports.HttpProvider = HttpProvider;
   exports.JsonRpc = JsonRpc;
-  exports.Messanger = Messanger;
+  exports.Messenger = Messanger;
 
   Object.defineProperty(exports, '__esModule', { value: true });
 

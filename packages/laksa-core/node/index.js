@@ -59,7 +59,7 @@
 
       _defineProperty(this, "setProvider", provider => {
         this.currentProvider = new laksaRequest.HttpProvider(provider);
-        this.messanger.setProvider(this.currentProvider);
+        this.messenger.setProvider(this.currentProvider);
       });
 
       // validateArgs(args, {}, { nodeUrl: [util.isUrl] })
@@ -68,7 +68,7 @@
       this.util = util; //
 
       this.currentProvider = new laksaRequest.HttpProvider(url);
-      this.messanger = new laksaRequest.Messanger(this.currentProvider); //
+      this.messenger = new laksaRequest.Messenger(this.currentProvider); //
 
       this.zil = new Zil(this);
     }
