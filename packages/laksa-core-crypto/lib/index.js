@@ -271,9 +271,9 @@ var verifyPrivateKey = function verifyPrivateKey(privateKey) {
 var encodeTransaction = function encodeTransaction(txn) {
   var codeHex = Buffer.from(txn.code).toString('hex');
   var dataHex = Buffer.from(txn.data).toString('hex');
-  var encoded = intToByteArray(txn.version, 64).join('') + intToByteArray(txn.nonce, 64).join('') + txn.to + txn.pubKey // + txn.amount.toString('hex', 64)
-  // update later
-  + intToByteArray(txn.amount, 64).join('') + intToByteArray(txn.gasPrice, 64).join('') + intToByteArray(txn.gasLimit, 64).join('') + intToByteArray(txn.code.length, 8).join('') // size of code
+  var encoded = intToByteArray(txn.version, 64).join('') + intToByteArray(txn.nonce, 64).join('') + txn.to + txn.pubKey + txn.amount.toString('hex', 64) // update later
+  // + intToByteArray(txn.amount, 64).join('')
+  + intToByteArray(txn.gasPrice, 64).join('') + intToByteArray(txn.gasLimit, 64).join('') + intToByteArray(txn.code.length, 8).join('') // size of code
   + codeHex + intToByteArray(txn.data.length, 8).join('') // size of data
   + dataHex;
   return Buffer.from(encoded, 'hex');
