@@ -39,9 +39,93 @@ setButton.onclick=function(e){
 var URL ='https://api-scilla.zilliqa.com'
 Laksa.setProvider(URL)
 // webz.isConnected().then(console.log)
-Laksa.zil.getNetworkId((err,data)=>(console.log({err,data})))
+let code = `
+(* HelloWorld contract *)
 
 
+(***************************************************)
+(*               Associated library                *)
+(***************************************************)
+library HelloWorld
+
+let one_msg =
+  fun (msg : Message) =>
+  let nil_msg = Nil {Message} in
+  Cons {Message} msg nil_msg
+
+let not_owner_code = Int32 1
+let set_hello_code = Int32 2
+
+(***************************************************)
+(*             The contract definition             *)
+(***************************************************)
+
+contract HelloWorld
+(owner: Address)
+
+field welcome_msg : String = ""
+
+transition setHello (msg : String)
+  is_owner = builtin eq owner _sender;
+  match is_owner with
+  | False =>
+    msg = {_tag : "Main"; _recipient : _sender; _amount : Uint128 0; code : not_owner_code};
+    msgs = one_msg msg;
+    send msgs
+  | True =>
+    welcome_msg := msg;
+    msg = {_tag : "Main"; _recipient : _sender; _amount : Uint128 0; code : set_hello_code};
+    msgs = one_msg msg;
+    send msgs
+  end
+end
+
+
+transition getHello ()
+    r <- welcome_msg;
+    msg = {_tag : "Main"; _recipient : _sender; _amount : Uint128 0; msg : r};
+    msgs = one_msg msg;
+    send msgs
+end
+
+`
+//
+// the immutable initialisation variables
+let initParams = [
+  {
+    vname: "dummy",
+    type: "String",
+    value: `ASDF`
+  }
+];
+
+let txnDetails = {
+  version: 0,
+  nonce: 2,
+  to: "0000000000000000000000000000000000000000",
+  amount: Laksa.util.toBN(0),
+  gasPrice: 1,
+  gasLimit: 50,
+  code: code,
+  data: JSON.stringify(initParams).replace(/\\"/g, '"')
+};
+
+// sign the transaction using util methods
+let txn = Laksa.util.createTransactionJson(
+  "e19d05c5452598e24caad4a0d85a49146f7be089515c905ae6a19e8a578a6930",
+  txnDetails
+);
+
+const myAddress = { address: "9bfec715a6bd658fcb62b0f8cc9bfa2ade71434a" };
+// with callback
+Laksa.zil.getBalance(myAddress, callback);
+
+// send the transaction to the node
+// Laksa.zil.createTransaction(txn, callback);
+
+function callback(err, data) {
+  console.log({ err, data });
+}
 </script>
 </body>
 </html>
