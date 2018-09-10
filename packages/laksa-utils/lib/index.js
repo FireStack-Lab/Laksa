@@ -445,7 +445,7 @@ var Method = function Method(options) {
       var resultKey = Object.keys(paramsObject)[0];
       result = [_this.transformedBeforeSend(paramsObject[resultKey], resultKey)];
     } else if (keyArrayLength > 1 && _this.isSendJson) {
-      var newObject = R.map(_this.transformedBeforeSend, paramsObject);
+      var newObject = R.mapObjIndexed(_this.transformedBeforeSend, paramsObject);
       result = [newObject];
     }
 
@@ -476,6 +476,8 @@ var Method = function Method(options) {
         _this.validateArgs(args, requiredArgs, optionalArgs);
 
         var params = _this.extractParams(args);
+
+        console.log(params);
 
         if (callback) {
           return _this.messanger.sendAsync({
