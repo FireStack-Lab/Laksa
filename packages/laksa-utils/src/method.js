@@ -96,7 +96,7 @@ class Method {
     if (keyArrayLength === 1 && !this.isSendJson) {
       const resultKey = Object.keys(paramsObject)[0]
       result = [this.transformedBeforeSend(paramsObject[resultKey], resultKey)]
-    } else if (keyArrayLength > 1 && this.isSendJson) {
+    } else if (keyArrayLength > 0 && this.isSendJson) {
       const newObject = R.mapObjIndexed(this.transformedBeforeSend, paramsObject)
 
       result = [newObject]
