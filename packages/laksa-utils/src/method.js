@@ -122,6 +122,7 @@ class Method {
         const { requiredArgs, optionalArgs } = this.generateValidateObjects()
         this.validateArgs(args, requiredArgs, optionalArgs)
         const params = this.extractParams(args)
+        console.log(params)
         if (callback) {
           return this.messanger.sendAsync({ method: this.call, params }, callback)
         }

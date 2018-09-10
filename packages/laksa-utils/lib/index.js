@@ -477,6 +477,8 @@ var Method = function Method(options) {
 
         var params = _this.extractParams(args);
 
+        console.log(params);
+
         if (callback) {
           return _this.messanger.sendAsync({
             method: _this.call,
