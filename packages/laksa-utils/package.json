@@ -1,6 +1,6 @@
 {
   "name": "laksa-utils",
-  "version": "0.0.25",
+  "version": "0.0.26",
   "description": "laksa-utils for webz.js",
   "main": "index.js",
   "browser": "lib/index.js",
@@ -15,7 +15,7 @@
   "gitHead": "437d52fc2ede7a3294d22cc177e1076c6cacb9a0",
   "dependencies": {
     "bn.js": "^4.11.8",
-    "laksa-core-crypto": "^0.0.25",
+    "laksa-core-crypto": "^0.0.26",
     "number-to-bn": "^1.7.0",
     "ramda": "^0.25.0",
     "valid-url": "^1.0.9"
