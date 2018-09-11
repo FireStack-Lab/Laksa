@@ -143,7 +143,7 @@
     constructor(_provider) {
       _defineProperty(this, "send", async data => {
         if (!this.provider) {
-          console.error(laksaShared.InvalidProvider());
+          laksaShared.InvalidProvider();
           return null;
         }
 
@@ -154,7 +154,7 @@
 
       _defineProperty(this, "sendAsync", (data, callback) => {
         if (!this.provider) {
-          console.error(laksaShared.InvalidProvider());
+          laksaShared.InvalidProvider();
           return null;
         }
 
@@ -170,7 +170,7 @@
 
       _defineProperty(this, "sendBatch", (data, callback) => {
         if (!this.provider) {
-          console.error(laksaShared.InvalidProvider());
+          laksaShared.InvalidProvider();
           return null;
         }
 
@@ -186,7 +186,7 @@
 
       _defineProperty(this, "sendServer", async (endpoint, data) => {
         if (!this.provider) {
-          console.error(laksaShared.InvalidProvider());
+          laksaShared.InvalidProvider();
           return null;
         } // const payload = this.JsonRpc.toPayload(data.method, data.params)
 
@@ -197,7 +197,7 @@
 
       _defineProperty(this, "sendAsyncServer", (endpoint, data, callback) => {
         if (!this.provider) {
-          console.error(laksaShared.InvalidProvider());
+          laksaShared.InvalidProvider();
           return null;
         } // const payload = this.JsonRpc.toPayload(data.method, data.params)
 
@@ -213,7 +213,7 @@
 
       _defineProperty(this, "sendBatchServer", (data, callback) => {
         if (!this.provider) {
-          console.error(laksaShared.InvalidProvider());
+          laksaShared.InvalidProvider();
           return null;
         } // const payload = this.JsonRpc.toBatchPayload(data)
 
