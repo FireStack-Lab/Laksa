@@ -1,5 +1,3 @@
-
-
 const { readdirSync, statSync } = require('fs')
 const { join } = require('path')
 const baseConfig = require('./jest.src.config')
@@ -18,13 +16,13 @@ const packages = readdirSync(packagesRoot).filter((dir) => {
   const packagePath = join(packagesRoot, dir, 'package.json')
   return statSync(packagePath).isFile()
 })
-// Create a module map to point React packages to the build output
+// Create a module map to point packages to the build output
 const moduleNameMapper = {}
 packages.forEach((name) => {
   // Root entry point
-  moduleNameMapper[`^${name}$`] = `<rootDir>/build/node_modules/${name}`
+  moduleNameMapper[`^${name}$`] = `<rootDir>/dist/node_modules/${name}`
   // Named entry points
-  moduleNameMapper[`^${name}/(.*)$`] = `<rootDir>/build/node_modules/${name}/$1`
+  moduleNameMapper[`^${name}/(.*)$`] = `<rootDir>/dist/node_modules/${name}/$1`
 })
 
 module.exports = Object.assign({}, baseConfig, {
