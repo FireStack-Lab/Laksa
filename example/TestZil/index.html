@@ -42,6 +42,7 @@ Laksa.setProvider(URL)
 let code = `
 (* HelloWorld contract *)
 
+import ListUtils
 
 (***************************************************)
 (*               Associated library                *)
@@ -61,23 +62,15 @@ let set_hello_code = Int32 2
 (***************************************************)
 
 contract HelloWorld
-(owner: Address)
+(dummy: String)
 
 field welcome_msg : String = ""
 
 transition setHello (msg : String)
-  is_owner = builtin eq owner _sender;
-  match is_owner with
-  | False =>
-    msg = {_tag : "Main"; _recipient : _sender; _amount : Uint128 0; code : not_owner_code};
-    msgs = one_msg msg;
-    send msgs
-  | True =>
     welcome_msg := msg;
     msg = {_tag : "Main"; _recipient : _sender; _amount : Uint128 0; code : set_hello_code};
     msgs = one_msg msg;
     send msgs
-  end
 end
 
 
@@ -87,7 +80,6 @@ transition getHello ()
     msgs = one_msg msg;
     send msgs
 end
-
 `
 //
 // the immutable initialisation variables
@@ -118,7 +110,22 @@ let txn = Laksa.util.createTransactionJson(
 
 const myAddress = { address: "9bfec715a6bd658fcb62b0f8cc9bfa2ade71434a" };
 // with callback
-Laksa.zil.getBalance(myAddress, callback);
+// Laksa.zil.getBalance(myAddress, callback);
+Laksa.zil.getSmartContracts(myAddress,(err,data)=>{
+  if(data.length>0){
+    data.map(d=>{
+      Laksa.zil.getSmartContractState({address:d.address},(err,data)=>{
+        console.log({smartContractState:data});
+      })
+      Laksa.zil.getSmartContractCode({address:d.address},(err,data)=>{
+        console.log({smartContractCode:data});
+      })
+      Laksa.zil.getSmartContractInit({address:d.address},(err,data)=>{
+        console.log({smartContractInit:data})
+      })
+    })
+  }
+});
 
 // send the transaction to the node
 // Laksa.zil.createTransaction(txn, callback);
