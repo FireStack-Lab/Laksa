@@ -1,14 +1,14 @@
 {
   "name": "laksa-core",
-  "version": "0.0.26",
+  "version": "0.0.27",
   "description": "",
   "main": "index.js",
   "browser": "lib/index.js",
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "laksa-request": "^0.0.26",
-    "laksa-utils": "^0.0.26",
-    "laksa-zil": "^0.0.26"
+    "laksa-request": "^0.0.27",
+    "laksa-utils": "^0.0.27",
+    "laksa-zil": "^0.0.27"
   }
 }
