@@ -208,7 +208,7 @@ var Messanger = function Messanger(_provider) {
                 break;
               }
 
-              console.error(laksaShared.InvalidProvider());
+              laksaShared.InvalidProvider();
               return _context.abrupt("return", null);
 
             case 3:
@@ -235,7 +235,7 @@ var Messanger = function Messanger(_provider) {
 
   _defineProperty(this, "sendAsync", function (data, callback) {
     if (!_this.provider) {
-      console.error(laksaShared.InvalidProvider());
+      laksaShared.InvalidProvider();
       return null;
     }
 
@@ -252,7 +252,7 @@ var Messanger = function Messanger(_provider) {
 
   _defineProperty(this, "sendBatch", function (data, callback) {
     if (!_this.provider) {
-      console.error(laksaShared.InvalidProvider());
+      laksaShared.InvalidProvider();
       return null;
     }
 
@@ -283,7 +283,7 @@ var Messanger = function Messanger(_provider) {
                 break;
               }
 
-              console.error(laksaShared.InvalidProvider());
+              laksaShared.InvalidProvider();
               return _context2.abrupt("return", null);
 
             case 3:
@@ -309,7 +309,7 @@ var Messanger = function Messanger(_provider) {
 
   _defineProperty(this, "sendAsyncServer", function (endpoint, data, callback) {
     if (!_this.provider) {
-      console.error(laksaShared.InvalidProvider());
+      laksaShared.InvalidProvider();
       return null;
     } // const payload = this.JsonRpc.toPayload(data.method, data.params)
 
@@ -325,7 +325,7 @@ var Messanger = function Messanger(_provider) {
 
   _defineProperty(this, "sendBatchServer", function (data, callback) {
     if (!_this.provider) {
-      console.error(laksaShared.InvalidProvider());
+      laksaShared.InvalidProvider();
       return null;
     } // const payload = this.JsonRpc.toBatchPayload(data)
 
