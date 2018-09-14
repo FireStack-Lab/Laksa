@@ -9,7 +9,8 @@ export {
   getAddressFromPublicKey,
   verifyPrivateKey,
   encodeTransaction,
-  createTransactionJson
+  createTransactionJson,
+  randomBytes
 } from 'laksa-core-crypto'
 
 export { Method, Property }

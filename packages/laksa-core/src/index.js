@@ -6,6 +6,7 @@
 //
 
 import * as util from 'laksa-utils'
+import * as wallet from 'laksa-wallet'
 import { HttpProvider, Messenger } from 'laksa-request'
 import Zil from 'laksa-zil'
 import config from './config'
@@ -16,6 +17,7 @@ class Laksa {
     const url = args || config.defaultNodeUrl
     //
     this.util = util
+    this.wallet = wallet
     //
     this.currentProvider = new HttpProvider(url)
     this.messenger = new Messenger(this.currentProvider)

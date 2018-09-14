@@ -9,6 +9,7 @@
   "dependencies": {
     "laksa-request": "^0.0.27",
     "laksa-utils": "^0.0.27",
+    "laksa-wallet": "^0.0.1",
     "laksa-zil": "^0.0.27"
   }
 }

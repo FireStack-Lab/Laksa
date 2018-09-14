@@ -583,6 +583,7 @@
   exports.verifyPrivateKey = laksaCoreCrypto.verifyPrivateKey;
   exports.encodeTransaction = laksaCoreCrypto.encodeTransaction;
   exports.createTransactionJson = laksaCoreCrypto.createTransactionJson;
+  exports.randomBytes = laksaCoreCrypto.randomBytes;
   exports.Method = Method;
   exports.Property = Property;
   exports.isNumber = isNumber;

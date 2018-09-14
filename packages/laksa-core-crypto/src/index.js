@@ -198,3 +198,5 @@ export const createTransactionJson = (privateKey, txnDetails) => {
 
   return txn
 }
+
+export { randomBytes }
