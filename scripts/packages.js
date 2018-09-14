@@ -3,6 +3,7 @@ export default [
   'laksa-request',
   'laksa-shared',
   'laksa-utils',
+  'laksa-wallet',
   'laksa-zil',
   'laksa-core',
   'laksa'

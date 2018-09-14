@@ -75,8 +75,6 @@
       });
 
       _defineProperty(this, "sendAsync", (payload, callback) => {
-        // const request = this.instance()
-        // console.log(JSON.stringify(payload))
         this.instance().post(this.url, JSON.stringify(payload)).then(response => {
           const {
             data,
@@ -90,8 +88,6 @@
       });
 
       _defineProperty(this, "sendAsyncServer", (endpoint, payload, callback) => {
-        // const request = this.instance()
-        // console.log(JSON.stringify(payload))
         this.instance().post(`${this.url}${endpoint}`, JSON.stringify(payload)).then(response => {
           const {
             data,

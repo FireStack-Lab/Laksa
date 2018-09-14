@@ -124,8 +124,6 @@ var HttpProvider = function HttpProvider(url, timeout, user, password, headers) 
   }());
 
   _defineProperty(this, "sendAsync", function (payload, callback) {
-    // const request = this.instance()
-    // console.log(JSON.stringify(payload))
     _this.instance().post(_this.url, JSON.stringify(payload)).then(function (response) {
       var data = response.data,
           status = response.status;
@@ -139,8 +137,6 @@ var HttpProvider = function HttpProvider(url, timeout, user, password, headers) 
   });
 
   _defineProperty(this, "sendAsyncServer", function (endpoint, payload, callback) {
-    // const request = this.instance()
-    // console.log(JSON.stringify(payload))
     _this.instance().post("".concat(_this.url).concat(endpoint), JSON.stringify(payload)).then(function (response) {
       var data = response.data,
           status = response.status;

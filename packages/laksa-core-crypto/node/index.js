@@ -321,6 +321,7 @@
     return txn;
   };
 
+  exports.randomBytes = randomBytes;
   exports.generatePrivateKey = generatePrivateKey;
   exports.getAddressFromPrivateKey = getAddressFromPrivateKey;
   exports.getPubKeyFromPrivateKey = getPubKeyFromPrivateKey;

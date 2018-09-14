@@ -8,6 +8,7 @@ var _asyncToGenerator = _interopDefault(require('@babel/runtime/helpers/asyncToG
 var _classCallCheck = _interopDefault(require('@babel/runtime/helpers/classCallCheck'));
 var _defineProperty = _interopDefault(require('@babel/runtime/helpers/defineProperty'));
 var util = require('laksa-utils');
+var wallet = require('laksa-wallet');
 var laksaRequest = require('laksa-request');
 var Zil = _interopDefault(require('laksa-zil'));
 
@@ -90,7 +91,8 @@ var Laksa = function Laksa(args) {
   // validateArgs(args, {}, { nodeUrl: [util.isUrl] })
   var url = args || config.defaultNodeUrl; //
 
-  this.util = util; //
+  this.util = util;
+  this.wallet = wallet; //
 
   this.currentProvider = new laksaRequest.HttpProvider(url);
   this.messenger = new laksaRequest.Messenger(this.currentProvider); //

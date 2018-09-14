@@ -1,8 +1,8 @@
 (function (global, factory) {
-  typeof exports === 'object' && typeof module !== 'undefined' ? module.exports = factory(require('laksa-utils'), require('laksa-request'), require('laksa-zil')) :
-  typeof define === 'function' && define.amd ? define(['laksa-utils', 'laksa-request', 'laksa-zil'], factory) :
-  (global.Laksa = factory(global.util,global.laksaRequest,global.Zil));
-}(this, (function (util,laksaRequest,Zil) { 'use strict';
+  typeof exports === 'object' && typeof module !== 'undefined' ? module.exports = factory(require('laksa-utils'), require('laksa-wallet'), require('laksa-request'), require('laksa-zil')) :
+  typeof define === 'function' && define.amd ? define(['laksa-utils', 'laksa-wallet', 'laksa-request', 'laksa-zil'], factory) :
+  (global.Laksa = factory(global.util,global.wallet,global.laksaRequest,global.Zil));
+}(this, (function (util,wallet,laksaRequest,Zil) { 'use strict';
 
   Zil = Zil && Zil.hasOwnProperty('default') ? Zil['default'] : Zil;
 
@@ -65,7 +65,8 @@
       // validateArgs(args, {}, { nodeUrl: [util.isUrl] })
       const url = args || config.defaultNodeUrl; //
 
-      this.util = util; //
+      this.util = util;
+      this.wallet = wallet; //
 
       this.currentProvider = new laksaRequest.HttpProvider(url);
       this.messenger = new laksaRequest.Messenger(this.currentProvider); //
