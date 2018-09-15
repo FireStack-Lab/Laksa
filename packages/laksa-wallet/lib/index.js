@@ -18,21 +18,21 @@ require('core-js/modules/es6.array.iterator');
 require('core-js/modules/es6.object.keys');
 var _classCallCheck = _interopDefault(require('@babel/runtime/helpers/classCallCheck'));
 var _defineProperty = _interopDefault(require('@babel/runtime/helpers/defineProperty'));
-var R = _interopDefault(require('ramda'));
 
 var encrypt = function encrypt(privateKey, password) {
+  var options = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : {};
   if (!laksaUtils.isPrivateKey) throw new Error('Invalid PrivateKey');
   if (!laksaUtils.isString(password)) throw new Error('no password found');
-  var iv = laksaUtils.randomBytes(16);
-  var salt = laksaUtils.randomBytes(32);
+  var iv = options.iv || laksaUtils.randomBytes(16);
+  var salt = options.salt || laksaUtils.randomBytes(32);
   var kdfparams = {
-    dklen: 32,
+    dklen: options.dklen || 32,
     salt: salt.toString('hex'),
-    c: 262144,
+    c: options.c || 262144,
     prf: 'hmac-sha256'
   };
   var derivedKey = CryptoJS.PBKDF2(password, CryptoJS.enc.Utf8.parse(kdfparams.salt), {
-    keySize: 256 / 32,
+    keySize: 256 / kdfparams.dklen,
     iterations: kdfparams.c
   }); // password should be replaced to derivedKey
 
@@ -125,6 +125,8 @@ var importAccount = function importAccount(privateKey) {
   }
 };
 var encryptAccount = function encryptAccount(accountObject, password) {
+  var level = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : 1000;
+  if (!laksaUtils.isString(password)) throw new Error('password is not found');
   laksaUtils.validateArgs(accountObject, {
     address: [laksaUtils.isAddress],
     privateKey: [laksaUtils.isPrivateKey],
@@ -134,12 +136,15 @@ var encryptAccount = function encryptAccount(accountObject, password) {
   try {
     return _objectSpread({}, accountObject, {
       privateKey: ENCRYPTED
-    }, encrypt(accountObject.privateKey, password));
+    }, encrypt(accountObject.privateKey, password, {
+      c: level
+    }));
   } catch (e) {
     return e;
   }
 };
 var decryptAccount = function decryptAccount(accountObject, password) {
+  if (!laksaUtils.isString(password)) throw new Error('password is not found');
   laksaUtils.validateArgs(accountObject, {
     address: [laksaUtils.isAddress],
     crypto: [laksaUtils.isObject],
@@ -176,17 +181,17 @@ var Wallet = function Wallet() {
       return /^\d+$/i.test(n) && parseInt(n, 10) <= 9e20;
     };
 
-    return R.filter(isCorrectKeys, Object.keys(_this.accounts));
+    return Object.keys(_this.accounts).filter(isCorrectKeys);
   });
 
   _defineProperty(this, "getCurrentMaxIndex", function () {
-    var keyList = _this.getIndexKeys();
-
     var diff = function diff(a, b) {
       return b - a;
-    };
+    }; // const sorted = R.sort(diff, keyList)
 
-    var sorted = R.sort(diff, keyList);
+
+    var sorted = _this.getIndexKeys().sort(diff);
+
     return sorted[0] === undefined ? -1 : parseInt(sorted[0], 10);
   });
 
@@ -279,36 +284,30 @@ var Wallet = function Wallet() {
   });
 
   _defineProperty(this, "getWalletAddresses", function () {
-    var keyList = _this.getIndexKeys();
-
-    return R.map(function (index) {
+    return _this.getIndexKeys().map(function (index) {
       var _this$getAccountByInd = _this.getAccountByIndex(parseInt(index, 10)),
           address = _this$getAccountByInd.address;
 
       return address;
-    }, keyList);
+    });
   });
 
   _defineProperty(this, "getWalletPublicKeys", function () {
-    var keyList = _this.getIndexKeys();
-
-    return R.map(function (index) {
+    return _this.getIndexKeys().map(function (index) {
       var _this$getAccountByInd2 = _this.getAccountByIndex(parseInt(index, 10)),
           publicKey = _this$getAccountByInd2.publicKey;
 
       return publicKey;
-    }, keyList);
+    });
   });
 
   _defineProperty(this, "getWalletPrivateKeys", function () {
-    var keyList = _this.getIndexKeys();
-
-    return R.map(function (index) {
+    return _this.getIndexKeys().map(function (index) {
       var _this$getAccountByInd3 = _this.getAccountByIndex(parseInt(index, 10)),
           privateKey = _this$getAccountByInd3.privateKey;
 
       return privateKey;
-    }, keyList);
+    });
   });
 
   _defineProperty(this, "updateAccountByAddress", function (address, newObject) {
@@ -322,30 +321,26 @@ var Wallet = function Wallet() {
   });
 
   _defineProperty(this, "cleanAllAccounts", function () {
-    var keyList = _this.getIndexKeys();
-
-    R.forEach(function (index) {
+    _this.getIndexKeys().forEach(function (index) {
       return _this.removeOneAccountByIndex(parseInt(index, 10));
-    }, keyList);
+    });
+
     return true;
   });
 
-  _defineProperty(this, "encryptAllAccounts", function (password) {
-    var currentKeys = _this.getIndexKeys();
-
-    R.forEach(function (index) {
+  _defineProperty(this, "encryptAllAccounts", function (password, level) {
+    _this.getIndexKeys().forEach(function (index) {
       var _this$getAccountByInd4 = _this.getAccountByIndex(parseInt(index, 10)),
           address = _this$getAccountByInd4.address;
 
-      _this.encryptAccountByAddress(address, password, encryptedBy.WALLET);
-    }, currentKeys);
+      _this.encryptAccountByAddress(address, password, level, encryptedBy.WALLET);
+    });
+
     return true;
   });
 
   _defineProperty(this, "decryptAllAccounts", function (password) {
-    var currentKeys = _this.getIndexKeys();
-
-    R.forEach(function (index) {
+    _this.getIndexKeys().forEach(function (index) {
       var accountObject = _this.getAccountByIndex(parseInt(index, 10));
 
       var address = accountObject.address,
@@ -357,19 +352,20 @@ var Wallet = function Wallet() {
         console.error("address ".concat(address, " is protected by account psw"));
         console.error('use /decryptAccountByAddress/ instead');
       }
-    }, currentKeys);
+    });
+
     return true;
   });
 
-  _defineProperty(this, "encryptAccountByAddress", function (address, password, by) {
+  _defineProperty(this, "encryptAccountByAddress", function (address, password, level, by) {
     var accountObject = _this.getAccountByAddress(address);
 
     if (accountObject !== undefined) {
       var privateKey = accountObject.privateKey,
           crypto = accountObject.crypto;
 
-      if (privateKey !== undefined && laksaUtils.isPrivateKey(privateKey) && crypto === undefined) {
-        var encryptedObject = encryptAccount(accountObject, password);
+      if (privateKey !== undefined && privateKey !== ENCRYPTED && crypto === undefined) {
+        var encryptedObject = encryptAccount(accountObject, password, level);
         return _this.updateAccountByAddress(address, Object.assign({}, encryptedObject, {
           LastEncryptedBy: by || encryptedBy.ACCOUNT
         }));
@@ -404,3 +400,8 @@ var Wallet = function Wallet() {
 exports.Wallet = Wallet;
 exports.encrypt = encrypt;
 exports.decrypt = decrypt;
+exports.createAccount = createAccount;
+exports.importAccount = importAccount;
+exports.encryptAccount = encryptAccount;
+exports.decryptAccount = decryptAccount;
+exports.ENCRYPTED = ENCRYPTED;

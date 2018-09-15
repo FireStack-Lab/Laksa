@@ -4,6 +4,7 @@ export default [
   'laksa-shared',
   'laksa-utils',
   'laksa-wallet',
+  'laksa-hd-wallet',
   'laksa-zil',
   'laksa-core',
   'laksa'

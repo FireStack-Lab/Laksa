@@ -11,13 +11,16 @@ import { HttpProvider, Messenger } from 'laksa-request'
 import Zil from 'laksa-zil'
 import config from './config'
 
+const { Wallet } = wallet
+
 class Laksa {
   constructor(args) {
     // validateArgs(args, {}, { nodeUrl: [util.isUrl] })
     const url = args || config.defaultNodeUrl
     //
     this.util = util
-    this.wallet = wallet
+    this.wallet = new Wallet()
+
     //
     this.currentProvider = new HttpProvider(url)
     this.messenger = new Messenger(this.currentProvider)

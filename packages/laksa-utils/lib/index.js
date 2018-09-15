@@ -17,7 +17,6 @@ require('core-js/modules/es6.object.keys');
 var _classCallCheck = _interopDefault(require('@babel/runtime/helpers/classCallCheck'));
 var _defineProperty = _interopDefault(require('@babel/runtime/helpers/defineProperty'));
 require('core-js/modules/es6.number.constructor');
-var R = require('ramda');
 var laksaCoreCrypto = require('laksa-core-crypto');
 
 /**
@@ -445,7 +444,11 @@ var Method = function Method(options) {
       var resultKey = Object.keys(paramsObject)[0];
       result = [_this.transformedBeforeSend(paramsObject[resultKey], resultKey)];
     } else if (keyArrayLength > 0 && _this.isSendJson) {
-      var newObject = R.mapObjIndexed(_this.transformedBeforeSend, paramsObject);
+      var newObject = {};
+      Object.keys(paramsObject).map(function (k) {
+        newObject[k] = _this.transformedBeforeSend(paramsObject[k], k);
+        return false;
+      });
       result = [newObject];
     }
 

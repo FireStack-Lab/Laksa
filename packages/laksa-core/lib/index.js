@@ -20,6 +20,8 @@ var config = {
   defaultAccount: undefined
 };
 
+var Wallet = wallet.Wallet;
+
 var Laksa = function Laksa(args) {
   var _this = this;
 
@@ -92,7 +94,7 @@ var Laksa = function Laksa(args) {
   var url = args || config.defaultNodeUrl; //
 
   this.util = util;
-  this.wallet = wallet; //
+  this.wallet = new Wallet(); //
 
   this.currentProvider = new laksaRequest.HttpProvider(url);
   this.messenger = new laksaRequest.Messenger(this.currentProvider); //

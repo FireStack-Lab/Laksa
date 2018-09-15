@@ -29,6 +29,10 @@
     defaultAccount: undefined
   };
 
+  const {
+    Wallet
+  } = wallet;
+
   class Laksa {
     constructor(args) {
       _defineProperty(this, "providers", {
@@ -66,7 +70,7 @@
       const url = args || config.defaultNodeUrl; //
 
       this.util = util;
-      this.wallet = wallet; //
+      this.wallet = new Wallet(); //
 
       this.currentProvider = new laksaRequest.HttpProvider(url);
       this.messenger = new laksaRequest.Messenger(this.currentProvider); //

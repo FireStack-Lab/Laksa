@@ -1,7 +1,7 @@
 import {
   isAddress, isNumber, isPrivateKey, isObject, isArray
 } from 'laksa-utils'
-import R from 'ramda'
+
 import * as account from './account'
 
 const encryptedBy = {
@@ -21,15 +21,15 @@ class Wallet {
 
   getIndexKeys = () => {
     const isCorrectKeys = n => /^\d+$/i.test(n) && parseInt(n, 10) <= 9e20
-    return R.filter(isCorrectKeys, Object.keys(this.accounts))
+    return Object.keys(this.accounts).filter(isCorrectKeys)
   }
 
   getCurrentMaxIndex = () => {
-    const keyList = this.getIndexKeys()
     const diff = (a, b) => {
       return b - a
     }
-    const sorted = R.sort(diff, keyList)
+    // const sorted = R.sort(diff, keyList)
+    const sorted = this.getIndexKeys().sort(diff)
     return sorted[0] === undefined ? -1 : parseInt(sorted[0], 10)
   }
 
@@ -106,27 +106,24 @@ class Wallet {
   }
 
   getWalletAddresses = () => {
-    const keyList = this.getIndexKeys()
-    return R.map((index) => {
+    return this.getIndexKeys().map((index) => {
       const { address } = this.getAccountByIndex(parseInt(index, 10))
       return address
-    }, keyList)
+    })
   }
 
   getWalletPublicKeys = () => {
-    const keyList = this.getIndexKeys()
-    return R.map((index) => {
+    return this.getIndexKeys().map((index) => {
       const { publicKey } = this.getAccountByIndex(parseInt(index, 10))
       return publicKey
-    }, keyList)
+    })
   }
 
   getWalletPrivateKeys = () => {
-    const keyList = this.getIndexKeys()
-    return R.map((index) => {
+    return this.getIndexKeys().map((index) => {
       const { privateKey } = this.getAccountByIndex(parseInt(index, 10))
       return privateKey
-    }, keyList)
+    })
   }
 
   updateAccountByAddress = (address, newObject) => {
@@ -138,23 +135,20 @@ class Wallet {
   }
 
   cleanAllAccounts = () => {
-    const keyList = this.getIndexKeys()
-    R.forEach(index => this.removeOneAccountByIndex(parseInt(index, 10)), keyList)
+    this.getIndexKeys().forEach(index => this.removeOneAccountByIndex(parseInt(index, 10)))
     return true
   }
 
-  encryptAllAccounts = (password) => {
-    const currentKeys = this.getIndexKeys()
-    R.forEach((index) => {
+  encryptAllAccounts = (password, level) => {
+    this.getIndexKeys().forEach((index) => {
       const { address } = this.getAccountByIndex(parseInt(index, 10))
-      this.encryptAccountByAddress(address, password, encryptedBy.WALLET)
-    }, currentKeys)
+      this.encryptAccountByAddress(address, password, level, encryptedBy.WALLET)
+    })
     return true
   }
 
   decryptAllAccounts = (password) => {
-    const currentKeys = this.getIndexKeys()
-    R.forEach((index) => {
+    this.getIndexKeys().forEach((index) => {
       const accountObject = this.getAccountByIndex(parseInt(index, 10))
       const { address, LastEncryptedBy } = accountObject
       if (LastEncryptedBy === encryptedBy.WALLET) {
@@ -163,16 +157,16 @@ class Wallet {
         console.error(`address ${address} is protected by account psw`)
         console.error('use /decryptAccountByAddress/ instead')
       }
-    }, currentKeys)
+    })
     return true
   }
 
-  encryptAccountByAddress = (address, password, by) => {
+  encryptAccountByAddress = (address, password, level, by) => {
     const accountObject = this.getAccountByAddress(address)
     if (accountObject !== undefined) {
       const { privateKey, crypto } = accountObject
-      if (privateKey !== undefined && isPrivateKey(privateKey) && crypto === undefined) {
-        const encryptedObject = account.encryptAccount(accountObject, password)
+      if (privateKey !== undefined && privateKey !== account.ENCRYPTED && crypto === undefined) {
+        const encryptedObject = account.encryptAccount(accountObject, password, level)
         return this.updateAccountByAddress(
           address,
           Object.assign({}, encryptedObject, {
