@@ -2,6 +2,7 @@ import {
   generatePrivateKey,
   getAddressFromPrivateKey,
   getPubKeyFromPrivateKey,
+  createTransactionJson,
   isPrivateKey,
   isPubkey,
   isAddress,
@@ -89,4 +90,8 @@ export const decryptAccount = (accountObject, password) => {
   } catch (e) {
     return e
   }
+}
+
+export const signTransaction = (privateKey, transactionObject) => {
+  return createTransactionJson(privateKey, transactionObject)
 }

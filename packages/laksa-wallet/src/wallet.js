@@ -1,5 +1,5 @@
 import {
-  isAddress, isNumber, isPrivateKey, isObject, isArray
+  isAddress, isNumber, isObject, isArray
 } from 'laksa-utils'
 
 import * as account from './account'
