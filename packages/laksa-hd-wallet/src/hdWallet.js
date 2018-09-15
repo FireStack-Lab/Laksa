@@ -1,4 +1,4 @@
-import Wallet from 'laksa-wallet'
+import { Wallet } from 'laksa-wallet'
 import * as Mnemonic from './mnemonic'
 import HDKey from './hdkey'
 

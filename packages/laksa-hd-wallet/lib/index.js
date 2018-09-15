@@ -18,7 +18,7 @@ var _possibleConstructorReturn = _interopDefault(require('@babel/runtime/helpers
 var _getPrototypeOf = _interopDefault(require('@babel/runtime/helpers/getPrototypeOf'));
 var _inherits = _interopDefault(require('@babel/runtime/helpers/inherits'));
 var _assertThisInitialized = _interopDefault(require('@babel/runtime/helpers/assertThisInitialized'));
-var Wallet = _interopDefault(require('laksa-wallet'));
+var laksaWallet = require('laksa-wallet');
 
 var getAvailableWordLists = function getAvailableWordLists() {
   return bip.wordlists;
@@ -126,6 +126,6 @@ function (_Wallet) {
   }
 
   return HDWallet;
-}(Wallet);
+}(laksaWallet.Wallet);
 
 exports.HDWallet = HDWallet;
