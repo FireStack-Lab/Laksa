@@ -1,11 +1,10 @@
 (function (global, factory) {
   typeof exports === 'object' && typeof module !== 'undefined' ? factory(exports, require('bip39'), require('hdkey'), require('laksa-wallet')) :
   typeof define === 'function' && define.amd ? define(['exports', 'bip39', 'hdkey', 'laksa-wallet'], factory) :
-  (factory((global.Laksa = {}),global.bip,global.npmhdkeyobject,global.Wallet));
-}(this, (function (exports,bip,npmhdkeyobject,Wallet) { 'use strict';
+  (factory((global.Laksa = {}),global.bip,global.npmhdkeyobject,global.laksaWallet));
+}(this, (function (exports,bip,npmhdkeyobject,laksaWallet) { 'use strict';
 
   npmhdkeyobject = npmhdkeyobject && npmhdkeyobject.hasOwnProperty('default') ? npmhdkeyobject['default'] : npmhdkeyobject;
-  Wallet = Wallet && Wallet.hasOwnProperty('default') ? Wallet['default'] : Wallet;
 
   function _defineProperty(obj, key, value) {
     if (key in obj) {
@@ -79,7 +78,7 @@
 
   }
 
-  class HDWallet extends Wallet {
+  class HDWallet extends laksaWallet.Wallet {
     constructor(props, mnemonics, language) {
       super(props);
 
