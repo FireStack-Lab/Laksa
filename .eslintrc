@@ -23,6 +23,7 @@
     "jsx-a11y/anchor-is-valid": "off",
     "jsx-a11y/click-events-have-key-events": "off",
     "no-nested-ternary": [0],
+    "no-control-regex": "off",
     "arrow-body-style": [0],
     "import/extensions": [0],
     "no-bitwise": [0],

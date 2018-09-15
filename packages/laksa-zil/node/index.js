@@ -4,21 +4,6 @@
   (global.Laksa = factory(global.laksaUtils));
 }(this, (function (laksaUtils) { 'use strict';
 
-  function _defineProperty(obj, key, value) {
-    if (key in obj) {
-      Object.defineProperty(obj, key, {
-        value: value,
-        enumerable: true,
-        configurable: true,
-        writable: true
-      });
-    } else {
-      obj[key] = value;
-    }
-
-    return obj;
-  }
-
   var methodObjects = [
   /**
    * isConnected
@@ -413,31 +398,11 @@
 
   class Zil {
     constructor(Webz) {
-      _defineProperty(this, "generateWallet", walletName => {
-        if (!laksaUtils.isString(walletName)) throw Error('walletName has to be String');
-        const walletPrivateKey = laksaUtils.generatePrivateKey();
-        const walletPublicKey = walletPrivateKey ? laksaUtils.getPubKeyFromPrivateKey(walletPrivateKey) : null;
-        const walletAddress = walletPrivateKey ? laksaUtils.getAddressFromPrivateKey(walletPrivateKey) : null;
-        const Wallet = {
-          walletName,
-          walletPublicKey,
-          walletPrivateKey,
-          walletAddress
-        };
-        return Wallet;
-      });
-
       this.messenger = Webz.messenger;
       this.config = Webz.config;
       mapObjectToMethods(this);
       mapPropertyToObjects(this);
     }
-    /**
-     * generate Key pairs and use WalletName as input param to identify
-     * @param  {[type]} walletName [description]
-     * @return {[type]}            [description]
-     */
-
 
     get defaultBlock() {
       return this.config.defaultBlock;

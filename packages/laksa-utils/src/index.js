@@ -28,6 +28,9 @@ export {
   isPrivateKey,
   isAddress,
   isBN,
+  isHex,
+  isNull,
+  isUndefined,
   validateArgs,
   validateFunctionArgs
 } from './validator'
@@ -39,7 +42,11 @@ export {
   fromUtf8,
   fromAscii,
   toBN,
-  toNumber,
+  hexToNumber,
+  utf8ToHex,
+  numberToHex,
   padLeft,
-  padRight
+  padRight,
+  strip0x,
+  add0x
 } from './transformer'

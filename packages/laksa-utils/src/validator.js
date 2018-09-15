@@ -100,11 +100,6 @@ const isAddress = (address) => {
     // If it's all small caps or all all caps, return true
     return true
   }
-  // web3.js use checksumAddress
-  // else {
-  //     // Otherwise check each case
-  //     return isChecksumAddress(address)
-  // }
 }
 // assign validator string
 Object.assign(isAddress, { validator: 'Address' })
@@ -173,6 +168,40 @@ const isHash = (txHash) => {
 }
 // assign validator string
 Object.assign(isHash, { validator: 'Hash' })
+
+/**
+ * Check if string is HEX
+ *
+ * @method isHex
+ * @param {String} hex to be checked
+ * @returns {Boolean}
+ */
+const isHex = (hex) => {
+  return (isString(hex) || isNumber(hex)) && /^0x?[0-9a-f]*$/i.test(hex)
+}
+// assign validator string
+Object.assign(isHex, { validator: 'Hex' })
+
+/**
+ * check Object isNull
+ * @param  {[type]}  obj [description]
+ * @return {Boolean}     [description]
+ */
+const isNull = (obj) => {
+  return obj === null
+}
+Object.assign(isNull, { validator: 'Null' })
+
+/**
+ * check object is undefined
+ * @param  {[type]}  obj [description]
+ * @return {Boolean}     [description]
+ */
+const isUndefined = (obj) => {
+  return obj === undefined
+}
+
+Object.assign(isUndefined, { validator: 'Undefined' })
 
 // isBN
 // imported
@@ -244,6 +273,9 @@ export {
   isPrivateKey,
   isAddress,
   isBN,
+  isHex,
+  isNull,
+  isUndefined,
   validateArgs,
   validateFunctionArgs
 }

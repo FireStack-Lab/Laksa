@@ -8,15 +8,20 @@ var _typeof = _interopDefault(require('@babel/runtime/helpers/typeof'));
 require('core-js/modules/es6.object.assign');
 var validUrl = require('valid-url');
 var bn_js = require('bn.js');
+require('core-js/modules/es6.number.is-nan');
+require('core-js/modules/es6.regexp.split');
+require('core-js/modules/es6.regexp.replace');
+require('core-js/modules/es6.number.constructor');
+require('core-js/modules/es6.number.is-finite');
 require('core-js/modules/es6.regexp.to-string');
 var numToBN = _interopDefault(require('number-to-bn'));
+var utf8 = _interopDefault(require('utf8'));
 require('core-js/modules/es6.function.name');
 require('core-js/modules/web.dom.iterable');
 require('core-js/modules/es6.array.iterator');
 require('core-js/modules/es6.object.keys');
 var _classCallCheck = _interopDefault(require('@babel/runtime/helpers/classCallCheck'));
 var _defineProperty = _interopDefault(require('@babel/runtime/helpers/defineProperty'));
-require('core-js/modules/es6.number.constructor');
 var laksaCoreCrypto = require('laksa-core-crypto');
 
 /**
@@ -137,12 +142,7 @@ var isAddress = function isAddress(address) {
   } else if (/^(0x)?[0-9a-f]{40}$/.test(address) || /^(0x)?[0-9A-F]{40}$/.test(address)) {
     // If it's all small caps or all all caps, return true
     return true;
-  } // web3.js use checksumAddress
-  // else {
-  //     // Otherwise check each case
-  //     return isChecksumAddress(address)
-  // }
-
+  }
 }; // assign validator string
 
 
@@ -225,6 +225,48 @@ var isHash = function isHash(txHash) {
 
 Object.assign(isHash, {
   validator: 'Hash'
+});
+/**
+ * Check if string is HEX
+ *
+ * @method isHex
+ * @param {String} hex to be checked
+ * @returns {Boolean}
+ */
+
+var isHex = function isHex(hex) {
+  return (isString(hex) || isNumber(hex)) && /^0x?[0-9a-f]*$/i.test(hex);
+}; // assign validator string
+
+
+Object.assign(isHex, {
+  validator: 'Hex'
+});
+/**
+ * check Object isNull
+ * @param  {[type]}  obj [description]
+ * @return {Boolean}     [description]
+ */
+
+var isNull = function isNull(obj) {
+  return obj === null;
+};
+
+Object.assign(isNull, {
+  validator: 'Null'
+});
+/**
+ * check object is undefined
+ * @param  {[type]}  obj [description]
+ * @return {Boolean}     [description]
+ */
+
+var isUndefined = function isUndefined(obj) {
+  return obj === undefined;
+};
+
+Object.assign(isUndefined, {
+  validator: 'Undefined'
 }); // isBN
 // imported
 
@@ -308,8 +350,27 @@ var intToByteArray = function intToByteArray(val, paddedSize) {
 
   return arr;
 };
+/**
+ * Converts value to it's hex representation
+ *
+ * @method numberToHex
+ * @param {String|Number|BN} value
+ * @return {String}
+ */
 
-var toHex = function toHex() {// to be implemented
+
+var numberToHex = function numberToHex(value) {
+  if (isNull(value) || isUndefined(value)) {
+    return value;
+  }
+
+  if (!Number.isFinite(value) && !isHex(value) && !bn_js.isBN(value) && !isString(value)) {
+    throw new Error("Given input \"".concat(value, "\" is not a number."));
+  }
+
+  var number = bn_js.isBN(value) ? value : toBN(value);
+  var result = number.toString(16);
+  return number.lt(toBN(0)) ? "-0x".concat(result.substr(1)) : "0x".concat(result);
 };
 
 var toUtf8 = function toUtf8() {// to utf 8
@@ -332,9 +393,107 @@ var toBN = function toBN(data) {
   } // to be implemented
 
 };
+/**
+ * Converts value to it's number representation
+ *
+ * @method hexToNumber
+ * @param {String|Number|BN} value
+ * @return {String}
+ */
 
-var toNumber = function toNumber() {} // to be implemented
 
+var hexToNumber = function hexToNumber(value) {
+  if (!value) {
+    return value;
+  }
+
+  return toBN(value).toNumber();
+};
+/**
+ * Should be called to get hex representation (prefixed by 0x) of utf8 string
+ *
+ * @method utf8ToHex
+ * @param {String} str
+ * @returns {String} hex representation of input string
+ */
+
+
+var utf8ToHex = function utf8ToHex(str) {
+  var hex = '';
+  var newString = utf8.encode(str);
+  var str1 = newString.replace(/^(?:\u0000)*/, '');
+  var str2 = str1.split('').reverse().join('');
+  var str3 = str2.replace(/^(?:\u0000)*/, '');
+  var str4 = str3.split('').reverse().join('');
+
+  for (var i = 0; i < str4.length; i += 1) {
+    var code = str4.charCodeAt(i); // if (code !== 0) {
+
+    var n = code.toString(16);
+    hex += n.length < 2 ? "0".concat(n) : n; // }
+  }
+
+  return "0x".concat(hex);
+};
+/**
+ * Auto converts any given value into it's hex representation.
+ *
+ * And even stringifys objects before.
+ *
+ * @method toHex
+ * @param {String|Number|BN|Object} value
+ * @param {Boolean} returnType
+ * @return {String}
+ */
+
+
+var toHex = function toHex(value, returnType) {
+  /* jshint maxcomplexity: false */
+  if (isAddress(value)) {
+    // strip 0x from address
+    return returnType ? 'address' : "0x".concat(value.toLowerCase().replace(/^0x/i, ''));
+  }
+
+  if (isBoolean(value)) {
+    return returnType ? 'bool' : value ? '0x01' : '0x00';
+  }
+
+  if (isObject(value) && !bn_js.isBN(value)) {
+    return returnType ? 'string' : utf8ToHex(JSON.stringify(value));
+  }
+
+  if (bn_js.isBN(value)) {
+    return returnType ? 'BN' : numberToHex(value);
+  } // if its a negative number, pass it through numberToHex
+
+
+  if (isString(value)) {
+    if (isHex(value) || !Number.isNaN(Number(value))) {
+      return returnType ? value < 0 ? 'int256' : 'uint256' : numberToHex(value);
+    } else if (!Number.isFinite(value) && !isUndefined(value) && Number.isNaN(Number(value))) {
+      return returnType ? 'string' : add0x(value);
+    }
+  }
+
+  return returnType ? value < 0 ? 'int256' : 'uint256' : numberToHex(value);
+};
+
+var strip0x = function strip0x(value) {
+  var newString = toHex(value);
+  return "".concat(newString.replace(/^0x/i, ''));
+};
+
+var add0x = function add0x(value) {
+  var newString;
+
+  if (!isString(value)) {
+    newString = String(value);
+    return "0x".concat(newString.replace(/^0x/i, ''));
+  }
+
+  newString = "0x".concat(value.replace(/^0x/i, ''));
+  return newString;
+};
 /**
  * Should be called to pad string to expected length
  *
@@ -344,7 +503,7 @@ var toNumber = function toNumber() {} // to be implemented
  * @param {String} sign, by default 0
  * @returns {String} right aligned string
  */
-;
+
 
 var padLeft = function padLeft(string, chars, sign) {
   return new Array(chars - string.length + 1).join(sign || '0') + string;
@@ -381,7 +540,7 @@ var validatorArray = {
 };
 var transformerArray = {
   toBn: toBN,
-  toNumber: function toNumber$$1(string) {
+  toNumber: function toNumber(string) {
     return Number(string);
   },
   toString: function toString(string) {
@@ -602,6 +761,9 @@ exports.isUrl = isUrl;
 exports.isPubkey = isPubkey;
 exports.isPrivateKey = isPrivateKey;
 exports.isAddress = isAddress;
+exports.isHex = isHex;
+exports.isNull = isNull;
+exports.isUndefined = isUndefined;
 exports.validateArgs = validateArgs;
 exports.validateFunctionArgs = validateFunctionArgs;
 exports.intToByteArray = intToByteArray;
@@ -611,6 +773,10 @@ exports.toAscii = toAscii;
 exports.fromUtf8 = fromUtf8;
 exports.fromAscii = fromAscii;
 exports.toBN = toBN;
-exports.toNumber = toNumber;
+exports.hexToNumber = hexToNumber;
+exports.utf8ToHex = utf8ToHex;
+exports.numberToHex = numberToHex;
 exports.padLeft = padLeft;
 exports.padRight = padRight;
+exports.strip0x = strip0x;
+exports.add0x = add0x;

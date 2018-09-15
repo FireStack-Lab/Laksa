@@ -4,7 +4,6 @@ function _interopDefault (ex) { return (ex && (typeof ex === 'object') && 'defau
 
 var _classCallCheck = _interopDefault(require('@babel/runtime/helpers/classCallCheck'));
 var _createClass = _interopDefault(require('@babel/runtime/helpers/createClass'));
-var _defineProperty = _interopDefault(require('@babel/runtime/helpers/defineProperty'));
 var laksaUtils = require('laksa-utils');
 
 var methodObjects = [
@@ -405,31 +404,11 @@ function () {
   function Zil(Webz) {
     _classCallCheck(this, Zil);
 
-    _defineProperty(this, "generateWallet", function (walletName) {
-      if (!laksaUtils.isString(walletName)) throw Error('walletName has to be String');
-      var walletPrivateKey = laksaUtils.generatePrivateKey();
-      var walletPublicKey = walletPrivateKey ? laksaUtils.getPubKeyFromPrivateKey(walletPrivateKey) : null;
-      var walletAddress = walletPrivateKey ? laksaUtils.getAddressFromPrivateKey(walletPrivateKey) : null;
-      var Wallet = {
-        walletName: walletName,
-        walletPublicKey: walletPublicKey,
-        walletPrivateKey: walletPrivateKey,
-        walletAddress: walletAddress
-      };
-      return Wallet;
-    });
-
     this.messenger = Webz.messenger;
     this.config = Webz.config;
     mapObjectToMethods(this);
     mapPropertyToObjects(this);
   }
-  /**
-   * generate Key pairs and use WalletName as input param to identify
-   * @param  {[type]} walletName [description]
-   * @return {[type]}            [description]
-   */
-
 
   _createClass(Zil, [{
     key: "defaultBlock",
