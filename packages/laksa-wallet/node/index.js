@@ -1,12 +1,11 @@
 (function (global, factory) {
-  typeof exports === 'object' && typeof module !== 'undefined' ? factory(exports, require('laksa-utils'), require('uuid'), require('crypto-js'), require('ramda')) :
-  typeof define === 'function' && define.amd ? define(['exports', 'laksa-utils', 'uuid', 'crypto-js', 'ramda'], factory) :
-  (factory((global.Laksa = {}),global.laksaUtils,global.uuid,global.CryptoJS,global.R));
-}(this, (function (exports,laksaUtils,uuid,CryptoJS,R) { 'use strict';
+  typeof exports === 'object' && typeof module !== 'undefined' ? factory(exports, require('laksa-utils'), require('uuid'), require('crypto-js')) :
+  typeof define === 'function' && define.amd ? define(['exports', 'laksa-utils', 'uuid', 'crypto-js'], factory) :
+  (factory((global.Laksa = {}),global.laksaUtils,global.uuid,global.CryptoJS));
+}(this, (function (exports,laksaUtils,uuid,CryptoJS) { 'use strict';
 
   uuid = uuid && uuid.hasOwnProperty('default') ? uuid['default'] : uuid;
   CryptoJS = CryptoJS && CryptoJS.hasOwnProperty('default') ? CryptoJS['default'] : CryptoJS;
-  R = R && R.hasOwnProperty('default') ? R['default'] : R;
 
   function _defineProperty(obj, key, value) {
     if (key in obj) {
@@ -42,19 +41,19 @@
     return target;
   }
 
-  const encrypt = (privateKey, password) => {
+  const encrypt = (privateKey, password, options = {}) => {
     if (!laksaUtils.isPrivateKey) throw new Error('Invalid PrivateKey');
     if (!laksaUtils.isString(password)) throw new Error('no password found');
-    const iv = laksaUtils.randomBytes(16);
-    const salt = laksaUtils.randomBytes(32);
+    const iv = options.iv || laksaUtils.randomBytes(16);
+    const salt = options.salt || laksaUtils.randomBytes(32);
     const kdfparams = {
-      dklen: 32,
+      dklen: options.dklen || 32,
       salt: salt.toString('hex'),
-      c: 262144,
+      c: options.c || 262144,
       prf: 'hmac-sha256'
     };
     const derivedKey = CryptoJS.PBKDF2(password, CryptoJS.enc.Utf8.parse(kdfparams.salt), {
-      keySize: 256 / 32,
+      keySize: 256 / kdfparams.dklen,
       iterations: kdfparams.c
     }); // password should be replaced to derivedKey
 
@@ -146,7 +145,8 @@
       return e;
     }
   };
-  const encryptAccount = (accountObject, password) => {
+  const encryptAccount = (accountObject, password, level = 1000) => {
+    if (!laksaUtils.isString(password)) throw new Error('password is not found');
     laksaUtils.validateArgs(accountObject, {
       address: [laksaUtils.isAddress],
       privateKey: [laksaUtils.isPrivateKey],
@@ -156,12 +156,15 @@
     try {
       return _objectSpread({}, accountObject, {
         privateKey: ENCRYPTED
-      }, encrypt(accountObject.privateKey, password));
+      }, encrypt(accountObject.privateKey, password, {
+        c: level
+      }));
     } catch (e) {
       return e;
     }
   };
   const decryptAccount = (accountObject, password) => {
+    if (!laksaUtils.isString(password)) throw new Error('password is not found');
     laksaUtils.validateArgs(accountObject, {
       address: [laksaUtils.isAddress],
       crypto: [laksaUtils.isObject],
@@ -193,17 +196,16 @@
       _defineProperty(this, "getIndexKeys", () => {
         const isCorrectKeys = n => /^\d+$/i.test(n) && parseInt(n, 10) <= 9e20;
 
-        return R.filter(isCorrectKeys, Object.keys(this.accounts));
+        return Object.keys(this.accounts).filter(isCorrectKeys);
       });
 
       _defineProperty(this, "getCurrentMaxIndex", () => {
-        const keyList = this.getIndexKeys();
-
         const diff = (a, b) => {
           return b - a;
-        };
+        }; // const sorted = R.sort(diff, keyList)
 
-        const sorted = R.sort(diff, keyList);
+
+        const sorted = this.getIndexKeys().sort(diff);
         return sorted[0] === undefined ? -1 : parseInt(sorted[0], 10);
       });
 
@@ -289,33 +291,30 @@
       });
 
       _defineProperty(this, "getWalletAddresses", () => {
-        const keyList = this.getIndexKeys();
-        return R.map(index => {
+        return this.getIndexKeys().map(index => {
           const {
             address
           } = this.getAccountByIndex(parseInt(index, 10));
           return address;
-        }, keyList);
+        });
       });
 
       _defineProperty(this, "getWalletPublicKeys", () => {
-        const keyList = this.getIndexKeys();
-        return R.map(index => {
+        return this.getIndexKeys().map(index => {
           const {
             publicKey
           } = this.getAccountByIndex(parseInt(index, 10));
           return publicKey;
-        }, keyList);
+        });
       });
 
       _defineProperty(this, "getWalletPrivateKeys", () => {
-        const keyList = this.getIndexKeys();
-        return R.map(index => {
+        return this.getIndexKeys().map(index => {
           const {
             privateKey
           } = this.getAccountByIndex(parseInt(index, 10));
           return privateKey;
-        }, keyList);
+        });
       });
 
       _defineProperty(this, "updateAccountByAddress", (address, newObject) => {
@@ -329,25 +328,22 @@
       });
 
       _defineProperty(this, "cleanAllAccounts", () => {
-        const keyList = this.getIndexKeys();
-        R.forEach(index => this.removeOneAccountByIndex(parseInt(index, 10)), keyList);
+        this.getIndexKeys().forEach(index => this.removeOneAccountByIndex(parseInt(index, 10)));
         return true;
       });
 
-      _defineProperty(this, "encryptAllAccounts", password => {
-        const currentKeys = this.getIndexKeys();
-        R.forEach(index => {
+      _defineProperty(this, "encryptAllAccounts", (password, level) => {
+        this.getIndexKeys().forEach(index => {
           const {
             address
           } = this.getAccountByIndex(parseInt(index, 10));
-          this.encryptAccountByAddress(address, password, encryptedBy.WALLET);
-        }, currentKeys);
+          this.encryptAccountByAddress(address, password, level, encryptedBy.WALLET);
+        });
         return true;
       });
 
       _defineProperty(this, "decryptAllAccounts", password => {
-        const currentKeys = this.getIndexKeys();
-        R.forEach(index => {
+        this.getIndexKeys().forEach(index => {
           const accountObject = this.getAccountByIndex(parseInt(index, 10));
           const {
             address,
@@ -360,11 +356,11 @@
             console.error(`address ${address} is protected by account psw`);
             console.error('use /decryptAccountByAddress/ instead');
           }
-        }, currentKeys);
+        });
         return true;
       });
 
-      _defineProperty(this, "encryptAccountByAddress", (address, password, by) => {
+      _defineProperty(this, "encryptAccountByAddress", (address, password, level, by) => {
         const accountObject = this.getAccountByAddress(address);
 
         if (accountObject !== undefined) {
@@ -373,8 +369,8 @@
             crypto
           } = accountObject;
 
-          if (privateKey !== undefined && laksaUtils.isPrivateKey(privateKey) && crypto === undefined) {
-            const encryptedObject = encryptAccount(accountObject, password);
+          if (privateKey !== undefined && privateKey !== ENCRYPTED && crypto === undefined) {
+            const encryptedObject = encryptAccount(accountObject, password, level);
             return this.updateAccountByAddress(address, Object.assign({}, encryptedObject, {
               LastEncryptedBy: by || encryptedBy.ACCOUNT
             }));
@@ -413,6 +409,11 @@
   exports.Wallet = Wallet;
   exports.encrypt = encrypt;
   exports.decrypt = decrypt;
+  exports.createAccount = createAccount;
+  exports.importAccount = importAccount;
+  exports.encryptAccount = encryptAccount;
+  exports.decryptAccount = decryptAccount;
+  exports.ENCRYPTED = ENCRYPTED;
 
   Object.defineProperty(exports, '__esModule', { value: true });
 

@@ -6,6 +6,7 @@ import {
   isPubkey,
   isAddress,
   isObject,
+  isString,
   validateArgs
 } from 'laksa-utils'
 
@@ -53,7 +54,8 @@ export const importAccount = (privateKey) => {
   }
 }
 
-export const encryptAccount = (accountObject, password) => {
+export const encryptAccount = (accountObject, password, level = 1000) => {
+  if (!isString(password)) throw new Error('password is not found')
   validateArgs(accountObject, {
     address: [isAddress],
     privateKey: [isPrivateKey],
@@ -63,7 +65,7 @@ export const encryptAccount = (accountObject, password) => {
     return {
       ...accountObject,
       privateKey: ENCRYPTED,
-      ...encrypt(accountObject.privateKey, password)
+      ...encrypt(accountObject.privateKey, password, { c: level })
     }
   } catch (e) {
     return e
@@ -71,6 +73,7 @@ export const encryptAccount = (accountObject, password) => {
 }
 
 export const decryptAccount = (accountObject, password) => {
+  if (!isString(password)) throw new Error('password is not found')
   validateArgs(accountObject, {
     address: [isAddress],
     crypto: [isObject],

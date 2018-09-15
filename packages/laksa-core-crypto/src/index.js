@@ -144,8 +144,6 @@ export const encodeTransaction = (txn) => {
     + txn.to
     + txn.pubKey
     + txn.amount.toString('hex', 64)
-    // update later
-    // + intToByteArray(txn.amount, 64).join('')
     + intToByteArray(txn.gasPrice, 64).join('')
     + intToByteArray(txn.gasLimit, 64).join('')
     + intToByteArray(txn.code.length, 8).join('') // size of code

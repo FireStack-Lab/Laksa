@@ -1,4 +1,3 @@
-import * as R from 'ramda'
 import {
   isNumber,
   isString,
@@ -97,8 +96,11 @@ class Method {
       const resultKey = Object.keys(paramsObject)[0]
       result = [this.transformedBeforeSend(paramsObject[resultKey], resultKey)]
     } else if (keyArrayLength > 0 && this.isSendJson) {
-      const newObject = R.mapObjIndexed(this.transformedBeforeSend, paramsObject)
-
+      const newObject = {}
+      Object.keys(paramsObject).map((k) => {
+        newObject[k] = this.transformedBeforeSend(paramsObject[k], k)
+        return false
+      })
       result = [newObject]
     }
     return result

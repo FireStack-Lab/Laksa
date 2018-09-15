@@ -2,20 +2,21 @@ import { randomBytes, isPrivateKey, isString } from 'laksa-utils'
 import uuid from 'uuid'
 import CryptoJS from 'crypto-js'
 
-export const encrypt = (privateKey, password) => {
+export const encrypt = (privateKey, password, options = {}) => {
   if (!isPrivateKey) throw new Error('Invalid PrivateKey')
   if (!isString(password)) throw new Error('no password found')
-  const iv = randomBytes(16)
-  const salt = randomBytes(32)
+
+  const iv = options.iv || randomBytes(16)
+  const salt = options.salt || randomBytes(32)
   const kdfparams = {
-    dklen: 32,
+    dklen: options.dklen || 32,
     salt: salt.toString('hex'),
-    c: 262144,
+    c: options.c || 262144,
     prf: 'hmac-sha256'
   }
 
   const derivedKey = CryptoJS.PBKDF2(password, CryptoJS.enc.Utf8.parse(kdfparams.salt), {
-    keySize: 256 / 32,
+    keySize: 256 / kdfparams.dklen,
     iterations: kdfparams.c
   })
   // password should be replaced to derivedKey

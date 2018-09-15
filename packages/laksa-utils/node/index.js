@@ -1,8 +1,8 @@
 (function (global, factory) {
-  typeof exports === 'object' && typeof module !== 'undefined' ? factory(exports, require('valid-url'), require('bn.js'), require('number-to-bn'), require('ramda'), require('laksa-core-crypto')) :
-  typeof define === 'function' && define.amd ? define(['exports', 'valid-url', 'bn.js', 'number-to-bn', 'ramda', 'laksa-core-crypto'], factory) :
-  (factory((global.Laksa = {}),global.validUrl,global.bn_js,global.numToBN,global.R,global.laksaCoreCrypto));
-}(this, (function (exports,validUrl,bn_js,numToBN,R,laksaCoreCrypto) { 'use strict';
+  typeof exports === 'object' && typeof module !== 'undefined' ? factory(exports, require('valid-url'), require('bn.js'), require('number-to-bn'), require('laksa-core-crypto')) :
+  typeof define === 'function' && define.amd ? define(['exports', 'valid-url', 'bn.js', 'number-to-bn', 'laksa-core-crypto'], factory) :
+  (factory((global.Laksa = {}),global.validUrl,global.bn_js,global.numToBN,global.laksaCoreCrypto));
+}(this, (function (exports,validUrl,bn_js,numToBN,laksaCoreCrypto) { 'use strict';
 
   numToBN = numToBN && numToBN.hasOwnProperty('default') ? numToBN['default'] : numToBN;
 
@@ -440,7 +440,11 @@
           const resultKey = Object.keys(paramsObject)[0];
           result = [this.transformedBeforeSend(paramsObject[resultKey], resultKey)];
         } else if (keyArrayLength > 0 && this.isSendJson) {
-          const newObject = R.mapObjIndexed(this.transformedBeforeSend, paramsObject);
+          const newObject = {};
+          Object.keys(paramsObject).map(k => {
+            newObject[k] = this.transformedBeforeSend(paramsObject[k], k);
+            return false;
+          });
           result = [newObject];
         }
 
