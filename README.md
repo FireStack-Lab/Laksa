@@ -55,4 +55,4 @@ yarn add laksa
 
 ## Examples
 
-! Comming Soon !
+! Coming Soon !
