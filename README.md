@@ -27,27 +27,7 @@ So it may change a lot before it's stable version is released.
 
 ## How to Use?
 
-### In `NodeJS` or modern `WebApp`
-
-```bash
-npm install laksa
-// or
-yarn add laksa
-```
-
-### In HTML and for Browser
-
-- First git clone this library.
-- Then `yarn install && yarn dist`
-- If the build process is finished and without failure, you can see 4 files in `{your project}/dist` folder.
-- Paste the `laksa.browser.js` and `laksa.browser.js.map` into your html project.
-- Then throw them into your html `<script />` tag.
-
-```HTML
-...
-<script src="{your html project}/Laksa.browser.js"></script>
-...
-```
+- [Getting Started](./docs/en/gettingStarted_en.md)
 
 ## API Reference
 

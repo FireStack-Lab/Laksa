@@ -23,27 +23,7 @@ Laksa 是一个开发工具包，让开发者快速连接 Zilliqa-BlockChain
 
 ## 如何使用?
 
-### 在 `NodeJS` 或现代的 `WebApp`中使用
-
-```bash
-npm install laksa
-// 或者使用yarn
-yarn add laksa
-```
-
-### 在浏览器通过 HTML 加载
-
-- 第一步 git clone 这个库.
-- 安装依赖并构建 `yarn install && yarn dist`
-- 如果构建过程顺利完成没有失败, 在 `{项目目录}/dist` 文件夹中将会看到 4 个文件.
-- 把 `laksa.browser.js` 以及 `laksa.browser.js.map` 复制粘贴到你的 HTML 的项目中（一般放在 js 的文件夹里）.
-- 在 HTML 的 `<script />` 进行引用，像下面这样.
-
-```HTML
-...
-<script src="{your html project}/Laksa.browser.js"></script>
-...
-```
+- [开始使用](./docs/cn/gettingStarted_cn.md)
 
 ## API 索引以及文档
 
