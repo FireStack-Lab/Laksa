@@ -23,7 +23,7 @@ Laksa 是一个开发工具包，让开发者快速连接 Zilliqa-BlockChain
 
 ## 如何使用?
 
-- [开始使用](./docs/cn/gettingStarted_cn.md)
+- [开始使用](./gettingStarted_cn.md)
 
 ## API 索引以及文档
 
