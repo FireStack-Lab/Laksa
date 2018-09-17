@@ -1,7 +1,21 @@
-# Laksa -- A Javascript Library for Zilliqa
+# Laksa
 
 ![travis](https://travis-ci.com/FireStack-Lab/Laksa.svg?branch=master)
 [![npm version](https://img.shields.io/npm/v/laksa.svg?style=flat-square)](https://www.npmjs.org/package/laksa)
+
+[English README](./README.md)
+
+[中文版说明](./docs/cn/index_cm.md)
+
+Laksa is a developer tools that interigate with Zilliqa-BlockChain.
+
+## Warning
+
+This project is under developement and updated frequently, including `test scripts` and `dependencies`.
+
+So it may change a lot before it's stable version is released.
+
+`DO NOT` use it into your production envirorment.
 
 ## Why `Laksa` but not `Zilliqa-JS`?
 
@@ -35,10 +49,10 @@ yarn add laksa
 ...
 ```
 
-### API Reference
+## API Reference
 
 ! Coming Soon !
 
-### Examples
+## Examples
 
 ! Comming Soon !
