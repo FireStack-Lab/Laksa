@@ -5,6 +5,8 @@
 
 Laksa 是一个开发工具包，让开发者快速连接 Zilliqa-BlockChain
 
+## [English README](./README.md)
+
 ## 注意事项
 
 本项目在不停的进行迭代和更新，包括测试用例，开发依赖以及工具可用性

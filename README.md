@@ -3,9 +3,7 @@
 ![travis](https://travis-ci.com/FireStack-Lab/Laksa.svg?branch=master)
 [![npm version](https://img.shields.io/npm/v/laksa.svg?style=flat-square)](https://www.npmjs.org/package/laksa)
 
-[English README](./README.md)
-
-[中文版说明](./README_CN.md)
+## [中文版说明](./README_CN.md)
 
 Laksa is a developer tools that interigate with Zilliqa-BlockChain.
 
