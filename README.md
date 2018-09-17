@@ -5,7 +5,7 @@
 
 ## Why `Laksa` but not `Zilliqa-JS`?
 
-- `Zilliqa-JS` is developed by Ethereum Team. `Laksa` is developed by Zilliqa community.
+- `Zilliqa-JS` is developed by Zilliqa Core Team. `Laksa` is developed by Zilliqa community.
 - `Zilliqa-JS` is a basic library contained crypto algos, and basic utils.
 - `Laksa` is a framework that provides more features than `Zilliqa-JS`.
 - `Laska` is a "mono-repo" that devide the repo to multiple sub packages. Developers may customize their project using different packages on their demands.
