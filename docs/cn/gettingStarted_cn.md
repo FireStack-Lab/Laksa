@@ -65,7 +65,7 @@ $bash > yarn add laksa@latest # 你可以安装最新的版本
 2. 在安装好环境之后，你可以输入以下命令执行.
 
 ```bash
-$bash > git clone https://github.com/FireStack-Lab/Laksa.git && cd laksa && yarn install && yarn build
+$bash > git clone https://github.com/FireStack-Lab/Laksa.git && cd Laksa && yarn install && yarn build
 ```
 
 3. 当所有命令执行完毕，并且没有出现错误提示的话，会在项目路径的`/dist`下面找到 四个文件，分别是
