@@ -5,7 +5,7 @@
 
 [English README](./README.md)
 
-[中文版说明](./docs/cn/index_cm.md)
+[中文版说明](./docs/cn/index_cn.md)
 
 Laksa is a developer tools that interigate with Zilliqa-BlockChain.
 
