@@ -65,7 +65,7 @@ If you find it hard, please wait for our release version later. You may download
 2. After you've install all requred env, run the following commands in your command-line
 
 ```bash
-$bash > git clone https://github.com/FireStack-Lab/Laksa.git && cd laksa && yarn install && yarn build
+$bash > git clone https://github.com/FireStack-Lab/Laksa.git && cd Laksa && yarn install && yarn build
 ```
 
 3. After all install scripts are executed and finished without Error. You can find 4 files in the `/dist` folder, which are:
