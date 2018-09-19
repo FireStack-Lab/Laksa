@@ -1,5 +1,4 @@
 import axios from 'axios'
-// import errors from 'errors'
 
 class HttpProvider {
   constructor(url, timeout, user, password, headers) {
@@ -8,7 +7,7 @@ class HttpProvider {
     this.user = user || null
     this.password = password || null
     this.headers = headers
-    this.axios = this.instance()
+    this.request = this.instance()
   }
 
   instance = () => {
@@ -31,7 +30,7 @@ class HttpProvider {
   }
 
   send = async (payload) => {
-    const result = await this.instance()
+    const result = await this.request
       .post(this.url, JSON.stringify(payload))
       .then((response) => {
         const { data, status } = response
@@ -44,7 +43,7 @@ class HttpProvider {
   }
 
   sendServer = async (endpoint, payload) => {
-    const result = await this.instance()
+    const result = await this.request
       .post(`${this.url}${endpoint}`, JSON.stringify(payload))
       .then((response) => {
         const { data, status } = response
@@ -57,7 +56,7 @@ class HttpProvider {
   }
 
   sendAsync = (payload, callback) => {
-    this.instance()
+    this.request
       .post(this.url, JSON.stringify(payload))
       .then((response) => {
         const { data, status } = response
@@ -69,7 +68,7 @@ class HttpProvider {
   }
 
   sendAsyncServer = (endpoint, payload, callback) => {
-    this.instance()
+    this.request
       .post(`${this.url}${endpoint}`, JSON.stringify(payload))
       .then((response) => {
         const { data, status } = response

@@ -27,7 +27,7 @@ var currenProvider=document.getElementById('nodeUrl').value
 var setButton=document.getElementById('setProviderButton')
 //For local testing, use URL = 'http://localhost:4200'
 //To connect to the external network, use URL = 'https://api-scilla.zilliqa.com'
-var Laksa =new Laksa(currenProvider)
+var laksa =new Laksa(currenProvider)
 
 // var URL = undefined
 
@@ -37,7 +37,7 @@ setButton.onclick=function(e){
 };
 
 var URL ='https://api-scilla.zilliqa.com'
-Laksa.setProvider(URL)
+laksa.setProvider(URL)
 // webz.isConnected().then(console.log)
 let code = `
 (* HelloWorld contract *)
@@ -95,7 +95,7 @@ let txnDetails = {
   version: 0,
   nonce: 2,
   to: "0000000000000000000000000000000000000000",
-  amount: Laksa.util.toBN(0),
+  amount: laksa.util.toBN(0),
   gasPrice: 1,
   gasLimit: 50,
   code: code,
@@ -103,7 +103,7 @@ let txnDetails = {
 };
 
 // sign the transaction using util methods
-let txn = Laksa.util.createTransactionJson(
+let txn = laksa.util.createTransactionJson(
   "e19d05c5452598e24caad4a0d85a49146f7be089515c905ae6a19e8a578a6930",
   txnDetails
 );
@@ -111,16 +111,16 @@ let txn = Laksa.util.createTransactionJson(
 const myAddress = { address: "9bfec715a6bd658fcb62b0f8cc9bfa2ade71434a" };
 // with callback
 // Laksa.zil.getBalance(myAddress, callback);
-Laksa.zil.getSmartContracts(myAddress,(err,data)=>{
+laksa.zil.getSmartContracts(myAddress,(err,data)=>{
   if(data.length>0){
     data.map(d=>{
-      Laksa.zil.getSmartContractState({address:d.address},(err,data)=>{
+      laksa.zil.getSmartContractState({address:d.address},(err,data)=>{
         console.log({smartContractState:data});
       })
-      Laksa.zil.getSmartContractCode({address:d.address},(err,data)=>{
+      laksa.zil.getSmartContractCode({address:d.address},(err,data)=>{
         console.log({smartContractCode:data});
       })
-      Laksa.zil.getSmartContractInit({address:d.address},(err,data)=>{
+      laksa.zil.getSmartContractInit({address:d.address},(err,data)=>{
         console.log({smartContractInit:data})
       })
     })
