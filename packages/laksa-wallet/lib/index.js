@@ -218,30 +218,29 @@ var Wallet = function Wallet() {
 
   _defineProperty(this, "createBatchAccounts", function (number) {
     if (!laksaUtils.isNumber(number) || laksaUtils.isNumber(number) && number === 0) throw new Error('number has to be >0 Number');
+    var Batch = [];
 
     for (var i = 0; i < number; i += 1) {
-      _this.createAccount();
+      Batch.push(_this.createAccount());
     }
 
-    return true;
+    return Batch;
   });
 
   _defineProperty(this, "importAccountFromPrivateKey", function (privateKey) {
     var accountObject = importAccount(privateKey);
-
-    _this.addAccount(accountObject);
-
-    return true;
+    return _this.addAccount(accountObject);
   });
 
   _defineProperty(this, "importAccountsFromPrivateKeyList", function (privateKeyList) {
     if (!laksaUtils.isArray(privateKeyList)) throw new Error('privateKeyList has to be Array<String>');
+    var Imported = [];
 
     for (var i = 0; i < privateKeyList.length; i += 1) {
-      _this.importAccountFromPrivateKey(privateKeyList[i]);
+      Imported.push(_this.importAccountFromPrivateKey(privateKeyList[i]));
     }
 
-    return true;
+    return Imported;
   });
 
   _defineProperty(this, "removeOneAccountByAddress", function (address) {

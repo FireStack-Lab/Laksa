@@ -56,24 +56,25 @@ class Wallet {
 
   createBatchAccounts = (number) => {
     if (!isNumber(number) || (isNumber(number) && number === 0)) throw new Error('number has to be >0 Number')
+    const Batch = []
     for (let i = 0; i < number; i += 1) {
-      this.createAccount()
+      Batch.push(this.createAccount())
     }
-    return true
+    return Batch
   }
 
   importAccountFromPrivateKey = (privateKey) => {
     const accountObject = account.importAccount(privateKey)
-    this.addAccount(accountObject)
-    return true
+    return this.addAccount(accountObject)
   }
 
   importAccountsFromPrivateKeyList = (privateKeyList) => {
     if (!isArray(privateKeyList)) throw new Error('privateKeyList has to be Array<String>')
+    const Imported = []
     for (let i = 0; i < privateKeyList.length; i += 1) {
-      this.importAccountFromPrivateKey(privateKeyList[i])
+      Imported.push(this.importAccountFromPrivateKey(privateKeyList[i]))
     }
-    return true
+    return Imported
   }
 
   removeOneAccountByAddress = (address) => {

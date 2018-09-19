@@ -230,28 +230,29 @@
 
       _defineProperty(this, "createBatchAccounts", number => {
         if (!laksaUtils.isNumber(number) || laksaUtils.isNumber(number) && number === 0) throw new Error('number has to be >0 Number');
+        const Batch = [];
 
         for (let i = 0; i < number; i += 1) {
-          this.createAccount();
+          Batch.push(this.createAccount());
         }
 
-        return true;
+        return Batch;
       });
 
       _defineProperty(this, "importAccountFromPrivateKey", privateKey => {
         const accountObject = importAccount(privateKey);
-        this.addAccount(accountObject);
-        return true;
+        return this.addAccount(accountObject);
       });
 
       _defineProperty(this, "importAccountsFromPrivateKeyList", privateKeyList => {
         if (!laksaUtils.isArray(privateKeyList)) throw new Error('privateKeyList has to be Array<String>');
+        const Imported = [];
 
         for (let i = 0; i < privateKeyList.length; i += 1) {
-          this.importAccountFromPrivateKey(privateKeyList[i]);
+          Imported.push(this.importAccountFromPrivateKey(privateKeyList[i]));
         }
 
-        return true;
+        return Imported;
       });
 
       _defineProperty(this, "removeOneAccountByAddress", address => {
