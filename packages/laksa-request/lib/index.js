@@ -55,7 +55,7 @@ var HttpProvider = function HttpProvider(url, timeout, user, password, headers) 
           switch (_context.prev = _context.next) {
             case 0:
               _context.next = 2;
-              return _this.instance().post(_this.url, JSON.stringify(payload)).then(function (response) {
+              return _this.request.post(_this.url, JSON.stringify(payload)).then(function (response) {
                 var data = response.data,
                     status = response.status;
 
@@ -95,7 +95,7 @@ var HttpProvider = function HttpProvider(url, timeout, user, password, headers) 
           switch (_context2.prev = _context2.next) {
             case 0:
               _context2.next = 2;
-              return _this.instance().post("".concat(_this.url).concat(endpoint), JSON.stringify(payload)).then(function (response) {
+              return _this.request.post("".concat(_this.url).concat(endpoint), JSON.stringify(payload)).then(function (response) {
                 var data = response.data,
                     status = response.status;
 
@@ -124,7 +124,7 @@ var HttpProvider = function HttpProvider(url, timeout, user, password, headers) 
   }());
 
   _defineProperty(this, "sendAsync", function (payload, callback) {
-    _this.instance().post(_this.url, JSON.stringify(payload)).then(function (response) {
+    _this.request.post(_this.url, JSON.stringify(payload)).then(function (response) {
       var data = response.data,
           status = response.status;
 
@@ -137,7 +137,7 @@ var HttpProvider = function HttpProvider(url, timeout, user, password, headers) 
   });
 
   _defineProperty(this, "sendAsyncServer", function (endpoint, payload, callback) {
-    _this.instance().post("".concat(_this.url).concat(endpoint), JSON.stringify(payload)).then(function (response) {
+    _this.request.post("".concat(_this.url).concat(endpoint), JSON.stringify(payload)).then(function (response) {
       var data = response.data,
           status = response.status;
 
@@ -154,7 +154,7 @@ var HttpProvider = function HttpProvider(url, timeout, user, password, headers) 
   this.user = user || null;
   this.password = password || null;
   this.headers = headers;
-  this.axios = this.instance();
+  this.request = this.instance();
 };
 
 var JsonRpc = function JsonRpc() {

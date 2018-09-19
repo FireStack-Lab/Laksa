@@ -47,7 +47,7 @@
       });
 
       _defineProperty(this, "send", async payload => {
-        const result = await this.instance().post(this.url, JSON.stringify(payload)).then(response => {
+        const result = await this.request.post(this.url, JSON.stringify(payload)).then(response => {
           const {
             data,
             status
@@ -61,7 +61,7 @@
       });
 
       _defineProperty(this, "sendServer", async (endpoint, payload) => {
-        const result = await this.instance().post(`${this.url}${endpoint}`, JSON.stringify(payload)).then(response => {
+        const result = await this.request.post(`${this.url}${endpoint}`, JSON.stringify(payload)).then(response => {
           const {
             data,
             status
@@ -75,7 +75,7 @@
       });
 
       _defineProperty(this, "sendAsync", (payload, callback) => {
-        this.instance().post(this.url, JSON.stringify(payload)).then(response => {
+        this.request.post(this.url, JSON.stringify(payload)).then(response => {
           const {
             data,
             status
@@ -88,7 +88,7 @@
       });
 
       _defineProperty(this, "sendAsyncServer", (endpoint, payload, callback) => {
-        this.instance().post(`${this.url}${endpoint}`, JSON.stringify(payload)).then(response => {
+        this.request.post(`${this.url}${endpoint}`, JSON.stringify(payload)).then(response => {
           const {
             data,
             status
@@ -105,7 +105,7 @@
       this.user = user || null;
       this.password = password || null;
       this.headers = headers;
-      this.axios = this.instance();
+      this.request = this.instance();
     }
 
   }

@@ -207,14 +207,13 @@ var Wallet = function Wallet() {
     _this.accounts[newIndex] = objectKey;
 
     _this.updateLength();
+
+    return _objectSpread({}, newAccountObject);
   });
 
   _defineProperty(this, "createAccount", function () {
     var accountObject = createAccount();
-
-    _this.addAccount(accountObject);
-
-    return true;
+    return _this.addAccount(accountObject);
   });
 
   _defineProperty(this, "createBatchAccounts", function (number) {

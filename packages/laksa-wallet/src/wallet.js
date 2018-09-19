@@ -44,12 +44,14 @@ class Wallet {
     this.accounts[objectKey] = newAccountObject
     this.accounts[newIndex] = objectKey
     this.updateLength()
+    return {
+      ...newAccountObject
+    }
   }
 
   createAccount = () => {
     const accountObject = account.createAccount()
-    this.addAccount(accountObject)
-    return true
+    return this.addAccount(accountObject)
   }
 
   createBatchAccounts = (number) => {

@@ -220,12 +220,12 @@
         this.accounts[objectKey] = newAccountObject;
         this.accounts[newIndex] = objectKey;
         this.updateLength();
+        return _objectSpread({}, newAccountObject);
       });
 
       _defineProperty(this, "createAccount", () => {
         const accountObject = createAccount();
-        this.addAccount(accountObject);
-        return true;
+        return this.addAccount(accountObject);
       });
 
       _defineProperty(this, "createBatchAccounts", number => {
