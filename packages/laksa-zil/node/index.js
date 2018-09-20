@@ -248,6 +248,18 @@
     isSendJson: false
   },
   /**
+   * compileCode
+   * @params {code:String}
+   */
+  {
+    name: 'compileCode',
+    call: 'CompileCode',
+    params: {
+      code: ['isString', 'required']
+    },
+    isSendJson: true
+  },
+  /**
    * checkCode
    */
   {
