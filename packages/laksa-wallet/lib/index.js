@@ -393,7 +393,12 @@ var Wallet = function Wallet() {
 
   this.length = 0;
   this.accounts = [];
-};
+}
+/**
+ * [updateLength description]
+ * @return {[type]} [description]
+ */
+;
 
 exports.Wallet = Wallet;
 exports.encrypt = encrypt;

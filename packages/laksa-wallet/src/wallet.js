@@ -15,6 +15,10 @@ class Wallet {
     this.accounts = []
   }
 
+  /**
+   * [updateLength description]
+   * @return {[type]} [description]
+   */
   updateLength = () => {
     this.length = this.getIndexKeys().length
   }
