@@ -413,11 +413,11 @@ var mapPropertyToObjects = function mapPropertyToObjects(main) {
 var Zil =
 /*#__PURE__*/
 function () {
-  function Zil(Webz) {
+  function Zil(Laksa) {
     _classCallCheck(this, Zil);
 
-    this.messenger = Webz.messenger;
-    this.config = Webz.config;
+    this.messenger = Laksa.messenger;
+    this.config = Laksa.config;
     mapObjectToMethods(this);
     mapPropertyToObjects(this);
   }

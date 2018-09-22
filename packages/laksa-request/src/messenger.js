@@ -8,21 +8,14 @@ class Messanger {
   }
 
   send = async (data) => {
-    if (!this.provider) {
-      InvalidProvider()
-      return null
-    }
+    this.providerCheck()
     const payload = this.JsonRpc.toPayload(data.method, data.params)
     const result = await this.provider.send(payload)
     return result
   }
 
   sendAsync = (data, callback) => {
-    if (!this.provider) {
-      InvalidProvider()
-      return null
-    }
-
+    this.providerCheck()
     const payload = this.JsonRpc.toPayload(data.method, data.params)
     this.provider.sendAsync(payload, (err, result) => {
       if (err) {
@@ -33,37 +26,24 @@ class Messanger {
   }
 
   sendBatch = (data, callback) => {
-    if (!this.provider) {
-      InvalidProvider()
-      return null
-    }
-
+    this.providerCheck()
     const payload = this.JsonRpc.toBatchPayload(data)
-
     this.provider.sendAsync(payload, (err, results) => {
       if (err) {
         return callback(err)
       }
-      callback(err, results)
+      callback(null, results)
     })
   }
 
   sendServer = async (endpoint, data) => {
-    if (!this.provider) {
-      InvalidProvider()
-      return null
-    }
-    // const payload = this.JsonRpc.toPayload(data.method, data.params)
+    this.providerCheck()
     const result = await this.provider.sendServer(endpoint, data)
     return result
   }
 
   sendAsyncServer = (endpoint, data, callback) => {
-    if (!this.provider) {
-      InvalidProvider()
-      return null
-    }
-    // const payload = this.JsonRpc.toPayload(data.method, data.params)
+    this.providerCheck()
     this.provider.sendAsyncServer(endpoint, data, (err, result) => {
       if (err) {
         return callback(err)
@@ -73,21 +53,24 @@ class Messanger {
   }
 
   sendBatchServer = (data, callback) => {
-    if (!this.provider) {
-      InvalidProvider()
-      return null
-    }
-    // const payload = this.JsonRpc.toBatchPayload(data)
+    this.providerCheck()
     this.provider.sendAsync(data, (err, results) => {
       if (err) {
         return callback(err)
       }
-      callback(err, results)
+      callback(null, results)
     })
   }
 
   setProvider = (provider) => {
     this.provider = provider
+  }
+
+  providerCheck = () => {
+    if (!this.provider) {
+      InvalidProvider()
+      return null
+    }
   }
 }
 

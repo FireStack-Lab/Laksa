@@ -1,8 +1,8 @@
 (function (global, factory) {
-  typeof exports === 'object' && typeof module !== 'undefined' ? module.exports = factory(require('laksa-utils'), require('laksa-wallet'), require('laksa-request'), require('laksa-zil')) :
-  typeof define === 'function' && define.amd ? define(['laksa-utils', 'laksa-wallet', 'laksa-request', 'laksa-zil'], factory) :
-  (global.Laksa = factory(global.util,global.wallet,global.laksaRequest,global.Zil));
-}(this, (function (util,wallet,laksaRequest,Zil) { 'use strict';
+  typeof exports === 'object' && typeof module !== 'undefined' ? module.exports = factory(require('laksa-utils'), require('laksa-core-crypto'), require('laksa-wallet'), require('laksa-request'), require('laksa-zil')) :
+  typeof define === 'function' && define.amd ? define(['laksa-utils', 'laksa-core-crypto', 'laksa-wallet', 'laksa-request', 'laksa-zil'], factory) :
+  (global.Laksa = factory(global.util,global.core,global.wallet,global.laksaRequest,global.Zil));
+}(this, (function (util,core,wallet,laksaRequest,Zil) { 'use strict';
 
   Zil = Zil && Zil.hasOwnProperty('default') ? Zil['default'] : Zil;
 
@@ -19,6 +19,25 @@
     }
 
     return obj;
+  }
+
+  function _objectSpread(target) {
+    for (var i = 1; i < arguments.length; i++) {
+      var source = arguments[i] != null ? arguments[i] : {};
+      var ownKeys = Object.keys(source);
+
+      if (typeof Object.getOwnPropertySymbols === 'function') {
+        ownKeys = ownKeys.concat(Object.getOwnPropertySymbols(source).filter(function (sym) {
+          return Object.getOwnPropertyDescriptor(source, sym).enumerable;
+        }));
+      }
+
+      ownKeys.forEach(function (key) {
+        _defineProperty(target, key, source[key]);
+      });
+    }
+
+    return target;
   }
 
   var config = {
@@ -40,11 +59,11 @@
 
       _defineProperty(this, "config", config);
 
-      _defineProperty(this, "isConnected", async () => {
+      _defineProperty(this, "isConnected", async callback => {
         const result = await this.zil.isConnected();
 
         try {
-          return !(result instanceof Error);
+          return callback === undefined ? !(result instanceof Error) : callback(null, true);
         } catch (e) {
           return false;
         }
@@ -65,16 +84,12 @@
         this.messenger.setProvider(this.currentProvider);
       });
 
-      // validateArgs(args, {}, { nodeUrl: [util.isUrl] })
-      const url = args || config.defaultNodeUrl; //
-
-      this.util = util;
-      this.wallet = new Wallet(); //
-
+      const url = args || config.defaultNodeUrl;
+      this.util = _objectSpread({}, util, core);
       this.currentProvider = new laksaRequest.HttpProvider(url);
-      this.messenger = new laksaRequest.Messenger(this.currentProvider); //
-
+      this.messenger = new laksaRequest.Messenger(this.currentProvider);
       this.zil = new Zil(this);
+      this.wallet = new Wallet();
     }
 
   }

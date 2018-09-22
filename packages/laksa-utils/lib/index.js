@@ -5,9 +5,13 @@ Object.defineProperty(exports, '__esModule', { value: true });
 function _interopDefault (ex) { return (ex && (typeof ex === 'object') && 'default' in ex) ? ex['default'] : ex; }
 
 var _typeof = _interopDefault(require('@babel/runtime/helpers/typeof'));
-require('core-js/modules/es6.object.assign');
 var validUrl = require('valid-url');
 var bn_js = require('bn.js');
+require('core-js/modules/es6.object.assign');
+require('core-js/modules/es7.object.values');
+require('core-js/modules/web.dom.iterable');
+require('core-js/modules/es6.array.iterator');
+require('core-js/modules/es6.object.keys');
 require('core-js/modules/es6.number.is-nan');
 require('core-js/modules/es6.regexp.split');
 require('core-js/modules/es6.regexp.replace');
@@ -17,12 +21,8 @@ require('core-js/modules/es6.regexp.to-string');
 var numToBN = _interopDefault(require('number-to-bn'));
 var utf8 = _interopDefault(require('utf8'));
 require('core-js/modules/es6.function.name');
-require('core-js/modules/web.dom.iterable');
-require('core-js/modules/es6.array.iterator');
-require('core-js/modules/es6.object.keys');
 var _classCallCheck = _interopDefault(require('@babel/runtime/helpers/classCallCheck'));
 var _defineProperty = _interopDefault(require('@babel/runtime/helpers/defineProperty'));
-var laksaCoreCrypto = require('laksa-core-crypto');
 
 /**
  * [isNumber verify param is a Number]
@@ -32,59 +32,43 @@ var laksaCoreCrypto = require('laksa-core-crypto');
 
 var isNumber = function isNumber(obj) {
   return obj === +obj;
-}; // assign validator string
-
-
-Object.assign(isNumber, {
-  validator: 'Number'
-});
+};
 /**
  * [isString verify param is a String]
  * @param  {[type]}  obj [value]
  * @return {Boolean}     [boolean]
  */
 
+
 var isString = function isString(obj) {
   return obj === "".concat(obj);
-}; // assign validator string
-
-
-Object.assign(isString, {
-  validator: 'String'
-});
+};
 /**
  * [isBoolean verify param is a Boolean]
  * @param  {[type]}  obj [value]
  * @return {Boolean}     [boolean]
  */
 
+
 var isBoolean = function isBoolean(obj) {
   return obj === !!obj;
-}; // assign validator string
-
-
-Object.assign(isBoolean, {
-  validator: 'Boolean'
-});
+};
 /**
  * [isArray verify param input is an Array]
  * @param  {[type]}  obj [value]
  * @return {Boolean}     [boolean]
  */
 
+
 var isArray = function isArray(obj) {
   return Array.isArray(obj);
-}; // assign validator string
-
-
-Object.assign(isArray, {
-  validator: 'Array'
-});
+};
 /**
  * [isJson verify param input is a Json]
  * @param  {[type]}  obj [value]
  * @return {Boolean}     [boolean]
  */
+
 
 var isJson = function isJson(obj) {
   try {
@@ -92,40 +76,27 @@ var isJson = function isJson(obj) {
   } catch (e) {
     return false;
   }
-}; // assign validator string
-
-
-Object.assign(isJson, {
-  validator: 'Json'
-});
+};
 /**
  * [isObject verify param is an Object]
  * @param  {[type]}  obj [value]
  * @return {Boolean}     [boolean]
  */
 
+
 var isObject = function isObject(obj) {
   return obj !== null && !Array.isArray(obj) && _typeof(obj) === 'object';
-}; // assign validator string
-
-
-Object.assign(isObject, {
-  validator: 'Object'
-});
+};
 /**
  * [isFunction verify param is a Function]
  * @param  {[type]}  obj [value]
  * @return {Boolean}     [description]
  */
 
+
 var isFunction = function isFunction(obj) {
   return typeof obj === 'function';
-}; // assign validator string
-
-
-Object.assign(isFunction, {
-  validator: 'Function'
-});
+};
 /**
  * verify if param is correct
  * @param  {[hex|string]}  address [description]
@@ -135,6 +106,7 @@ Object.assign(isFunction, {
 //   return !!address.match(/^[0-9a-fA-F]{40}$/)
 // }
 
+
 var isAddress = function isAddress(address) {
   if (!/^(0x)?[0-9a-f]{40}$/i.test(address)) {
     // check if it has the basic requirements of an address
@@ -143,17 +115,13 @@ var isAddress = function isAddress(address) {
     // If it's all small caps or all all caps, return true
     return true;
   }
-}; // assign validator string
-
-
-Object.assign(isAddress, {
-  validator: 'Address'
-});
+};
 /**
  * verify if privateKey is correct
  * @param  {[hex|string]}  privateKey [description]
  * @return {Boolean}            [description]
  */
+
 
 var isPrivateKey = function isPrivateKey(privateKey) {
   if (!/^(0x)?[0-9a-f]{64}$/i.test(privateKey)) {
@@ -164,17 +132,13 @@ var isPrivateKey = function isPrivateKey(privateKey) {
     return true;
   } // return !!privateKey.match(/^[0-9a-fA-F]{64}$/)
 
-}; // assign validator string
-
-
-Object.assign(isPrivateKey, {
-  validator: 'PrivateKey'
-});
+};
 /**
  * verify if public key is correct
  * @param  {[hex|string]}  pubkey [description]
  * @return {Boolean}        [description]
  */
+
 
 var isPubkey = function isPubkey(pubkey) {
   if (!/^(0x)?[0-9a-f]{66}$/i.test(pubkey)) {
@@ -185,31 +149,27 @@ var isPubkey = function isPubkey(pubkey) {
     return true;
   } // return !!pubkey.match(/^[0-9a-fA-F]{66}$/)
 
-}; // assign validator string
-
-
-Object.assign(isPubkey, {
-  validator: 'PublicKey'
-});
+};
 /**
  * verify if url is correct
  * @param  {[string]}  url [description]
  * @return {Boolean}     [description]
  */
 
+
 var isUrl = function isUrl(url) {
-  return validUrl.isWebUri(url);
-}; // assign validator string
+  if (typeof url === 'string') {
+    return validUrl.isWebUri(url);
+  }
 
-
-Object.assign(isUrl, {
-  validator: 'Url'
-});
+  return false;
+};
 /**
  * verify if hash is correct
  * @param  {[string]}  txHash [description]
  * @return {Boolean}        [description]
  */
+
 
 var isHash = function isHash(txHash) {
   if (!/^(0x)?[0-9a-f]{64}$/i.test(txHash)) {
@@ -220,12 +180,7 @@ var isHash = function isHash(txHash) {
     return true;
   } // return !!txHash.match(/^[0-9a-fA-F]{64}$/)
 
-}; // assign validator string
-
-
-Object.assign(isHash, {
-  validator: 'Hash'
-});
+};
 /**
  * Check if string is HEX
  *
@@ -234,45 +189,137 @@ Object.assign(isHash, {
  * @returns {Boolean}
  */
 
+
 var isHex = function isHex(hex) {
   return (isString(hex) || isNumber(hex)) && /^0x?[0-9a-f]*$/i.test(hex);
-}; // assign validator string
-
-
-Object.assign(isHex, {
-  validator: 'Hex'
-});
+};
 /**
  * check Object isNull
  * @param  {[type]}  obj [description]
  * @return {Boolean}     [description]
  */
 
+
 var isNull = function isNull(obj) {
   return obj === null;
 };
-
-Object.assign(isNull, {
-  validator: 'Null'
-});
 /**
  * check object is undefined
  * @param  {[type]}  obj [description]
  * @return {Boolean}     [description]
  */
 
+
 var isUndefined = function isUndefined(obj) {
   return obj === undefined;
 };
 
-Object.assign(isUndefined, {
-  validator: 'Undefined'
-}); // isBN
-// imported
-
-Object.assign(bn_js.isBN, {
-  validator: 'BN'
+var validators = /*#__PURE__*/Object.freeze({
+  isNumber: isNumber,
+  isString: isString,
+  isBoolean: isBoolean,
+  isArray: isArray,
+  isJson: isJson,
+  isObject: isObject,
+  isFunction: isFunction,
+  isHash: isHash,
+  isUrl: isUrl,
+  isPubkey: isPubkey,
+  isPrivateKey: isPrivateKey,
+  isAddress: isAddress,
+  isBN: bn_js.isBN,
+  isHex: isHex,
+  isNull: isNull,
+  isUndefined: isUndefined
 });
+
+function objToArray(obj) {
+  var keys = Object.keys(obj);
+  var values = Object.values(obj);
+  var newArray = keys.map(function (k, index) {
+    var Obj = {};
+    Obj[k] = values[index];
+    return Obj;
+  });
+  return newArray;
+}
+
+function injectValidator(func) {
+  if (_typeof(func) === 'object' && func !== undefined) {
+    var valName = Object.keys(func)[0];
+    var valFunc = Object.values(func)[0];
+    return Object.assign(valFunc, {
+      validator: valName,
+      test: function test(obj) {
+        return valFunc(obj);
+      }
+    });
+  } else return false;
+}
+
+function extractValidator(vals) {
+  var newValidator = [];
+  var newArr = objToArray(vals);
+  newArr.forEach(function (v, index) {
+    var newV = injectValidator(v);
+    var validatorString = newV.validator;
+    newValidator[validatorString] = newV;
+    newValidator[index] = newV;
+  });
+  return newValidator;
+}
+
+var valArray = extractValidator(validators);
+var isNumber$1 = valArray.isNumber,
+    isString$1 = valArray.isString,
+    isBoolean$1 = valArray.isBoolean,
+    isArray$1 = valArray.isArray,
+    isJson$1 = valArray.isJson,
+    isObject$1 = valArray.isObject,
+    isFunction$1 = valArray.isFunction,
+    isHash$1 = valArray.isHash,
+    isUrl$1 = valArray.isUrl,
+    isPubkey$1 = valArray.isPubkey,
+    isPrivateKey$1 = valArray.isPrivateKey,
+    isAddress$1 = valArray.isAddress,
+    isBN = valArray.isBN,
+    isHex$1 = valArray.isHex,
+    isNull$1 = valArray.isNull,
+    isUndefined$1 = valArray.isUndefined;
+/**
+ * [Validator description]
+ * @param       {[type]} stringToTest    [description]
+ * @param       {[type]} validatorString [description]
+ * @constructor
+ */
+
+function Validator(stringToTest, validatorString) {
+  if (typeof validatorString === 'string' && valArray["is".concat(validatorString)] !== undefined) {
+    return valArray["is".concat(validatorString)].test(stringToTest);
+  } else if (typeof validatorString === 'function') {
+    return validatorString(stringToTest);
+  } else {
+    throw new Error("validator not found :".concat(validatorString));
+  }
+}
+
+function tester(value, callback) {
+  try {
+    var validateResult = valArray.map(function (func) {
+      return func.test(value) ? func.validator.substring(2) : false;
+    }).filter(function (d) {
+      return d !== false;
+    });
+    return callback === undefined ? validateResult : callback(validateResult);
+  } catch (e) {
+    return callback === undefined ? e : callback(e);
+  }
+}
+
+Object.assign(Validator, {
+  test: tester
+});
+var validator = Validator;
 /**
  * make sure each of the keys in requiredArgs is present in args
  * @param  {[type]} args         [description]
@@ -360,15 +407,15 @@ var intToByteArray = function intToByteArray(val, paddedSize) {
 
 
 var numberToHex = function numberToHex(value) {
-  if (isNull(value) || isUndefined(value)) {
+  if (isNull$1(value) || isUndefined$1(value)) {
     return value;
   }
 
-  if (!Number.isFinite(value) && !isHex(value) && !bn_js.isBN(value) && !isString(value)) {
+  if (!Number.isFinite(value) && !isHex$1(value) && !isBN(value) && !isString$1(value)) {
     throw new Error("Given input \"".concat(value, "\" is not a number."));
   }
 
-  var number = bn_js.isBN(value) ? value : toBN(value);
+  var number = isBN(value) ? value : toBN(value);
   var result = number.toString(16);
   return number.lt(toBN(0)) ? "-0x".concat(result.substr(1)) : "0x".concat(result);
 };
@@ -449,28 +496,28 @@ var utf8ToHex = function utf8ToHex(str) {
 
 var toHex = function toHex(value, returnType) {
   /* jshint maxcomplexity: false */
-  if (isAddress(value)) {
+  if (isAddress$1(value)) {
     // strip 0x from address
     return returnType ? 'address' : "0x".concat(value.toLowerCase().replace(/^0x/i, ''));
   }
 
-  if (isBoolean(value)) {
+  if (isBoolean$1(value)) {
     return returnType ? 'bool' : value ? '0x01' : '0x00';
   }
 
-  if (isObject(value) && !bn_js.isBN(value)) {
+  if (isObject$1(value) && !isBN(value)) {
     return returnType ? 'string' : utf8ToHex(JSON.stringify(value));
   }
 
-  if (bn_js.isBN(value)) {
+  if (isBN(value)) {
     return returnType ? 'BN' : numberToHex(value);
   } // if its a negative number, pass it through numberToHex
 
 
-  if (isString(value)) {
-    if (isHex(value) || !Number.isNaN(Number(value))) {
+  if (isString$1(value)) {
+    if (isHex$1(value) || !Number.isNaN(Number(value))) {
       return returnType ? value < 0 ? 'int256' : 'uint256' : numberToHex(value);
-    } else if (!Number.isFinite(value) && !isUndefined(value) && Number.isNaN(Number(value))) {
+    } else if (!Number.isFinite(value) && !isUndefined$1(value) && Number.isNaN(Number(value))) {
       return returnType ? 'string' : add0x(value);
     }
   }
@@ -486,7 +533,7 @@ var strip0x = function strip0x(value) {
 var add0x = function add0x(value) {
   var newString;
 
-  if (!isString(value)) {
+  if (!isString$1(value)) {
     newString = String(value);
     return "0x".concat(newString.replace(/^0x/i, ''));
   }
@@ -524,19 +571,19 @@ var padRight = function padRight(string, chars, sign) {
 };
 
 var validatorArray = {
-  isNumber: [isNumber],
-  isString: [isString],
-  isBoolean: [isBoolean],
-  isArray: [isArray],
-  isJson: [isJson],
-  isObject: [isObject],
-  isFunction: [isFunction],
-  isHash: [isHash],
-  isUrl: [isUrl],
-  isPubkey: [isPubkey],
-  isPrivateKey: [isPrivateKey],
-  isBN: [bn_js.isBN],
-  isAddress: [isAddress]
+  isNumber: [isNumber$1],
+  isString: [isString$1],
+  isBoolean: [isBoolean$1],
+  isArray: [isArray$1],
+  isJson: [isJson$1],
+  isObject: [isObject$1],
+  isFunction: [isFunction$1],
+  isHash: [isHash$1],
+  isUrl: [isUrl$1],
+  isPubkey: [isPubkey$1],
+  isPrivateKey: [isPrivateKey$1],
+  isBN: [isBN],
+  isAddress: [isAddress$1]
 };
 var transformerArray = {
   toBn: toBN,
@@ -594,7 +641,7 @@ var Method = function Method(options) {
   });
 
   _defineProperty(this, "extractParams", function (args) {
-    var paramsObject = isObject(args) ? args : {};
+    var paramsObject = isObject$1(args) ? args : {};
     var result;
     var keyArrayLength = Object.keys(paramsObject).length;
     if (keyArrayLength === 0) result = [];
@@ -639,11 +686,13 @@ var Method = function Method(options) {
 
         var params = _this.extractParams(args);
 
-        if (callback) {
+        var newCallback = isFunction$1(args) ? args : callback;
+
+        if (newCallback) {
           return _this.messanger.sendAsync({
             method: _this.call,
             params: params
-          }, callback);
+          }, newCallback);
         }
 
         return _this.messanger.send({
@@ -661,8 +710,10 @@ var Method = function Method(options) {
 
         _this.validateArgs(args, requiredArgs, optionalArgs);
 
-        if (callback) {
-          return _this.messanger.sendAsyncServer(_this.endpoint, args, callback);
+        var newCallback = isFunction$1(args) ? args : callback;
+
+        if (newCallback) {
+          return _this.messanger.sendAsyncServer(_this.endpoint, args, newCallback);
         }
 
         return _this.messanger.sendServer(_this.endpoint, args);
@@ -707,8 +758,7 @@ var Property = function Property(options) {
     };
     var newZilObject = {};
     newZilObject[asyncGetterName(zilName)] = _this.propertyBuilder();
-    Object.defineProperty(object, zilName, zilObject); //
-
+    Object.defineProperty(object, zilName, zilObject);
     Object.assign(object, newZilObject);
   });
 
@@ -737,35 +787,28 @@ var Property = function Property(options) {
   this.messanger = null;
 };
 
-exports.isBN = bn_js.isBN;
-exports.generatePrivateKey = laksaCoreCrypto.generatePrivateKey;
-exports.getAddressFromPrivateKey = laksaCoreCrypto.getAddressFromPrivateKey;
-exports.getPubKeyFromPrivateKey = laksaCoreCrypto.getPubKeyFromPrivateKey;
-exports.compressPublicKey = laksaCoreCrypto.compressPublicKey;
-exports.getAddressFromPublicKey = laksaCoreCrypto.getAddressFromPublicKey;
-exports.verifyPrivateKey = laksaCoreCrypto.verifyPrivateKey;
-exports.encodeTransaction = laksaCoreCrypto.encodeTransaction;
-exports.createTransactionJson = laksaCoreCrypto.createTransactionJson;
-exports.randomBytes = laksaCoreCrypto.randomBytes;
 exports.Method = Method;
 exports.Property = Property;
-exports.isNumber = isNumber;
-exports.isString = isString;
-exports.isBoolean = isBoolean;
-exports.isArray = isArray;
-exports.isJson = isJson;
-exports.isObject = isObject;
-exports.isFunction = isFunction;
-exports.isHash = isHash;
-exports.isUrl = isUrl;
-exports.isPubkey = isPubkey;
-exports.isPrivateKey = isPrivateKey;
-exports.isAddress = isAddress;
-exports.isHex = isHex;
-exports.isNull = isNull;
-exports.isUndefined = isUndefined;
+exports.isNumber = isNumber$1;
+exports.isString = isString$1;
+exports.isBoolean = isBoolean$1;
+exports.isArray = isArray$1;
+exports.isJson = isJson$1;
+exports.isObject = isObject$1;
+exports.isFunction = isFunction$1;
+exports.isHash = isHash$1;
+exports.isUrl = isUrl$1;
+exports.isPubkey = isPubkey$1;
+exports.isPrivateKey = isPrivateKey$1;
+exports.isAddress = isAddress$1;
+exports.isBN = isBN;
+exports.isHex = isHex$1;
+exports.isNull = isNull$1;
+exports.isUndefined = isUndefined$1;
+exports.validator = validator;
 exports.validateArgs = validateArgs;
 exports.validateFunctionArgs = validateFunctionArgs;
+exports.extractValidator = extractValidator;
 exports.intToByteArray = intToByteArray;
 exports.toHex = toHex;
 exports.toUtf8 = toUtf8;

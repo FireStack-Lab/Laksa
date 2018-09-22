@@ -23,7 +23,6 @@ class Property {
     const newZilObject = {}
     newZilObject[asyncGetterName(zilName)] = this.propertyBuilder()
     Object.defineProperty(object, zilName, zilObject)
-    //
     Object.assign(object, newZilObject)
   }
 

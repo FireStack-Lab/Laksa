@@ -10,6 +10,7 @@
   "license": "ISC",
   "dependencies": {
     "crypto-js": "^3.1.9-1",
+    "laksa-core-crypto": "^0.0.34",
     "laksa-utils": "^0.0.34",
     "uuid": "^3.3.2"
   }

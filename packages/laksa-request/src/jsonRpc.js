@@ -4,7 +4,8 @@ class JsonRpc {
   }
 
   toPayload = (method, params) => {
-    if (!method) console.error('jsonrpc method should be specified!')
+    // FIXME: error to be done by shared/errors
+    if (!method) throw new Error('jsonrpc method should be specified!')
 
     // advance message ID
     this.messageId += 1

@@ -6,6 +6,7 @@ function _interopDefault (ex) { return (ex && (typeof ex === 'object') && 'defau
 
 require('core-js/modules/es6.regexp.to-string');
 var laksaUtils = require('laksa-utils');
+var laksaCoreCrypto = require('laksa-core-crypto');
 var uuid = _interopDefault(require('uuid'));
 var CryptoJS = _interopDefault(require('crypto-js'));
 require('core-js/modules/es6.object.assign');
@@ -23,8 +24,8 @@ var encrypt = function encrypt(privateKey, password) {
   var options = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : {};
   if (!laksaUtils.isPrivateKey) throw new Error('Invalid PrivateKey');
   if (!laksaUtils.isString(password)) throw new Error('no password found');
-  var iv = options.iv || laksaUtils.randomBytes(16);
-  var salt = options.salt || laksaUtils.randomBytes(32);
+  var iv = options.iv || laksaCoreCrypto.randomBytes(16);
+  var salt = options.salt || laksaCoreCrypto.randomBytes(32);
   var kdfparams = {
     dklen: options.dklen || 32,
     salt: salt.toString('hex'),
@@ -46,7 +47,7 @@ var encrypt = function encrypt(privateKey, password) {
   return {
     version: 3,
     id: uuid.v4({
-      random: laksaUtils.randomBytes(16)
+      random: laksaCoreCrypto.randomBytes(16)
     }),
     crypto: {
       ciphertext: ciphertext.toString(),

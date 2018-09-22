@@ -1,8 +1,8 @@
 (function (global, factory) {
-  typeof exports === 'object' && typeof module !== 'undefined' ? factory(exports, require('valid-url'), require('bn.js'), require('number-to-bn'), require('utf8'), require('laksa-core-crypto')) :
-  typeof define === 'function' && define.amd ? define(['exports', 'valid-url', 'bn.js', 'number-to-bn', 'utf8', 'laksa-core-crypto'], factory) :
-  (factory((global.Laksa = {}),global.validUrl,global.bn_js,global.numToBN,global.utf8,global.laksaCoreCrypto));
-}(this, (function (exports,validUrl,bn_js,numToBN,utf8,laksaCoreCrypto) { 'use strict';
+  typeof exports === 'object' && typeof module !== 'undefined' ? factory(exports, require('valid-url'), require('bn.js'), require('number-to-bn'), require('utf8')) :
+  typeof define === 'function' && define.amd ? define(['exports', 'valid-url', 'bn.js', 'number-to-bn', 'utf8'], factory) :
+  (factory((global.Laksa = {}),global.validUrl,global.bn_js,global.numToBN,global.utf8));
+}(this, (function (exports,validUrl,bn_js,numToBN,utf8) { 'use strict';
 
   numToBN = numToBN && numToBN.hasOwnProperty('default') ? numToBN['default'] : numToBN;
   utf8 = utf8 && utf8.hasOwnProperty('default') ? utf8['default'] : utf8;
@@ -30,59 +30,43 @@
 
   const isNumber = obj => {
     return obj === +obj;
-  }; // assign validator string
-
-
-  Object.assign(isNumber, {
-    validator: 'Number'
-  });
+  };
   /**
    * [isString verify param is a String]
    * @param  {[type]}  obj [value]
    * @return {Boolean}     [boolean]
    */
 
+
   const isString = obj => {
     return obj === `${obj}`;
-  }; // assign validator string
-
-
-  Object.assign(isString, {
-    validator: 'String'
-  });
+  };
   /**
    * [isBoolean verify param is a Boolean]
    * @param  {[type]}  obj [value]
    * @return {Boolean}     [boolean]
    */
 
+
   const isBoolean = obj => {
     return obj === !!obj;
-  }; // assign validator string
-
-
-  Object.assign(isBoolean, {
-    validator: 'Boolean'
-  });
+  };
   /**
    * [isArray verify param input is an Array]
    * @param  {[type]}  obj [value]
    * @return {Boolean}     [boolean]
    */
 
+
   const isArray = obj => {
     return Array.isArray(obj);
-  }; // assign validator string
-
-
-  Object.assign(isArray, {
-    validator: 'Array'
-  });
+  };
   /**
    * [isJson verify param input is a Json]
    * @param  {[type]}  obj [value]
    * @return {Boolean}     [boolean]
    */
+
 
   const isJson = obj => {
     try {
@@ -90,40 +74,27 @@
     } catch (e) {
       return false;
     }
-  }; // assign validator string
-
-
-  Object.assign(isJson, {
-    validator: 'Json'
-  });
+  };
   /**
    * [isObject verify param is an Object]
    * @param  {[type]}  obj [value]
    * @return {Boolean}     [boolean]
    */
 
+
   const isObject = obj => {
     return obj !== null && !Array.isArray(obj) && typeof obj === 'object';
-  }; // assign validator string
-
-
-  Object.assign(isObject, {
-    validator: 'Object'
-  });
+  };
   /**
    * [isFunction verify param is a Function]
    * @param  {[type]}  obj [value]
    * @return {Boolean}     [description]
    */
 
+
   const isFunction = obj => {
     return typeof obj === 'function';
-  }; // assign validator string
-
-
-  Object.assign(isFunction, {
-    validator: 'Function'
-  });
+  };
   /**
    * verify if param is correct
    * @param  {[hex|string]}  address [description]
@@ -133,6 +104,7 @@
   //   return !!address.match(/^[0-9a-fA-F]{40}$/)
   // }
 
+
   const isAddress = address => {
     if (!/^(0x)?[0-9a-f]{40}$/i.test(address)) {
       // check if it has the basic requirements of an address
@@ -141,17 +113,13 @@
       // If it's all small caps or all all caps, return true
       return true;
     }
-  }; // assign validator string
-
-
-  Object.assign(isAddress, {
-    validator: 'Address'
-  });
+  };
   /**
    * verify if privateKey is correct
    * @param  {[hex|string]}  privateKey [description]
    * @return {Boolean}            [description]
    */
+
 
   const isPrivateKey = privateKey => {
     if (!/^(0x)?[0-9a-f]{64}$/i.test(privateKey)) {
@@ -162,17 +130,13 @@
       return true;
     } // return !!privateKey.match(/^[0-9a-fA-F]{64}$/)
 
-  }; // assign validator string
-
-
-  Object.assign(isPrivateKey, {
-    validator: 'PrivateKey'
-  });
+  };
   /**
    * verify if public key is correct
    * @param  {[hex|string]}  pubkey [description]
    * @return {Boolean}        [description]
    */
+
 
   const isPubkey = pubkey => {
     if (!/^(0x)?[0-9a-f]{66}$/i.test(pubkey)) {
@@ -183,31 +147,27 @@
       return true;
     } // return !!pubkey.match(/^[0-9a-fA-F]{66}$/)
 
-  }; // assign validator string
-
-
-  Object.assign(isPubkey, {
-    validator: 'PublicKey'
-  });
+  };
   /**
    * verify if url is correct
    * @param  {[string]}  url [description]
    * @return {Boolean}     [description]
    */
 
+
   const isUrl = url => {
-    return validUrl.isWebUri(url);
-  }; // assign validator string
+    if (typeof url === 'string') {
+      return validUrl.isWebUri(url);
+    }
 
-
-  Object.assign(isUrl, {
-    validator: 'Url'
-  });
+    return false;
+  };
   /**
    * verify if hash is correct
    * @param  {[string]}  txHash [description]
    * @return {Boolean}        [description]
    */
+
 
   const isHash = txHash => {
     if (!/^(0x)?[0-9a-f]{64}$/i.test(txHash)) {
@@ -218,12 +178,7 @@
       return true;
     } // return !!txHash.match(/^[0-9a-fA-F]{64}$/)
 
-  }; // assign validator string
-
-
-  Object.assign(isHash, {
-    validator: 'Hash'
-  });
+  };
   /**
    * Check if string is HEX
    *
@@ -232,45 +187,135 @@
    * @returns {Boolean}
    */
 
+
   const isHex = hex => {
     return (isString(hex) || isNumber(hex)) && /^0x?[0-9a-f]*$/i.test(hex);
-  }; // assign validator string
-
-
-  Object.assign(isHex, {
-    validator: 'Hex'
-  });
+  };
   /**
    * check Object isNull
    * @param  {[type]}  obj [description]
    * @return {Boolean}     [description]
    */
 
+
   const isNull = obj => {
     return obj === null;
   };
-
-  Object.assign(isNull, {
-    validator: 'Null'
-  });
   /**
    * check object is undefined
    * @param  {[type]}  obj [description]
    * @return {Boolean}     [description]
    */
 
+
   const isUndefined = obj => {
     return obj === undefined;
   };
 
-  Object.assign(isUndefined, {
-    validator: 'Undefined'
-  }); // isBN
-  // imported
-
-  Object.assign(bn_js.isBN, {
-    validator: 'BN'
+  var validators = /*#__PURE__*/Object.freeze({
+    isNumber: isNumber,
+    isString: isString,
+    isBoolean: isBoolean,
+    isArray: isArray,
+    isJson: isJson,
+    isObject: isObject,
+    isFunction: isFunction,
+    isHash: isHash,
+    isUrl: isUrl,
+    isPubkey: isPubkey,
+    isPrivateKey: isPrivateKey,
+    isAddress: isAddress,
+    isBN: bn_js.isBN,
+    isHex: isHex,
+    isNull: isNull,
+    isUndefined: isUndefined
   });
+
+  function objToArray(obj) {
+    const keys = Object.keys(obj);
+    const values = Object.values(obj);
+    const newArray = keys.map((k, index) => {
+      const Obj = {};
+      Obj[k] = values[index];
+      return Obj;
+    });
+    return newArray;
+  }
+
+  function injectValidator(func) {
+    if (typeof func === 'object' && func !== undefined) {
+      const valName = Object.keys(func)[0];
+      const valFunc = Object.values(func)[0];
+      return Object.assign(valFunc, {
+        validator: valName,
+        test: obj => valFunc(obj)
+      });
+    } else return false;
+  }
+
+  function extractValidator(vals) {
+    const newValidator = [];
+    const newArr = objToArray(vals);
+    newArr.forEach((v, index) => {
+      const newV = injectValidator(v);
+      const validatorString = newV.validator;
+      newValidator[validatorString] = newV;
+      newValidator[index] = newV;
+    });
+    return newValidator;
+  }
+
+  const valArray = extractValidator(validators);
+  const {
+    isNumber: isNumber$1,
+    isString: isString$1,
+    isBoolean: isBoolean$1,
+    isArray: isArray$1,
+    isJson: isJson$1,
+    isObject: isObject$1,
+    isFunction: isFunction$1,
+    isHash: isHash$1,
+    isUrl: isUrl$1,
+    isPubkey: isPubkey$1,
+    isPrivateKey: isPrivateKey$1,
+    isAddress: isAddress$1,
+    isBN,
+    isHex: isHex$1,
+    isNull: isNull$1,
+    isUndefined: isUndefined$1
+  } = valArray;
+  /**
+   * [Validator description]
+   * @param       {[type]} stringToTest    [description]
+   * @param       {[type]} validatorString [description]
+   * @constructor
+   */
+
+  function Validator(stringToTest, validatorString) {
+    if (typeof validatorString === 'string' && valArray[`is${validatorString}`] !== undefined) {
+      return valArray[`is${validatorString}`].test(stringToTest);
+    } else if (typeof validatorString === 'function') {
+      return validatorString(stringToTest);
+    } else {
+      throw new Error(`validator not found :${validatorString}`);
+    }
+  }
+
+  function tester(value, callback) {
+    try {
+      const validateResult = valArray.map(func => {
+        return func.test(value) ? func.validator.substring(2) : false;
+      }).filter(d => d !== false);
+      return callback === undefined ? validateResult : callback(validateResult);
+    } catch (e) {
+      return callback === undefined ? e : callback(e);
+    }
+  }
+
+  Object.assign(Validator, {
+    test: tester
+  });
+  const validator = Validator;
   /**
    * make sure each of the keys in requiredArgs is present in args
    * @param  {[type]} args         [description]
@@ -358,15 +403,15 @@
 
 
   const numberToHex = value => {
-    if (isNull(value) || isUndefined(value)) {
+    if (isNull$1(value) || isUndefined$1(value)) {
       return value;
     }
 
-    if (!Number.isFinite(value) && !isHex(value) && !bn_js.isBN(value) && !isString(value)) {
+    if (!Number.isFinite(value) && !isHex$1(value) && !isBN(value) && !isString$1(value)) {
       throw new Error(`Given input "${value}" is not a number.`);
     }
 
-    const number = bn_js.isBN(value) ? value : toBN(value);
+    const number = isBN(value) ? value : toBN(value);
     const result = number.toString(16);
     return number.lt(toBN(0)) ? `-0x${result.substr(1)}` : `0x${result}`;
   };
@@ -447,28 +492,28 @@
 
   const toHex = (value, returnType) => {
     /* jshint maxcomplexity: false */
-    if (isAddress(value)) {
+    if (isAddress$1(value)) {
       // strip 0x from address
       return returnType ? 'address' : `0x${value.toLowerCase().replace(/^0x/i, '')}`;
     }
 
-    if (isBoolean(value)) {
+    if (isBoolean$1(value)) {
       return returnType ? 'bool' : value ? '0x01' : '0x00';
     }
 
-    if (isObject(value) && !bn_js.isBN(value)) {
+    if (isObject$1(value) && !isBN(value)) {
       return returnType ? 'string' : utf8ToHex(JSON.stringify(value));
     }
 
-    if (bn_js.isBN(value)) {
+    if (isBN(value)) {
       return returnType ? 'BN' : numberToHex(value);
     } // if its a negative number, pass it through numberToHex
 
 
-    if (isString(value)) {
-      if (isHex(value) || !Number.isNaN(Number(value))) {
+    if (isString$1(value)) {
+      if (isHex$1(value) || !Number.isNaN(Number(value))) {
         return returnType ? value < 0 ? 'int256' : 'uint256' : numberToHex(value);
-      } else if (!Number.isFinite(value) && !isUndefined(value) && Number.isNaN(Number(value))) {
+      } else if (!Number.isFinite(value) && !isUndefined$1(value) && Number.isNaN(Number(value))) {
         return returnType ? 'string' : add0x(value);
       }
     }
@@ -484,7 +529,7 @@
   const add0x = value => {
     let newString;
 
-    if (!isString(value)) {
+    if (!isString$1(value)) {
       newString = String(value);
       return `0x${newString.replace(/^0x/i, '')}`;
     }
@@ -522,19 +567,19 @@
   };
 
   const validatorArray = {
-    isNumber: [isNumber],
-    isString: [isString],
-    isBoolean: [isBoolean],
-    isArray: [isArray],
-    isJson: [isJson],
-    isObject: [isObject],
-    isFunction: [isFunction],
-    isHash: [isHash],
-    isUrl: [isUrl],
-    isPubkey: [isPubkey],
-    isPrivateKey: [isPrivateKey],
-    isBN: [bn_js.isBN],
-    isAddress: [isAddress]
+    isNumber: [isNumber$1],
+    isString: [isString$1],
+    isBoolean: [isBoolean$1],
+    isArray: [isArray$1],
+    isJson: [isJson$1],
+    isObject: [isObject$1],
+    isFunction: [isFunction$1],
+    isHash: [isHash$1],
+    isUrl: [isUrl$1],
+    isPubkey: [isPubkey$1],
+    isPrivateKey: [isPrivateKey$1],
+    isBN: [isBN],
+    isAddress: [isAddress$1]
   };
   const transformerArray = {
     toBn: toBN,
@@ -585,7 +630,7 @@
       });
 
       _defineProperty(this, "extractParams", args => {
-        const paramsObject = isObject(args) ? args : {};
+        const paramsObject = isObject$1(args) ? args : {};
         let result;
         const keyArrayLength = Object.keys(paramsObject).length;
         if (keyArrayLength === 0) result = [];
@@ -628,12 +673,13 @@
             } = this.generateValidateObjects();
             this.validateArgs(args, requiredArgs, optionalArgs);
             const params = this.extractParams(args);
+            const newCallback = isFunction$1(args) ? args : callback;
 
-            if (callback) {
+            if (newCallback) {
               return this.messanger.sendAsync({
                 method: this.call,
                 params
-              }, callback);
+              }, newCallback);
             }
 
             return this.messanger.send({
@@ -650,9 +696,10 @@
               optionalArgs
             } = this.generateValidateObjects();
             this.validateArgs(args, requiredArgs, optionalArgs);
+            const newCallback = isFunction$1(args) ? args : callback;
 
-            if (callback) {
-              return this.messanger.sendAsyncServer(this.endpoint, args, callback);
+            if (newCallback) {
+              return this.messanger.sendAsyncServer(this.endpoint, args, newCallback);
             }
 
             return this.messanger.sendServer(this.endpoint, args);
@@ -698,8 +745,7 @@
         };
         const newZilObject = {};
         newZilObject[asyncGetterName(zilName)] = this.propertyBuilder();
-        Object.defineProperty(object, zilName, zilObject); //
-
+        Object.defineProperty(object, zilName, zilObject);
         Object.assign(object, newZilObject);
       });
 
@@ -732,35 +778,28 @@
 
   }
 
-  exports.isBN = bn_js.isBN;
-  exports.generatePrivateKey = laksaCoreCrypto.generatePrivateKey;
-  exports.getAddressFromPrivateKey = laksaCoreCrypto.getAddressFromPrivateKey;
-  exports.getPubKeyFromPrivateKey = laksaCoreCrypto.getPubKeyFromPrivateKey;
-  exports.compressPublicKey = laksaCoreCrypto.compressPublicKey;
-  exports.getAddressFromPublicKey = laksaCoreCrypto.getAddressFromPublicKey;
-  exports.verifyPrivateKey = laksaCoreCrypto.verifyPrivateKey;
-  exports.encodeTransaction = laksaCoreCrypto.encodeTransaction;
-  exports.createTransactionJson = laksaCoreCrypto.createTransactionJson;
-  exports.randomBytes = laksaCoreCrypto.randomBytes;
   exports.Method = Method;
   exports.Property = Property;
-  exports.isNumber = isNumber;
-  exports.isString = isString;
-  exports.isBoolean = isBoolean;
-  exports.isArray = isArray;
-  exports.isJson = isJson;
-  exports.isObject = isObject;
-  exports.isFunction = isFunction;
-  exports.isHash = isHash;
-  exports.isUrl = isUrl;
-  exports.isPubkey = isPubkey;
-  exports.isPrivateKey = isPrivateKey;
-  exports.isAddress = isAddress;
-  exports.isHex = isHex;
-  exports.isNull = isNull;
-  exports.isUndefined = isUndefined;
+  exports.isNumber = isNumber$1;
+  exports.isString = isString$1;
+  exports.isBoolean = isBoolean$1;
+  exports.isArray = isArray$1;
+  exports.isJson = isJson$1;
+  exports.isObject = isObject$1;
+  exports.isFunction = isFunction$1;
+  exports.isHash = isHash$1;
+  exports.isUrl = isUrl$1;
+  exports.isPubkey = isPubkey$1;
+  exports.isPrivateKey = isPrivateKey$1;
+  exports.isAddress = isAddress$1;
+  exports.isBN = isBN;
+  exports.isHex = isHex$1;
+  exports.isNull = isNull$1;
+  exports.isUndefined = isUndefined$1;
+  exports.validator = validator;
   exports.validateArgs = validateArgs;
   exports.validateFunctionArgs = validateFunctionArgs;
+  exports.extractValidator = extractValidator;
   exports.intToByteArray = intToByteArray;
   exports.toHex = toHex;
   exports.toUtf8 = toUtf8;

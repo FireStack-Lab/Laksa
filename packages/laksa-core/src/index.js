@@ -6,6 +6,7 @@
 //
 
 import * as util from 'laksa-utils'
+import * as core from 'laksa-core-crypto'
 import * as wallet from 'laksa-wallet'
 import { HttpProvider, Messenger } from 'laksa-request'
 import Zil from 'laksa-zil'
@@ -15,17 +16,12 @@ const { Wallet } = wallet
 
 class Laksa {
   constructor(args) {
-    // validateArgs(args, {}, { nodeUrl: [util.isUrl] })
     const url = args || config.defaultNodeUrl
-    //
-    this.util = util
-    this.wallet = new Wallet()
-
-    //
+    this.util = { ...util, ...core }
     this.currentProvider = new HttpProvider(url)
     this.messenger = new Messenger(this.currentProvider)
-    //
     this.zil = new Zil(this)
+    this.wallet = new Wallet()
   }
 
   providers = {
@@ -35,10 +31,10 @@ class Laksa {
   config = config
 
   // library method
-  isConnected = async () => {
+  isConnected = async (callback) => {
     const result = await this.zil.isConnected()
     try {
-      return !(result instanceof Error)
+      return callback === undefined ? !(result instanceof Error) : callback(null, true)
     } catch (e) {
       return false
     }
@@ -52,7 +48,6 @@ class Laksa {
 
   getDefaultBlock = () => this.config.defaultBlock
 
-  // provider method
   getProvider = () => this.currentProvider
 
   setProvider = (provider) => {

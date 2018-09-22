@@ -1,4 +1,5 @@
-import { randomBytes, isPrivateKey, isString } from 'laksa-utils'
+import { isPrivateKey, isString } from 'laksa-utils'
+import { randomBytes } from 'laksa-core-crypto'
 import uuid from 'uuid'
 import CryptoJS from 'crypto-js'
 
