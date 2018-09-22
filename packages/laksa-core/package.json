@@ -1,16 +1,16 @@
 {
   "name": "laksa-core",
-  "version": "0.0.34",
+  "version": "0.0.35",
   "description": "",
   "main": "index.js",
   "browser": "lib/index.js",
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "laksa-core-crypto": "^0.0.34",
-    "laksa-request": "^0.0.34",
-    "laksa-utils": "^0.0.34",
-    "laksa-wallet": "^0.0.34",
-    "laksa-zil": "^0.0.34"
+    "laksa-core-crypto": "^0.0.35",
+    "laksa-request": "^0.0.35",
+    "laksa-utils": "^0.0.35",
+    "laksa-wallet": "^0.0.35",
+    "laksa-zil": "^0.0.35"
   }
 }
