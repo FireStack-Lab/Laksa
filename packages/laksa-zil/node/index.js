@@ -409,9 +409,9 @@
   };
 
   class Zil {
-    constructor(Webz) {
-      this.messenger = Webz.messenger;
-      this.config = Webz.config;
+    constructor(Laksa) {
+      this.messenger = Laksa.messenger;
+      this.config = Laksa.config;
       mapObjectToMethods(this);
       mapPropertyToObjects(this);
     }

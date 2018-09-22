@@ -13,7 +13,7 @@ import {
   isAddress,
   isBN,
   validateArgs
-} from './validator'
+} from './generator'
 
 import { toBN } from './transformer'
 
@@ -125,8 +125,9 @@ class Method {
         const { requiredArgs, optionalArgs } = this.generateValidateObjects()
         this.validateArgs(args, requiredArgs, optionalArgs)
         const params = this.extractParams(args)
-        if (callback) {
-          return this.messanger.sendAsync({ method: this.call, params }, callback)
+        const newCallback = isFunction(args) ? args : callback
+        if (newCallback) {
+          return this.messanger.sendAsync({ method: this.call, params }, newCallback)
         }
         return this.messanger.send({ method: this.call, params })
       }
@@ -135,8 +136,9 @@ class Method {
       return (args, callback) => {
         const { requiredArgs, optionalArgs } = this.generateValidateObjects()
         this.validateArgs(args, requiredArgs, optionalArgs)
-        if (callback) {
-          return this.messanger.sendAsyncServer(this.endpoint, args, callback)
+        const newCallback = isFunction(args) ? args : callback
+        if (newCallback) {
+          return this.messanger.sendAsyncServer(this.endpoint, args, newCallback)
         }
         return this.messanger.sendServer(this.endpoint, args)
       }

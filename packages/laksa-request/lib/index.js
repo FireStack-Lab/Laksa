@@ -55,15 +55,8 @@ var HttpProvider = function HttpProvider(url, timeout, user, password, headers) 
           switch (_context.prev = _context.next) {
             case 0:
               _context.next = 2;
-              return _this.request.post(_this.url, JSON.stringify(payload)).then(function (response) {
-                var data = response.data,
-                    status = response.status;
-
-                if (data.result && status === 200) {
-                  return data.result;
-                }
-              }).catch(function (err) {
-                return err;
+              return _this.requestFunc({
+                payload: payload
               });
 
             case 2:
@@ -95,15 +88,9 @@ var HttpProvider = function HttpProvider(url, timeout, user, password, headers) 
           switch (_context2.prev = _context2.next) {
             case 0:
               _context2.next = 2;
-              return _this.request.post("".concat(_this.url).concat(endpoint), JSON.stringify(payload)).then(function (response) {
-                var data = response.data,
-                    status = response.status;
-
-                if (data.result && status === 200) {
-                  return data.result;
-                }
-              }).catch(function (err) {
-                return err;
+              return _this.requestFunc({
+                endpoint: endpoint,
+                payload: payload
               });
 
             case 2:
@@ -124,28 +111,42 @@ var HttpProvider = function HttpProvider(url, timeout, user, password, headers) 
   }());
 
   _defineProperty(this, "sendAsync", function (payload, callback) {
-    _this.request.post(_this.url, JSON.stringify(payload)).then(function (response) {
-      var data = response.data,
-          status = response.status;
-
-      if (data.result && status === 200) {
-        callback(null, data.result);
-      }
-    }).catch(function (err) {
-      return callback(err);
+    _this.requestFunc({
+      payload: payload,
+      callback: callback
     });
   });
 
   _defineProperty(this, "sendAsyncServer", function (endpoint, payload, callback) {
-    _this.request.post("".concat(_this.url).concat(endpoint), JSON.stringify(payload)).then(function (response) {
+    _this.requestFunc({
+      endpoint: endpoint,
+      payload: payload,
+      callback: callback
+    });
+  });
+
+  _defineProperty(this, "requestFunc", function (_ref3) {
+    var endpoint = _ref3.endpoint,
+        payload = _ref3.payload,
+        callback = _ref3.callback;
+    var dest = endpoint !== null && endpoint !== undefined ? "".concat(_this.url).concat(endpoint) : _this.url;
+    return _this.request.post(dest, JSON.stringify(payload)).then(function (response) {
       var data = response.data,
           status = response.status;
 
       if (data.result && status === 200) {
-        callback(null, data.result);
+        if (callback === undefined) {
+          return data.result;
+        } else {
+          callback(null, data.result);
+        }
       }
     }).catch(function (err) {
-      return callback(err);
+      if (callback === undefined) {
+        return err;
+      } else {
+        callback(err);
+      }
     });
   });
 
@@ -163,7 +164,8 @@ var JsonRpc = function JsonRpc() {
   _classCallCheck(this, JsonRpc);
 
   _defineProperty(this, "toPayload", function (method, params) {
-    if (!method) console.error('jsonrpc method should be specified!'); // advance message ID
+    // FIXME: error to be done by shared/errors
+    if (!method) throw new Error('jsonrpc method should be specified!'); // advance message ID
 
     _this.messageId += 1;
     return {
@@ -199,24 +201,17 @@ var Messanger = function Messanger(_provider) {
         while (1) {
           switch (_context.prev = _context.next) {
             case 0:
-              if (_this.provider) {
-                _context.next = 3;
-                break;
-              }
+              _this.providerCheck();
 
-              laksaShared.InvalidProvider();
-              return _context.abrupt("return", null);
-
-            case 3:
               payload = _this.JsonRpc.toPayload(data.method, data.params);
-              _context.next = 6;
+              _context.next = 4;
               return _this.provider.send(payload);
 
-            case 6:
+            case 4:
               result = _context.sent;
               return _context.abrupt("return", result);
 
-            case 8:
+            case 6:
             case "end":
               return _context.stop();
           }
@@ -230,10 +225,7 @@ var Messanger = function Messanger(_provider) {
   }());
 
   _defineProperty(this, "sendAsync", function (data, callback) {
-    if (!_this.provider) {
-      laksaShared.InvalidProvider();
-      return null;
-    }
+    _this.providerCheck();
 
     var payload = _this.JsonRpc.toPayload(data.method, data.params);
 
@@ -247,10 +239,7 @@ var Messanger = function Messanger(_provider) {
   });
 
   _defineProperty(this, "sendBatch", function (data, callback) {
-    if (!_this.provider) {
-      laksaShared.InvalidProvider();
-      return null;
-    }
+    _this.providerCheck();
 
     var payload = _this.JsonRpc.toBatchPayload(data);
 
@@ -259,7 +248,7 @@ var Messanger = function Messanger(_provider) {
         return callback(err);
       }
 
-      callback(err, results);
+      callback(null, results);
     });
   });
 
@@ -274,23 +263,16 @@ var Messanger = function Messanger(_provider) {
         while (1) {
           switch (_context2.prev = _context2.next) {
             case 0:
-              if (_this.provider) {
-                _context2.next = 3;
-                break;
-              }
+              _this.providerCheck();
 
-              laksaShared.InvalidProvider();
-              return _context2.abrupt("return", null);
-
-            case 3:
-              _context2.next = 5;
+              _context2.next = 3;
               return _this.provider.sendServer(endpoint, data);
 
-            case 5:
+            case 3:
               result = _context2.sent;
               return _context2.abrupt("return", result);
 
-            case 7:
+            case 5:
             case "end":
               return _context2.stop();
           }
@@ -304,11 +286,7 @@ var Messanger = function Messanger(_provider) {
   }());
 
   _defineProperty(this, "sendAsyncServer", function (endpoint, data, callback) {
-    if (!_this.provider) {
-      laksaShared.InvalidProvider();
-      return null;
-    } // const payload = this.JsonRpc.toPayload(data.method, data.params)
-
+    _this.providerCheck();
 
     _this.provider.sendAsyncServer(endpoint, data, function (err, result) {
       if (err) {
@@ -320,23 +298,26 @@ var Messanger = function Messanger(_provider) {
   });
 
   _defineProperty(this, "sendBatchServer", function (data, callback) {
-    if (!_this.provider) {
-      laksaShared.InvalidProvider();
-      return null;
-    } // const payload = this.JsonRpc.toBatchPayload(data)
-
+    _this.providerCheck();
 
     _this.provider.sendAsync(data, function (err, results) {
       if (err) {
         return callback(err);
       }
 
-      callback(err, results);
+      callback(null, results);
     });
   });
 
   _defineProperty(this, "setProvider", function (provider) {
     _this.provider = provider;
+  });
+
+  _defineProperty(this, "providerCheck", function () {
+    if (!_this.provider) {
+      laksaShared.InvalidProvider();
+      return null;
+    }
   });
 
   this.provider = _provider;

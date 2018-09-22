@@ -1,8 +1,8 @@
 (function (global, factory) {
-  typeof exports === 'object' && typeof module !== 'undefined' ? factory(exports, require('laksa-utils'), require('uuid'), require('crypto-js')) :
-  typeof define === 'function' && define.amd ? define(['exports', 'laksa-utils', 'uuid', 'crypto-js'], factory) :
-  (factory((global.Laksa = {}),global.laksaUtils,global.uuid,global.CryptoJS));
-}(this, (function (exports,laksaUtils,uuid,CryptoJS) { 'use strict';
+  typeof exports === 'object' && typeof module !== 'undefined' ? factory(exports, require('laksa-utils'), require('laksa-core-crypto'), require('uuid'), require('crypto-js')) :
+  typeof define === 'function' && define.amd ? define(['exports', 'laksa-utils', 'laksa-core-crypto', 'uuid', 'crypto-js'], factory) :
+  (factory((global.Laksa = {}),global.laksaUtils,global.laksaCoreCrypto,global.uuid,global.CryptoJS));
+}(this, (function (exports,laksaUtils,laksaCoreCrypto,uuid,CryptoJS) { 'use strict';
 
   uuid = uuid && uuid.hasOwnProperty('default') ? uuid['default'] : uuid;
   CryptoJS = CryptoJS && CryptoJS.hasOwnProperty('default') ? CryptoJS['default'] : CryptoJS;
@@ -44,8 +44,8 @@
   const encrypt = (privateKey, password, options = {}) => {
     if (!laksaUtils.isPrivateKey) throw new Error('Invalid PrivateKey');
     if (!laksaUtils.isString(password)) throw new Error('no password found');
-    const iv = options.iv || laksaUtils.randomBytes(16);
-    const salt = options.salt || laksaUtils.randomBytes(32);
+    const iv = options.iv || laksaCoreCrypto.randomBytes(16);
+    const salt = options.salt || laksaCoreCrypto.randomBytes(32);
     const kdfparams = {
       dklen: options.dklen || 32,
       salt: salt.toString('hex'),
@@ -67,7 +67,7 @@
     return {
       version: 3,
       id: uuid.v4({
-        random: laksaUtils.randomBytes(16)
+        random: laksaCoreCrypto.randomBytes(16)
       }),
       crypto: {
         ciphertext: ciphertext.toString(),

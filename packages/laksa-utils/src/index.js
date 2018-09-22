@@ -1,19 +1,8 @@
 import Method from './method'
 import Property from './property'
 
-export {
-  generatePrivateKey,
-  getAddressFromPrivateKey,
-  getPubKeyFromPrivateKey,
-  compressPublicKey,
-  getAddressFromPublicKey,
-  verifyPrivateKey,
-  encodeTransaction,
-  createTransactionJson,
-  randomBytes
-} from 'laksa-core-crypto'
-
 export { Method, Property }
+
 export {
   isNumber,
   isString,
@@ -31,9 +20,11 @@ export {
   isHex,
   isNull,
   isUndefined,
+  validator,
   validateArgs,
-  validateFunctionArgs
-} from './validator'
+  validateFunctionArgs,
+  extractValidator
+} from './generator'
 export {
   intToByteArray,
   toHex,

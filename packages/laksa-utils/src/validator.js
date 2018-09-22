@@ -9,8 +9,6 @@ import { isBN } from 'bn.js'
 const isNumber = (obj) => {
   return obj === +obj
 }
-// assign validator string
-Object.assign(isNumber, { validator: 'Number' })
 
 /**
  * [isString verify param is a String]
@@ -20,8 +18,6 @@ Object.assign(isNumber, { validator: 'Number' })
 const isString = (obj) => {
   return obj === `${obj}`
 }
-// assign validator string
-Object.assign(isString, { validator: 'String' })
 
 /**
  * [isBoolean verify param is a Boolean]
@@ -31,8 +27,6 @@ Object.assign(isString, { validator: 'String' })
 const isBoolean = (obj) => {
   return obj === !!obj
 }
-// assign validator string
-Object.assign(isBoolean, { validator: 'Boolean' })
 
 /**
  * [isArray verify param input is an Array]
@@ -42,8 +36,6 @@ Object.assign(isBoolean, { validator: 'Boolean' })
 const isArray = (obj) => {
   return Array.isArray(obj)
 }
-// assign validator string
-Object.assign(isArray, { validator: 'Array' })
 
 /**
  * [isJson verify param input is a Json]
@@ -57,8 +49,6 @@ const isJson = (obj) => {
     return false
   }
 }
-// assign validator string
-Object.assign(isJson, { validator: 'Json' })
 
 /**
  * [isObject verify param is an Object]
@@ -68,8 +58,6 @@ Object.assign(isJson, { validator: 'Json' })
 const isObject = (obj) => {
   return obj !== null && !Array.isArray(obj) && typeof obj === 'object'
 }
-// assign validator string
-Object.assign(isObject, { validator: 'Object' })
 
 /**
  * [isFunction verify param is a Function]
@@ -80,8 +68,6 @@ Object.assign(isObject, { validator: 'Object' })
 const isFunction = (obj) => {
   return typeof obj === 'function'
 }
-// assign validator string
-Object.assign(isFunction, { validator: 'Function' })
 
 /**
  * verify if param is correct
@@ -101,8 +87,6 @@ const isAddress = (address) => {
     return true
   }
 }
-// assign validator string
-Object.assign(isAddress, { validator: 'Address' })
 
 /**
  * verify if privateKey is correct
@@ -119,8 +103,6 @@ const isPrivateKey = (privateKey) => {
   }
   // return !!privateKey.match(/^[0-9a-fA-F]{64}$/)
 }
-// assign validator string
-Object.assign(isPrivateKey, { validator: 'PrivateKey' })
 
 /**
  * verify if public key is correct
@@ -137,8 +119,6 @@ const isPubkey = (pubkey) => {
   }
   // return !!pubkey.match(/^[0-9a-fA-F]{66}$/)
 }
-// assign validator string
-Object.assign(isPubkey, { validator: 'PublicKey' })
 
 /**
  * verify if url is correct
@@ -146,10 +126,11 @@ Object.assign(isPubkey, { validator: 'PublicKey' })
  * @return {Boolean}     [description]
  */
 const isUrl = (url) => {
-  return isWebUri(url)
+  if (typeof url === 'string') {
+    return isWebUri(url)
+  }
+  return false
 }
-// assign validator string
-Object.assign(isUrl, { validator: 'Url' })
 
 /**
  * verify if hash is correct
@@ -166,8 +147,6 @@ const isHash = (txHash) => {
   }
   // return !!txHash.match(/^[0-9a-fA-F]{64}$/)
 }
-// assign validator string
-Object.assign(isHash, { validator: 'Hash' })
 
 /**
  * Check if string is HEX
@@ -179,8 +158,6 @@ Object.assign(isHash, { validator: 'Hash' })
 const isHex = (hex) => {
   return (isString(hex) || isNumber(hex)) && /^0x?[0-9a-f]*$/i.test(hex)
 }
-// assign validator string
-Object.assign(isHex, { validator: 'Hex' })
 
 /**
  * check Object isNull
@@ -190,7 +167,6 @@ Object.assign(isHex, { validator: 'Hex' })
 const isNull = (obj) => {
   return obj === null
 }
-Object.assign(isNull, { validator: 'Null' })
 
 /**
  * check object is undefined
@@ -199,64 +175,6 @@ Object.assign(isNull, { validator: 'Null' })
  */
 const isUndefined = (obj) => {
   return obj === undefined
-}
-
-Object.assign(isUndefined, { validator: 'Undefined' })
-
-// isBN
-// imported
-Object.assign(isBN, { validator: 'BN' })
-
-/**
- * make sure each of the keys in requiredArgs is present in args
- * @param  {[type]} args         [description]
- * @param  {[type]} requiredArgs [description]
- * @param  {[type]} optionalArgs [description]
- * @return {[type]}              [description]
- */
-function validateArgs(args, requiredArgs, optionalArgs) {
-  for (const key in requiredArgs) {
-    if (args[key] !== undefined) {
-      for (let i = 0; i < requiredArgs[key].length; i += 1) {
-        if (typeof requiredArgs[key][i] !== 'function') throw new Error('Validator is not a function')
-
-        if (!requiredArgs[key][i](args[key])) {
-          throw new Error(
-            `Validation failed for ${key},should be ${requiredArgs[key][i].validator}`
-          )
-        }
-      }
-    } else throw new Error(`Key not found: ${key}`)
-  }
-
-  for (const key in optionalArgs) {
-    if (args[key]) {
-      for (let i = 0; i < optionalArgs[key].length; i += 1) {
-        if (typeof optionalArgs[key][i] !== 'function') throw new Error('Validator is not a function')
-
-        if (!optionalArgs[key][i](args[key])) {
-          throw new Error(
-            `Validation failed for ${key},should be ${optionalArgs[key][i].validator}`
-          )
-        }
-      }
-    }
-  }
-  return true
-}
-
-function validateFunctionArgs(ArgsArray, validatorArray) {
-  const argLength = ArgsArray.length
-  const valLength = validatorArray.length
-  if (argLength < valLength) throw new Error('Some args are required by function but missing')
-  for (let i = 0; i < valLength; i += 1) {
-    if (!validatorArray[i](ArgsArray[i])) {
-      throw new Error(
-        `Validation failed for arguments[${i}], should be ${validatorArray[i].validator}`
-      )
-    }
-  }
-  return true
 }
 
 export {
@@ -275,7 +193,5 @@ export {
   isBN,
   isHex,
   isNull,
-  isUndefined,
-  validateArgs,
-  validateFunctionArgs
+  isUndefined
 }

@@ -9,7 +9,7 @@ import {
   isBoolean,
   isObject,
   isString
-} from './validator'
+} from './generator'
 /**
  * convert number to array representing the padded hex form
  * @param  {[string]} val        [description]

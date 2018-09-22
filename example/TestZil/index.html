@@ -108,24 +108,42 @@ let txn = laksa.util.createTransactionJson(
   txnDetails
 );
 
+
+
+console.log(txn);
+
+
 const myAddress = { address: "9bfec715a6bd658fcb62b0f8cc9bfa2ade71434a" };
 // with callback
-// Laksa.zil.getBalance(myAddress, callback);
-laksa.zil.getSmartContracts(myAddress,(err,data)=>{
-  if(data.length>0){
-    data.map(d=>{
-      laksa.zil.getSmartContractState({address:d.address},(err,data)=>{
-        console.log({smartContractState:data});
-      })
-      laksa.zil.getSmartContractCode({address:d.address},(err,data)=>{
-        console.log({smartContractCode:data});
-      })
-      laksa.zil.getSmartContractInit({address:d.address},(err,data)=>{
-        console.log({smartContractInit:data})
-      })
-    })
-  }
-});
+laksa.zil.isConnected((err,data)=>{console.log({data})})
+
+
+
+
+//laksa.isConnected().then(console.log);
+
+// laksa.zil.getSmartContracts(myAddress,(err,data)=>{
+//   if(data.length>0){
+//     data.map(d=>{
+//       laksa.zil.getSmartContractState({address:d.address},(err,data)=>{
+//         console.log({smartContractState:data});
+//       })
+//       laksa.zil.getSmartContractCode({address:d.address},(err,data)=>{
+//         console.log({smartContractCode:data});
+//       })
+//       laksa.zil.getSmartContractInit({address:d.address},(err,data)=>{
+//         console.log({smartContractInit:data})
+//       })
+//     })
+//   }
+// });
+
+// laksa.zil.createMessage({
+//   to:'2E3C9B415B19AE4035503A06192A0FAD76E04243',
+//   from:'9bfec715a6bd658fcb62b0f8cc9bfa2ade71434a',
+//   gas:10,
+//   gasPrice:10
+// }).then(console.log)
 
 // send the transaction to the node
 // Laksa.zil.createTransaction(txn, callback);

@@ -47,57 +47,61 @@
       });
 
       _defineProperty(this, "send", async payload => {
-        const result = await this.request.post(this.url, JSON.stringify(payload)).then(response => {
-          const {
-            data,
-            status
-          } = response;
-
-          if (data.result && status === 200) {
-            return data.result;
-          }
-        }).catch(err => err);
+        const result = await this.requestFunc({
+          payload
+        });
         return result;
       });
 
       _defineProperty(this, "sendServer", async (endpoint, payload) => {
-        const result = await this.request.post(`${this.url}${endpoint}`, JSON.stringify(payload)).then(response => {
-          const {
-            data,
-            status
-          } = response;
-
-          if (data.result && status === 200) {
-            return data.result;
-          }
-        }).catch(err => err);
+        const result = await this.requestFunc({
+          endpoint,
+          payload
+        });
         return result;
       });
 
       _defineProperty(this, "sendAsync", (payload, callback) => {
-        this.request.post(this.url, JSON.stringify(payload)).then(response => {
-          const {
-            data,
-            status
-          } = response;
-
-          if (data.result && status === 200) {
-            callback(null, data.result);
-          }
-        }).catch(err => callback(err));
+        this.requestFunc({
+          payload,
+          callback
+        });
       });
 
       _defineProperty(this, "sendAsyncServer", (endpoint, payload, callback) => {
-        this.request.post(`${this.url}${endpoint}`, JSON.stringify(payload)).then(response => {
+        this.requestFunc({
+          endpoint,
+          payload,
+          callback
+        });
+      });
+
+      _defineProperty(this, "requestFunc", ({
+        endpoint,
+        payload,
+        callback
+      }) => {
+        const dest = endpoint !== null && endpoint !== undefined ? `${this.url}${endpoint}` : this.url;
+        return this.request.post(dest, JSON.stringify(payload)).then(response => {
           const {
             data,
             status
           } = response;
 
           if (data.result && status === 200) {
-            callback(null, data.result);
+            if (callback === undefined) {
+              return data.result;
+            } else {
+              callback(null, data.result);
+            }
           }
-        }).catch(err => callback(err));
+        }).catch(err => {
+          if (callback === undefined) {
+            return err;
+          } else {
+            callback(err);
+          }
+        });
       });
 
       this.url = url || 'http://localhost:4200';
@@ -113,7 +117,8 @@
   class JsonRpc {
     constructor() {
       _defineProperty(this, "toPayload", (method, params) => {
-        if (!method) console.error('jsonrpc method should be specified!'); // advance message ID
+        // FIXME: error to be done by shared/errors
+        if (!method) throw new Error('jsonrpc method should be specified!'); // advance message ID
 
         this.messageId += 1;
         return {
@@ -138,22 +143,14 @@
   class Messanger {
     constructor(_provider) {
       _defineProperty(this, "send", async data => {
-        if (!this.provider) {
-          laksaShared.InvalidProvider();
-          return null;
-        }
-
+        this.providerCheck();
         const payload = this.JsonRpc.toPayload(data.method, data.params);
         const result = await this.provider.send(payload);
         return result;
       });
 
       _defineProperty(this, "sendAsync", (data, callback) => {
-        if (!this.provider) {
-          laksaShared.InvalidProvider();
-          return null;
-        }
-
+        this.providerCheck();
         const payload = this.JsonRpc.toPayload(data.method, data.params);
         this.provider.sendAsync(payload, (err, result) => {
           if (err) {
@@ -165,39 +162,25 @@
       });
 
       _defineProperty(this, "sendBatch", (data, callback) => {
-        if (!this.provider) {
-          laksaShared.InvalidProvider();
-          return null;
-        }
-
+        this.providerCheck();
         const payload = this.JsonRpc.toBatchPayload(data);
         this.provider.sendAsync(payload, (err, results) => {
           if (err) {
             return callback(err);
           }
 
-          callback(err, results);
+          callback(null, results);
         });
       });
 
       _defineProperty(this, "sendServer", async (endpoint, data) => {
-        if (!this.provider) {
-          laksaShared.InvalidProvider();
-          return null;
-        } // const payload = this.JsonRpc.toPayload(data.method, data.params)
-
-
+        this.providerCheck();
         const result = await this.provider.sendServer(endpoint, data);
         return result;
       });
 
       _defineProperty(this, "sendAsyncServer", (endpoint, data, callback) => {
-        if (!this.provider) {
-          laksaShared.InvalidProvider();
-          return null;
-        } // const payload = this.JsonRpc.toPayload(data.method, data.params)
-
-
+        this.providerCheck();
         this.provider.sendAsyncServer(endpoint, data, (err, result) => {
           if (err) {
             return callback(err);
@@ -208,23 +191,25 @@
       });
 
       _defineProperty(this, "sendBatchServer", (data, callback) => {
-        if (!this.provider) {
-          laksaShared.InvalidProvider();
-          return null;
-        } // const payload = this.JsonRpc.toBatchPayload(data)
-
-
+        this.providerCheck();
         this.provider.sendAsync(data, (err, results) => {
           if (err) {
             return callback(err);
           }
 
-          callback(err, results);
+          callback(null, results);
         });
       });
 
       _defineProperty(this, "setProvider", provider => {
         this.provider = provider;
+      });
+
+      _defineProperty(this, "providerCheck", () => {
+        if (!this.provider) {
+          laksaShared.InvalidProvider();
+          return null;
+        }
       });
 
       this.provider = _provider;
