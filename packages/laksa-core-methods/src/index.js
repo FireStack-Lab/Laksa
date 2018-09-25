@@ -12,10 +12,9 @@ import {
   isPrivateKey,
   isAddress,
   isBN,
-  validateArgs
-} from './generator'
-
-import { toBN } from './transformer'
+  validateArgs,
+  toBN
+} from 'laksa-utils'
 
 const validatorArray = {
   isNumber: [isNumber],

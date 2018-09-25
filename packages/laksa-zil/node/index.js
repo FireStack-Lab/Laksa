@@ -1,8 +1,11 @@
 (function (global, factory) {
-  typeof exports === 'object' && typeof module !== 'undefined' ? module.exports = factory(require('laksa-utils')) :
-  typeof define === 'function' && define.amd ? define(['laksa-utils'], factory) :
-  (global.Laksa = factory(global.laksaUtils));
-}(this, (function (laksaUtils) { 'use strict';
+  typeof exports === 'object' && typeof module !== 'undefined' ? module.exports = factory(require('laksa-core-methods'), require('laksa-core-properties')) :
+  typeof define === 'function' && define.amd ? define(['laksa-core-methods', 'laksa-core-properties'], factory) :
+  (global.Laksa = factory(global.Method,global.Property));
+}(this, (function (Method,Property) { 'use strict';
+
+  Method = Method && Method.hasOwnProperty('default') ? Method['default'] : Method;
+  Property = Property && Property.hasOwnProperty('default') ? Property['default'] : Property;
 
   var methodObjects = [
   /**
@@ -392,7 +395,7 @@
 
   const mapObjectToMethods = main => {
     methodObjects.map(data => {
-      const zilMethod = new laksaUtils.Method(data);
+      const zilMethod = new Method(data);
       zilMethod.setMessanger(main.messenger);
       zilMethod.assignToObject(main);
       return false;
@@ -401,7 +404,7 @@
 
   const mapPropertyToObjects = main => {
     propertyObjects.map(data => {
-      const zilProperty = new laksaUtils.Property(data);
+      const zilProperty = new Property(data);
       zilProperty.setMessanger(main.messenger);
       zilProperty.assignToObject(main);
       return false;

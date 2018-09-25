@@ -13,6 +13,7 @@
   "author": "neeboo",
   "license": "ISC",
   "dependencies": {
-    "laksa-utils": "^0.0.35"
+    "laksa-core-methods": "^0.0.1",
+    "laksa-core-properties": "^0.0.1"
   }
 }
