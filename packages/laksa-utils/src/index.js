@@ -1,8 +1,3 @@
-import Method from './method'
-import Property from './property'
-
-export { Method, Property }
-
 export {
   isNumber,
   isString,

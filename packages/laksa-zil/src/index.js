@@ -1,5 +1,5 @@
-import { Method, Property } from 'laksa-utils'
-
+import Method from 'laksa-core-methods'
+import Property from 'laksa-core-properties'
 import methodObjects from './methodObjects'
 import propertyObjects from './propertyObjects'
 

@@ -4,7 +4,8 @@ function _interopDefault (ex) { return (ex && (typeof ex === 'object') && 'defau
 
 var _classCallCheck = _interopDefault(require('@babel/runtime/helpers/classCallCheck'));
 var _createClass = _interopDefault(require('@babel/runtime/helpers/createClass'));
-var laksaUtils = require('laksa-utils');
+var Method = _interopDefault(require('laksa-core-methods'));
+var Property = _interopDefault(require('laksa-core-properties'));
 
 var methodObjects = [
 /**
@@ -394,7 +395,7 @@ var propertyObjects = [
 
 var mapObjectToMethods = function mapObjectToMethods(main) {
   methodObjects.map(function (data) {
-    var zilMethod = new laksaUtils.Method(data);
+    var zilMethod = new Method(data);
     zilMethod.setMessanger(main.messenger);
     zilMethod.assignToObject(main);
     return false;
@@ -403,7 +404,7 @@ var mapObjectToMethods = function mapObjectToMethods(main) {
 
 var mapPropertyToObjects = function mapPropertyToObjects(main) {
   propertyObjects.map(function (data) {
-    var zilProperty = new laksaUtils.Property(data);
+    var zilProperty = new Property(data);
     zilProperty.setMessanger(main.messenger);
     zilProperty.assignToObject(main);
     return false;
