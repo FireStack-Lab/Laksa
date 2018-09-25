@@ -8,7 +8,8 @@
   "license": "ISC",
   "dependencies": {
     "laksa-core-crypto": "^0.0.36",
-    "laksa-request": "^0.0.36",
+    "laksa-core-messenger": "^0.0.1",
+    "laksa-providers-http": "^0.0.1",
     "laksa-utils": "^0.0.36",
     "laksa-wallet": "^0.0.36",
     "laksa-zil": "^0.0.36"

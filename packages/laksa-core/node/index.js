@@ -1,9 +1,10 @@
 (function (global, factory) {
-  typeof exports === 'object' && typeof module !== 'undefined' ? module.exports = factory(require('laksa-utils'), require('laksa-core-crypto'), require('laksa-wallet'), require('laksa-request'), require('laksa-zil')) :
-  typeof define === 'function' && define.amd ? define(['laksa-utils', 'laksa-core-crypto', 'laksa-wallet', 'laksa-request', 'laksa-zil'], factory) :
-  (global.Laksa = factory(global.util,global.core,global.wallet,global.laksaRequest,global.Zil));
-}(this, (function (util,core,wallet,laksaRequest,Zil) { 'use strict';
+  typeof exports === 'object' && typeof module !== 'undefined' ? module.exports = factory(require('laksa-utils'), require('laksa-core-crypto'), require('laksa-wallet'), require('laksa-core-messenger'), require('laksa-providers-http'), require('laksa-zil')) :
+  typeof define === 'function' && define.amd ? define(['laksa-utils', 'laksa-core-crypto', 'laksa-wallet', 'laksa-core-messenger', 'laksa-providers-http', 'laksa-zil'], factory) :
+  (global.Laksa = factory(global.util,global.core,global.wallet,global.laksaCoreMessenger,global.HttpProvider,global.Zil));
+}(this, (function (util,core,wallet,laksaCoreMessenger,HttpProvider,Zil) { 'use strict';
 
+  HttpProvider = HttpProvider && HttpProvider.hasOwnProperty('default') ? HttpProvider['default'] : HttpProvider;
   Zil = Zil && Zil.hasOwnProperty('default') ? Zil['default'] : Zil;
 
   function _defineProperty(obj, key, value) {
@@ -54,7 +55,7 @@
   class Laksa {
     constructor(args) {
       _defineProperty(this, "providers", {
-        HttpProvider: laksaRequest.HttpProvider
+        HttpProvider
       });
 
       _defineProperty(this, "config", config);
@@ -80,14 +81,14 @@
       _defineProperty(this, "getProvider", () => this.currentProvider);
 
       _defineProperty(this, "setProvider", provider => {
-        this.currentProvider = new laksaRequest.HttpProvider(provider);
+        this.currentProvider = new HttpProvider(provider);
         this.messenger.setProvider(this.currentProvider);
       });
 
       const url = args || config.defaultNodeUrl;
       this.util = _objectSpread({}, util, core);
-      this.currentProvider = new laksaRequest.HttpProvider(url);
-      this.messenger = new laksaRequest.Messenger(this.currentProvider);
+      this.currentProvider = new HttpProvider(url);
+      this.messenger = new laksaCoreMessenger.Messenger(this.currentProvider);
       this.zil = new Zil(this);
       this.wallet = new Wallet();
     }

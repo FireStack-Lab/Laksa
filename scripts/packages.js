@@ -1,6 +1,7 @@
 export default [
   'laksa-core-crypto',
-  'laksa-request',
+  'laksa-core-messenger',
+  'laksa-providers-http',
   'laksa-shared',
   'laksa-utils',
   'laksa-core-methods',

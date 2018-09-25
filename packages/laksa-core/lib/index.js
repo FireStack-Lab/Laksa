@@ -11,7 +11,8 @@ var _defineProperty = _interopDefault(require('@babel/runtime/helpers/defineProp
 var util = require('laksa-utils');
 var core = require('laksa-core-crypto');
 var wallet = require('laksa-wallet');
-var laksaRequest = require('laksa-request');
+var laksaCoreMessenger = require('laksa-core-messenger');
+var HttpProvider = _interopDefault(require('laksa-providers-http'));
 var Zil = _interopDefault(require('laksa-zil'));
 
 var config = {
@@ -29,7 +30,7 @@ var Laksa = function Laksa(args) {
   _classCallCheck(this, Laksa);
 
   _defineProperty(this, "providers", {
-    HttpProvider: laksaRequest.HttpProvider
+    HttpProvider: HttpProvider
   });
 
   _defineProperty(this, "config", config);
@@ -92,15 +93,15 @@ var Laksa = function Laksa(args) {
   });
 
   _defineProperty(this, "setProvider", function (provider) {
-    _this.currentProvider = new laksaRequest.HttpProvider(provider);
+    _this.currentProvider = new HttpProvider(provider);
 
     _this.messenger.setProvider(_this.currentProvider);
   });
 
   var url = args || config.defaultNodeUrl;
   this.util = _objectSpread({}, util, core);
-  this.currentProvider = new laksaRequest.HttpProvider(url);
-  this.messenger = new laksaRequest.Messenger(this.currentProvider);
+  this.currentProvider = new HttpProvider(url);
+  this.messenger = new laksaCoreMessenger.Messenger(this.currentProvider);
   this.zil = new Zil(this);
   this.wallet = new Wallet();
 };

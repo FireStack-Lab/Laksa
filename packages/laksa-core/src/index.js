@@ -8,7 +8,8 @@
 import * as util from 'laksa-utils'
 import * as core from 'laksa-core-crypto'
 import * as wallet from 'laksa-wallet'
-import { HttpProvider, Messenger } from 'laksa-request'
+import { Messenger } from 'laksa-core-messenger'
+import HttpProvider from 'laksa-providers-http'
 import Zil from 'laksa-zil'
 import config from './config'
 
