@@ -411,7 +411,7 @@
 
     set accounts(value) {
       if (value !== undefined) {
-        throw new Error('you cant set accounts directly, use internal functions');
+        throw new Error('you should not set "accounts" directly, use internal functions');
       }
     }
     /**
