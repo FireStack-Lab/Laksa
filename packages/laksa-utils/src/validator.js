@@ -11,6 +11,15 @@ const isNumber = (obj) => {
 }
 
 /**
+ * [isNumber verify param is a Number]
+ * @param  {[type]}  obj [value]
+ * @return {Boolean}     [boolean]
+ */
+const isInt = (obj) => {
+  return isNumber(obj) && Number.isInteger(obj)
+}
+
+/**
  * [isString verify param is a String]
  * @param  {[type]}  obj [value]
  * @return {Boolean}     [boolean]
@@ -179,6 +188,7 @@ const isUndefined = (obj) => {
 
 export {
   isNumber,
+  isInt,
   isString,
   isBoolean,
   isArray,

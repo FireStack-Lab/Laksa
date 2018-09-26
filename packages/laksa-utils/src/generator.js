@@ -37,6 +37,7 @@ function extractValidator(vals) {
 const valArray = extractValidator(validators)
 const {
   isNumber,
+  isInt,
   isString,
   isBoolean,
   isArray,
@@ -139,8 +140,31 @@ function validateFunctionArgs(ArgsArray, validatorArray) {
   return true
 }
 
+function validateTypes(arg, validatorArray) {
+  const valLength = validatorArray.length
+
+  if (valLength === 0 || !isArray(validatorArray)) {
+    throw new Error('Must include some validators')
+  }
+  const valsKey = validator.test(arg)
+
+  const getValidators = []
+  const finalReduceArray = validatorArray.map((v) => {
+    getValidators.push(v.validator)
+    return valsKey.includes(v.validator.substring(2)) ? 1 : 0
+  })
+  const finalReduce = finalReduceArray.reduce((acc, cur) => acc + cur)
+  if (finalReduce === 0) {
+    throw new TypeError(
+      `One of [${[...getValidators]}] has to pass, but we have your arg to be [${[...valsKey]}]`
+    )
+  }
+  return true
+}
+
 export {
   isNumber,
+  isInt,
   isString,
   isBoolean,
   isArray,
@@ -158,6 +182,7 @@ export {
   isUndefined,
   validator,
   validateArgs,
+  validateTypes,
   validateFunctionArgs,
   extractValidator
 }

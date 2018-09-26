@@ -5,8 +5,13 @@ Object.defineProperty(exports, '__esModule', { value: true });
 function _interopDefault (ex) { return (ex && (typeof ex === 'object') && 'default' in ex) ? ex['default'] : ex; }
 
 var _typeof = _interopDefault(require('@babel/runtime/helpers/typeof'));
+require('core-js/modules/es6.number.constructor');
+require('core-js/modules/es6.number.is-integer');
 var validUrl = require('valid-url');
 var bn_js = require('bn.js');
+var _toConsumableArray = _interopDefault(require('@babel/runtime/helpers/toConsumableArray'));
+require('core-js/modules/es7.array.includes');
+require('core-js/modules/es6.string.includes');
 require('core-js/modules/es6.object.assign');
 require('core-js/modules/es7.object.values');
 require('core-js/modules/web.dom.iterable');
@@ -15,7 +20,6 @@ require('core-js/modules/es6.object.keys');
 require('core-js/modules/es6.number.is-nan');
 require('core-js/modules/es6.regexp.split');
 require('core-js/modules/es6.regexp.replace');
-require('core-js/modules/es6.number.constructor');
 require('core-js/modules/es6.number.is-finite');
 require('core-js/modules/es6.regexp.to-string');
 var numToBN = _interopDefault(require('number-to-bn'));
@@ -29,6 +33,16 @@ var utf8 = _interopDefault(require('utf8'));
 
 var isNumber = function isNumber(obj) {
   return obj === +obj;
+};
+/**
+ * [isNumber verify param is a Number]
+ * @param  {[type]}  obj [value]
+ * @return {Boolean}     [boolean]
+ */
+
+
+var isInt = function isInt(obj) {
+  return isNumber(obj) && Number.isInteger(obj);
 };
 /**
  * [isString verify param is a String]
@@ -213,6 +227,7 @@ var isUndefined = function isUndefined(obj) {
 
 var validators = /*#__PURE__*/Object.freeze({
   isNumber: isNumber,
+  isInt: isInt,
   isString: isString,
   isBoolean: isBoolean,
   isArray: isArray,
@@ -268,6 +283,7 @@ function extractValidator(vals) {
 
 var valArray = extractValidator(validators);
 var isNumber$1 = valArray.isNumber,
+    isInt$1 = valArray.isInt,
     isString$1 = valArray.isString,
     isBoolean$1 = valArray.isBoolean,
     isArray$1 = valArray.isArray,
@@ -367,6 +383,30 @@ function validateFunctionArgs(ArgsArray, validatorArray) {
   return true;
 }
 
+function validateTypes(arg, validatorArray) {
+  var valLength = validatorArray.length;
+
+  if (valLength === 0 || !isArray$1(validatorArray)) {
+    throw new Error('Must include some validators');
+  }
+
+  var valsKey = validator.test(arg);
+  var getValidators = [];
+  var finalReduceArray = validatorArray.map(function (v) {
+    getValidators.push(v.validator);
+    return valsKey.includes(v.validator.substring(2)) ? 1 : 0;
+  });
+  var finalReduce = finalReduceArray.reduce(function (acc, cur) {
+    return acc + cur;
+  });
+
+  if (finalReduce === 0) {
+    throw new TypeError("One of [".concat(getValidators.concat(), "] has to pass, but we have your arg to be [").concat(_toConsumableArray(valsKey), "]"));
+  }
+
+  return true;
+}
+
 /**
  * convert number to array representing the padded hex form
  * @param  {[string]} val        [description]
@@ -404,6 +444,8 @@ var intToByteArray = function intToByteArray(val, paddedSize) {
 
 
 var numberToHex = function numberToHex(value) {
+  validateTypes(value, [isString$1, isNumber$1, isBN, isNull$1, isUndefined$1]);
+
   if (isNull$1(value) || isUndefined$1(value)) {
     return value;
   }
@@ -447,6 +489,8 @@ var toBN = function toBN(data) {
 
 
 var hexToNumber = function hexToNumber(value) {
+  validateTypes(value, [isNumber$1, isString$1, isHex$1, isBN, isUndefined$1]);
+
   if (!value) {
     return value;
   }
@@ -463,6 +507,7 @@ var hexToNumber = function hexToNumber(value) {
 
 
 var utf8ToHex = function utf8ToHex(str) {
+  validateTypes(str, [isAddress$1, isString$1, isHex$1]);
   var hex = '';
   var newString = utf8.encode(str);
   var str1 = newString.replace(/^(?:\u0000)*/, '');
@@ -493,6 +538,8 @@ var utf8ToHex = function utf8ToHex(str) {
 
 var toHex = function toHex(value, returnType) {
   /* jshint maxcomplexity: false */
+  validateTypes(value, [isAddress$1, isBoolean$1, isObject$1, isString$1, isNumber$1, isHex$1, isBN]);
+
   if (isAddress$1(value)) {
     // strip 0x from address
     return returnType ? 'address' : "0x".concat(value.toLowerCase().replace(/^0x/i, ''));
@@ -526,8 +573,15 @@ var strip0x = function strip0x(value) {
   var newString = toHex(value);
   return "".concat(newString.replace(/^0x/i, ''));
 };
+/**
+ * [add an '0x' prefix to value]
+ * @param  {[String|Number|Hex|BN]} value [description]
+ * @return {[String]}       [description]
+ */
+
 
 var add0x = function add0x(value) {
+  validateTypes(value, [isString$1, isNumber$1, isHex$1, isBN]);
   var newString;
 
   if (!isString$1(value)) {
@@ -568,6 +622,7 @@ var padRight = function padRight(string, chars, sign) {
 };
 
 exports.isNumber = isNumber$1;
+exports.isInt = isInt$1;
 exports.isString = isString$1;
 exports.isBoolean = isBoolean$1;
 exports.isArray = isArray$1;
@@ -591,12 +646,12 @@ exports.intToByteArray = intToByteArray;
 exports.toHex = toHex;
 exports.toUtf8 = toUtf8;
 exports.toAscii = toAscii;
-exports.fromUtf8 = fromUtf8;
-exports.fromAscii = fromAscii;
 exports.toBN = toBN;
 exports.hexToNumber = hexToNumber;
 exports.utf8ToHex = utf8ToHex;
 exports.numberToHex = numberToHex;
+exports.fromUtf8 = fromUtf8;
+exports.fromAscii = fromAscii;
 exports.padLeft = padLeft;
 exports.padRight = padRight;
 exports.strip0x = strip0x;

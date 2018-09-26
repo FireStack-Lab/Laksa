@@ -1,15 +1,12 @@
 import {
+  isPrivateKey, isPubkey, isAddress, isObject, isString, validateArgs
+} from 'laksa-utils'
+import {
   generatePrivateKey,
   getAddressFromPrivateKey,
   getPubKeyFromPrivateKey,
-  createTransactionJson,
-  isPrivateKey,
-  isPubkey,
-  isAddress,
-  isObject,
-  isString,
-  validateArgs
-} from 'laksa-utils'
+  createTransactionJson
+} from 'laksa-core-crypto'
 
 import { encrypt, decrypt } from './entropy'
 

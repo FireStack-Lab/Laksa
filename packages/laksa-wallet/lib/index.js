@@ -87,8 +87,8 @@ var ENCRYPTED = Symbol('ENCRYPTED');
 
 function generateAccountObject(privateKey) {
   if (!laksaUtils.isPrivateKey(privateKey)) throw new Error('private key is not correct');
-  var address = laksaUtils.getAddressFromPrivateKey(privateKey);
-  var publicKey = laksaUtils.getPubKeyFromPrivateKey(privateKey);
+  var address = laksaCoreCrypto.getAddressFromPrivateKey(privateKey);
+  var publicKey = laksaCoreCrypto.getPubKeyFromPrivateKey(privateKey);
   var accountObject = {}; // set accountObject
 
   if (laksaUtils.isPubkey(publicKey) && laksaUtils.isPrivateKey(privateKey) && laksaUtils.isAddress(address)) {
@@ -110,7 +110,7 @@ function generateAccountObject(privateKey) {
 
 
 var createAccount = function createAccount() {
-  var privateKey = laksaUtils.generatePrivateKey();
+  var privateKey = laksaCoreCrypto.generatePrivateKey();
 
   try {
     return generateAccountObject(privateKey);

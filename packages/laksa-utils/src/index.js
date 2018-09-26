@@ -1,5 +1,6 @@
 export {
   isNumber,
+  isInt,
   isString,
   isBoolean,
   isArray,
@@ -25,12 +26,13 @@ export {
   toHex,
   toUtf8,
   toAscii,
-  fromUtf8,
-  fromAscii,
   toBN,
   hexToNumber,
   utf8ToHex,
   numberToHex,
+  //-------
+  fromUtf8,
+  fromAscii,
   padLeft,
   padRight,
   strip0x,
