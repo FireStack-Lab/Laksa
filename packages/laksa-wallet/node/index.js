@@ -186,6 +186,7 @@
     ACCOUNT: Symbol('account'),
     WALLET: Symbol('wallet')
   };
+  const _accounts = [];
 
   class Wallet {
     constructor() {
@@ -196,7 +197,7 @@
       _defineProperty(this, "getIndexKeys", () => {
         const isCorrectKeys = n => /^\d+$/i.test(n) && parseInt(n, 10) <= 9e20;
 
-        return Object.keys(this.accounts).filter(isCorrectKeys);
+        return Object.keys(_accounts).filter(isCorrectKeys);
       });
 
       _defineProperty(this, "getCurrentMaxIndex", () => {
@@ -217,8 +218,8 @@
         });
         const objectKey = newAccountObject.address;
         const newIndex = newAccountObject.index;
-        this.accounts[objectKey] = newAccountObject;
-        this.accounts[newIndex] = objectKey;
+        _accounts[objectKey] = newAccountObject;
+        _accounts[newIndex] = objectKey;
         this.updateLength();
         return _objectSpread({}, newAccountObject);
       });
@@ -262,8 +263,8 @@
         } = this.getAccountByAddress(address);
 
         if (index !== undefined) {
-          delete this.accounts[index];
-          delete this.accounts[address];
+          delete _accounts[index];
+          delete _accounts[address];
           this.updateLength();
         }
       });
@@ -279,12 +280,12 @@
 
       _defineProperty(this, "getAccountByAddress", address => {
         if (!laksaUtils.isAddress(address)) throw new Error('address is not correct');
-        return this.accounts[address];
+        return _accounts[address];
       });
 
       _defineProperty(this, "getAccountByIndex", index => {
         if (!laksaUtils.isNumber(index)) throw new Error('index is not correct');
-        const address = this.accounts[index];
+        const address = _accounts[index];
 
         if (address !== undefined) {
           return this.getAccountByAddress(address);
@@ -324,7 +325,7 @@
         const newAccountObject = Object.assign({}, newObject, {
           updatedTime: new Date()
         });
-        this.accounts[address] = newAccountObject;
+        _accounts[address] = newAccountObject;
         return true;
       });
 
@@ -402,7 +403,16 @@
       });
 
       this.length = 0;
-      this.accounts = [];
+    }
+
+    get accounts() {
+      return _accounts;
+    }
+
+    set accounts(value) {
+      if (value !== undefined) {
+        throw new Error('you cant set accounts directly, use internal functions');
+      }
     }
     /**
      * [updateLength description]
