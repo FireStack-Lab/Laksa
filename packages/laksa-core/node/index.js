@@ -1,8 +1,8 @@
 (function (global, factory) {
-  typeof exports === 'object' && typeof module !== 'undefined' ? module.exports = factory(require('laksa-utils'), require('laksa-core-crypto'), require('laksa-wallet'), require('laksa-core-messenger'), require('laksa-providers-http'), require('laksa-zil')) :
-  typeof define === 'function' && define.amd ? define(['laksa-utils', 'laksa-core-crypto', 'laksa-wallet', 'laksa-core-messenger', 'laksa-providers-http', 'laksa-zil'], factory) :
-  (global.Laksa = factory(global.util,global.core,global.wallet,global.laksaCoreMessenger,global.HttpProvider,global.Zil));
-}(this, (function (util,core,wallet,laksaCoreMessenger,HttpProvider,Zil) { 'use strict';
+  typeof exports === 'object' && typeof module !== 'undefined' ? module.exports = factory(require('laksa-utils'), require('laksa-core-crypto'), require('laksa-core-messenger'), require('laksa-providers-http'), require('laksa-zil')) :
+  typeof define === 'function' && define.amd ? define(['laksa-utils', 'laksa-core-crypto', 'laksa-core-messenger', 'laksa-providers-http', 'laksa-zil'], factory) :
+  (global.Laksa = factory(global.util,global.core,global.laksaCoreMessenger,global.HttpProvider,global.Zil));
+}(this, (function (util,core,laksaCoreMessenger,HttpProvider,Zil) { 'use strict';
 
   HttpProvider = HttpProvider && HttpProvider.hasOwnProperty('default') ? HttpProvider['default'] : HttpProvider;
   Zil = Zil && Zil.hasOwnProperty('default') ? Zil['default'] : Zil;
@@ -48,10 +48,6 @@
     defaultAccount: undefined
   };
 
-  const {
-    Wallet
-  } = wallet;
-
   class Laksa {
     constructor(args) {
       _defineProperty(this, "providers", {
@@ -90,7 +86,6 @@
       this.currentProvider = new HttpProvider(url);
       this.messenger = new laksaCoreMessenger.Messenger(this.currentProvider);
       this.zil = new Zil(this);
-      this.wallet = new Wallet();
     }
 
   }

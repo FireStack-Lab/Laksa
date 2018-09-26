@@ -7,13 +7,10 @@
 
 import * as util from 'laksa-utils'
 import * as core from 'laksa-core-crypto'
-import * as wallet from 'laksa-wallet'
 import { Messenger } from 'laksa-core-messenger'
 import HttpProvider from 'laksa-providers-http'
 import Zil from 'laksa-zil'
 import config from './config'
-
-const { Wallet } = wallet
 
 class Laksa {
   constructor(args) {
@@ -22,7 +19,6 @@ class Laksa {
     this.currentProvider = new HttpProvider(url)
     this.messenger = new Messenger(this.currentProvider)
     this.zil = new Zil(this)
-    this.wallet = new Wallet()
   }
 
   providers = {
