@@ -1,6 +1,7 @@
 import {
   isAddress, isNumber, isObject, isArray
 } from 'laksa-utils'
+import { Map, List } from 'immutable'
 
 import * as account from './account'
 
@@ -9,7 +10,7 @@ const encryptedBy = {
   WALLET: Symbol('wallet')
 }
 
-const _accounts = []
+let _accounts = Map({ accounts: List([]) })
 
 class Wallet {
   constructor() {
@@ -17,7 +18,7 @@ class Wallet {
   }
 
   get accounts() {
-    return _accounts
+    return _accounts.get('accounts').toArray()
   }
 
   set accounts(value) {
@@ -36,7 +37,8 @@ class Wallet {
 
   getIndexKeys = () => {
     const isCorrectKeys = n => /^\d+$/i.test(n) && parseInt(n, 10) <= 9e20
-    return Object.keys(_accounts).filter(isCorrectKeys)
+    const arrays = _accounts.get('accounts').toArray()
+    return Object.keys(arrays).filter(isCorrectKeys)
   }
 
   getCurrentMaxIndex = () => {
@@ -56,8 +58,11 @@ class Wallet {
     })
     const objectKey = newAccountObject.address
     const newIndex = newAccountObject.index
-    _accounts[objectKey] = newAccountObject
-    _accounts[newIndex] = objectKey
+    let newArrays = _accounts.get('accounts')
+    newArrays = newArrays.set(newIndex, objectKey)
+    _accounts = _accounts.set(objectKey, newAccountObject)
+    _accounts = _accounts.set('accounts', List(newArrays))
+    // _accounts = _accounts.concat(newArrays)
     this.updateLength()
     return {
       ...newAccountObject
@@ -92,12 +97,15 @@ class Wallet {
     return Imported
   }
 
+  //-------
   removeOneAccountByAddress = (address) => {
     if (!isAddress(address)) throw new Error('address is not correct')
     const { index } = this.getAccountByAddress(address)
     if (index !== undefined) {
-      delete _accounts[index]
-      delete _accounts[address]
+      const currentArray = _accounts.get('accounts').toArray()
+      delete currentArray[index]
+      _accounts = _accounts.set('accounts', List(currentArray))
+      _accounts = _accounts.delete(address)
       this.updateLength()
     }
   }
@@ -110,57 +118,89 @@ class Wallet {
     }
   }
 
+  //---------
   getAccountByAddress = (address) => {
     if (!isAddress(address)) throw new Error('address is not correct')
-    return _accounts[address]
+    return _accounts.get(address)
   }
 
   getAccountByIndex = (index) => {
     if (!isNumber(index)) throw new Error('index is not correct')
-    const address = _accounts[index]
+    const address = _accounts.get('accounts').get(index)
     if (address !== undefined) {
       return this.getAccountByAddress(address)
     } else return undefined
   }
 
   getWalletAddresses = () => {
-    return this.getIndexKeys().map((index) => {
-      const { address } = this.getAccountByIndex(parseInt(index, 10))
-      return address
-    })
+    return this.getIndexKeys()
+      .map((index) => {
+        const accountFound = this.getAccountByIndex(parseInt(index, 10))
+        if (accountFound) {
+          return accountFound.address
+        }
+        return false
+      })
+      .filter(d => !!d)
   }
 
   getWalletPublicKeys = () => {
-    return this.getIndexKeys().map((index) => {
-      const { publicKey } = this.getAccountByIndex(parseInt(index, 10))
-      return publicKey
-    })
+    return this.getIndexKeys()
+      .map((index) => {
+        const accountFound = this.getAccountByIndex(parseInt(index, 10))
+        if (accountFound) {
+          return accountFound.publicKey
+        }
+        return false
+      })
+      .filter(d => !!d)
   }
 
   getWalletPrivateKeys = () => {
-    return this.getIndexKeys().map((index) => {
-      const { privateKey } = this.getAccountByIndex(parseInt(index, 10))
-      return privateKey
-    })
+    return this.getIndexKeys()
+      .map((index) => {
+        const accountFound = this.getAccountByIndex(parseInt(index, 10))
+        if (accountFound) {
+          return accountFound.privateKey
+        }
+        return false
+      })
+      .filter(d => !!d)
   }
+
+  getWalletAccounts = () => {
+    return this.getIndexKeys()
+      .map((index) => {
+        const accountFound = this.getAccountByIndex(parseInt(index, 10))
+        return accountFound || false
+      })
+      .filter(d => !!d)
+  }
+
+  // -----------
 
   updateAccountByAddress = (address, newObject) => {
     if (!isAddress(address)) throw new Error('address is not correct')
     if (!isObject(newObject)) throw new Error('new account Object is not correct')
     const newAccountObject = Object.assign({}, newObject, { updatedTime: new Date() })
-    _accounts[address] = newAccountObject
+    _accounts = _accounts.update(address, () => newAccountObject)
     return true
   }
 
+  // -----------
   cleanAllAccounts = () => {
     this.getIndexKeys().forEach(index => this.removeOneAccountByIndex(parseInt(index, 10)))
     return true
   }
 
+  // -----------
   encryptAllAccounts = (password, level) => {
     this.getIndexKeys().forEach((index) => {
-      const { address } = this.getAccountByIndex(parseInt(index, 10))
-      this.encryptAccountByAddress(address, password, level, encryptedBy.WALLET)
+      const accountObject = this.getAccountByIndex(parseInt(index, 10))
+      if (accountObject) {
+        const { address } = accountObject
+        this.encryptAccountByAddress(address, password, level, encryptedBy.WALLET)
+      }
     })
     return true
   }
@@ -168,12 +208,14 @@ class Wallet {
   decryptAllAccounts = (password) => {
     this.getIndexKeys().forEach((index) => {
       const accountObject = this.getAccountByIndex(parseInt(index, 10))
-      const { address, LastEncryptedBy } = accountObject
-      if (LastEncryptedBy === encryptedBy.WALLET) {
-        this.decryptAccountByAddress(address, password, encryptedBy.WALLET)
-      } else {
-        console.error(`address ${address} is protected by account psw`)
-        console.error('use /decryptAccountByAddress/ instead')
+      if (accountObject) {
+        const { address, LastEncryptedBy } = accountObject
+        if (LastEncryptedBy === encryptedBy.WALLET) {
+          this.decryptAccountByAddress(address, password, encryptedBy.WALLET)
+        } else {
+          console.error(`address ${address} is protected by account psw`)
+          console.error('use /decryptAccountByAddress/ instead')
+        }
       }
     })
     return true
