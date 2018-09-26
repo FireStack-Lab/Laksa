@@ -1,6 +1,6 @@
 {
   "name": "laksa-zil",
-  "version": "0.0.39",
+  "version": "0.0.40",
   "description": "laksa-zil for webz.js",
   "main": "index.js",
   "browser": "lib/index.js",
@@ -13,7 +13,7 @@
   "author": "neeboo",
   "license": "ISC",
   "dependencies": {
-    "laksa-core-methods": "^0.0.39",
-    "laksa-core-properties": "^0.0.39"
+    "laksa-core-methods": "^0.0.40",
+    "laksa-core-properties": "^0.0.40"
   }
 }
