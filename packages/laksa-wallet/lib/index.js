@@ -20,6 +20,7 @@ require('core-js/modules/es6.object.keys');
 var _classCallCheck = _interopDefault(require('@babel/runtime/helpers/classCallCheck'));
 var _createClass = _interopDefault(require('@babel/runtime/helpers/createClass'));
 var _defineProperty = _interopDefault(require('@babel/runtime/helpers/defineProperty'));
+var immutable = require('immutable');
 
 var encrypt = function encrypt(privateKey, password) {
   var options = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : {};
@@ -168,7 +169,10 @@ var encryptedBy = {
   ACCOUNT: Symbol('account'),
   WALLET: Symbol('wallet')
 };
-var _accounts = [];
+
+var _accounts = immutable.Map({
+  accounts: immutable.List([])
+});
 
 var Wallet =
 /*#__PURE__*/
@@ -187,7 +191,9 @@ function () {
         return /^\d+$/i.test(n) && parseInt(n, 10) <= 9e20;
       };
 
-      return Object.keys(_accounts).filter(isCorrectKeys);
+      var arrays = _accounts.get('accounts').toArray();
+
+      return Object.keys(arrays).filter(isCorrectKeys);
     });
 
     _defineProperty(this, "getCurrentMaxIndex", function () {
@@ -209,8 +215,12 @@ function () {
       });
       var objectKey = newAccountObject.address;
       var newIndex = newAccountObject.index;
-      _accounts[objectKey] = newAccountObject;
-      _accounts[newIndex] = objectKey;
+
+      var newArrays = _accounts.get('accounts');
+
+      newArrays = newArrays.set(newIndex, objectKey);
+      _accounts = _accounts.set(objectKey, newAccountObject);
+      _accounts = _accounts.set('accounts', immutable.List(newArrays)); // _accounts = _accounts.concat(newArrays)
 
       _this.updateLength();
 
@@ -256,8 +266,11 @@ function () {
           index = _this$getAccountByAdd.index;
 
       if (index !== undefined) {
-        delete _accounts[index];
-        delete _accounts[address];
+        var currentArray = _accounts.get('accounts').toArray();
+
+        delete currentArray[index];
+        _accounts = _accounts.set('accounts', immutable.List(currentArray));
+        _accounts = _accounts.delete(address);
 
         _this.updateLength();
       }
@@ -275,12 +288,13 @@ function () {
 
     _defineProperty(this, "getAccountByAddress", function (address) {
       if (!laksaUtils.isAddress(address)) throw new Error('address is not correct');
-      return _accounts[address];
+      return _accounts.get(address);
     });
 
     _defineProperty(this, "getAccountByIndex", function (index) {
       if (!laksaUtils.isNumber(index)) throw new Error('index is not correct');
-      var address = _accounts[index];
+
+      var address = _accounts.get('accounts').get(index);
 
       if (address !== undefined) {
         return _this.getAccountByAddress(address);
@@ -289,28 +303,53 @@ function () {
 
     _defineProperty(this, "getWalletAddresses", function () {
       return _this.getIndexKeys().map(function (index) {
-        var _this$getAccountByInd = _this.getAccountByIndex(parseInt(index, 10)),
-            address = _this$getAccountByInd.address;
+        var accountFound = _this.getAccountByIndex(parseInt(index, 10));
 
-        return address;
+        if (accountFound) {
+          return accountFound.address;
+        }
+
+        return false;
+      }).filter(function (d) {
+        return !!d;
       });
     });
 
     _defineProperty(this, "getWalletPublicKeys", function () {
       return _this.getIndexKeys().map(function (index) {
-        var _this$getAccountByInd2 = _this.getAccountByIndex(parseInt(index, 10)),
-            publicKey = _this$getAccountByInd2.publicKey;
+        var accountFound = _this.getAccountByIndex(parseInt(index, 10));
 
-        return publicKey;
+        if (accountFound) {
+          return accountFound.publicKey;
+        }
+
+        return false;
+      }).filter(function (d) {
+        return !!d;
       });
     });
 
     _defineProperty(this, "getWalletPrivateKeys", function () {
       return _this.getIndexKeys().map(function (index) {
-        var _this$getAccountByInd3 = _this.getAccountByIndex(parseInt(index, 10)),
-            privateKey = _this$getAccountByInd3.privateKey;
+        var accountFound = _this.getAccountByIndex(parseInt(index, 10));
 
-        return privateKey;
+        if (accountFound) {
+          return accountFound.privateKey;
+        }
+
+        return false;
+      }).filter(function (d) {
+        return !!d;
+      });
+    });
+
+    _defineProperty(this, "getWalletAccounts", function () {
+      return _this.getIndexKeys().map(function (index) {
+        var accountFound = _this.getAccountByIndex(parseInt(index, 10));
+
+        return accountFound || false;
+      }).filter(function (d) {
+        return !!d;
       });
     });
 
@@ -320,7 +359,9 @@ function () {
       var newAccountObject = Object.assign({}, newObject, {
         updatedTime: new Date()
       });
-      _accounts[address] = newAccountObject;
+      _accounts = _accounts.update(address, function () {
+        return newAccountObject;
+      });
       return true;
     });
 
@@ -334,10 +375,13 @@ function () {
 
     _defineProperty(this, "encryptAllAccounts", function (password, level) {
       _this.getIndexKeys().forEach(function (index) {
-        var _this$getAccountByInd4 = _this.getAccountByIndex(parseInt(index, 10)),
-            address = _this$getAccountByInd4.address;
+        var accountObject = _this.getAccountByIndex(parseInt(index, 10));
 
-        _this.encryptAccountByAddress(address, password, level, encryptedBy.WALLET);
+        if (accountObject) {
+          var address = accountObject.address;
+
+          _this.encryptAccountByAddress(address, password, level, encryptedBy.WALLET);
+        }
       });
 
       return true;
@@ -347,14 +391,16 @@ function () {
       _this.getIndexKeys().forEach(function (index) {
         var accountObject = _this.getAccountByIndex(parseInt(index, 10));
 
-        var address = accountObject.address,
-            LastEncryptedBy = accountObject.LastEncryptedBy;
+        if (accountObject) {
+          var address = accountObject.address,
+              LastEncryptedBy = accountObject.LastEncryptedBy;
 
-        if (LastEncryptedBy === encryptedBy.WALLET) {
-          _this.decryptAccountByAddress(address, password, encryptedBy.WALLET);
-        } else {
-          console.error("address ".concat(address, " is protected by account psw"));
-          console.error('use /decryptAccountByAddress/ instead');
+          if (LastEncryptedBy === encryptedBy.WALLET) {
+            _this.decryptAccountByAddress(address, password, encryptedBy.WALLET);
+          } else {
+            console.error("address ".concat(address, " is protected by account psw"));
+            console.error('use /decryptAccountByAddress/ instead');
+          }
         }
       });
 
@@ -403,7 +449,7 @@ function () {
   _createClass(Wallet, [{
     key: "accounts",
     get: function get() {
-      return _accounts;
+      return _accounts.get('accounts').toArray();
     },
     set: function set(value) {
       if (value !== undefined) {
