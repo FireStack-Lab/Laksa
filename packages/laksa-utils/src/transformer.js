@@ -8,7 +8,9 @@ import {
   isAddress,
   isBoolean,
   isObject,
-  isString
+  isString,
+  isNumber,
+  validateTypes
 } from './generator'
 /**
  * convert number to array representing the padded hex form
@@ -46,6 +48,7 @@ const intToByteArray = (val, paddedSize) => {
  * @return {String}
  */
 const numberToHex = (value) => {
+  validateTypes(value, [isString, isNumber, isBN, isNull, isUndefined])
   if (isNull(value) || isUndefined(value)) {
     return value
   }
@@ -89,6 +92,7 @@ const toBN = (data) => {
  * @return {String}
  */
 const hexToNumber = (value) => {
+  validateTypes(value, [isNumber, isString, isHex, isBN, isUndefined])
   if (!value) {
     return value
   }
@@ -103,6 +107,7 @@ const hexToNumber = (value) => {
  * @returns {String} hex representation of input string
  */
 const utf8ToHex = (str) => {
+  validateTypes(str, [isAddress, isString, isHex])
   let hex = ''
 
   const newString = utf8.encode(str)
@@ -141,7 +146,7 @@ const utf8ToHex = (str) => {
  */
 const toHex = (value, returnType) => {
   /* jshint maxcomplexity: false */
-
+  validateTypes(value, [isAddress, isBoolean, isObject, isString, isNumber, isHex, isBN])
   if (isAddress(value)) {
     // strip 0x from address
     return returnType ? 'address' : `0x${value.toLowerCase().replace(/^0x/i, '')}`
@@ -175,7 +180,13 @@ const strip0x = (value) => {
   return `${newString.replace(/^0x/i, '')}`
 }
 
+/**
+ * [add an '0x' prefix to value]
+ * @param  {[String|Number|Hex|BN]} value [description]
+ * @return {[String]}       [description]
+ */
 const add0x = (value) => {
+  validateTypes(value, [isString, isNumber, isHex, isBN])
   let newString
   if (!isString(value)) {
     newString = String(value)

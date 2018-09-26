@@ -107,8 +107,8 @@
 
   function generateAccountObject(privateKey) {
     if (!laksaUtils.isPrivateKey(privateKey)) throw new Error('private key is not correct');
-    const address = laksaUtils.getAddressFromPrivateKey(privateKey);
-    const publicKey = laksaUtils.getPubKeyFromPrivateKey(privateKey);
+    const address = laksaCoreCrypto.getAddressFromPrivateKey(privateKey);
+    const publicKey = laksaCoreCrypto.getPubKeyFromPrivateKey(privateKey);
     let accountObject = {}; // set accountObject
 
     if (laksaUtils.isPubkey(publicKey) && laksaUtils.isPrivateKey(privateKey) && laksaUtils.isAddress(address)) {
@@ -130,7 +130,7 @@
 
 
   const createAccount = () => {
-    const privateKey = laksaUtils.generatePrivateKey();
+    const privateKey = laksaCoreCrypto.generatePrivateKey();
 
     try {
       return generateAccountObject(privateKey);
