@@ -1,6 +1,6 @@
 {
   "name": "laksa-wallet",
-  "version": "0.0.39",
+  "version": "0.0.40",
   "description": "laksa-wallet for laksa",
   "main": "index.js",
   "scripts": {
@@ -11,8 +11,8 @@
   "dependencies": {
     "crypto-js": "^3.1.9-1",
     "immutable": "^3.8.2",
-    "laksa-core-crypto": "^0.0.39",
-    "laksa-utils": "^0.0.39",
+    "laksa-core-crypto": "^0.0.40",
+    "laksa-utils": "^0.0.40",
     "uuid": "^3.3.2"
   }
 }

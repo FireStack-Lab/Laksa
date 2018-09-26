@@ -1,6 +1,6 @@
 {
   "name": "laksa-hd-wallet",
-  "version": "0.0.39",
+  "version": "0.0.40",
   "description": "hd-wallet for laksa",
   "main": "index.js",
   "scripts": {
@@ -14,7 +14,7 @@
   "dependencies": {
     "bip39": "^2.5.0",
     "hdkey": "^1.1.0",
-    "laksa-utils": "^0.0.39",
-    "laksa-wallet": "^0.0.39"
+    "laksa-utils": "^0.0.40",
+    "laksa-wallet": "^0.0.40"
   }
 }
