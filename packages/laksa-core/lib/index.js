@@ -10,7 +10,6 @@ var _classCallCheck = _interopDefault(require('@babel/runtime/helpers/classCallC
 var _defineProperty = _interopDefault(require('@babel/runtime/helpers/defineProperty'));
 var util = require('laksa-utils');
 var core = require('laksa-core-crypto');
-var wallet = require('laksa-wallet');
 var laksaCoreMessenger = require('laksa-core-messenger');
 var HttpProvider = _interopDefault(require('laksa-providers-http'));
 var Zil = _interopDefault(require('laksa-zil'));
@@ -21,8 +20,6 @@ var config = {
   defaultBlock: 'latest',
   defaultAccount: undefined
 };
-
-var Wallet = wallet.Wallet;
 
 var Laksa = function Laksa(args) {
   var _this = this;
@@ -103,7 +100,6 @@ var Laksa = function Laksa(args) {
   this.currentProvider = new HttpProvider(url);
   this.messenger = new laksaCoreMessenger.Messenger(this.currentProvider);
   this.zil = new Zil(this);
-  this.wallet = new Wallet();
 };
 
 module.exports = Laksa;
