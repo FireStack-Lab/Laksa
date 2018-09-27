@@ -407,6 +407,30 @@ function validateTypes(arg, validatorArray) {
   return true;
 }
 
+function validateTypesMatch(arg, validatorArray) {
+  var valLength = validatorArray.length;
+
+  if (valLength === 0 || !isArray$1(validatorArray)) {
+    throw new Error('Must include some validators');
+  }
+
+  var valsKey = validator.test(arg);
+  var getValidators = [];
+  var finalReduceArray = validatorArray.map(function (v) {
+    getValidators.push(v.validator);
+    return valsKey.includes(v.validator.substring(2)) ? 1 : 0;
+  });
+  var finalReduce = finalReduceArray.reduce(function (acc, cur) {
+    return acc + cur;
+  });
+
+  if (finalReduce < valLength || finalReduce === 0) {
+    throw new TypeError("All of [".concat(getValidators.concat(), "] has to pass, but we have your arg to be [").concat(_toConsumableArray(valsKey), "]"));
+  }
+
+  return true;
+}
+
 /**
  * convert number to array representing the padded hex form
  * @param  {[string]} val        [description]
@@ -640,6 +664,8 @@ exports.isNull = isNull$1;
 exports.isUndefined = isUndefined$1;
 exports.validator = validator;
 exports.validateArgs = validateArgs;
+exports.validateTypes = validateTypes;
+exports.validateTypesMatch = validateTypesMatch;
 exports.validateFunctionArgs = validateFunctionArgs;
 exports.extractValidator = extractValidator;
 exports.intToByteArray = intToByteArray;
