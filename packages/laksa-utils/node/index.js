@@ -385,6 +385,28 @@
     return true;
   }
 
+  function validateTypesMatch(arg, validatorArray) {
+    const valLength = validatorArray.length;
+
+    if (valLength === 0 || !isArray$1(validatorArray)) {
+      throw new Error('Must include some validators');
+    }
+
+    const valsKey = validator.test(arg);
+    const getValidators = [];
+    const finalReduceArray = validatorArray.map(v => {
+      getValidators.push(v.validator);
+      return valsKey.includes(v.validator.substring(2)) ? 1 : 0;
+    });
+    const finalReduce = finalReduceArray.reduce((acc, cur) => acc + cur);
+
+    if (finalReduce < valLength || finalReduce === 0) {
+      throw new TypeError(`All of [${[...getValidators]}] has to pass, but we have your arg to be [${[...valsKey]}]`);
+    }
+
+    return true;
+  }
+
   /**
    * convert number to array representing the padded hex form
    * @param  {[string]} val        [description]
@@ -618,6 +640,8 @@
   exports.isUndefined = isUndefined$1;
   exports.validator = validator;
   exports.validateArgs = validateArgs;
+  exports.validateTypes = validateTypes;
+  exports.validateTypesMatch = validateTypesMatch;
   exports.validateFunctionArgs = validateFunctionArgs;
   exports.extractValidator = extractValidator;
   exports.intToByteArray = intToByteArray;

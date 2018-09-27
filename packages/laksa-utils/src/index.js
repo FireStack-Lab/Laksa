@@ -18,6 +18,8 @@ export {
   isUndefined,
   validator,
   validateArgs,
+  validateTypes,
+  validateTypesMatch,
   validateFunctionArgs,
   extractValidator
 } from './generator'
