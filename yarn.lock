@@ -4721,6 +4721,10 @@ ignore@^4.0.6:
   version "4.0.6"
   resolved "https://registry.npmjs.org/ignore/-/ignore-4.0.6.tgz#750e3db5862087b4737ebac8207ffd1ef27b25fc"
 
+immutable@^3.8.2:
+  version "3.8.2"
+  resolved "https://registry.npmjs.org/immutable/-/immutable-3.8.2.tgz#c2439951455bb39913daf281376f1530e104adf3"
+
 import-lazy@^2.1.0:
   version "2.1.0"
   resolved "https://registry.npmjs.org/import-lazy/-/import-lazy-2.1.0.tgz#05698e3d45c88e8d7e9d92cb0584e77f096f3e43"
@@ -7634,6 +7638,12 @@ rollup-plugin-commonjs@^9.1.6:
     resolve "^1.5.0"
     rollup-pluginutils "^2.0.1"
 
+rollup-plugin-json@^3.1.0:
+  version "3.1.0"
+  resolved "https://registry.npmjs.org/rollup-plugin-json/-/rollup-plugin-json-3.1.0.tgz#7c1daf60c46bc21021ea016bd00863561a03321b"
+  dependencies:
+    rollup-pluginutils "^2.3.1"
+
 rollup-plugin-node-resolve@^3.4.0:
   version "3.4.0"
   resolved "https://registry.npmjs.org/rollup-plugin-node-resolve/-/rollup-plugin-node-resolve-3.4.0.tgz#908585eda12e393caac7498715a01e08606abc89"
@@ -7676,6 +7686,13 @@ rollup-pluginutils@2.0.1:
 rollup-pluginutils@^2.0.1, rollup-pluginutils@^2.3.0:
   version "2.3.1"
   resolved "https://registry.npmjs.org/rollup-pluginutils/-/rollup-pluginutils-2.3.1.tgz#760d185ccc237dedc12d7ae48c6bcd127b4892d0"
+  dependencies:
+    estree-walker "^0.5.2"
+    micromatch "^2.3.11"
+
+rollup-pluginutils@^2.3.1:
+  version "2.3.3"
+  resolved "https://registry.npmjs.org/rollup-pluginutils/-/rollup-pluginutils-2.3.3.tgz#3aad9b1eb3e7fe8262820818840bf091e5ae6794"
   dependencies:
     estree-walker "^0.5.2"
     micromatch "^2.3.11"

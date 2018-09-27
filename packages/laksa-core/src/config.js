@@ -1,5 +1,7 @@
+import { version } from '../package.json'
+
 export default {
-  version: '0.0.1',
+  version,
   defaultProviderUrl: 'http://localhost:4200',
   defaultBlock: 'latest',
   defaultAccount: undefined

@@ -1,4 +1,5 @@
 import babel from 'rollup-plugin-babel'
+import json from 'rollup-plugin-json'
 import packages from '../packages'
 import serverConfig from '../babel/babel.server.config.js'
 
@@ -11,7 +12,7 @@ function bundles() {
         format: 'umd',
         name: 'Laksa'
       },
-      plugins: [babel(serverConfig)]
+      plugins: [babel(serverConfig), json()]
     }
   })
 }
