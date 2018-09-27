@@ -14,8 +14,10 @@ var laksaCoreMessenger = require('laksa-core-messenger');
 var HttpProvider = _interopDefault(require('laksa-providers-http'));
 var Zil = _interopDefault(require('laksa-zil'));
 
+var version = "0.0.41";
+
 var config = {
-  version: '0.0.1',
+  version: version,
   defaultProviderUrl: 'http://localhost:4200',
   defaultBlock: 'latest',
   defaultAccount: undefined
