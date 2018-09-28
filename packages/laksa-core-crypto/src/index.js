@@ -251,6 +251,7 @@ const isAddress = (address) => {
     // If it's all small caps or all all caps, return true
     return true
   }
+  return false
 }
 
 export { randomBytes }
