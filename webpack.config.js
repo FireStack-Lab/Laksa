@@ -11,58 +11,123 @@
 /* eslint import/no-extraneous-dependencies: ["error", { devDependencies: true }] */
 const path = require('path')
 const UglifyJs = require('uglifyjs-webpack-plugin')
+const packagesSettings = require('./scripts/packagesList')
 
-const baseConfig = {
-  entry: {
-    Laksa: ['./packages/laksa/index.js']
-  },
-  mode: 'production',
-  module: {
-    rules: [
-      {
-        test: /\.js$/,
-        use: {
-          loader: 'babel-loader'
-          // options: {
-          //   babelrc: true,
-          //   cacheDirectory: true
-          // }
-        }
-      }
-    ]
-  },
-  devtool: 'source-map',
-  resolve: {
-    symlinks: true,
-    extensions: ['.js']
-  }
-}
+function createBatchConfig(list) {
+  return list.map((l) => {
+    const entry = {}
+    entry[l.name] = [`./packages/${l.dest}/index.js`]
 
-const clientConfig = {
-  ...baseConfig,
-  optimization: {
-    minimizer: [
-      new UglifyJs({
-        uglifyOptions: {
-          compress: true,
-          mangle: true,
-          toplevel: false,
-          output: {
-            beautify: false,
-            comments: false
+    const batchBaseConfig = {
+      entry,
+      mode: 'production',
+      module: {
+        rules: [
+          {
+            test: /\.js$/,
+            use: {
+              loader: 'babel-loader'
+            }
           }
-        },
-        parallel: true,
-        sourceMap: true
-      })
-    ]
-  },
-  output: {
-    libraryTarget: 'umd',
-    library: 'laksa.js',
-    filename: '[name].browser.js',
-    path: path.join(__dirname, 'dist')
-  }
+        ]
+      },
+      devtool: 'source-map',
+      resolve: {
+        symlinks: true,
+        extensions: ['.js']
+      }
+    }
+
+    const batchClientConfig = {
+      ...batchBaseConfig,
+      optimization: {
+        minimizer: [
+          new UglifyJs({
+            uglifyOptions: {
+              compress: true,
+              mangle: true,
+              toplevel: false,
+              output: {
+                beautify: false,
+                comments: false
+              }
+            },
+            parallel: true,
+            sourceMap: true
+          })
+        ]
+      },
+      output: {
+        libraryTarget: 'umd',
+        library: `${l.name}`,
+        filename: '[name].browser.js',
+        path: path.join(__dirname, 'dist')
+      }
+    }
+
+    return [batchBaseConfig, batchClientConfig]
+  })
 }
 
-module.exports = [baseConfig, clientConfig]
+function reduceDimension(arr) {
+  return Array.prototype.concat.apply([], arr)
+}
+
+const batch = reduceDimension(createBatchConfig(packagesSettings))
+
+module.exports = batch
+
+// const baseConfig = {
+//   entry: {
+//     Laksa: ['./packages/laksa/index.js']
+//   },
+//   mode: 'production',
+//   module: {
+//     rules: [
+//       {
+//         test: /\.js$/,
+//         use: {
+//           loader: 'babel-loader'
+//           // options: {
+//           //   babelrc: true,
+//           //   cacheDirectory: true
+//           // }
+//         }
+//       }
+//     ]
+//   },
+//   devtool: 'source-map',
+//   resolve: {
+//     symlinks: true,
+//     extensions: ['.js']
+//   }
+// }
+//
+// const clientConfig = {
+//   ...baseConfig,
+//   optimization: {
+//     minimizer: [
+//       new UglifyJs({
+//         uglifyOptions: {
+//           compress: true,
+//           mangle: true,
+//           toplevel: false,
+//           output: {
+//             beautify: false,
+//             comments: false
+//           }
+//         },
+//         parallel: true,
+//         sourceMap: true
+//       })
+//     ]
+//   },
+//   output: {
+//     libraryTarget: 'umd',
+//     library: 'laksa.js',
+//     filename: '[name].browser.js',
+//     path: path.join(__dirname, 'dist')
+//   }
+// }
+//
+// module.exports = [baseConfig, clientConfig]

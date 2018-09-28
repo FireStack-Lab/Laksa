@@ -1,6 +1,6 @@
 import { isWebUri } from 'valid-url'
 import { isBN } from 'bn.js'
-
+import { toChecksumAddress } from './transformer'
 /**
  * [isNumber verify param is a Number]
  * @param  {[type]}  obj [value]
@@ -186,6 +186,18 @@ const isUndefined = (obj) => {
   return obj === undefined
 }
 
+/**
+ * isValidChecksumAddress
+ *
+ * takes hex-encoded string and returns boolean if address is checksumed
+ *
+ * @param {string} address
+ * @returns {boolean}
+ */
+const isValidChecksumAddress = (address) => {
+  return isAddress(address.replace('0x', '')) && toChecksumAddress(address) === address
+}
+
 export {
   isNumber,
   isInt,
@@ -200,6 +212,7 @@ export {
   isPubkey,
   isPrivateKey,
   isAddress,
+  isValidChecksumAddress,
   isBN,
   isHex,
   isNull,
