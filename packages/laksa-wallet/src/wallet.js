@@ -4,11 +4,7 @@ import {
 import { Map, List } from 'immutable'
 
 import * as account from './account'
-
-const encryptedBy = {
-  ACCOUNT: Symbol('account'),
-  WALLET: Symbol('wallet')
-}
+import { encryptedBy } from './symbols'
 
 let _accounts = Map({ accounts: List([]) })
 
@@ -70,7 +66,8 @@ class Wallet {
   }
 
   createAccount = () => {
-    const accountObject = account.createAccount()
+    const accountInstance = new account.Account()
+    const accountObject = accountInstance.createAccount()
     return this.addAccount(accountObject)
   }
 
@@ -84,7 +81,8 @@ class Wallet {
   }
 
   importAccountFromPrivateKey = (privateKey) => {
-    const accountObject = account.importAccount(privateKey)
+    const accountInstance = new account.Account()
+    const accountObject = accountInstance.importAccount(privateKey)
     return this.addAccount(accountObject)
   }
 
@@ -226,7 +224,7 @@ class Wallet {
     if (accountObject !== undefined) {
       const { privateKey, crypto } = accountObject
       if (privateKey !== undefined && privateKey !== account.ENCRYPTED && crypto === undefined) {
-        const encryptedObject = account.encryptAccount(accountObject, password, level)
+        const encryptedObject = accountObject.encrypt(password, level)
         return this.updateAccountByAddress(
           address,
           Object.assign({}, encryptedObject, {
@@ -243,7 +241,7 @@ class Wallet {
     if (accountObject !== undefined) {
       const { privateKey, crypto } = accountObject
       if (privateKey !== undefined && privateKey === account.ENCRYPTED && isObject(crypto)) {
-        const decryptedObject = account.decryptAccount(accountObject, password)
+        const decryptedObject = accountObject.decrypt(password)
         return this.updateAccountByAddress(
           address,
           Object.assign({}, decryptedObject, {

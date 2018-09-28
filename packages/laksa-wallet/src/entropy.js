@@ -70,7 +70,7 @@ export const decrypt = (keyStore, password) => {
 
   const macString = CryptoJS.SHA3(macBuffer.toString()).toString()
   if (macString !== keyStore.crypto.mac) {
-    throw Error('password may be wrong')
+    throw new Error('password may be wrong')
   }
 
   const decrypted = CryptoJS.AES.decrypt(data, derivedKey.toString().slice(0, 16), {

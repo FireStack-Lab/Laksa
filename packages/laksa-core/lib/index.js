@@ -101,7 +101,8 @@ var Laksa = function Laksa(args) {
   this.util = _objectSpread({}, util, core);
   this.currentProvider = new HttpProvider(url);
   this.messenger = new laksaCoreMessenger.Messenger(this.currentProvider);
-  this.zil = new Zil(this);
+  this.zil = new Zil(this); // this.account = new Account()
+  // this.wallet = new Wallet()
 };
 
 module.exports = Laksa;

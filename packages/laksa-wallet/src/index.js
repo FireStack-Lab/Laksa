@@ -2,6 +2,7 @@ import Wallet from './wallet'
 
 export { encrypt, decrypt } from './entropy'
 export {
-  createAccount, importAccount, encryptAccount, decryptAccount, ENCRYPTED
+  Account, createAccount, importAccount, encryptAccount, decryptAccount
 } from './account'
 export { Wallet }
+export { ENCRYPTED, encryptedBy } from './symbols'
