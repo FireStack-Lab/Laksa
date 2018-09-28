@@ -344,7 +344,7 @@
 
   const isValidChecksumAddress = address => {
     const replacedAddress = address.replace('0x', '');
-    return !!replacedAddress.match(/^[0-9a-fA-F]{64}$/) && toChecksumAddress(address) === address;
+    return !!replacedAddress.match(/^[0-9a-fA-F]{40}$/) && toChecksumAddress(address) === address;
   };
 
   exports.randomBytes = randomBytes;
