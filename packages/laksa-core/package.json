@@ -1,17 +1,17 @@
 {
   "name": "laksa-core",
-  "version": "0.0.42",
+  "version": "0.0.43",
   "description": "",
   "main": "index.js",
   "browser": "lib/index.js",
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "laksa-core-crypto": "^0.0.42",
-    "laksa-core-messenger": "^0.0.42",
-    "laksa-providers-http": "^0.0.42",
-    "laksa-utils": "^0.0.42",
-    "laksa-wallet": "^0.0.42",
-    "laksa-zil": "^0.0.42"
+    "laksa-core-crypto": "^0.0.43",
+    "laksa-core-messenger": "^0.0.43",
+    "laksa-providers-http": "^0.0.43",
+    "laksa-utils": "^0.0.43",
+    "laksa-wallet": "^0.0.43",
+    "laksa-zil": "^0.0.43"
   }
 }
