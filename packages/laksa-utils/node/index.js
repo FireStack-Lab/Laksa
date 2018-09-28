@@ -1,225 +1,11 @@
 (function (global, factory) {
-  typeof exports === 'object' && typeof module !== 'undefined' ? factory(exports, require('number-to-bn'), require('utf8'), require('valid-url'), require('bn.js')) :
-  typeof define === 'function' && define.amd ? define(['exports', 'number-to-bn', 'utf8', 'valid-url', 'bn.js'], factory) :
-  (factory((global.Laksa = {}),global.numToBN,global.utf8,global.validUrl,global.bn_js));
-}(this, (function (exports,numToBN,utf8,validUrl,bn_js) { 'use strict';
+  typeof exports === 'object' && typeof module !== 'undefined' ? factory(exports, require('valid-url'), require('bn.js'), require('number-to-bn'), require('utf8')) :
+  typeof define === 'function' && define.amd ? define(['exports', 'valid-url', 'bn.js', 'number-to-bn', 'utf8'], factory) :
+  (factory((global.Laksa = {}),global.validUrl,global.bn_js,global.numToBN,global.utf8));
+}(this, (function (exports,validUrl,bn_js,numToBN,utf8) { 'use strict';
 
   numToBN = numToBN && numToBN.hasOwnProperty('default') ? numToBN['default'] : numToBN;
   utf8 = utf8 && utf8.hasOwnProperty('default') ? utf8['default'] : utf8;
-
-  /**
-   * convert number to array representing the padded hex form
-   * @param  {[string]} val        [description]
-   * @param  {[number]} paddedSize [description]
-   * @return {[string]}            [description]
-   */
-
-  const intToByteArray = (val, paddedSize) => {
-    const arr = [];
-    const hexVal = val.toString(16);
-    const hexRep = [];
-    let i;
-
-    for (i = 0; i < hexVal.length; i += 1) {
-      hexRep[i] = hexVal[i].toString();
-    }
-
-    for (i = 0; i < paddedSize - hexVal.length; i += 1) {
-      arr.push('0');
-    }
-
-    for (i = 0; i < hexVal.length; i += 1) {
-      arr.push(hexRep[i]);
-    }
-
-    return arr;
-  };
-  /**
-   * Converts value to it's hex representation
-   *
-   * @method numberToHex
-   * @param {String|Number|BN} value
-   * @return {String}
-   */
-
-
-  const numberToHex = value => {
-    validateTypes(value, [isString$1, isNumber$1, isBN, isNull$1, isUndefined$1]);
-
-    if (isNull$1(value) || isUndefined$1(value)) {
-      return value;
-    }
-
-    if (!Number.isFinite(value) && !isHex$1(value) && !isBN(value) && !isString$1(value)) {
-      throw new Error(`Given input "${value}" is not a number.`);
-    }
-
-    const number = isBN(value) ? value : toBN(value);
-    const result = number.toString(16);
-    return number.lt(toBN(0)) ? `-0x${result.substr(1)}` : `0x${result}`;
-  };
-
-  const toUtf8 = () => {// to utf 8
-  };
-
-  const toAscii = () => {// to be implemented
-  };
-
-  const fromUtf8 = () => {// to be implemented
-  };
-
-  const fromAscii = () => {// to be implemented
-  };
-
-  const toBN = data => {
-    try {
-      return numToBN(data);
-    } catch (e) {
-      throw new Error(`${e} of "${data}"`);
-    } // to be implemented
-
-  };
-  /**
-   * Converts value to it's number representation
-   *
-   * @method hexToNumber
-   * @param {String|Number|BN} value
-   * @return {String}
-   */
-
-
-  const hexToNumber = value => {
-    validateTypes(value, [isNumber$1, isString$1, isHex$1, isBN, isUndefined$1]);
-
-    if (!value) {
-      return value;
-    }
-
-    return toBN(value).toNumber();
-  };
-  /**
-   * Should be called to get hex representation (prefixed by 0x) of utf8 string
-   *
-   * @method utf8ToHex
-   * @param {String} str
-   * @returns {String} hex representation of input string
-   */
-
-
-  const utf8ToHex = str => {
-    validateTypes(str, [isAddress$1, isString$1, isHex$1]);
-    let hex = '';
-    const newString = utf8.encode(str);
-    const str1 = newString.replace(/^(?:\u0000)*/, '');
-    const str2 = str1.split('').reverse().join('');
-    const str3 = str2.replace(/^(?:\u0000)*/, '');
-    const str4 = str3.split('').reverse().join('');
-
-    for (let i = 0; i < str4.length; i += 1) {
-      const code = str4.charCodeAt(i); // if (code !== 0) {
-
-      const n = code.toString(16);
-      hex += n.length < 2 ? `0${n}` : n; // }
-    }
-
-    return `0x${hex}`;
-  };
-  /**
-   * Auto converts any given value into it's hex representation.
-   *
-   * And even stringifys objects before.
-   *
-   * @method toHex
-   * @param {String|Number|BN|Object} value
-   * @param {Boolean} returnType
-   * @return {String}
-   */
-
-
-  const toHex = (value, returnType) => {
-    /* jshint maxcomplexity: false */
-    validateTypes(value, [isAddress$1, isBoolean$1, isObject$1, isString$1, isNumber$1, isHex$1, isBN]);
-
-    if (isAddress$1(value)) {
-      // strip 0x from address
-      return returnType ? 'address' : `0x${value.toLowerCase().replace(/^0x/i, '')}`;
-    }
-
-    if (isBoolean$1(value)) {
-      return returnType ? 'bool' : value ? '0x01' : '0x00';
-    }
-
-    if (isObject$1(value) && !isBN(value)) {
-      return returnType ? 'string' : utf8ToHex(JSON.stringify(value));
-    }
-
-    if (isBN(value)) {
-      return returnType ? 'BN' : numberToHex(value);
-    } // if its a negative number, pass it through numberToHex
-
-
-    if (isString$1(value)) {
-      if (isHex$1(value) || !Number.isNaN(Number(value))) {
-        return returnType ? value < 0 ? 'int256' : 'uint256' : numberToHex(value);
-      } else if (!Number.isFinite(value) && !isUndefined$1(value) && Number.isNaN(Number(value))) {
-        return returnType ? 'string' : add0x(value);
-      }
-    }
-
-    return returnType ? value < 0 ? 'int256' : 'uint256' : numberToHex(value);
-  };
-
-  const strip0x = value => {
-    const newString = toHex(value);
-    return `${newString.replace(/^0x/i, '')}`;
-  };
-  /**
-   * [add an '0x' prefix to value]
-   * @param  {[String|Number|Hex|BN]} value [description]
-   * @return {[String]}       [description]
-   */
-
-
-  const add0x = value => {
-    validateTypes(value, [isString$1, isNumber$1, isHex$1, isBN]);
-    let newString;
-
-    if (!isString$1(value)) {
-      newString = String(value);
-      return `0x${newString.replace(/^0x/i, '')}`;
-    }
-
-    newString = `0x${value.replace(/^0x/i, '')}`;
-    return newString;
-  };
-  /**
-   * Should be called to pad string to expected length
-   *
-   * @method padLeft
-   * @param {String} string to be padded
-   * @param {Number} characters that result string should have
-   * @param {String} sign, by default 0
-   * @returns {String} right aligned string
-   */
-
-
-  const padLeft = (string, chars, sign) => {
-    return new Array(chars - string.length + 1).join(sign || '0') + string;
-  };
-  /**
-   * Should be called to pad string to expected length
-   *
-   * @method padRight
-   * @param {String} string to be padded
-   * @param {Number} characters that result string should have
-   * @param {String} sign, by default 0
-   * @returns {String} right aligned string
-   */
-
-
-  const padRight = (string, chars, sign) => {
-    return string + new Array(chars - string.length + 1).join(sign || '0');
-  };
 
   /**
    * [isNumber verify param is a Number]
@@ -622,6 +408,220 @@
 
     return true;
   }
+
+  /**
+   * convert number to array representing the padded hex form
+   * @param  {[string]} val        [description]
+   * @param  {[number]} paddedSize [description]
+   * @return {[string]}            [description]
+   */
+
+  const intToByteArray = (val, paddedSize) => {
+    const arr = [];
+    const hexVal = val.toString(16);
+    const hexRep = [];
+    let i;
+
+    for (i = 0; i < hexVal.length; i += 1) {
+      hexRep[i] = hexVal[i].toString();
+    }
+
+    for (i = 0; i < paddedSize - hexVal.length; i += 1) {
+      arr.push('0');
+    }
+
+    for (i = 0; i < hexVal.length; i += 1) {
+      arr.push(hexRep[i]);
+    }
+
+    return arr;
+  };
+  /**
+   * Converts value to it's hex representation
+   *
+   * @method numberToHex
+   * @param {String|Number|BN} value
+   * @return {String}
+   */
+
+
+  const numberToHex = value => {
+    validateTypes(value, [isString$1, isNumber$1, isBN, isNull$1, isUndefined$1]);
+
+    if (isNull$1(value) || isUndefined$1(value)) {
+      return value;
+    }
+
+    if (!Number.isFinite(value) && !isHex$1(value) && !isBN(value) && !isString$1(value)) {
+      throw new Error(`Given input "${value}" is not a number.`);
+    }
+
+    const number = isBN(value) ? value : toBN(value);
+    const result = number.toString(16);
+    return number.lt(toBN(0)) ? `-0x${result.substr(1)}` : `0x${result}`;
+  };
+
+  const toUtf8 = () => {// to utf 8
+  };
+
+  const toAscii = () => {// to be implemented
+  };
+
+  const fromUtf8 = () => {// to be implemented
+  };
+
+  const fromAscii = () => {// to be implemented
+  };
+
+  const toBN = data => {
+    try {
+      return numToBN(data);
+    } catch (e) {
+      throw new Error(`${e} of "${data}"`);
+    } // to be implemented
+
+  };
+  /**
+   * Converts value to it's number representation
+   *
+   * @method hexToNumber
+   * @param {String|Number|BN} value
+   * @return {String}
+   */
+
+
+  const hexToNumber = value => {
+    validateTypes(value, [isNumber$1, isString$1, isHex$1, isBN, isUndefined$1]);
+
+    if (!value) {
+      return value;
+    }
+
+    return toBN(value).toNumber();
+  };
+  /**
+   * Should be called to get hex representation (prefixed by 0x) of utf8 string
+   *
+   * @method utf8ToHex
+   * @param {String} str
+   * @returns {String} hex representation of input string
+   */
+
+
+  const utf8ToHex = str => {
+    validateTypes(str, [isAddress$1, isString$1, isHex$1]);
+    let hex = '';
+    const newString = utf8.encode(str);
+    const str1 = newString.replace(/^(?:\u0000)*/, '');
+    const str2 = str1.split('').reverse().join('');
+    const str3 = str2.replace(/^(?:\u0000)*/, '');
+    const str4 = str3.split('').reverse().join('');
+
+    for (let i = 0; i < str4.length; i += 1) {
+      const code = str4.charCodeAt(i); // if (code !== 0) {
+
+      const n = code.toString(16);
+      hex += n.length < 2 ? `0${n}` : n; // }
+    }
+
+    return `0x${hex}`;
+  };
+  /**
+   * Auto converts any given value into it's hex representation.
+   *
+   * And even stringifys objects before.
+   *
+   * @method toHex
+   * @param {String|Number|BN|Object} value
+   * @param {Boolean} returnType
+   * @return {String}
+   */
+
+
+  const toHex = (value, returnType) => {
+    /* jshint maxcomplexity: false */
+    validateTypes(value, [isAddress$1, isBoolean$1, isObject$1, isString$1, isNumber$1, isHex$1, isBN]);
+
+    if (isAddress$1(value)) {
+      // strip 0x from address
+      return returnType ? 'address' : `0x${value.toLowerCase().replace(/^0x/i, '')}`;
+    }
+
+    if (isBoolean$1(value)) {
+      return returnType ? 'bool' : value ? '0x01' : '0x00';
+    }
+
+    if (isObject$1(value) && !isBN(value)) {
+      return returnType ? 'string' : utf8ToHex(JSON.stringify(value));
+    }
+
+    if (isBN(value)) {
+      return returnType ? 'BN' : numberToHex(value);
+    } // if its a negative number, pass it through numberToHex
+
+
+    if (isString$1(value)) {
+      if (isHex$1(value) || !Number.isNaN(Number(value))) {
+        return returnType ? value < 0 ? 'int256' : 'uint256' : numberToHex(value);
+      } else if (!Number.isFinite(value) && !isUndefined$1(value) && Number.isNaN(Number(value))) {
+        return returnType ? 'string' : add0x(value);
+      }
+    }
+
+    return returnType ? value < 0 ? 'int256' : 'uint256' : numberToHex(value);
+  };
+
+  const strip0x = value => {
+    const newString = toHex(value);
+    return `${newString.replace(/^0x/i, '')}`;
+  };
+  /**
+   * [add an '0x' prefix to value]
+   * @param  {[String|Number|Hex|BN]} value [description]
+   * @return {[String]}       [description]
+   */
+
+
+  const add0x = value => {
+    validateTypes(value, [isString$1, isNumber$1, isHex$1, isBN]);
+    let newString;
+
+    if (!isString$1(value)) {
+      newString = String(value);
+      return `0x${newString.replace(/^0x/i, '')}`;
+    }
+
+    newString = `0x${value.replace(/^0x/i, '')}`;
+    return newString;
+  };
+  /**
+   * Should be called to pad string to expected length
+   *
+   * @method padLeft
+   * @param {String} string to be padded
+   * @param {Number} characters that result string should have
+   * @param {String} sign, by default 0
+   * @returns {String} right aligned string
+   */
+
+
+  const padLeft = (string, chars, sign) => {
+    return new Array(chars - string.length + 1).join(sign || '0') + string;
+  };
+  /**
+   * Should be called to pad string to expected length
+   *
+   * @method padRight
+   * @param {String} string to be padded
+   * @param {Number} characters that result string should have
+   * @param {String} sign, by default 0
+   * @returns {String} right aligned string
+   */
+
+
+  const padRight = (string, chars, sign) => {
+    return string + new Array(chars - string.length + 1).join(sign || '0');
+  };
 
   exports.isNumber = isNumber$1;
   exports.isInt = isInt$1;
