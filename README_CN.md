@@ -3,8 +3,8 @@
 ![travis](https://travis-ci.com/FireStack-Lab/Laksa.svg?branch=master)
 [![npm version](https://img.shields.io/npm/v/laksa.svg?style=flat-square)](https://www.npmjs.org/package/laksa)
 
-Laksa 是一个开发工具包，让开发者快速连接 Zilliqa-BlockChain
-就像 Web3 与 Ethereum 的关系，Laska 为 Zilliqa 而生
+Laksa 是一个开发工具包，让开发者快速连接 Zilliqa-BlockChain。
+就像 Web3 与 Ethereum 的关系，Laska 为 Zilliqa 而生。
 
 ## [English README](./README.md)
 

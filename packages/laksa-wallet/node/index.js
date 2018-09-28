@@ -92,7 +92,7 @@
     const macString = CryptoJS.SHA3(macBuffer.toString()).toString();
 
     if (macString !== keyStore.crypto.mac) {
-      throw Error('password may be wrong');
+      throw new Error('password may be wrong');
     }
 
     const decrypted = CryptoJS.AES.decrypt(data, derivedKey.toString().slice(0, 16), {
@@ -104,6 +104,10 @@
   };
 
   const ENCRYPTED = Symbol('ENCRYPTED');
+  const encryptedBy = {
+    ACCOUNT: Symbol('account'),
+    WALLET: Symbol('wallet')
+  };
 
   function generateAccountObject(privateKey) {
     if (!laksaUtils.isPrivateKey(privateKey)) throw new Error('private key is not correct');
@@ -160,7 +164,7 @@
         c: level
       }));
     } catch (e) {
-      return e;
+      throw new Error(e);
     }
   };
   const decryptAccount = (accountObject, password) => {
@@ -178,14 +182,70 @@
         privateKey: decrypt(accountObject, password)
       });
     } catch (e) {
-      return e;
+      throw new Error(e);
     }
   };
-
-  const encryptedBy = {
-    ACCOUNT: Symbol('account'),
-    WALLET: Symbol('wallet')
+  const signTransaction = (privateKey, transactionObject) => {
+    return laksaCoreCrypto.createTransactionJson(privateKey, transactionObject);
   };
+  class Account {
+    constructor() {
+      _defineProperty(this, "createAccount", () => {
+        const accountObject = createAccount();
+        const newObject = new Account();
+        return Object.assign({}, accountObject, {
+          encrypt: newObject.encrypt,
+          decrypt: newObject.decrypt,
+          signTransaction: newObject.signTransaction,
+          signTransactionWithPassword: newObject.signTransactionWithPassword
+        });
+      });
+
+      _defineProperty(this, "importAccount", privateKey => {
+        const accountObject = importAccount(privateKey);
+        const newObject = new Account();
+        return Object.assign({}, accountObject, {
+          encrypt: newObject.encrypt,
+          decrypt: newObject.decrypt,
+          signTransaction: newObject.signTransaction,
+          signTransactionWithPassword: newObject.signTransactionWithPassword
+        });
+      });
+    }
+
+    // sub object
+    encrypt(password, level = 1000) {
+      return Object.assign(this, encryptAccount(this, password, level));
+    } // sub object
+
+
+    decrypt(password) {
+      const that = this;
+      const decrypted = decryptAccount(that, password);
+      delete this.crypto;
+      return Object.assign(this, decrypted);
+    } // sub object
+
+
+    signTransaction(transactionObject) {
+      if (this.privateKey === ENCRYPTED) {
+        throw new Error('This account is encrypted, please decrypt it first or use "signTransactionWithPassword"');
+      }
+
+      return signTransaction(this.privateKey, transactionObject);
+    } // sub object
+
+
+    signTransactionWithPassword(transactionObject, password) {
+      if (this.privateKey === ENCRYPTED) {
+        const decrypted = this.decrypt(password);
+        const signed = signTransaction(decrypted.privateKey, transactionObject);
+        Object.assign(this, encryptAccount(decrypted, password));
+        return signed;
+      }
+    }
+
+  }
 
   let _accounts = immutable.Map({
     accounts: immutable.List([])
@@ -235,7 +295,8 @@
       });
 
       _defineProperty(this, "createAccount", () => {
-        const accountObject = createAccount();
+        const accountInstance = new Account();
+        const accountObject = accountInstance.createAccount();
         return this.addAccount(accountObject);
       });
 
@@ -251,7 +312,8 @@
       });
 
       _defineProperty(this, "importAccountFromPrivateKey", privateKey => {
-        const accountObject = importAccount(privateKey);
+        const accountInstance = new Account();
+        const accountObject = accountInstance.importAccount(privateKey);
         return this.addAccount(accountObject);
       });
 
@@ -408,8 +470,8 @@
             crypto
           } = accountObject;
 
-          if (privateKey !== undefined && privateKey !== ENCRYPTED && crypto === undefined) {
-            const encryptedObject = encryptAccount(accountObject, password, level);
+          if (privateKey !== undefined && privateKey !== undefined && crypto === undefined) {
+            const encryptedObject = accountObject.encrypt(password, level);
             return this.updateAccountByAddress(address, Object.assign({}, encryptedObject, {
               LastEncryptedBy: by || encryptedBy.ACCOUNT
             }));
@@ -428,8 +490,8 @@
             crypto
           } = accountObject;
 
-          if (privateKey !== undefined && privateKey === ENCRYPTED && laksaUtils.isObject(crypto)) {
-            const decryptedObject = decryptAccount(accountObject, password);
+          if (privateKey !== undefined && privateKey === undefined && laksaUtils.isObject(crypto)) {
+            const decryptedObject = accountObject.decrypt(password);
             return this.updateAccountByAddress(address, Object.assign({}, decryptedObject, {
               LastEncryptedBy: by || encryptedBy.ACCOUNT
             }));
@@ -462,11 +524,13 @@
   exports.Wallet = Wallet;
   exports.encrypt = encrypt;
   exports.decrypt = decrypt;
+  exports.Account = Account;
   exports.createAccount = createAccount;
   exports.importAccount = importAccount;
   exports.encryptAccount = encryptAccount;
   exports.decryptAccount = decryptAccount;
   exports.ENCRYPTED = ENCRYPTED;
+  exports.encryptedBy = encryptedBy;
 
   Object.defineProperty(exports, '__esModule', { value: true });
 
