@@ -1,12 +1,11 @@
 (function (global, factory) {
-  typeof exports === 'object' && typeof module !== 'undefined' ? factory(exports, require('number-to-bn'), require('utf8'), require('hash.js'), require('valid-url'), require('bn.js')) :
-  typeof define === 'function' && define.amd ? define(['exports', 'number-to-bn', 'utf8', 'hash.js', 'valid-url', 'bn.js'], factory) :
-  (factory((global.Laksa = {}),global.numToBN,global.utf8,global.hashjs,global.validUrl,global.bn_js));
-}(this, (function (exports,numToBN,utf8,hashjs,validUrl,bn_js) { 'use strict';
+  typeof exports === 'object' && typeof module !== 'undefined' ? factory(exports, require('number-to-bn'), require('utf8'), require('valid-url'), require('bn.js')) :
+  typeof define === 'function' && define.amd ? define(['exports', 'number-to-bn', 'utf8', 'valid-url', 'bn.js'], factory) :
+  (factory((global.Laksa = {}),global.numToBN,global.utf8,global.validUrl,global.bn_js));
+}(this, (function (exports,numToBN,utf8,validUrl,bn_js) { 'use strict';
 
   numToBN = numToBN && numToBN.hasOwnProperty('default') ? numToBN['default'] : numToBN;
   utf8 = utf8 && utf8.hasOwnProperty('default') ? utf8['default'] : utf8;
-  hashjs = hashjs && hashjs.hasOwnProperty('default') ? hashjs['default'] : hashjs;
 
   /**
    * convert number to array representing the padded hex form
@@ -221,31 +220,6 @@
   const padRight = (string, chars, sign) => {
     return string + new Array(chars - string.length + 1).join(sign || '0');
   };
-  /**
-   * toChecksumAddress
-   *
-   * takes hex-encoded string and returns the corresponding address
-   *
-   * @param {string} address
-   * @returns {string}
-   */
-
-
-  const toChecksumAddress = address => {
-    const testAddress = address.toLowerCase().replace('0x', '');
-    const hash = hashjs.sha256().update(testAddress, 'hex').digest('hex');
-    let ret = '0x';
-
-    for (let i = 0; i < testAddress.length; i += 1) {
-      if (parseInt(hash[i], 16) >= 8) {
-        ret += testAddress[i].toUpperCase();
-      } else {
-        ret += testAddress[i];
-      }
-    }
-
-    return ret;
-  };
 
   /**
    * [isNumber verify param is a Number]
@@ -446,19 +420,6 @@
   const isUndefined = obj => {
     return obj === undefined;
   };
-  /**
-   * isValidChecksumAddress
-   *
-   * takes hex-encoded string and returns boolean if address is checksumed
-   *
-   * @param {string} address
-   * @returns {boolean}
-   */
-
-
-  const isValidChecksumAddress = address => {
-    return isAddress(address.replace('0x', '')) && toChecksumAddress(address) === address;
-  };
 
   var validators = /*#__PURE__*/Object.freeze({
     isNumber: isNumber,
@@ -474,7 +435,6 @@
     isPubkey: isPubkey,
     isPrivateKey: isPrivateKey,
     isAddress: isAddress,
-    isValidChecksumAddress: isValidChecksumAddress,
     isBN: bn_js.isBN,
     isHex: isHex,
     isNull: isNull,
@@ -530,7 +490,6 @@
     isPubkey: isPubkey$1,
     isPrivateKey: isPrivateKey$1,
     isAddress: isAddress$1,
-    isValidChecksumAddress: isValidChecksumAddress$1,
     isBN,
     isHex: isHex$1,
     isNull: isNull$1,
@@ -675,7 +634,6 @@
   exports.isPubkey = isPubkey$1;
   exports.isPrivateKey = isPrivateKey$1;
   exports.isAddress = isAddress$1;
-  exports.isValidChecksumAddress = isValidChecksumAddress$1;
   exports.isBN = isBN;
   exports.isHex = isHex$1;
   exports.isNull = isNull$1;
@@ -691,7 +649,6 @@
   exports.toUtf8 = toUtf8;
   exports.toAscii = toAscii;
   exports.toBN = toBN;
-  exports.toChecksumAddress = toChecksumAddress;
   exports.hexToNumber = hexToNumber;
   exports.utf8ToHex = utf8ToHex;
   exports.numberToHex = numberToHex;

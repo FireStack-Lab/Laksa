@@ -15,11 +15,11 @@ const packagesSettings = require('./scripts/packagesList')
 
 function createBatchConfig(list) {
   return list.map((l) => {
-    const entry = {}
-    entry[l.name] = [`./packages/${l.dest}/index.js`]
+    const entryBase = {}
+    entryBase[l.name] = [`./packages/${l.dest}/index.js`]
 
     const batchBaseConfig = {
-      entry,
+      entry: entryBase,
       mode: 'production',
       module: {
         rules: [
