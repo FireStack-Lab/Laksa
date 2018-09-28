@@ -12,7 +12,6 @@ require('core-js/modules/es6.number.is-finite');
 require('core-js/modules/es6.regexp.to-string');
 var numToBN = _interopDefault(require('number-to-bn'));
 var utf8 = _interopDefault(require('utf8'));
-var hashjs = _interopDefault(require('hash.js'));
 var _typeof = _interopDefault(require('@babel/runtime/helpers/typeof'));
 require('core-js/modules/es6.number.is-integer');
 var validUrl = require('valid-url');
@@ -239,31 +238,6 @@ var padLeft = function padLeft(string, chars, sign) {
 var padRight = function padRight(string, chars, sign) {
   return string + new Array(chars - string.length + 1).join(sign || '0');
 };
-/**
- * toChecksumAddress
- *
- * takes hex-encoded string and returns the corresponding address
- *
- * @param {string} address
- * @returns {string}
- */
-
-
-var toChecksumAddress = function toChecksumAddress(address) {
-  var testAddress = address.toLowerCase().replace('0x', '');
-  var hash = hashjs.sha256().update(testAddress, 'hex').digest('hex');
-  var ret = '0x';
-
-  for (var i = 0; i < testAddress.length; i += 1) {
-    if (parseInt(hash[i], 16) >= 8) {
-      ret += testAddress[i].toUpperCase();
-    } else {
-      ret += testAddress[i];
-    }
-  }
-
-  return ret;
-};
 
 /**
  * [isNumber verify param is a Number]
@@ -464,19 +438,6 @@ var isNull = function isNull(obj) {
 var isUndefined = function isUndefined(obj) {
   return obj === undefined;
 };
-/**
- * isValidChecksumAddress
- *
- * takes hex-encoded string and returns boolean if address is checksumed
- *
- * @param {string} address
- * @returns {boolean}
- */
-
-
-var isValidChecksumAddress = function isValidChecksumAddress(address) {
-  return isAddress(address.replace('0x', '')) && toChecksumAddress(address) === address;
-};
 
 var validators = /*#__PURE__*/Object.freeze({
   isNumber: isNumber,
@@ -492,7 +453,6 @@ var validators = /*#__PURE__*/Object.freeze({
   isPubkey: isPubkey,
   isPrivateKey: isPrivateKey,
   isAddress: isAddress,
-  isValidChecksumAddress: isValidChecksumAddress,
   isBN: bn_js.isBN,
   isHex: isHex,
   isNull: isNull,
@@ -549,7 +509,6 @@ var isNumber$1 = valArray.isNumber,
     isPubkey$1 = valArray.isPubkey,
     isPrivateKey$1 = valArray.isPrivateKey,
     isAddress$1 = valArray.isAddress,
-    isValidChecksumAddress$1 = valArray.isValidChecksumAddress,
     isBN = valArray.isBN,
     isHex$1 = valArray.isHex,
     isNull$1 = valArray.isNull,
@@ -699,7 +658,6 @@ exports.isUrl = isUrl$1;
 exports.isPubkey = isPubkey$1;
 exports.isPrivateKey = isPrivateKey$1;
 exports.isAddress = isAddress$1;
-exports.isValidChecksumAddress = isValidChecksumAddress$1;
 exports.isBN = isBN;
 exports.isHex = isHex$1;
 exports.isNull = isNull$1;
@@ -715,7 +673,6 @@ exports.toHex = toHex;
 exports.toUtf8 = toUtf8;
 exports.toAscii = toAscii;
 exports.toBN = toBN;
-exports.toChecksumAddress = toChecksumAddress;
 exports.hexToNumber = hexToNumber;
 exports.utf8ToHex = utf8ToHex;
 exports.numberToHex = numberToHex;

@@ -197,4 +197,60 @@ export const createTransactionJson = (privateKey, txnDetails) => {
   return txn
 }
 
+/**
+ * toChecksumAddress
+ *
+ * takes hex-encoded string and returns the corresponding address
+ *
+ * @param {string} address
+ * @returns {string}
+ */
+export const toChecksumAddress = (address) => {
+  const testAddress = address.toLowerCase().replace('0x', '')
+  const hash = hashjs
+    .sha256()
+    .update(testAddress, 'hex')
+    .digest('hex')
+  let ret = '0x'
+  for (let i = 0; i < testAddress.length; i += 1) {
+    if (parseInt(hash[i], 16) >= 8) {
+      ret += testAddress[i].toUpperCase()
+    } else {
+      ret += testAddress[i]
+    }
+  }
+  return ret
+}
+
+/**
+ * isValidChecksumAddress
+ *
+ * takes hex-encoded string and returns boolean if address is checksumed
+ *
+ * @param {string} address
+ * @returns {boolean}
+ */
+export const isValidChecksumAddress = (address) => {
+  return isAddress(address.replace('0x', '')) && toChecksumAddress(address) === address
+}
+
+/**
+ * verify if param is correct
+ * @param  {[hex|string]}  address [description]
+ * @return {Boolean}         [description]
+ */
+// const isAddress = (address) => {
+//   return !!address.match(/^[0-9a-fA-F]{40}$/)
+// }
+
+const isAddress = (address) => {
+  if (!/^(0x)?[0-9a-f]{40}$/i.test(address)) {
+    // check if it has the basic requirements of an address
+    return false
+  } else if (/^(0x)?[0-9a-f]{40}$/.test(address) || /^(0x)?[0-9A-F]{40}$/.test(address)) {
+    // If it's all small caps or all all caps, return true
+    return true
+  }
+}
+
 export { randomBytes }
