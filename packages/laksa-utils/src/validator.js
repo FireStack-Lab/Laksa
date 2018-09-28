@@ -1,6 +1,6 @@
 import { isWebUri } from 'valid-url'
 import { isBN } from 'bn.js'
-import { toChecksumAddress } from './transformer'
+
 /**
  * [isNumber verify param is a Number]
  * @param  {[type]}  obj [value]

@@ -197,26 +197,18 @@ export const createTransactionJson = (privateKey, txnDetails) => {
   return txn
 }
 
-/**
- * toChecksumAddress
- *
- * takes hex-encoded string and returns the corresponding address
- *
- * @param {string} address
- * @returns {string}
- */
 export const toChecksumAddress = (address) => {
-  const testAddress = address.toLowerCase().replace('0x', '')
+  const newAddress = address.toLowerCase().replace('0x', '')
   const hash = hashjs
     .sha256()
-    .update(testAddress, 'hex')
+    .update(newAddress, 'hex')
     .digest('hex')
   let ret = '0x'
-  for (let i = 0; i < testAddress.length; i += 1) {
+  for (let i = 0; i < newAddress.length; i += 1) {
     if (parseInt(hash[i], 16) >= 8) {
-      ret += testAddress[i].toUpperCase()
+      ret += newAddress[i].toUpperCase()
     } else {
-      ret += testAddress[i]
+      ret += newAddress[i]
     }
   }
   return ret
@@ -231,7 +223,8 @@ export const toChecksumAddress = (address) => {
  * @returns {boolean}
  */
 export const isValidChecksumAddress = (address) => {
-  return toChecksumAddress(address) === address
+  const replacedAddress = address.replace('0x', '')
+  return !!replacedAddress.match(/^[0-9a-fA-F]{64}$/) && toChecksumAddress(address) === address
 }
 
 export { randomBytes }
