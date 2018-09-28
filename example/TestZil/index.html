@@ -21,6 +21,7 @@
 <button id="setProviderButton">Set Provider</button>
 </div>
 <script src="../../dist/Laksa.browser.js"></script>
+<script src="../../dist/LaksaWallet.browser.js"></script>
 <script>
 
 var currenProvider=document.getElementById('nodeUrl').value
@@ -28,8 +29,8 @@ var setButton=document.getElementById('setProviderButton')
 //For local testing, use URL = 'http://localhost:4200'
 //To connect to the external network, use URL = 'https://api-scilla.zilliqa.com'
 var laksa =new Laksa(currenProvider)
-
 // var URL = undefined
+const {Wallet,Account}=window.LaksaWallet
 
 
 setButton.onclick=function(e){

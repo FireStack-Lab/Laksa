@@ -14,7 +14,7 @@ var laksaCoreMessenger = require('laksa-core-messenger');
 var HttpProvider = _interopDefault(require('laksa-providers-http'));
 var Zil = _interopDefault(require('laksa-zil'));
 
-var version = "0.0.42";
+var version = "0.0.43";
 
 var config = {
   version: version,

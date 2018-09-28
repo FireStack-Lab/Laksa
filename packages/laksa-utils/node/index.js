@@ -1,411 +1,12 @@
 (function (global, factory) {
-  typeof exports === 'object' && typeof module !== 'undefined' ? factory(exports, require('valid-url'), require('bn.js'), require('number-to-bn'), require('utf8')) :
-  typeof define === 'function' && define.amd ? define(['exports', 'valid-url', 'bn.js', 'number-to-bn', 'utf8'], factory) :
-  (factory((global.Laksa = {}),global.validUrl,global.bn_js,global.numToBN,global.utf8));
-}(this, (function (exports,validUrl,bn_js,numToBN,utf8) { 'use strict';
+  typeof exports === 'object' && typeof module !== 'undefined' ? factory(exports, require('number-to-bn'), require('utf8'), require('hash.js'), require('valid-url'), require('bn.js')) :
+  typeof define === 'function' && define.amd ? define(['exports', 'number-to-bn', 'utf8', 'hash.js', 'valid-url', 'bn.js'], factory) :
+  (factory((global.Laksa = {}),global.numToBN,global.utf8,global.hashjs,global.validUrl,global.bn_js));
+}(this, (function (exports,numToBN,utf8,hashjs,validUrl,bn_js) { 'use strict';
 
   numToBN = numToBN && numToBN.hasOwnProperty('default') ? numToBN['default'] : numToBN;
   utf8 = utf8 && utf8.hasOwnProperty('default') ? utf8['default'] : utf8;
-
-  /**
-   * [isNumber verify param is a Number]
-   * @param  {[type]}  obj [value]
-   * @return {Boolean}     [boolean]
-   */
-
-  const isNumber = obj => {
-    return obj === +obj;
-  };
-  /**
-   * [isNumber verify param is a Number]
-   * @param  {[type]}  obj [value]
-   * @return {Boolean}     [boolean]
-   */
-
-
-  const isInt = obj => {
-    return isNumber(obj) && Number.isInteger(obj);
-  };
-  /**
-   * [isString verify param is a String]
-   * @param  {[type]}  obj [value]
-   * @return {Boolean}     [boolean]
-   */
-
-
-  const isString = obj => {
-    return obj === `${obj}`;
-  };
-  /**
-   * [isBoolean verify param is a Boolean]
-   * @param  {[type]}  obj [value]
-   * @return {Boolean}     [boolean]
-   */
-
-
-  const isBoolean = obj => {
-    return obj === !!obj;
-  };
-  /**
-   * [isArray verify param input is an Array]
-   * @param  {[type]}  obj [value]
-   * @return {Boolean}     [boolean]
-   */
-
-
-  const isArray = obj => {
-    return Array.isArray(obj);
-  };
-  /**
-   * [isJson verify param input is a Json]
-   * @param  {[type]}  obj [value]
-   * @return {Boolean}     [boolean]
-   */
-
-
-  const isJson = obj => {
-    try {
-      return !!JSON.parse(obj);
-    } catch (e) {
-      return false;
-    }
-  };
-  /**
-   * [isObject verify param is an Object]
-   * @param  {[type]}  obj [value]
-   * @return {Boolean}     [boolean]
-   */
-
-
-  const isObject = obj => {
-    return obj !== null && !Array.isArray(obj) && typeof obj === 'object';
-  };
-  /**
-   * [isFunction verify param is a Function]
-   * @param  {[type]}  obj [value]
-   * @return {Boolean}     [description]
-   */
-
-
-  const isFunction = obj => {
-    return typeof obj === 'function';
-  };
-  /**
-   * verify if param is correct
-   * @param  {[hex|string]}  address [description]
-   * @return {Boolean}         [description]
-   */
-  // const isAddress = (address) => {
-  //   return !!address.match(/^[0-9a-fA-F]{40}$/)
-  // }
-
-
-  const isAddress = address => {
-    if (!/^(0x)?[0-9a-f]{40}$/i.test(address)) {
-      // check if it has the basic requirements of an address
-      return false;
-    } else if (/^(0x)?[0-9a-f]{40}$/.test(address) || /^(0x)?[0-9A-F]{40}$/.test(address)) {
-      // If it's all small caps or all all caps, return true
-      return true;
-    }
-  };
-  /**
-   * verify if privateKey is correct
-   * @param  {[hex|string]}  privateKey [description]
-   * @return {Boolean}            [description]
-   */
-
-
-  const isPrivateKey = privateKey => {
-    if (!/^(0x)?[0-9a-f]{64}$/i.test(privateKey)) {
-      // check if it has the basic requirements of an privatekey
-      return false;
-    } else if (/^(0x)?[0-9a-f]{64}$/.test(privateKey) || /^(0x)?[0-9A-F]{64}$/.test(privateKey)) {
-      // If it's all small caps or all all caps, return true
-      return true;
-    } // return !!privateKey.match(/^[0-9a-fA-F]{64}$/)
-
-  };
-  /**
-   * verify if public key is correct
-   * @param  {[hex|string]}  pubkey [description]
-   * @return {Boolean}        [description]
-   */
-
-
-  const isPubkey = pubkey => {
-    if (!/^(0x)?[0-9a-f]{66}$/i.test(pubkey)) {
-      // check if it has the basic requirements of an pubkey
-      return false;
-    } else if (/^(0x)?[0-9a-f]{66}$/.test(pubkey) || /^(0x)?[0-9A-F]{66}$/.test(pubkey)) {
-      // If it's all small caps or all all caps, return true
-      return true;
-    } // return !!pubkey.match(/^[0-9a-fA-F]{66}$/)
-
-  };
-  /**
-   * verify if url is correct
-   * @param  {[string]}  url [description]
-   * @return {Boolean}     [description]
-   */
-
-
-  const isUrl = url => {
-    if (typeof url === 'string') {
-      return validUrl.isWebUri(url);
-    }
-
-    return false;
-  };
-  /**
-   * verify if hash is correct
-   * @param  {[string]}  txHash [description]
-   * @return {Boolean}        [description]
-   */
-
-
-  const isHash = txHash => {
-    if (!/^(0x)?[0-9a-f]{64}$/i.test(txHash)) {
-      // check if it has the basic requirements of an txHash
-      return false;
-    } else if (/^(0x)?[0-9a-f]{64}$/.test(txHash) || /^(0x)?[0-9A-F]{64}$/.test(txHash)) {
-      // If it's all small caps or all all caps, return true
-      return true;
-    } // return !!txHash.match(/^[0-9a-fA-F]{64}$/)
-
-  };
-  /**
-   * Check if string is HEX
-   *
-   * @method isHex
-   * @param {String} hex to be checked
-   * @returns {Boolean}
-   */
-
-
-  const isHex = hex => {
-    return (isString(hex) || isNumber(hex)) && /^0x?[0-9a-f]*$/i.test(hex);
-  };
-  /**
-   * check Object isNull
-   * @param  {[type]}  obj [description]
-   * @return {Boolean}     [description]
-   */
-
-
-  const isNull = obj => {
-    return obj === null;
-  };
-  /**
-   * check object is undefined
-   * @param  {[type]}  obj [description]
-   * @return {Boolean}     [description]
-   */
-
-
-  const isUndefined = obj => {
-    return obj === undefined;
-  };
-
-  var validators = /*#__PURE__*/Object.freeze({
-    isNumber: isNumber,
-    isInt: isInt,
-    isString: isString,
-    isBoolean: isBoolean,
-    isArray: isArray,
-    isJson: isJson,
-    isObject: isObject,
-    isFunction: isFunction,
-    isHash: isHash,
-    isUrl: isUrl,
-    isPubkey: isPubkey,
-    isPrivateKey: isPrivateKey,
-    isAddress: isAddress,
-    isBN: bn_js.isBN,
-    isHex: isHex,
-    isNull: isNull,
-    isUndefined: isUndefined
-  });
-
-  function objToArray(obj) {
-    const keys = Object.keys(obj);
-    const values = Object.values(obj);
-    const newArray = keys.map((k, index) => {
-      const Obj = {};
-      Obj[k] = values[index];
-      return Obj;
-    });
-    return newArray;
-  }
-
-  function injectValidator(func) {
-    if (typeof func === 'object' && func !== undefined) {
-      const valName = Object.keys(func)[0];
-      const valFunc = Object.values(func)[0];
-      return Object.assign(valFunc, {
-        validator: valName,
-        test: obj => valFunc(obj)
-      });
-    } else return false;
-  }
-
-  function extractValidator(vals) {
-    const newValidator = [];
-    const newArr = objToArray(vals);
-    newArr.forEach((v, index) => {
-      const newV = injectValidator(v);
-      const validatorString = newV.validator;
-      newValidator[validatorString] = newV;
-      newValidator[index] = newV;
-    });
-    return newValidator;
-  }
-
-  const valArray = extractValidator(validators);
-  const {
-    isNumber: isNumber$1,
-    isInt: isInt$1,
-    isString: isString$1,
-    isBoolean: isBoolean$1,
-    isArray: isArray$1,
-    isJson: isJson$1,
-    isObject: isObject$1,
-    isFunction: isFunction$1,
-    isHash: isHash$1,
-    isUrl: isUrl$1,
-    isPubkey: isPubkey$1,
-    isPrivateKey: isPrivateKey$1,
-    isAddress: isAddress$1,
-    isBN,
-    isHex: isHex$1,
-    isNull: isNull$1,
-    isUndefined: isUndefined$1
-  } = valArray;
-  /**
-   * [Validator description]
-   * @param       {[type]} stringToTest    [description]
-   * @param       {[type]} validatorString [description]
-   * @constructor
-   */
-
-  function Validator(stringToTest, validatorString) {
-    if (typeof validatorString === 'string' && valArray[`is${validatorString}`] !== undefined) {
-      return valArray[`is${validatorString}`].test(stringToTest);
-    } else if (typeof validatorString === 'function') {
-      return validatorString(stringToTest);
-    } else {
-      throw new Error(`validator not found :${validatorString}`);
-    }
-  }
-
-  function tester(value, callback) {
-    try {
-      const validateResult = valArray.map(func => {
-        return func.test(value) ? func.validator.substring(2) : false;
-      }).filter(d => d !== false);
-      return callback === undefined ? validateResult : callback(validateResult);
-    } catch (e) {
-      return callback === undefined ? e : callback(e);
-    }
-  }
-
-  Object.assign(Validator, {
-    test: tester
-  });
-  const validator = Validator;
-  /**
-   * make sure each of the keys in requiredArgs is present in args
-   * @param  {[type]} args         [description]
-   * @param  {[type]} requiredArgs [description]
-   * @param  {[type]} optionalArgs [description]
-   * @return {[type]}              [description]
-   */
-
-  function validateArgs(args, requiredArgs, optionalArgs) {
-    for (const key in requiredArgs) {
-      if (args[key] !== undefined) {
-        for (let i = 0; i < requiredArgs[key].length; i += 1) {
-          if (typeof requiredArgs[key][i] !== 'function') throw new Error('Validator is not a function');
-
-          if (!requiredArgs[key][i](args[key])) {
-            throw new Error(`Validation failed for ${key},should be ${requiredArgs[key][i].validator}`);
-          }
-        }
-      } else throw new Error(`Key not found: ${key}`);
-    }
-
-    for (const key in optionalArgs) {
-      if (args[key]) {
-        for (let i = 0; i < optionalArgs[key].length; i += 1) {
-          if (typeof optionalArgs[key][i] !== 'function') throw new Error('Validator is not a function');
-
-          if (!optionalArgs[key][i](args[key])) {
-            throw new Error(`Validation failed for ${key},should be ${optionalArgs[key][i].validator}`);
-          }
-        }
-      }
-    }
-
-    return true;
-  }
-
-  function validateFunctionArgs(ArgsArray, validatorArray) {
-    const argLength = ArgsArray.length;
-    const valLength = validatorArray.length;
-    if (argLength < valLength) throw new Error('Some args are required by function but missing');
-
-    for (let i = 0; i < valLength; i += 1) {
-      if (!validatorArray[i](ArgsArray[i])) {
-        throw new Error(`Validation failed for arguments[${i}], should be ${validatorArray[i].validator}`);
-      }
-    }
-
-    return true;
-  }
-
-  function validateTypes(arg, validatorArray) {
-    const valLength = validatorArray.length;
-
-    if (valLength === 0 || !isArray$1(validatorArray)) {
-      throw new Error('Must include some validators');
-    }
-
-    const valsKey = validator.test(arg);
-    const getValidators = [];
-    const finalReduceArray = validatorArray.map(v => {
-      getValidators.push(v.validator);
-      return valsKey.includes(v.validator.substring(2)) ? 1 : 0;
-    });
-    const finalReduce = finalReduceArray.reduce((acc, cur) => acc + cur);
-
-    if (finalReduce === 0) {
-      throw new TypeError(`One of [${[...getValidators]}] has to pass, but we have your arg to be [${[...valsKey]}]`);
-    }
-
-    return true;
-  }
-
-  function validateTypesMatch(arg, validatorArray) {
-    const valLength = validatorArray.length;
-
-    if (valLength === 0 || !isArray$1(validatorArray)) {
-      throw new Error('Must include some validators');
-    }
-
-    const valsKey = validator.test(arg);
-    const getValidators = [];
-    const finalReduceArray = validatorArray.map(v => {
-      getValidators.push(v.validator);
-      return valsKey.includes(v.validator.substring(2)) ? 1 : 0;
-    });
-    const finalReduce = finalReduceArray.reduce((acc, cur) => acc + cur);
-
-    if (finalReduce < valLength || finalReduce === 0) {
-      throw new TypeError(`All of [${[...getValidators]}] has to pass, but we have your arg to be [${[...valsKey]}]`);
-    }
-
-    return true;
-  }
+  hashjs = hashjs && hashjs.hasOwnProperty('default') ? hashjs['default'] : hashjs;
 
   /**
    * convert number to array representing the padded hex form
@@ -620,6 +221,446 @@
   const padRight = (string, chars, sign) => {
     return string + new Array(chars - string.length + 1).join(sign || '0');
   };
+  /**
+   * toChecksumAddress
+   *
+   * takes hex-encoded string and returns the corresponding address
+   *
+   * @param {string} address
+   * @returns {string}
+   */
+
+
+  const toChecksumAddress = address => {
+    const testAddress = address.toLowerCase().replace('0x', '');
+    const hash = hashjs.sha256().update(testAddress, 'hex').digest('hex');
+    let ret = '0x';
+
+    for (let i = 0; i < testAddress.length; i += 1) {
+      if (parseInt(hash[i], 16) >= 8) {
+        ret += testAddress[i].toUpperCase();
+      } else {
+        ret += testAddress[i];
+      }
+    }
+
+    return ret;
+  };
+
+  /**
+   * [isNumber verify param is a Number]
+   * @param  {[type]}  obj [value]
+   * @return {Boolean}     [boolean]
+   */
+
+  const isNumber = obj => {
+    return obj === +obj;
+  };
+  /**
+   * [isNumber verify param is a Number]
+   * @param  {[type]}  obj [value]
+   * @return {Boolean}     [boolean]
+   */
+
+
+  const isInt = obj => {
+    return isNumber(obj) && Number.isInteger(obj);
+  };
+  /**
+   * [isString verify param is a String]
+   * @param  {[type]}  obj [value]
+   * @return {Boolean}     [boolean]
+   */
+
+
+  const isString = obj => {
+    return obj === `${obj}`;
+  };
+  /**
+   * [isBoolean verify param is a Boolean]
+   * @param  {[type]}  obj [value]
+   * @return {Boolean}     [boolean]
+   */
+
+
+  const isBoolean = obj => {
+    return obj === !!obj;
+  };
+  /**
+   * [isArray verify param input is an Array]
+   * @param  {[type]}  obj [value]
+   * @return {Boolean}     [boolean]
+   */
+
+
+  const isArray = obj => {
+    return Array.isArray(obj);
+  };
+  /**
+   * [isJson verify param input is a Json]
+   * @param  {[type]}  obj [value]
+   * @return {Boolean}     [boolean]
+   */
+
+
+  const isJson = obj => {
+    try {
+      return !!JSON.parse(obj);
+    } catch (e) {
+      return false;
+    }
+  };
+  /**
+   * [isObject verify param is an Object]
+   * @param  {[type]}  obj [value]
+   * @return {Boolean}     [boolean]
+   */
+
+
+  const isObject = obj => {
+    return obj !== null && !Array.isArray(obj) && typeof obj === 'object';
+  };
+  /**
+   * [isFunction verify param is a Function]
+   * @param  {[type]}  obj [value]
+   * @return {Boolean}     [description]
+   */
+
+
+  const isFunction = obj => {
+    return typeof obj === 'function';
+  };
+  /**
+   * verify if param is correct
+   * @param  {[hex|string]}  address [description]
+   * @return {Boolean}         [description]
+   */
+  // const isAddress = (address) => {
+  //   return !!address.match(/^[0-9a-fA-F]{40}$/)
+  // }
+
+
+  const isAddress = address => {
+    if (!/^(0x)?[0-9a-f]{40}$/i.test(address)) {
+      // check if it has the basic requirements of an address
+      return false;
+    } else if (/^(0x)?[0-9a-f]{40}$/.test(address) || /^(0x)?[0-9A-F]{40}$/.test(address)) {
+      // If it's all small caps or all all caps, return true
+      return true;
+    }
+  };
+  /**
+   * verify if privateKey is correct
+   * @param  {[hex|string]}  privateKey [description]
+   * @return {Boolean}            [description]
+   */
+
+
+  const isPrivateKey = privateKey => {
+    if (!/^(0x)?[0-9a-f]{64}$/i.test(privateKey)) {
+      // check if it has the basic requirements of an privatekey
+      return false;
+    } else if (/^(0x)?[0-9a-f]{64}$/.test(privateKey) || /^(0x)?[0-9A-F]{64}$/.test(privateKey)) {
+      // If it's all small caps or all all caps, return true
+      return true;
+    } // return !!privateKey.match(/^[0-9a-fA-F]{64}$/)
+
+  };
+  /**
+   * verify if public key is correct
+   * @param  {[hex|string]}  pubkey [description]
+   * @return {Boolean}        [description]
+   */
+
+
+  const isPubkey = pubkey => {
+    if (!/^(0x)?[0-9a-f]{66}$/i.test(pubkey)) {
+      // check if it has the basic requirements of an pubkey
+      return false;
+    } else if (/^(0x)?[0-9a-f]{66}$/.test(pubkey) || /^(0x)?[0-9A-F]{66}$/.test(pubkey)) {
+      // If it's all small caps or all all caps, return true
+      return true;
+    } // return !!pubkey.match(/^[0-9a-fA-F]{66}$/)
+
+  };
+  /**
+   * verify if url is correct
+   * @param  {[string]}  url [description]
+   * @return {Boolean}     [description]
+   */
+
+
+  const isUrl = url => {
+    if (typeof url === 'string') {
+      return validUrl.isWebUri(url);
+    }
+
+    return false;
+  };
+  /**
+   * verify if hash is correct
+   * @param  {[string]}  txHash [description]
+   * @return {Boolean}        [description]
+   */
+
+
+  const isHash = txHash => {
+    if (!/^(0x)?[0-9a-f]{64}$/i.test(txHash)) {
+      // check if it has the basic requirements of an txHash
+      return false;
+    } else if (/^(0x)?[0-9a-f]{64}$/.test(txHash) || /^(0x)?[0-9A-F]{64}$/.test(txHash)) {
+      // If it's all small caps or all all caps, return true
+      return true;
+    } // return !!txHash.match(/^[0-9a-fA-F]{64}$/)
+
+  };
+  /**
+   * Check if string is HEX
+   *
+   * @method isHex
+   * @param {String} hex to be checked
+   * @returns {Boolean}
+   */
+
+
+  const isHex = hex => {
+    return (isString(hex) || isNumber(hex)) && /^0x?[0-9a-f]*$/i.test(hex);
+  };
+  /**
+   * check Object isNull
+   * @param  {[type]}  obj [description]
+   * @return {Boolean}     [description]
+   */
+
+
+  const isNull = obj => {
+    return obj === null;
+  };
+  /**
+   * check object is undefined
+   * @param  {[type]}  obj [description]
+   * @return {Boolean}     [description]
+   */
+
+
+  const isUndefined = obj => {
+    return obj === undefined;
+  };
+  /**
+   * isValidChecksumAddress
+   *
+   * takes hex-encoded string and returns boolean if address is checksumed
+   *
+   * @param {string} address
+   * @returns {boolean}
+   */
+
+
+  const isValidChecksumAddress = address => {
+    return isAddress(address.replace('0x', '')) && toChecksumAddress(address) === address;
+  };
+
+  var validators = /*#__PURE__*/Object.freeze({
+    isNumber: isNumber,
+    isInt: isInt,
+    isString: isString,
+    isBoolean: isBoolean,
+    isArray: isArray,
+    isJson: isJson,
+    isObject: isObject,
+    isFunction: isFunction,
+    isHash: isHash,
+    isUrl: isUrl,
+    isPubkey: isPubkey,
+    isPrivateKey: isPrivateKey,
+    isAddress: isAddress,
+    isValidChecksumAddress: isValidChecksumAddress,
+    isBN: bn_js.isBN,
+    isHex: isHex,
+    isNull: isNull,
+    isUndefined: isUndefined
+  });
+
+  function objToArray(obj) {
+    const keys = Object.keys(obj);
+    const values = Object.values(obj);
+    const newArray = keys.map((k, index) => {
+      const Obj = {};
+      Obj[k] = values[index];
+      return Obj;
+    });
+    return newArray;
+  }
+
+  function injectValidator(func) {
+    if (typeof func === 'object' && func !== undefined) {
+      const valName = Object.keys(func)[0];
+      const valFunc = Object.values(func)[0];
+      return Object.assign(valFunc, {
+        validator: valName,
+        test: obj => valFunc(obj)
+      });
+    } else return false;
+  }
+
+  function extractValidator(vals) {
+    const newValidator = [];
+    const newArr = objToArray(vals);
+    newArr.forEach((v, index) => {
+      const newV = injectValidator(v);
+      const validatorString = newV.validator;
+      newValidator[validatorString] = newV;
+      newValidator[index] = newV;
+    });
+    return newValidator;
+  }
+
+  const valArray = extractValidator(validators);
+  const {
+    isNumber: isNumber$1,
+    isInt: isInt$1,
+    isString: isString$1,
+    isBoolean: isBoolean$1,
+    isArray: isArray$1,
+    isJson: isJson$1,
+    isObject: isObject$1,
+    isFunction: isFunction$1,
+    isHash: isHash$1,
+    isUrl: isUrl$1,
+    isPubkey: isPubkey$1,
+    isPrivateKey: isPrivateKey$1,
+    isAddress: isAddress$1,
+    isValidChecksumAddress: isValidChecksumAddress$1,
+    isBN,
+    isHex: isHex$1,
+    isNull: isNull$1,
+    isUndefined: isUndefined$1
+  } = valArray;
+  /**
+   * [Validator description]
+   * @param       {[type]} stringToTest    [description]
+   * @param       {[type]} validatorString [description]
+   * @constructor
+   */
+
+  function Validator(stringToTest, validatorString) {
+    if (typeof validatorString === 'string' && valArray[`is${validatorString}`] !== undefined) {
+      return valArray[`is${validatorString}`].test(stringToTest);
+    } else if (typeof validatorString === 'function') {
+      return validatorString(stringToTest);
+    } else {
+      throw new Error(`validator not found :${validatorString}`);
+    }
+  }
+
+  function tester(value, callback) {
+    try {
+      const validateResult = valArray.map(func => {
+        return func.test(value) ? func.validator.substring(2) : false;
+      }).filter(d => d !== false);
+      return callback === undefined ? validateResult : callback(validateResult);
+    } catch (e) {
+      return callback === undefined ? e : callback(e);
+    }
+  }
+
+  Object.assign(Validator, {
+    test: tester
+  });
+  const validator = Validator;
+  /**
+   * make sure each of the keys in requiredArgs is present in args
+   * @param  {[type]} args         [description]
+   * @param  {[type]} requiredArgs [description]
+   * @param  {[type]} optionalArgs [description]
+   * @return {[type]}              [description]
+   */
+
+  function validateArgs(args, requiredArgs, optionalArgs) {
+    for (const key in requiredArgs) {
+      if (args[key] !== undefined) {
+        for (let i = 0; i < requiredArgs[key].length; i += 1) {
+          if (typeof requiredArgs[key][i] !== 'function') throw new Error('Validator is not a function');
+
+          if (!requiredArgs[key][i](args[key])) {
+            throw new Error(`Validation failed for ${key},should be ${requiredArgs[key][i].validator}`);
+          }
+        }
+      } else throw new Error(`Key not found: ${key}`);
+    }
+
+    for (const key in optionalArgs) {
+      if (args[key]) {
+        for (let i = 0; i < optionalArgs[key].length; i += 1) {
+          if (typeof optionalArgs[key][i] !== 'function') throw new Error('Validator is not a function');
+
+          if (!optionalArgs[key][i](args[key])) {
+            throw new Error(`Validation failed for ${key},should be ${optionalArgs[key][i].validator}`);
+          }
+        }
+      }
+    }
+
+    return true;
+  }
+
+  function validateFunctionArgs(ArgsArray, validatorArray) {
+    const argLength = ArgsArray.length;
+    const valLength = validatorArray.length;
+    if (argLength < valLength) throw new Error('Some args are required by function but missing');
+
+    for (let i = 0; i < valLength; i += 1) {
+      if (!validatorArray[i](ArgsArray[i])) {
+        throw new Error(`Validation failed for arguments[${i}], should be ${validatorArray[i].validator}`);
+      }
+    }
+
+    return true;
+  }
+
+  function validateTypes(arg, validatorArray) {
+    const valLength = validatorArray.length;
+
+    if (valLength === 0 || !isArray$1(validatorArray)) {
+      throw new Error('Must include some validators');
+    }
+
+    const valsKey = validator.test(arg);
+    const getValidators = [];
+    const finalReduceArray = validatorArray.map(v => {
+      getValidators.push(v.validator);
+      return valsKey.includes(v.validator.substring(2)) ? 1 : 0;
+    });
+    const finalReduce = finalReduceArray.reduce((acc, cur) => acc + cur);
+
+    if (finalReduce === 0) {
+      throw new TypeError(`One of [${[...getValidators]}] has to pass, but we have your arg to be [${[...valsKey]}]`);
+    }
+
+    return true;
+  }
+
+  function validateTypesMatch(arg, validatorArray) {
+    const valLength = validatorArray.length;
+
+    if (valLength === 0 || !isArray$1(validatorArray)) {
+      throw new Error('Must include some validators');
+    }
+
+    const valsKey = validator.test(arg);
+    const getValidators = [];
+    const finalReduceArray = validatorArray.map(v => {
+      getValidators.push(v.validator);
+      return valsKey.includes(v.validator.substring(2)) ? 1 : 0;
+    });
+    const finalReduce = finalReduceArray.reduce((acc, cur) => acc + cur);
+
+    if (finalReduce < valLength || finalReduce === 0) {
+      throw new TypeError(`All of [${[...getValidators]}] has to pass, but we have your arg to be [${[...valsKey]}]`);
+    }
+
+    return true;
+  }
 
   exports.isNumber = isNumber$1;
   exports.isInt = isInt$1;
@@ -634,6 +675,7 @@
   exports.isPubkey = isPubkey$1;
   exports.isPrivateKey = isPrivateKey$1;
   exports.isAddress = isAddress$1;
+  exports.isValidChecksumAddress = isValidChecksumAddress$1;
   exports.isBN = isBN;
   exports.isHex = isHex$1;
   exports.isNull = isNull$1;
@@ -649,6 +691,7 @@
   exports.toUtf8 = toUtf8;
   exports.toAscii = toAscii;
   exports.toBN = toBN;
+  exports.toChecksumAddress = toChecksumAddress;
   exports.hexToNumber = hexToNumber;
   exports.utf8ToHex = utf8ToHex;
   exports.numberToHex = numberToHex;

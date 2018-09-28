@@ -1,5 +1,6 @@
 import numToBN from 'number-to-bn'
 import utf8 from 'utf8'
+import hashjs from 'hash.js'
 import {
   isHex,
   isNull,
@@ -222,6 +223,31 @@ const padRight = (string, chars, sign) => {
   return string + new Array(chars - string.length + 1).join(sign || '0')
 }
 
+/**
+ * toChecksumAddress
+ *
+ * takes hex-encoded string and returns the corresponding address
+ *
+ * @param {string} address
+ * @returns {string}
+ */
+const toChecksumAddress = (address) => {
+  const testAddress = address.toLowerCase().replace('0x', '')
+  const hash = hashjs
+    .sha256()
+    .update(testAddress, 'hex')
+    .digest('hex')
+  let ret = '0x'
+  for (let i = 0; i < testAddress.length; i += 1) {
+    if (parseInt(hash[i], 16) >= 8) {
+      ret += testAddress[i].toUpperCase()
+    } else {
+      ret += testAddress[i]
+    }
+  }
+  return ret
+}
+
 export {
   intToByteArray,
   toHex,
@@ -233,6 +259,7 @@ export {
   hexToNumber,
   utf8ToHex,
   numberToHex,
+  toChecksumAddress,
   padLeft,
   padRight,
   strip0x,
