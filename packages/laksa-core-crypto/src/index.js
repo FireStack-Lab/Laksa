@@ -227,4 +227,4 @@ export const isValidChecksumAddress = (address) => {
   return !!replacedAddress.match(/^[0-9a-fA-F]{40}$/) && toChecksumAddress(address) === address
 }
 
-export { randomBytes }
+export { randomBytes, hashjs }
