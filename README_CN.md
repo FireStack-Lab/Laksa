@@ -6,7 +6,7 @@
 Laksa 是一个开发工具包，让开发者快速连接 Zilliqa-BlockChain。
 就像 Web3 与 Ethereum 的关系，Laska 为 Zilliqa 而生。
 
-## [English README](./README.md)
+### [English README](./README.md)
 
 ## 文档
 
