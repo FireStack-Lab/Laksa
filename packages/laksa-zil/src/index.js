@@ -46,6 +46,16 @@ class Zil {
     this.config.defaultAccount = account
     return account
   }
+
+  extendMethod(object) {
+    if (typeof object !== 'object') {
+      throw new Error('Method has to be an object')
+    }
+    const zilMethod = new Method(object)
+    zilMethod.setMessanger(this.messenger)
+    zilMethod.assignToObject(this)
+    return true
+  }
 }
 
 export default Zil

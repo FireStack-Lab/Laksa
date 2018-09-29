@@ -55,9 +55,9 @@ class HttpProvider {
         const { data, status } = response
         if (data.result && status === 200) {
           if (callback === undefined) {
-            return data.result
+            return !data.message ? data.result : data
           } else {
-            callback(null, data.result)
+            callback(null, !data.message ? data.result : data)
           }
         }
       })

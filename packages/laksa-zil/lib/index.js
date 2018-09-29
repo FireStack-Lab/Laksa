@@ -2,6 +2,7 @@
 
 function _interopDefault (ex) { return (ex && (typeof ex === 'object') && 'default' in ex) ? ex['default'] : ex; }
 
+var _typeof = _interopDefault(require('@babel/runtime/helpers/typeof'));
 var _classCallCheck = _interopDefault(require('@babel/runtime/helpers/classCallCheck'));
 var _createClass = _interopDefault(require('@babel/runtime/helpers/createClass'));
 var Method = _interopDefault(require('laksa-core-methods'));
@@ -424,6 +425,18 @@ function () {
   }
 
   _createClass(Zil, [{
+    key: "extendMethod",
+    value: function extendMethod(object) {
+      if (_typeof(object) !== 'object') {
+        throw new Error('Method has to be an object');
+      }
+
+      var zilMethod = new Method(object);
+      zilMethod.setMessanger(this.messenger);
+      zilMethod.assignToObject(this);
+      return true;
+    }
+  }, {
     key: "defaultBlock",
     get: function get() {
       return this.config.defaultBlock;

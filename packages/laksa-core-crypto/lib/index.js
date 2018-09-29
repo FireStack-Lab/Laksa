@@ -347,6 +347,7 @@ var isValidChecksumAddress = function isValidChecksumAddress(address) {
   return !!replacedAddress.match(/^[0-9a-fA-F]{40}$/) && toChecksumAddress(address) === address;
 };
 
+exports.hashjs = hashjs;
 exports.randomBytes = randomBytes;
 exports.generatePrivateKey = generatePrivateKey;
 exports.getAddressFromPrivateKey = getAddressFromPrivateKey;
