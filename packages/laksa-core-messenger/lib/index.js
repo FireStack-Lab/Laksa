@@ -38,6 +38,10 @@ var JsonRpc = function JsonRpc() {
   this.messageId = 0;
 };
 
+function getResultForData(data) {
+  return data.error ? data.error : data.message ? data : data.result;
+}
+
 var Messanger = function Messanger(_provider) {
   var _this = this;
 
@@ -56,20 +60,26 @@ var Messanger = function Messanger(_provider) {
             case 0:
               _this.providerCheck();
 
+              _context.prev = 1;
               payload = _this.JsonRpc.toPayload(data.method, data.params);
-              _context.next = 4;
+              _context.next = 5;
               return _this.provider.send(payload);
 
-            case 4:
+            case 5:
               result = _context.sent;
-              return _context.abrupt("return", result);
+              return _context.abrupt("return", getResultForData(result));
 
-            case 6:
+            case 9:
+              _context.prev = 9;
+              _context.t0 = _context["catch"](1);
+              throw new Error(_context.t0);
+
+            case 12:
             case "end":
               return _context.stop();
           }
         }
-      }, _callee, this);
+      }, _callee, this, [[1, 9]]);
     }));
 
     return function (_x) {
@@ -83,11 +93,12 @@ var Messanger = function Messanger(_provider) {
     var payload = _this.JsonRpc.toPayload(data.method, data.params);
 
     _this.provider.sendAsync(payload, function (err, result) {
-      if (err) {
-        return callback(err);
+      if (err || result.error) {
+        var errors = err || result.error;
+        return callback(errors);
       }
 
-      callback(null, result);
+      callback(null, getResultForData(result));
     });
   });
 
@@ -118,19 +129,25 @@ var Messanger = function Messanger(_provider) {
             case 0:
               _this.providerCheck();
 
-              _context2.next = 3;
-              return _this.provider.sendServer(endpoint, data);
+              _context2.prev = 1;
+              _context2.next = 4;
+              return _this.scillaProvider.sendServer(endpoint, data);
 
-            case 3:
+            case 4:
               result = _context2.sent;
               return _context2.abrupt("return", result);
 
-            case 5:
+            case 8:
+              _context2.prev = 8;
+              _context2.t0 = _context2["catch"](1);
+              throw new Error(_context2.t0);
+
+            case 11:
             case "end":
               return _context2.stop();
           }
         }
-      }, _callee2, this);
+      }, _callee2, this, [[1, 8]]);
     }));
 
     return function (_x2, _x3) {
@@ -141,9 +158,10 @@ var Messanger = function Messanger(_provider) {
   _defineProperty(this, "sendAsyncServer", function (endpoint, data, callback) {
     _this.providerCheck();
 
-    _this.provider.sendAsyncServer(endpoint, data, function (err, result) {
-      if (err) {
-        return callback(err);
+    _this.scillaProvider.sendAsyncServer(endpoint, data, function (err, result) {
+      if (err || result.error) {
+        var errors = err || result.error;
+        return callback(errors);
       }
 
       callback(null, result);
@@ -153,7 +171,7 @@ var Messanger = function Messanger(_provider) {
   _defineProperty(this, "sendBatchServer", function (data, callback) {
     _this.providerCheck();
 
-    _this.provider.sendAsync(data, function (err, results) {
+    _this.scillaProvider.sendAsync(data, function (err, results) {
       if (err) {
         return callback(err);
       }
@@ -166,6 +184,10 @@ var Messanger = function Messanger(_provider) {
     _this.provider = provider;
   });
 
+  _defineProperty(this, "setScillaProvider", function (provider) {
+    _this.scillaProvider = provider;
+  });
+
   _defineProperty(this, "providerCheck", function () {
     if (!_this.provider) {
       laksaShared.InvalidProvider();
@@ -174,6 +196,7 @@ var Messanger = function Messanger(_provider) {
   });
 
   this.provider = _provider;
+  this.scillaProvider = _provider;
   this.JsonRpc = new JsonRpc();
 };
 

@@ -14,7 +14,7 @@ var laksaCoreMessenger = require('laksa-core-messenger');
 var HttpProvider = _interopDefault(require('laksa-providers-http'));
 var Zil = _interopDefault(require('laksa-zil'));
 
-var version = "0.0.44";
+var version = "0.0.45";
 
 var config = {
   version: version,
@@ -92,15 +92,36 @@ var Laksa = function Laksa(args) {
   });
 
   _defineProperty(this, "setProvider", function (provider) {
-    _this.currentProvider = new HttpProvider(provider);
+    _this.setNodeProvider(provider);
 
-    _this.messenger.setProvider(_this.currentProvider);
+    _this.setScillaProvider(provider);
+  });
+
+  _defineProperty(this, "setNodeProvider", function (provider) {
+    var newProvider = new HttpProvider(provider);
+    _this.currentProvider = _objectSpread({}, _this.currentProvider, {
+      node: newProvider
+    });
+
+    _this.messenger.setProvider(newProvider);
+  });
+
+  _defineProperty(this, "setScillaProvider", function (provider) {
+    var newProvider = new HttpProvider(provider);
+    _this.currentProvider = _objectSpread({}, _this.currentProvider, {
+      scilla: newProvider
+    });
+
+    _this.messenger.setScillaProvider(newProvider);
   });
 
   var url = args || config.defaultNodeUrl;
   this.util = _objectSpread({}, util, core);
-  this.currentProvider = new HttpProvider(url);
-  this.messenger = new laksaCoreMessenger.Messenger(this.currentProvider);
+  this.currentProvider = {
+    node: new HttpProvider(url),
+    scilla: new HttpProvider(url)
+  };
+  this.messenger = new laksaCoreMessenger.Messenger(this.currentProvider.node);
   this.zil = new Zil(this); // this.account = new Account()
   // this.wallet = new Wallet()
 };
