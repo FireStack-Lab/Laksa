@@ -1,27 +1,37 @@
 import { InvalidProvider } from 'laksa-shared'
 import JsonRpc from './jsonRpc'
 
+function getResultForData(data) {
+  return data.error ? data.error : data.message ? data : data.result
+}
+
 class Messanger {
   constructor(provider) {
     this.provider = provider
+    this.scillaProvider = provider
     this.JsonRpc = new JsonRpc()
   }
 
   send = async (data) => {
     this.providerCheck()
-    const payload = this.JsonRpc.toPayload(data.method, data.params)
-    const result = await this.provider.send(payload)
-    return result
+    try {
+      const payload = this.JsonRpc.toPayload(data.method, data.params)
+      const result = await this.provider.send(payload)
+      return getResultForData(result)
+    } catch (e) {
+      throw new Error(e)
+    }
   }
 
   sendAsync = (data, callback) => {
     this.providerCheck()
     const payload = this.JsonRpc.toPayload(data.method, data.params)
     this.provider.sendAsync(payload, (err, result) => {
-      if (err) {
-        return callback(err)
+      if (err || result.error) {
+        const errors = err || result.error
+        return callback(errors)
       }
-      callback(null, result)
+      callback(null, getResultForData(result))
     })
   }
 
@@ -38,15 +48,20 @@ class Messanger {
 
   sendServer = async (endpoint, data) => {
     this.providerCheck()
-    const result = await this.provider.sendServer(endpoint, data)
-    return result
+    try {
+      const result = await this.scillaProvider.sendServer(endpoint, data)
+      return result
+    } catch (e) {
+      throw new Error(e)
+    }
   }
 
   sendAsyncServer = (endpoint, data, callback) => {
     this.providerCheck()
-    this.provider.sendAsyncServer(endpoint, data, (err, result) => {
-      if (err) {
-        return callback(err)
+    this.scillaProvider.sendAsyncServer(endpoint, data, (err, result) => {
+      if (err || result.error) {
+        const errors = err || result.error
+        return callback(errors)
       }
       callback(null, result)
     })
@@ -54,7 +69,7 @@ class Messanger {
 
   sendBatchServer = (data, callback) => {
     this.providerCheck()
-    this.provider.sendAsync(data, (err, results) => {
+    this.scillaProvider.sendAsync(data, (err, results) => {
       if (err) {
         return callback(err)
       }
@@ -64,6 +79,10 @@ class Messanger {
 
   setProvider = (provider) => {
     this.provider = provider
+  }
+
+  setScillaProvider = (provider) => {
+    this.scillaProvider = provider
   }
 
   providerCheck = () => {

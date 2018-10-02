@@ -45,24 +45,34 @@
 
   }
 
+  function getResultForData(data) {
+    return data.error ? data.error : data.message ? data : data.result;
+  }
+
   class Messanger {
     constructor(_provider) {
       _defineProperty(this, "send", async data => {
         this.providerCheck();
-        const payload = this.JsonRpc.toPayload(data.method, data.params);
-        const result = await this.provider.send(payload);
-        return result;
+
+        try {
+          const payload = this.JsonRpc.toPayload(data.method, data.params);
+          const result = await this.provider.send(payload);
+          return getResultForData(result);
+        } catch (e) {
+          throw new Error(e);
+        }
       });
 
       _defineProperty(this, "sendAsync", (data, callback) => {
         this.providerCheck();
         const payload = this.JsonRpc.toPayload(data.method, data.params);
         this.provider.sendAsync(payload, (err, result) => {
-          if (err) {
-            return callback(err);
+          if (err || result.error) {
+            const errors = err || result.error;
+            return callback(errors);
           }
 
-          callback(null, result);
+          callback(null, getResultForData(result));
         });
       });
 
@@ -80,15 +90,21 @@
 
       _defineProperty(this, "sendServer", async (endpoint, data) => {
         this.providerCheck();
-        const result = await this.provider.sendServer(endpoint, data);
-        return result;
+
+        try {
+          const result = await this.scillaProvider.sendServer(endpoint, data);
+          return result;
+        } catch (e) {
+          throw new Error(e);
+        }
       });
 
       _defineProperty(this, "sendAsyncServer", (endpoint, data, callback) => {
         this.providerCheck();
-        this.provider.sendAsyncServer(endpoint, data, (err, result) => {
-          if (err) {
-            return callback(err);
+        this.scillaProvider.sendAsyncServer(endpoint, data, (err, result) => {
+          if (err || result.error) {
+            const errors = err || result.error;
+            return callback(errors);
           }
 
           callback(null, result);
@@ -97,7 +113,7 @@
 
       _defineProperty(this, "sendBatchServer", (data, callback) => {
         this.providerCheck();
-        this.provider.sendAsync(data, (err, results) => {
+        this.scillaProvider.sendAsync(data, (err, results) => {
           if (err) {
             return callback(err);
           }
@@ -110,6 +126,10 @@
         this.provider = provider;
       });
 
+      _defineProperty(this, "setScillaProvider", provider => {
+        this.scillaProvider = provider;
+      });
+
       _defineProperty(this, "providerCheck", () => {
         if (!this.provider) {
           laksaShared.InvalidProvider();
@@ -118,6 +138,7 @@
       });
 
       this.provider = _provider;
+      this.scillaProvider = _provider;
       this.JsonRpc = new JsonRpc();
     }
 

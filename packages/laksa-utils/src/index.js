@@ -30,6 +30,7 @@ export {
   toAscii,
   toBN,
   hexToNumber,
+  hexToIntArray,
   utf8ToHex,
   numberToHex,
   //-------

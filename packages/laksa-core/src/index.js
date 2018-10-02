@@ -19,8 +19,8 @@ class Laksa {
   constructor(args) {
     const url = args || config.defaultNodeUrl
     this.util = { ...util, ...core }
-    this.currentProvider = new HttpProvider(url)
-    this.messenger = new Messenger(this.currentProvider)
+    this.currentProvider = { node: new HttpProvider(url), scilla: new HttpProvider(url) }
+    this.messenger = new Messenger(this.currentProvider.node)
     this.zil = new Zil(this)
     // this.account = new Account()
     // this.wallet = new Wallet()
@@ -53,8 +53,20 @@ class Laksa {
   getProvider = () => this.currentProvider
 
   setProvider = (provider) => {
-    this.currentProvider = new HttpProvider(provider)
-    this.messenger.setProvider(this.currentProvider)
+    this.setNodeProvider(provider)
+    this.setScillaProvider(provider)
+  }
+
+  setNodeProvider = (provider) => {
+    const newProvider = new HttpProvider(provider)
+    this.currentProvider = { ...this.currentProvider, node: newProvider }
+    this.messenger.setProvider(newProvider)
+  }
+
+  setScillaProvider = (provider) => {
+    const newProvider = new HttpProvider(provider)
+    this.currentProvider = { ...this.currentProvider, scilla: newProvider }
+    this.messenger.setScillaProvider(newProvider)
   }
 }
 

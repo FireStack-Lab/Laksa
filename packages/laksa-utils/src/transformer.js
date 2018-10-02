@@ -101,6 +101,32 @@ const hexToNumber = (value) => {
 }
 
 /**
+ * hexToIntArray
+ *
+ * @param {string} hex
+ * @returns {number[]}
+ */
+const hexToIntArray = (hex) => {
+  if (!hex || !isHex(hex)) {
+    return []
+  }
+
+  const res = []
+
+  for (let i = 0; i < hex.length; i += 1) {
+    const c = hex.charCodeAt(i)
+    const hi = c >> 8
+    const lo = c & 0xff
+    if (hi) {
+      res.push(hi, lo)
+    } else {
+      res.push(lo)
+    }
+  }
+
+  return res
+}
+/**
  * Should be called to get hex representation (prefixed by 0x) of utf8 string
  *
  * @method utf8ToHex
@@ -232,6 +258,7 @@ export {
   fromAscii,
   toBN,
   hexToNumber,
+  hexToIntArray,
   utf8ToHex,
   numberToHex,
   padLeft,

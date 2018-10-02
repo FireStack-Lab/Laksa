@@ -524,6 +524,35 @@ var hexToNumber = function hexToNumber(value) {
   return toBN(value).toNumber();
 };
 /**
+ * hexToIntArray
+ *
+ * @param {string} hex
+ * @returns {number[]}
+ */
+
+
+var hexToIntArray = function hexToIntArray(hex) {
+  if (!hex || !isHex$1(hex)) {
+    return [];
+  }
+
+  var res = [];
+
+  for (var i = 0; i < hex.length; i += 1) {
+    var c = hex.charCodeAt(i);
+    var hi = c >> 8;
+    var lo = c & 0xff;
+
+    if (hi) {
+      res.push(hi, lo);
+    } else {
+      res.push(lo);
+    }
+  }
+
+  return res;
+};
+/**
  * Should be called to get hex representation (prefixed by 0x) of utf8 string
  *
  * @method utf8ToHex
@@ -676,6 +705,7 @@ exports.toUtf8 = toUtf8;
 exports.toAscii = toAscii;
 exports.toBN = toBN;
 exports.hexToNumber = hexToNumber;
+exports.hexToIntArray = hexToIntArray;
 exports.utf8ToHex = utf8ToHex;
 exports.numberToHex = numberToHex;
 exports.fromUtf8 = fromUtf8;

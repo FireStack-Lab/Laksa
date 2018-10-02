@@ -500,6 +500,35 @@
     return toBN(value).toNumber();
   };
   /**
+   * hexToIntArray
+   *
+   * @param {string} hex
+   * @returns {number[]}
+   */
+
+
+  const hexToIntArray = hex => {
+    if (!hex || !isHex$1(hex)) {
+      return [];
+    }
+
+    const res = [];
+
+    for (let i = 0; i < hex.length; i += 1) {
+      const c = hex.charCodeAt(i);
+      const hi = c >> 8;
+      const lo = c & 0xff;
+
+      if (hi) {
+        res.push(hi, lo);
+      } else {
+        res.push(lo);
+      }
+    }
+
+    return res;
+  };
+  /**
    * Should be called to get hex representation (prefixed by 0x) of utf8 string
    *
    * @method utf8ToHex
@@ -652,6 +681,7 @@
   exports.toAscii = toAscii;
   exports.toBN = toBN;
   exports.hexToNumber = hexToNumber;
+  exports.hexToIntArray = hexToIntArray;
   exports.utf8ToHex = utf8ToHex;
   exports.numberToHex = numberToHex;
   exports.fromUtf8 = fromUtf8;

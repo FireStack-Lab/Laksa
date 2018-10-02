@@ -131,11 +131,11 @@ var HttpProvider = function HttpProvider(url, timeout, user, password, headers) 
       var data = response.data,
           status = response.status;
 
-      if (data.result && status === 200) {
+      if (data && status >= 200 && status < 400) {
         if (callback === undefined) {
-          return !data.message ? data.result : data;
+          return data;
         } else {
-          callback(null, !data.message ? data.result : data);
+          callback(null, data);
         }
       }
     }).catch(function (err) {
