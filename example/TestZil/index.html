@@ -21,9 +21,9 @@
 <button id="setProviderButton">Set Provider</button>
 </div>
 <script src="../../dist/Laksa.browser.js"></script>
-<script src="../../dist/LaksaZil.browser.js"></script>
+<!-- <script src="../../dist/LaksaZil.browser.js"></script> -->
 <script src="../../dist/LaksaWallet.browser.js"></script>
-<script src="../../dist/LaksaContract.browser.js"></script>
+<!-- <script src="../../dist/LaksaContract.browser.js"></script> -->
 <script>
 
 var currenProvider=document.getElementById('nodeUrl').value
@@ -32,11 +32,11 @@ var setButton=document.getElementById('setProviderButton')
 //To connect to the external network, use URL = 'https://api-scilla.zilliqa.com'
 var laksa =new Laksa()
 // var URL = undefined
-// const {Wallet,Account}=window.LaksaWallet
+// const {Wallet}=window.LaksaWallet
 
-const {Contract}=  LaksaContract
-const contract= new Contract()
-const Zil=LaksaZil
+// const {Contract}=  LaksaContract
+// const contract= new Contract()
+// const Zil=LaksaZil
 
 
 setButton.onclick=function(e){
@@ -161,52 +161,52 @@ function callback(err, data) {
 }
 
 // set scilla runner from local Savant-IDE
-laksa.setScillaProvider('http://localhost:8080')
-
-laksa.zil.extendMethod({name: 'SavantCode',
-    call: '',
-    params: { code: ['isString', 'required'] },
-    isSendJson: true,
-    endpoint: '/contract/check'})
-
-laksa.zil.extendMethod({name: 'SavantCall',
-    call: '',
-    params: { code:['isString','optional'],init:['isString','optional'],blockchain:['isString','optional'],gaslimit:['isString','optional']},
-    endpoint: '/contract/call'})
-
-laksa.zil.SavantCode({code:code}).then(data=>{
-  const{message,result}=data
-  if(result&&laksa.util.isJson(message)){
-    // const Contract=laksa.contract;
-    contract.setCode(code)
-    contract.setABI(JSON.parse(message))
-
-    contract.setInitParamsValues(contract.abi.getInitParams(),['0x9bfec715a6bd658fcb62b0f8cc9bfa2ade71434a'])
-
-    laksa.zil.getBalance(myAddress).then(balance=>{
-      laksa.zil.getLatestTxBlock(
-        (err,blockInfo)=>{
-          const lll=contract.deploy({
-            nonce:balance.nonce+1,
-            blockNumber:blockInfo.header.BlockNum,
-            privateKey:'e19d05c5452598e24caad4a0d85a49146f7be089515c905ae6a19e8a578a6930',
-            gasLimit:2000
-          })
-          console.log(lll);
-          // laksa.zil.createTransaction(lll,callback)
-          laksa.zil.SavantCall({
-            code:code,
-            init: JSON.stringify(contract.initParams),
-            blockchain: JSON.stringify(contract.blockchain),
-            gaslimit:JSON.stringify(lll.gasLimit),
-          }).then(data=>{
-            console.log(data);
-          })
-        }
-      )
-    })
-  }
-})
+// laksa.setScillaProvider('http://localhost:8080')
+//
+// laksa.zil.extendMethod({name: 'SavantCode',
+//     call: '',
+//     params: { code: ['isString', 'required'] },
+//     isSendJson: true,
+//     endpoint: '/contract/check'})
+//
+// laksa.zil.extendMethod({name: 'SavantCall',
+//     call: '',
+//     params: { code:['isString','optional'],init:['isString','optional'],blockchain:['isString','optional'],gaslimit:['isString','optional']},
+//     endpoint: '/contract/call'})
+//
+// laksa.zil.SavantCode({code:code}).then(data=>{
+//   const{message,result}=data
+//   if(result&&laksa.util.isJson(message)){
+//     // const Contract=laksa.contract;
+//     contract.setCode(code)
+//     contract.setABI(JSON.parse(message))
+//
+//     contract.setInitParamsValues(contract.abi.getInitParams(),['0x9bfec715a6bd658fcb62b0f8cc9bfa2ade71434a'])
+//
+//     laksa.zil.getBalance(myAddress).then(balance=>{
+//       laksa.zil.getLatestTxBlock(
+//         (err,blockInfo)=>{
+//           const lll=contract.deploy({
+//             nonce:balance.nonce+1,
+//             blockNumber:blockInfo.header.BlockNum,
+//             privateKey:'e19d05c5452598e24caad4a0d85a49146f7be089515c905ae6a19e8a578a6930',
+//             gasLimit:2000
+//           })
+//           // console.log(lll);
+//           // laksa.zil.createTransaction(lll,callback)
+//           laksa.zil.SavantCall({
+//             code:code,
+//             init: JSON.stringify(contract.initParams),
+//             blockchain: JSON.stringify(contract.blockchain),
+//             gaslimit:JSON.stringify(lll.gasLimit),
+//           }).then(data=>{
+//             console.log(data);
+//           })
+//         }
+//       )
+//     })
+//   }
+// })
 
 const {Wallet}=LaksaWallet
 const wallet=new Wallet()
