@@ -5,6 +5,7 @@ function _interopDefault (ex) { return (ex && (typeof ex === 'object') && 'defau
 var _typeof = _interopDefault(require('@babel/runtime/helpers/typeof'));
 var _classCallCheck = _interopDefault(require('@babel/runtime/helpers/classCallCheck'));
 var _createClass = _interopDefault(require('@babel/runtime/helpers/createClass'));
+var _defineProperty = _interopDefault(require('@babel/runtime/helpers/defineProperty'));
 var Method = _interopDefault(require('laksa-core-methods'));
 var Property = _interopDefault(require('laksa-core-properties'));
 
@@ -416,7 +417,20 @@ var Zil =
 /*#__PURE__*/
 function () {
   function Zil(Laksa) {
+    var _this = this;
+
     _classCallCheck(this, Zil);
+
+    _defineProperty(this, "extendMethod", function (object) {
+      if (_typeof(object) !== 'object') {
+        throw new Error('Method has to be an object');
+      }
+
+      var zilMethod = new Method(object);
+      zilMethod.setMessanger(_this.messenger);
+      zilMethod.assignToObject(_this);
+      return true;
+    });
 
     this.messenger = Laksa.messenger;
     this.config = Laksa.config;
@@ -425,18 +439,6 @@ function () {
   }
 
   _createClass(Zil, [{
-    key: "extendMethod",
-    value: function extendMethod(object) {
-      if (_typeof(object) !== 'object') {
-        throw new Error('Method has to be an object');
-      }
-
-      var zilMethod = new Method(object);
-      zilMethod.setMessanger(this.messenger);
-      zilMethod.assignToObject(this);
-      return true;
-    }
-  }, {
     key: "defaultBlock",
     get: function get() {
       return this.config.defaultBlock;

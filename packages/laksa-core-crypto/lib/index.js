@@ -4,19 +4,39 @@ Object.defineProperty(exports, '__esModule', { value: true });
 
 function _interopDefault (ex) { return (ex && (typeof ex === 'object') && 'default' in ex) ? ex['default'] : ex; }
 
+require('core-js/modules/es6.regexp.to-string');
+require('core-js/modules/es6.typed.uint8-array');
+var randomBytes = require('randomBytes');
 require('core-js/modules/es6.array.fill');
-var _classCallCheck = _interopDefault(require('@babel/runtime/helpers/classCallCheck'));
-var _defineProperty = _interopDefault(require('@babel/runtime/helpers/defineProperty'));
-var assert = _interopDefault(require('assert'));
+var assert = _interopDefault(require('bsert'));
 var elliptic = _interopDefault(require('elliptic'));
 var BN = _interopDefault(require('bn.js'));
-var Signature = _interopDefault(require('elliptic/lib/elliptic/ec/signature'));
 var hashjs = _interopDefault(require('hash.js'));
 var DRBG = _interopDefault(require('hmac-drbg'));
+var Signature = _interopDefault(require('elliptic/lib/elliptic/ec/signature'));
 require('core-js/modules/es6.regexp.match');
 require('core-js/modules/es6.regexp.replace');
-require('core-js/modules/es6.regexp.to-string');
-var randomBytes = _interopDefault(require('randombytes'));
+
+var randomBytes$1 = function randomBytes$$1(bytes) {
+  var randBz;
+
+  if (typeof window !== 'undefined' && window.crypto && window.crypto.getRandomValues) {
+    randBz = window.crypto.getRandomValues(new Uint8Array(bytes));
+  } else if (typeof require !== 'undefined') {
+    // randBz = require('crypto').randomBytes(bytes)
+    randBz = randomBytes.randomBytes(bytes);
+  } else {
+    throw new Error('Unable to generate safe random numbers.');
+  }
+
+  var randStr = '';
+
+  for (var i = 0; i < bytes; i += 1) {
+    randStr += "00".concat(randBz[i].toString(16)).slice(-2);
+  }
+
+  return randStr;
+};
 
 var _elliptic$ec = elliptic.ec('secp256k1'),
     curve = _elliptic$ec.curve; // Public key is a point (x, y) on the curve.
@@ -27,128 +47,126 @@ var _elliptic$ec = elliptic.ec('secp256k1'),
 
 
 var PUBKEY_COMPRESSED_SIZE_BYTES = 33;
+/**
+ * Hash (r | M).
+ * @param {Buffer} msg
+ * @param {BN} r
+ *
+ * @returns {Buffer}
+ */
 
-var Schnorr = function Schnorr() {
-  var _this = this;
+var hash = function hash(q, pubkey, msg) {
+  var sha256 = hashjs.sha256();
+  var totalLength = PUBKEY_COMPRESSED_SIZE_BYTES * 2 + msg.byteLength; // 33 q + 33 pubkey + variable msgLen
 
-  _classCallCheck(this, Schnorr);
+  var Q = q.toArrayLike(Buffer, 'be', 33);
+  var B = Buffer.allocUnsafe(totalLength);
+  Q.copy(B, 0);
+  pubkey.copy(B, 33);
+  msg.copy(B, 66);
+  return new BN(sha256.update(B).digest('hex'), 16);
+};
+/**
+ * sign
+ *
+ * @param {Buffer} msg
+ * @param {Buffer} key
+ * @param {Buffer} pubkey
+ * @param {Buffer} pubNonce?
+ *
+ * @returns {Signature}
+ */
 
-  _defineProperty(this, "hash", function (q, pubkey, msg) {
-    var sha256 = hashjs.sha256();
-    var totalLength = PUBKEY_COMPRESSED_SIZE_BYTES * 2 + msg.byteLength; // 33 q + 33 pubkey + variable msgLen
+var sign = function sign(msg, key, pubkey) {
+  var prv = new BN(key);
+  var drbg = getDRBG(msg, key);
+  var len = curve.n.byteLength();
+  var sig;
 
-    var Q = q.toArrayLike(Buffer, 'be', 33);
-    var B = Buffer.allocUnsafe(totalLength);
-    Q.copy(B, 0);
-    pubkey.copy(B, 33);
-    msg.copy(B, 66);
-    return new BN(sha256.update(B).digest('hex'), 16);
-  });
-
-  _defineProperty(this, "trySign", function (msg, prv, k, pn, pubKey) {
-    if (prv.isZero()) throw new Error('Bad private key.');
-    if (prv.gte(curve.n)) throw new Error('Bad private key.'); // 1a. check that k is not 0
-
-    if (k.isZero()) return null; // 1b. check that k is < the order of the group
-
-    if (k.gte(curve.n)) return null; // 2. Compute commitment Q = kG, where g is the base point
-
-    var Q = curve.g.mul(k); // convert the commitment to octets first
-
-    var compressedQ = new BN(Q.encodeCompressed()); // 3. Compute the challenge r = H(Q || pubKey || msg)
-
-    var r = _this.hash(compressedQ, pubKey, msg);
-
-    var h = r.clone();
-    if (h.isZero()) return null;
-    if (h.eq(curve.n)) return null; // 4. Compute s = k - r * prv
-    // 4a. Compute r * prv
-
-    var s = h.imul(prv); // 4b. Compute s = k - r * prv mod n
-
-    s = k.isub(s);
-    s = s.umod(curve.n);
-    if (s.isZero()) return null;
-    return new Signature({
-      r: r,
-      s: s
-    });
-  });
-
-  _defineProperty(this, "sign", function (msg, key, pubkey, pubNonce) {
-    var prv = new BN(key);
-
-    var drbg = _this.getDRBG(msg, key, pubNonce);
-
-    var len = curve.n.byteLength();
-    var pn;
-    if (pubNonce) pn = curve.decodePoint(pubNonce);
-    var sig;
-
-    while (!sig) {
-      var k = new BN(drbg.generate(len));
-      sig = _this.trySign(msg, prv, k, pn, pubkey);
-    }
-
-    return sig;
-  });
-
-  _defineProperty(this, "verify", function (msg, signature, key) {
-    var sig = new Signature(signature);
-    if (sig.s.gte(curve.n)) throw new Error('Invalid S value.');
-    if (sig.r.gt(curve.n)) throw new Error('Invalid R value.');
-    var kpub = curve.decodePoint(key);
-    var l = kpub.mul(sig.r);
-    var r = curve.g.mul(sig.s);
-    var Q = l.add(r);
-    var compressedQ = new BN(Q.encodeCompressed());
-
-    var r1 = _this.hash(compressedQ, key, msg);
-
-    if (r1.gte(curve.n)) throw new Error('Invalid hash.');
-    if (r1.isZero()) throw new Error('Invalid hash.');
-    return r1.eq(sig.r);
-  });
-
-  _defineProperty(this, "alg", Buffer.from('Schnorr+SHA256  ', 'ascii'));
-
-  _defineProperty(this, "getDRBG", function (msg, priv, data) {
-    var pers = Buffer.allocUnsafe(48);
-    pers.fill(0);
-
-    if (data) {
-      assert(data.length === 32);
-      data.copy(pers, 0);
-    }
-
-    _this.alg.copy(pers, 32);
-
-    return new DRBG({
-      hash: hashjs.sha256,
-      entropy: priv,
-      nonce: msg,
-      pers: pers
-    });
-  });
-
-  _defineProperty(this, "generateNoncePair", function (msg, priv, data) {
-    var drbg = _this.getDRBG(msg, priv, data);
-
-    var len = curve.n.byteLength();
+  while (!sig) {
     var k = new BN(drbg.generate(len));
+    sig = trySign(msg, prv, k, pubkey);
+  }
 
-    while (k.isZero() && k.gte(curve.n)) {
-      k = new BN(drbg.generate(len));
-    }
+  return sig;
+};
+/**
+ * trySign
+ *
+ * @param {Buffer} msg
+ * @param {BN} prv - private key
+ * @param {BN} k - DRBG-generated random number
+ * @param {Buffer} pn - optional
+ * @param {Buffer)} pubKey - public key
+ *
+ * @returns {Signature | null =>}
+ */
 
-    return Buffer.from(curve.g.mul(k).encode('array', true));
+var trySign = function trySign(msg, prv, k, pubKey) {
+  if (prv.isZero()) throw new Error('Bad private key.');
+  if (prv.gte(curve.n)) throw new Error('Bad private key.'); // 1a. check that k is not 0
+
+  if (k.isZero()) return null; // 1b. check that k is < the order of the group
+
+  if (k.gte(curve.n)) return null; // 2. Compute commitment Q = kG, where g is the base point
+
+  var Q = curve.g.mul(k); // convert the commitment to octets first
+
+  var compressedQ = new BN(Q.encodeCompressed()); // 3. Compute the challenge r = H(Q || pubKey || msg)
+
+  var r = hash(compressedQ, pubKey, msg);
+  var h = r.clone();
+  if (h.isZero()) return null;
+  if (h.eq(curve.n)) return null; // 4. Compute s = k - r * prv
+  // 4a. Compute r * prv
+
+  var s = h.imul(prv); // 4b. Compute s = k - r * prv mod n
+
+  s = k.isub(s);
+  s = s.umod(curve.n);
+  if (s.isZero()) return null;
+  return new Signature({
+    r: r,
+    s: s
+  });
+};
+/**
+ * Schnorr personalization string.
+ * @const {Buffer}
+ */
+
+var alg = Buffer.from('Schnorr+SHA256  ', 'ascii');
+/**
+ * Instantiate an HMAC-DRBG.
+ *
+ * @param {Buffer} msg
+ * @param {Buffer} priv - used as entropy input
+ * @param {Buffer} data - used as nonce
+ *
+ * @returns {DRBG}
+ */
+
+var getDRBG = function getDRBG(msg, priv, data) {
+  var pers = Buffer.allocUnsafe(48);
+  pers.fill(0);
+
+  if (data) {
+    assert(data.length === 32);
+    data.copy(pers, 0);
+  }
+
+  alg.copy(pers, 32);
+  return new DRBG({
+    hash: hashjs.sha256,
+    entropy: priv,
+    nonce: msg,
+    pers: pers
   });
 };
 
 var NUM_BYTES = 32; // const HEX_PREFIX = '0x';
 
 var secp256k1 = elliptic.ec('secp256k1');
-var schnorr = new Schnorr();
 /**
  * convert number to array representing the padded hex form
  * @param  {[string]} val        [description]
@@ -177,24 +195,53 @@ var intToByteArray = function intToByteArray(val, paddedSize) {
   return arr;
 };
 /**
+ * isHex
+ *
+ * @param {string} str - string to be tested
+ * @returns {boolean}
+ */
+
+var isHex = function isHex(str) {
+  var plain = str.replace('0x', '');
+  return /[0-9a-f]*$/i.test(plain);
+};
+/**
+ * hexToIntArray
+ *
+ * @param {string} hex
+ * @returns {number[]}
+ */
+
+
+var hexToIntArray = function hexToIntArray(hex) {
+  if (!hex || !isHex(hex)) {
+    return [];
+  }
+
+  var res = [];
+
+  for (var i = 0; i < hex.length; i += 1) {
+    var c = hex.charCodeAt(i);
+    var hi = c >> 8;
+    var lo = c & 0xff;
+
+    if (hi) {
+      res.push(hi, lo);
+    } else {
+      res.push(lo);
+    }
+  }
+
+  return res;
+};
+/**
  * generatePrivateKey
  *
  * @returns {string} - the hex-encoded private key
  */
 
-
 var generatePrivateKey = function generatePrivateKey() {
-  var priv = '';
-  var rand = randomBytes(NUM_BYTES);
-
-  for (var i = 0; i < rand.byteLength; i += 1) {
-    // add 00 in case we get an empty byte.
-    var byte = rand[i];
-    var hexstr = '00'.concat(byte.toString(16)).slice(-2);
-    priv += hexstr;
-  }
-
-  return priv;
+  return randomBytes$1(NUM_BYTES);
 };
 /**
  * getAddressFromPrivateKey
@@ -303,7 +350,7 @@ var createTransactionJson = function createTransactionJson(privateKey, txnDetail
   };
   var encodedTx = encodeTransaction(txn); // sign using schnorr lib
 
-  var sig = schnorr.sign(encodedTx, Buffer.from(privateKey, 'hex'), Buffer.from(pubKey, 'hex'));
+  var sig = sign(encodedTx, Buffer.from(privateKey, 'hex'), Buffer.from(pubKey, 'hex'));
   var r = sig.r.toString('hex');
   var s = sig.s.toString('hex');
 
@@ -320,11 +367,11 @@ var createTransactionJson = function createTransactionJson(privateKey, txnDetail
 };
 var toChecksumAddress = function toChecksumAddress(address) {
   var newAddress = address.toLowerCase().replace('0x', '');
-  var hash = hashjs.sha256().update(newAddress, 'hex').digest('hex');
+  var hash$$1 = hashjs.sha256().update(newAddress, 'hex').digest('hex');
   var ret = '0x';
 
   for (var i = 0; i < newAddress.length; i += 1) {
-    if (parseInt(hash[i], 16) >= 8) {
+    if (parseInt(hash$$1[i], 16) >= 8) {
       ret += newAddress[i].toUpperCase();
     } else {
       ret += newAddress[i];
@@ -348,7 +395,8 @@ var isValidChecksumAddress = function isValidChecksumAddress(address) {
 };
 
 exports.hashjs = hashjs;
-exports.randomBytes = randomBytes;
+exports.intToByteArray = intToByteArray;
+exports.hexToIntArray = hexToIntArray;
 exports.generatePrivateKey = generatePrivateKey;
 exports.getAddressFromPrivateKey = getAddressFromPrivateKey;
 exports.getPubKeyFromPrivateKey = getPubKeyFromPrivateKey;
@@ -359,3 +407,4 @@ exports.encodeTransaction = encodeTransaction;
 exports.createTransactionJson = createTransactionJson;
 exports.toChecksumAddress = toChecksumAddress;
 exports.isValidChecksumAddress = isValidChecksumAddress;
+exports.randomBytes = randomBytes$1;

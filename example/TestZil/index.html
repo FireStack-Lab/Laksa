@@ -21,7 +21,9 @@
 <button id="setProviderButton">Set Provider</button>
 </div>
 <script src="../../dist/Laksa.browser.js"></script>
+<script src="../../dist/LaksaZil.browser.js"></script>
 <script src="../../dist/LaksaWallet.browser.js"></script>
+<script src="../../dist/LaksaContract.browser.js"></script>
 <script>
 
 var currenProvider=document.getElementById('nodeUrl').value
@@ -30,7 +32,11 @@ var setButton=document.getElementById('setProviderButton')
 //To connect to the external network, use URL = 'https://api-scilla.zilliqa.com'
 var laksa =new Laksa()
 // var URL = undefined
-const {Wallet,Account}=window.LaksaWallet
+// const {Wallet,Account}=window.LaksaWallet
+
+const {Contract}=  LaksaContract
+const contract= new Contract()
+const Zil=LaksaZil
 
 
 setButton.onclick=function(e){
@@ -64,7 +70,7 @@ let set_hello_code = Int32 2
 (***************************************************)
 
 contract HelloWorld
-(dummy: String)
+(owner: ByStr20)
 
 field welcome_msg : String = ""
 
@@ -83,41 +89,41 @@ transition getHello ()
     send msgs
 end
 `
+// //
+// // the immutable initialisation variables
+// let initParams = [
+//   {
+//     vname: "dummy",
+//     type: "String",
+//     value: `ASDF`
+//   }
+// ];
 //
-// the immutable initialisation variables
-let initParams = [
-  {
-    vname: "dummy",
-    type: "String",
-    value: `ASDF`
-  }
-];
-
-let txnDetails = {
-  version: 0,
-  nonce: 2,
-  to: "0000000000000000000000000000000000000000",
-  amount: laksa.util.toBN(0),
-  gasPrice: 1,
-  gasLimit: 50,
-  code: code,
-  data: JSON.stringify(initParams).replace(/\\"/g, '"')
-};
-
-// sign the transaction using util methods
-let txn = laksa.util.createTransactionJson(
-  "e19d05c5452598e24caad4a0d85a49146f7be089515c905ae6a19e8a578a6930",
-  txnDetails
-);
+// let txnDetails = {
+//   version: 0,
+//   nonce: 2,
+//   to: "0000000000000000000000000000000000000000",
+//   amount: laksa.util.toBN(0),
+//   gasPrice: 1,
+//   gasLimit: 50,
+//   code: code,
+//   data: JSON.stringify(initParams).replace(/\\"/g, '"')
+// };
+//
+// // sign the transaction using util methods
+// let txn = laksa.util.createTransactionJson(
+//   "e19d05c5452598e24caad4a0d85a49146f7be089515c905ae6a19e8a578a6930",
+//   txnDetails
+// );
 
 
 
-console.log(txn);
+// console.log({txn});
 
 
 const myAddress = { address: "9bfec715a6bd658fcb62b0f8cc9bfa2ade71434a" };
 // with callback
-laksa.zil.getNetworkId((err,data)=>{console.log({err,data})})
+// laksa.zil.getNetworkId((err,data)=>{console.log({err,data})})
 
 
 
@@ -163,13 +169,47 @@ laksa.zil.extendMethod({name: 'SavantCode',
     isSendJson: true,
     endpoint: '/contract/check'})
 
+laksa.zil.extendMethod({name: 'SavantCall',
+    call: '',
+    params: { code:['isString','optional'],init:['isString','optional'],blockchain:['isString','optional'],gaslimit:['isString','optional']},
+    endpoint: '/contract/call'})
+
 laksa.zil.SavantCode({code:code}).then(data=>{
   const{message,result}=data
   if(result&&laksa.util.isJson(message)){
-    const ABI=JSON.parse(message)
-    console.log(ABI);
+    // const Contract=laksa.contract;
+    contract.setCode(code)
+    contract.setABI(JSON.parse(message))
+
+    contract.setInitParamsValues(contract.abi.getInitParams(),['0x9bfec715a6bd658fcb62b0f8cc9bfa2ade71434a'])
+
+    laksa.zil.getBalance(myAddress).then(balance=>{
+      laksa.zil.getLatestTxBlock(
+        (err,blockInfo)=>{
+          const lll=contract.deploy({
+            nonce:balance.nonce+1,
+            blockNumber:blockInfo.header.BlockNum,
+            privateKey:'e19d05c5452598e24caad4a0d85a49146f7be089515c905ae6a19e8a578a6930',
+            gasLimit:2000
+          })
+          console.log(lll);
+          // laksa.zil.createTransaction(lll,callback)
+          laksa.zil.SavantCall({
+            code:code,
+            init: JSON.stringify(contract.initParams),
+            blockchain: JSON.stringify(contract.blockchain),
+            gaslimit:JSON.stringify(lll.gasLimit),
+          }).then(data=>{
+            console.log(data);
+          })
+        }
+      )
+    })
   }
 })
+
+const {Wallet}=LaksaWallet
+const wallet=new Wallet()
 </script>
 </body>
 </html>

@@ -1,11 +1,8 @@
 (function (global, factory) {
-  typeof exports === 'object' && typeof module !== 'undefined' ? factory(exports, require('laksa-utils'), require('laksa-core-crypto'), require('uuid'), require('crypto-js'), require('immutable')) :
-  typeof define === 'function' && define.amd ? define(['exports', 'laksa-utils', 'laksa-core-crypto', 'uuid', 'crypto-js', 'immutable'], factory) :
-  (factory((global.Laksa = {}),global.laksaUtils,global.laksaCoreCrypto,global.uuid,global.CryptoJS,global.immutable));
-}(this, (function (exports,laksaUtils,laksaCoreCrypto,uuid,CryptoJS,immutable) { 'use strict';
-
-  uuid = uuid && uuid.hasOwnProperty('default') ? uuid['default'] : uuid;
-  CryptoJS = CryptoJS && CryptoJS.hasOwnProperty('default') ? CryptoJS['default'] : CryptoJS;
+  typeof exports === 'object' && typeof module !== 'undefined' ? factory(exports, require('laksa-utils'), require('immutable'), require('laksa-account')) :
+  typeof define === 'function' && define.amd ? define(['exports', 'laksa-utils', 'immutable', 'laksa-account'], factory) :
+  (factory((global.Laksa = {}),global.laksaUtils,global.immutable,global.account));
+}(this, (function (exports,laksaUtils,immutable,account) { 'use strict';
 
   function _defineProperty(obj, key, value) {
     if (key in obj) {
@@ -41,211 +38,11 @@
     return target;
   }
 
-  const encrypt = (privateKey, password, options = {}) => {
-    if (!laksaUtils.isPrivateKey) throw new Error('Invalid PrivateKey');
-    if (!laksaUtils.isString(password)) throw new Error('no password found');
-    const iv = options.iv || laksaCoreCrypto.randomBytes(16);
-    const salt = options.salt || laksaCoreCrypto.randomBytes(32);
-    const kdfparams = {
-      dklen: options.dklen || 32,
-      salt: salt.toString('hex'),
-      c: options.c || 262144,
-      prf: 'hmac-sha256'
-    };
-    const derivedKey = CryptoJS.PBKDF2(password, CryptoJS.enc.Utf8.parse(kdfparams.salt), {
-      keySize: 256 / kdfparams.dklen,
-      iterations: kdfparams.c
-    }); // password should be replaced to derivedKey
-
-    const ciphertext = CryptoJS.AES.encrypt(privateKey, derivedKey.toString().slice(0, 16), {
-      iv: CryptoJS.enc.Hex.parse(iv.toString('hex')),
-      mode: CryptoJS.mode.CBC,
-      padding: CryptoJS.pad.Pkcs7
-    });
-    const macBuffer = Buffer.concat([Buffer.from(derivedKey.toString().slice(16, 32), 'hex'), Buffer.from(ciphertext.toString(), 'hex')]);
-    const mac = CryptoJS.SHA3(macBuffer.toString());
-    return {
-      version: 3,
-      id: uuid.v4({
-        random: laksaCoreCrypto.randomBytes(16)
-      }),
-      crypto: {
-        ciphertext: ciphertext.toString(),
-        cipherparams: {
-          iv: iv.toString('hex')
-        },
-        cipher: 'aes-128-ctr',
-        kdf: 'pbkdf2',
-        kdfparams,
-        mac: mac.toString()
-      }
-    };
-  };
-  const decrypt = (keyStore, password) => {
-    if (!laksaUtils.isString(password)) throw new Error('no password found');
-    const data = keyStore.crypto.ciphertext;
-    const derivedKey = CryptoJS.PBKDF2(password, CryptoJS.enc.Utf8.parse(keyStore.crypto.kdfparams.salt), {
-      keySize: 256 / 32,
-      iterations: keyStore.crypto.kdfparams.c
-    });
-    const macBuffer = Buffer.concat([Buffer.from(derivedKey.toString().slice(16, 32), 'hex'), Buffer.from(keyStore.crypto.ciphertext.toString(), 'hex')]);
-    const macString = CryptoJS.SHA3(macBuffer.toString()).toString();
-
-    if (macString !== keyStore.crypto.mac) {
-      throw new Error('password may be wrong');
-    }
-
-    const decrypted = CryptoJS.AES.decrypt(data, derivedKey.toString().slice(0, 16), {
-      iv: CryptoJS.enc.Hex.parse(keyStore.crypto.cipherparams.iv),
-      mode: CryptoJS.mode.CBC,
-      padding: CryptoJS.pad.Pkcs7
-    });
-    return decrypted.toString(CryptoJS.enc.Utf8);
-  };
-
   const ENCRYPTED = Symbol('ENCRYPTED');
   const encryptedBy = {
     ACCOUNT: Symbol('account'),
     WALLET: Symbol('wallet')
   };
-
-  function generateAccountObject(privateKey) {
-    if (!laksaUtils.isPrivateKey(privateKey)) throw new Error('private key is not correct');
-    const address = laksaCoreCrypto.getAddressFromPrivateKey(privateKey);
-    const publicKey = laksaCoreCrypto.getPubKeyFromPrivateKey(privateKey);
-    let accountObject = {}; // set accountObject
-
-    if (laksaUtils.isPubkey(publicKey) && laksaUtils.isPrivateKey(privateKey) && laksaUtils.isAddress(address)) {
-      accountObject = {
-        privateKey,
-        address,
-        publicKey // push account object to accountArray
-
-      };
-      return accountObject;
-    }
-
-    throw new Error('account generate failure');
-  }
-  /**
-   * create an raw accountObject
-   * @return {[type]} [description]
-   */
-
-
-  const createAccount = () => {
-    const privateKey = laksaCoreCrypto.generatePrivateKey();
-
-    try {
-      return generateAccountObject(privateKey);
-    } catch (e) {
-      return e;
-    }
-  };
-  const importAccount = privateKey => {
-    try {
-      return generateAccountObject(privateKey);
-    } catch (e) {
-      return e;
-    }
-  };
-  const encryptAccount = (accountObject, password, level = 1000) => {
-    if (!laksaUtils.isString(password)) throw new Error('password is not found');
-    laksaUtils.validateArgs(accountObject, {
-      address: [laksaUtils.isAddress],
-      privateKey: [laksaUtils.isPrivateKey],
-      publicKey: [laksaUtils.isPubkey]
-    });
-
-    try {
-      return _objectSpread({}, accountObject, {
-        privateKey: ENCRYPTED
-      }, encrypt(accountObject.privateKey, password, {
-        c: level
-      }));
-    } catch (e) {
-      throw new Error(e);
-    }
-  };
-  const decryptAccount = (accountObject, password) => {
-    if (!laksaUtils.isString(password)) throw new Error('password is not found');
-    laksaUtils.validateArgs(accountObject, {
-      address: [laksaUtils.isAddress],
-      crypto: [laksaUtils.isObject],
-      publicKey: [laksaUtils.isPubkey]
-    });
-
-    try {
-      const newObject = Object.assign({}, accountObject);
-      delete newObject.crypto;
-      return _objectSpread({}, newObject, {
-        privateKey: decrypt(accountObject, password)
-      });
-    } catch (e) {
-      throw new Error(e);
-    }
-  };
-  const signTransaction = (privateKey, transactionObject) => {
-    return laksaCoreCrypto.createTransactionJson(privateKey, transactionObject);
-  };
-  class Account {
-    constructor() {
-      _defineProperty(this, "createAccount", () => {
-        const accountObject = createAccount();
-        const newObject = new Account();
-        return Object.assign({}, accountObject, {
-          encrypt: newObject.encrypt,
-          decrypt: newObject.decrypt,
-          signTransaction: newObject.signTransaction,
-          signTransactionWithPassword: newObject.signTransactionWithPassword
-        });
-      });
-
-      _defineProperty(this, "importAccount", privateKey => {
-        const accountObject = importAccount(privateKey);
-        const newObject = new Account();
-        return Object.assign({}, accountObject, {
-          encrypt: newObject.encrypt,
-          decrypt: newObject.decrypt,
-          signTransaction: newObject.signTransaction,
-          signTransactionWithPassword: newObject.signTransactionWithPassword
-        });
-      });
-    }
-
-    // sub object
-    encrypt(password, level = 1000) {
-      return Object.assign(this, encryptAccount(this, password, level));
-    } // sub object
-
-
-    decrypt(password) {
-      const that = this;
-      const decrypted = decryptAccount(that, password);
-      delete this.crypto;
-      return Object.assign(this, decrypted);
-    } // sub object
-
-
-    signTransaction(transactionObject) {
-      if (this.privateKey === ENCRYPTED) {
-        throw new Error('This account is encrypted, please decrypt it first or use "signTransactionWithPassword"');
-      }
-
-      return signTransaction(this.privateKey, transactionObject);
-    } // sub object
-
-
-    signTransactionWithPassword(transactionObject, password) {
-      if (this.privateKey === ENCRYPTED) {
-        const decrypted = this.decrypt(password);
-        const signed = signTransaction(decrypted.privateKey, transactionObject);
-        Object.assign(this, encryptAccount(decrypted, password));
-        return signed;
-      }
-    }
-
-  }
 
   let _accounts = immutable.Map({
     accounts: immutable.List([])
@@ -295,7 +92,7 @@
       });
 
       _defineProperty(this, "createAccount", () => {
-        const accountInstance = new Account();
+        const accountInstance = new account.Account();
         const accountObject = accountInstance.createAccount();
         return this.addAccount(accountObject);
       });
@@ -312,7 +109,7 @@
       });
 
       _defineProperty(this, "importAccountFromPrivateKey", privateKey => {
-        const accountInstance = new Account();
+        const accountInstance = new account.Account();
         const accountObject = accountInstance.importAccount(privateKey);
         return this.addAccount(accountObject);
       });
@@ -461,7 +258,7 @@
         return true;
       });
 
-      _defineProperty(this, "encryptAccountByAddress", (address, password, level, by) => {
+      _defineProperty(this, "encryptAccountByAddress", async (address, password, level, by) => {
         const accountObject = this.getAccountByAddress(address);
 
         if (accountObject !== undefined) {
@@ -470,8 +267,8 @@
             crypto
           } = accountObject;
 
-          if (privateKey !== undefined && privateKey !== undefined && crypto === undefined) {
-            const encryptedObject = accountObject.encrypt(password, level);
+          if (privateKey !== undefined && privateKey !== ENCRYPTED && crypto === undefined) {
+            const encryptedObject = await accountObject.encrypt(password, level);
             return this.updateAccountByAddress(address, Object.assign({}, encryptedObject, {
               LastEncryptedBy: by || encryptedBy.ACCOUNT
             }));
@@ -481,7 +278,7 @@
         return false;
       });
 
-      _defineProperty(this, "decryptAccountByAddress", (address, password, by) => {
+      _defineProperty(this, "decryptAccountByAddress", async (address, password, by) => {
         const accountObject = this.getAccountByAddress(address);
 
         if (accountObject !== undefined) {
@@ -490,8 +287,8 @@
             crypto
           } = accountObject;
 
-          if (privateKey !== undefined && privateKey === undefined && laksaUtils.isObject(crypto)) {
-            const decryptedObject = accountObject.decrypt(password);
+          if (privateKey !== undefined && privateKey === ENCRYPTED && laksaUtils.isObject(crypto)) {
+            const decryptedObject = await accountObject.decrypt(password);
             return this.updateAccountByAddress(address, Object.assign({}, decryptedObject, {
               LastEncryptedBy: by || encryptedBy.ACCOUNT
             }));
@@ -522,15 +319,6 @@
   }
 
   exports.Wallet = Wallet;
-  exports.encrypt = encrypt;
-  exports.decrypt = decrypt;
-  exports.Account = Account;
-  exports.createAccount = createAccount;
-  exports.importAccount = importAccount;
-  exports.encryptAccount = encryptAccount;
-  exports.decryptAccount = decryptAccount;
-  exports.ENCRYPTED = ENCRYPTED;
-  exports.encryptedBy = encryptedBy;
 
   Object.defineProperty(exports, '__esModule', { value: true });
 

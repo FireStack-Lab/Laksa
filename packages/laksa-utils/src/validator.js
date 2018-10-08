@@ -53,7 +53,7 @@ const isArray = (obj) => {
  */
 const isJson = (obj) => {
   try {
-    return !!JSON.parse(obj)
+    return !!JSON.parse(obj) && isObject(JSON.parse(obj))
   } catch (e) {
     return false
   }
@@ -187,6 +187,24 @@ const isUndefined = (obj) => {
   return obj === undefined
 }
 
+/**
+ * check object is undefined
+ * @param  {[type]}  obj [description]
+ * @return {Boolean}     [description]
+ */
+const isUnit = (obj) => {
+  return isInt(obj) && obj >= 0
+}
+
+/**
+ * [isByStrX description]
+ * @param  {[type]}  obj [description]
+ * @return {Boolean}     [description]
+ */
+const isByStrX = (obj) => {
+  return /^0x[A-F0-9]{20,65}$/i.test(obj)
+}
+
 export {
   isNumber,
   isInt,
@@ -195,6 +213,7 @@ export {
   isArray,
   isJson,
   isObject,
+  isUnit,
   isFunction,
   isHash,
   isUrl,
@@ -203,6 +222,7 @@ export {
   isAddress,
   isBN,
   isHex,
+  isByStrX,
   isNull,
   isUndefined
 }

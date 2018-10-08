@@ -1,13 +1,11 @@
-import randomBytes from 'randombytes'
 import elliptic from 'elliptic'
 import hashjs from 'hash.js'
-import Schnorr from './schnorr'
+import { randomBytes } from './random'
+import * as schnorr from './schnorr'
 
 const NUM_BYTES = 32
 // const HEX_PREFIX = '0x';
 const secp256k1 = elliptic.ec('secp256k1')
-
-const schnorr = new Schnorr()
 
 /**
  * convert number to array representing the padded hex form
@@ -15,7 +13,7 @@ const schnorr = new Schnorr()
  * @param  {[number]} paddedSize [description]
  * @return {[string]}            [description]
  */
-const intToByteArray = (val, paddedSize) => {
+export const intToByteArray = (val, paddedSize) => {
   const arr = []
 
   const hexVal = val.toString(16)
@@ -36,24 +34,50 @@ const intToByteArray = (val, paddedSize) => {
 
   return arr
 }
+/**
+ * isHex
+ *
+ * @param {string} str - string to be tested
+ * @returns {boolean}
+ */
+const isHex = (str) => {
+  const plain = str.replace('0x', '')
+  return /[0-9a-f]*$/i.test(plain)
+}
 
+/**
+ * hexToIntArray
+ *
+ * @param {string} hex
+ * @returns {number[]}
+ */
+export const hexToIntArray = (hex) => {
+  if (!hex || !isHex(hex)) {
+    return []
+  }
+
+  const res = []
+
+  for (let i = 0; i < hex.length; i += 1) {
+    const c = hex.charCodeAt(i)
+    const hi = c >> 8
+    const lo = c & 0xff
+    if (hi) {
+      res.push(hi, lo)
+    } else {
+      res.push(lo)
+    }
+  }
+
+  return res
+}
 /**
  * generatePrivateKey
  *
  * @returns {string} - the hex-encoded private key
  */
 export const generatePrivateKey = () => {
-  let priv = ''
-  const rand = randomBytes(NUM_BYTES)
-
-  for (let i = 0; i < rand.byteLength; i += 1) {
-    // add 00 in case we get an empty byte.
-    const byte = rand[i]
-    const hexstr = '00'.concat(byte.toString(16)).slice(-2)
-    priv += hexstr
-  }
-
-  return priv
+  return randomBytes(NUM_BYTES)
 }
 
 /**
