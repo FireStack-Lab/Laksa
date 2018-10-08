@@ -47,7 +47,7 @@ class Zil {
     return account
   }
 
-  extendMethod(object) {
+  extendMethod = (object) => {
     if (typeof object !== 'object') {
       throw new Error('Method has to be an object')
     }

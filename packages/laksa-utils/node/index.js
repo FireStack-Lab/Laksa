@@ -65,7 +65,7 @@
 
   const isJson = obj => {
     try {
-      return !!JSON.parse(obj);
+      return !!JSON.parse(obj) && isObject(JSON.parse(obj));
     } catch (e) {
       return false;
     }
@@ -208,6 +208,26 @@
   const isUndefined = obj => {
     return obj === undefined;
   };
+  /**
+   * check object is undefined
+   * @param  {[type]}  obj [description]
+   * @return {Boolean}     [description]
+   */
+
+
+  const isUnit = obj => {
+    return isInt(obj) && obj >= 0;
+  };
+  /**
+   * [isByStrX description]
+   * @param  {[type]}  obj [description]
+   * @return {Boolean}     [description]
+   */
+
+
+  const isByStrX = obj => {
+    return /^0x[A-F0-9]{20,65}$/i.test(obj);
+  };
 
   var validators = /*#__PURE__*/Object.freeze({
     isNumber: isNumber,
@@ -217,6 +237,7 @@
     isArray: isArray,
     isJson: isJson,
     isObject: isObject,
+    isUnit: isUnit,
     isFunction: isFunction,
     isHash: isHash,
     isUrl: isUrl,
@@ -225,6 +246,7 @@
     isAddress: isAddress,
     isBN: bn_js.isBN,
     isHex: isHex,
+    isByStrX: isByStrX,
     isNull: isNull,
     isUndefined: isUndefined
   });
@@ -272,6 +294,7 @@
     isArray: isArray$1,
     isJson: isJson$1,
     isObject: isObject$1,
+    isUnit: isUnit$1,
     isFunction: isFunction$1,
     isHash: isHash$1,
     isUrl: isUrl$1,
@@ -280,6 +303,7 @@
     isAddress: isAddress$1,
     isBN,
     isHex: isHex$1,
+    isByStrX: isByStrX$1,
     isNull: isNull$1,
     isUndefined: isUndefined$1
   } = valArray;
@@ -659,6 +683,7 @@
   exports.isArray = isArray$1;
   exports.isJson = isJson$1;
   exports.isObject = isObject$1;
+  exports.isUnit = isUnit$1;
   exports.isFunction = isFunction$1;
   exports.isHash = isHash$1;
   exports.isUrl = isUrl$1;
@@ -667,6 +692,7 @@
   exports.isAddress = isAddress$1;
   exports.isBN = isBN;
   exports.isHex = isHex$1;
+  exports.isByStrX = isByStrX$1;
   exports.isNull = isNull$1;
   exports.isUndefined = isUndefined$1;
   exports.validator = validator;

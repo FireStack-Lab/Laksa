@@ -8,8 +8,7 @@ import {
   createTransactionJson
 } from 'laksa-core-crypto'
 
-import { encrypt, decrypt } from './entropy'
-
+import { encrypt, decrypt } from 'laksa-extend-keystore'
 import { ENCRYPTED } from './symbols'
 
 function generateAccountObject(privateKey) {
@@ -52,7 +51,7 @@ export const importAccount = (privateKey) => {
   }
 }
 
-export const encryptAccount = (accountObject, password, level = 1000) => {
+export const encryptAccount = async (accountObject, password, level = 1024) => {
   if (!isString(password)) throw new Error('password is not found')
   validateArgs(accountObject, {
     address: [isAddress],
@@ -60,17 +59,19 @@ export const encryptAccount = (accountObject, password, level = 1000) => {
     publicKey: [isPubkey]
   })
   try {
-    return {
+    const encrypted = await encrypt(accountObject.privateKey, password, { level })
+    const encryptedObj = {
       ...accountObject,
       privateKey: ENCRYPTED,
-      ...encrypt(accountObject.privateKey, password, { c: level })
+      ...encrypted
     }
+    return encryptedObj
   } catch (e) {
     throw new Error(e)
   }
 }
 
-export const decryptAccount = (accountObject, password) => {
+export const decryptAccount = async (accountObject, password) => {
   if (!isString(password)) throw new Error('password is not found')
   validateArgs(accountObject, {
     address: [isAddress],
@@ -80,10 +81,12 @@ export const decryptAccount = (accountObject, password) => {
   try {
     const newObject = Object.assign({}, accountObject)
     delete newObject.crypto
-    return {
+    const decrypted = await decrypt(accountObject, password)
+    const decryptedObj = {
       ...newObject,
-      privateKey: decrypt(accountObject, password)
+      privateKey: decrypted
     }
+    return decryptedObj
   } catch (e) {
     throw new Error(e)
   }
@@ -119,14 +122,15 @@ export class Account {
   }
 
   // sub object
-  encrypt(password, level = 1000) {
-    return Object.assign(this, encryptAccount(this, password, level))
+  async encrypt(password, level = 1024) {
+    const encryptedAccount = await encryptAccount(this, password, level)
+    return Object.assign(this, encryptedAccount)
   }
 
   // sub object
-  decrypt(password) {
+  async decrypt(password) {
     const that = this
-    const decrypted = decryptAccount(that, password)
+    const decrypted = await decryptAccount(that, password)
     delete this.crypto
     return Object.assign(this, decrypted)
   }

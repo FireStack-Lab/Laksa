@@ -3,8 +3,8 @@ import {
 } from 'laksa-utils'
 import { Map, List } from 'immutable'
 
-import * as account from './account'
-import { encryptedBy } from './symbols'
+import * as account from 'laksa-account'
+import { encryptedBy, ENCRYPTED } from './symbols'
 
 let _accounts = Map({ accounts: List([]) })
 
@@ -219,12 +219,12 @@ class Wallet {
     return true
   }
 
-  encryptAccountByAddress = (address, password, level, by) => {
+  encryptAccountByAddress = async (address, password, level, by) => {
     const accountObject = this.getAccountByAddress(address)
     if (accountObject !== undefined) {
       const { privateKey, crypto } = accountObject
-      if (privateKey !== undefined && privateKey !== account.ENCRYPTED && crypto === undefined) {
-        const encryptedObject = accountObject.encrypt(password, level)
+      if (privateKey !== undefined && privateKey !== ENCRYPTED && crypto === undefined) {
+        const encryptedObject = await accountObject.encrypt(password, level)
         return this.updateAccountByAddress(
           address,
           Object.assign({}, encryptedObject, {
@@ -236,12 +236,14 @@ class Wallet {
     return false
   }
 
-  decryptAccountByAddress = (address, password, by) => {
+  decryptAccountByAddress = async (address, password, by) => {
     const accountObject = this.getAccountByAddress(address)
     if (accountObject !== undefined) {
       const { privateKey, crypto } = accountObject
-      if (privateKey !== undefined && privateKey === account.ENCRYPTED && isObject(crypto)) {
-        const decryptedObject = accountObject.decrypt(password)
+
+      if (privateKey !== undefined && privateKey === ENCRYPTED && isObject(crypto)) {
+        const decryptedObject = await accountObject.decrypt(password)
+
         return this.updateAccountByAddress(
           address,
           Object.assign({}, decryptedObject, {

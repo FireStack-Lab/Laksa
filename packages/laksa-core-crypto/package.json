@@ -7,8 +7,8 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "assert": "^1.4.1",
     "bn.js": "^4.11.8",
+    "bsert": "^0.0.4",
     "elliptic": "^6.4.1",
     "hash.js": "^1.1.5",
     "hmac-drbg": "^1.0.1",

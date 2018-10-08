@@ -7,6 +7,21 @@
   Method = Method && Method.hasOwnProperty('default') ? Method['default'] : Method;
   Property = Property && Property.hasOwnProperty('default') ? Property['default'] : Property;
 
+  function _defineProperty(obj, key, value) {
+    if (key in obj) {
+      Object.defineProperty(obj, key, {
+        value: value,
+        enumerable: true,
+        configurable: true,
+        writable: true
+      });
+    } else {
+      obj[key] = value;
+    }
+
+    return obj;
+  }
+
   var methodObjects = [
   /**
    * isConnected
@@ -413,6 +428,17 @@
 
   class Zil {
     constructor(Laksa) {
+      _defineProperty(this, "extendMethod", object => {
+        if (typeof object !== 'object') {
+          throw new Error('Method has to be an object');
+        }
+
+        const zilMethod = new Method(object);
+        zilMethod.setMessanger(this.messenger);
+        zilMethod.assignToObject(this);
+        return true;
+      });
+
       this.messenger = Laksa.messenger;
       this.config = Laksa.config;
       mapObjectToMethods(this);
@@ -435,17 +461,6 @@
     set defaultAccount(account) {
       this.config.defaultAccount = account;
       return account;
-    }
-
-    extendMethod(object) {
-      if (typeof object !== 'object') {
-        throw new Error('Method has to be an object');
-      }
-
-      const zilMethod = new Method(object);
-      zilMethod.setMessanger(this.messenger);
-      zilMethod.assignToObject(this);
-      return true;
     }
 
   }

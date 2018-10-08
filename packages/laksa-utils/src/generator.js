@@ -43,6 +43,7 @@ const {
   isArray,
   isJson,
   isObject,
+  isUnit,
   isFunction,
   isHash,
   isUrl,
@@ -51,6 +52,7 @@ const {
   isAddress,
   isBN,
   isHex,
+  isByStrX,
   isNull,
   isUndefined
 } = valArray
@@ -192,6 +194,7 @@ export {
   isArray,
   isJson,
   isObject,
+  isUnit,
   isFunction,
   isHash,
   isUrl,
@@ -200,6 +203,7 @@ export {
   isAddress,
   isBN,
   isHex,
+  isByStrX,
   isNull,
   isUndefined,
   validator,

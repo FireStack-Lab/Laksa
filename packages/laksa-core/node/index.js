@@ -41,7 +41,7 @@
     return target;
   }
 
-  var version = "0.0.45";
+  var version = "0.0.46";
 
   var config = {
     version,
@@ -88,7 +88,7 @@
         this.currentProvider = _objectSpread({}, this.currentProvider, {
           node: newProvider
         });
-        this.messenger.setProvider(newProvider);
+        this.messenger.setProvider(newProvider); // this.contract.setNodeProvider(newProvider)
       });
 
       _defineProperty(this, "setScillaProvider", provider => {
@@ -96,7 +96,7 @@
         this.currentProvider = _objectSpread({}, this.currentProvider, {
           scilla: newProvider
         });
-        this.messenger.setScillaProvider(newProvider);
+        this.messenger.setScillaProvider(newProvider); // this.contract.setScillaProvider(newProvider)
       });
 
       const url = args || config.defaultNodeUrl;
@@ -106,8 +106,18 @@
         scilla: new HttpProvider(url)
       };
       this.messenger = new laksaCoreMessenger.Messenger(this.currentProvider.node);
-      this.zil = new Zil(this); // this.account = new Account()
-      // this.wallet = new Wallet()
+      this.zil = new Zil(this);
+    }
+
+    register({
+      name,
+      pkg
+    }) {
+      const pkgObject = {
+        get: pkg,
+        enumerable: true
+      };
+      Object.defineProperty(this, name, pkgObject);
     }
 
   }

@@ -83,7 +83,7 @@ var isArray = function isArray(obj) {
 
 var isJson = function isJson(obj) {
   try {
-    return !!JSON.parse(obj);
+    return !!JSON.parse(obj) && isObject(JSON.parse(obj));
   } catch (e) {
     return false;
   }
@@ -226,6 +226,26 @@ var isNull = function isNull(obj) {
 var isUndefined = function isUndefined(obj) {
   return obj === undefined;
 };
+/**
+ * check object is undefined
+ * @param  {[type]}  obj [description]
+ * @return {Boolean}     [description]
+ */
+
+
+var isUnit = function isUnit(obj) {
+  return isInt(obj) && obj >= 0;
+};
+/**
+ * [isByStrX description]
+ * @param  {[type]}  obj [description]
+ * @return {Boolean}     [description]
+ */
+
+
+var isByStrX = function isByStrX(obj) {
+  return /^0x[A-F0-9]{20,65}$/i.test(obj);
+};
 
 var validators = /*#__PURE__*/Object.freeze({
   isNumber: isNumber,
@@ -235,6 +255,7 @@ var validators = /*#__PURE__*/Object.freeze({
   isArray: isArray,
   isJson: isJson,
   isObject: isObject,
+  isUnit: isUnit,
   isFunction: isFunction,
   isHash: isHash,
   isUrl: isUrl,
@@ -243,6 +264,7 @@ var validators = /*#__PURE__*/Object.freeze({
   isAddress: isAddress,
   isBN: bn_js.isBN,
   isHex: isHex,
+  isByStrX: isByStrX,
   isNull: isNull,
   isUndefined: isUndefined
 });
@@ -291,6 +313,7 @@ var isNumber$1 = valArray.isNumber,
     isArray$1 = valArray.isArray,
     isJson$1 = valArray.isJson,
     isObject$1 = valArray.isObject,
+    isUnit$1 = valArray.isUnit,
     isFunction$1 = valArray.isFunction,
     isHash$1 = valArray.isHash,
     isUrl$1 = valArray.isUrl,
@@ -299,6 +322,7 @@ var isNumber$1 = valArray.isNumber,
     isAddress$1 = valArray.isAddress,
     isBN = valArray.isBN,
     isHex$1 = valArray.isHex,
+    isByStrX$1 = valArray.isByStrX,
     isNull$1 = valArray.isNull,
     isUndefined$1 = valArray.isUndefined;
 /**
@@ -683,6 +707,7 @@ exports.isBoolean = isBoolean$1;
 exports.isArray = isArray$1;
 exports.isJson = isJson$1;
 exports.isObject = isObject$1;
+exports.isUnit = isUnit$1;
 exports.isFunction = isFunction$1;
 exports.isHash = isHash$1;
 exports.isUrl = isUrl$1;
@@ -691,6 +716,7 @@ exports.isPrivateKey = isPrivateKey$1;
 exports.isAddress = isAddress$1;
 exports.isBN = isBN;
 exports.isHex = isHex$1;
+exports.isByStrX = isByStrX$1;
 exports.isNull = isNull$1;
 exports.isUndefined = isUndefined$1;
 exports.validator = validator;
