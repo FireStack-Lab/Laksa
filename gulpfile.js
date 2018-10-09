@@ -8,7 +8,7 @@ const packages = [
   'laksa-core-methods',
   'laksa-core-properties',
   'laksa-extend-keystore',
-  'laska-account',
+  'laksa-account',
   'laksa-contracts',
   'laksa-providers-http',
   'laksa-shared',
