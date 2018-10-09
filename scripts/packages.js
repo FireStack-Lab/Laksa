@@ -3,6 +3,7 @@ export default [
   'laksa-extend-keystore',
   'laksa-core-messenger',
   'laksa-core-contract',
+  'laksa-core-transaction',
   'laksa-contracts',
   'laksa-providers-http',
   'laksa-shared',

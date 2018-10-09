@@ -1,10 +1,11 @@
 (function (global, factory) {
-  typeof exports === 'object' && typeof module !== 'undefined' ? module.exports = factory(require('axios')) :
-  typeof define === 'function' && define.amd ? define(['axios'], factory) :
-  (global.Laksa = factory(global.axios));
-}(this, (function (axios) { 'use strict';
+  typeof exports === 'object' && typeof module !== 'undefined' ? module.exports = factory(require('axios'), require('mitt')) :
+  typeof define === 'function' && define.amd ? define(['axios', 'mitt'], factory) :
+  (global.Laksa = factory(global.axios,global.Mitt));
+}(this, (function (axios,Mitt) { 'use strict';
 
   axios = axios && axios.hasOwnProperty('default') ? axios['default'] : axios;
+  Mitt = Mitt && Mitt.hasOwnProperty('default') ? Mitt['default'] : Mitt;
 
   function _defineProperty(obj, key, value) {
     if (key in obj) {
@@ -23,28 +24,7 @@
 
   class HttpProvider {
     constructor(url, timeout, user, password, headers) {
-      _defineProperty(this, "instance", () => {
-        const request = axios.create();
-
-        if (this.user && this.password) {
-          const AUTH_TOKEN = `Basic ${Buffer.from(`${this.user}:${this.password}`).toString('base64')}`;
-          request.defaults.headers.common.Authorization = AUTH_TOKEN;
-        }
-
-        request.defaults.headers.post['Content-Type'] = 'application/json';
-
-        if (this.headers) {
-          this.headers.forEach(header => {
-            request.defaults.headers.post[header.name] = header.value;
-          });
-        }
-
-        if (this.timeout) {
-          request.defaults.timeout = this.timeout;
-        }
-
-        return request;
-      });
+      _defineProperty(this, "subscribers", new Map());
 
       _defineProperty(this, "send", async payload => {
         const result = await this.requestFunc({
@@ -104,12 +84,48 @@
         });
       });
 
+      _defineProperty(this, "subscribe", (event, subscriber) => {
+        const subToken = Symbol('subToken');
+        this.subscribers.set(subToken, subscriber);
+        return subToken;
+      });
+
+      _defineProperty(this, "unsubscribe", token => {
+        if (this.subscribers.has(token)) {
+          this.subscribers.delete(token);
+        }
+      });
+
       this.url = url || 'http://localhost:4200';
       this.timeout = timeout || 0;
       this.user = user || null;
       this.password = password || null;
       this.headers = headers;
       this.request = this.instance();
+      this.broadcaster = new Mitt();
+    }
+
+    instance() {
+      const request = axios.create();
+
+      if (this.user && this.password) {
+        const AUTH_TOKEN = `Basic ${Buffer.from(`${this.user}:${this.password}`).toString('base64')}`;
+        request.defaults.headers.common.Authorization = AUTH_TOKEN;
+      }
+
+      request.defaults.headers.post['Content-Type'] = 'application/json';
+
+      if (this.headers) {
+        this.headers.forEach(header => {
+          request.defaults.headers.post[header.name] = header.value;
+        });
+      }
+
+      if (this.timeout) {
+        request.defaults.timeout = this.timeout;
+      }
+
+      return request;
     }
 
   }

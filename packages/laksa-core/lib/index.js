@@ -14,6 +14,8 @@ var util = require('laksa-utils');
 var core = require('laksa-core-crypto');
 var laksaCoreMessenger = require('laksa-core-messenger');
 var Contracts = _interopDefault(require('laksa-contracts'));
+var laksaAccount = require('laksa-account');
+var laksaWallet = require('laksa-wallet');
 var HttpProvider = _interopDefault(require('laksa-providers-http'));
 var Zil = _interopDefault(require('laksa-zil'));
 
@@ -35,10 +37,9 @@ function () {
     _classCallCheck(this, Laksa);
 
     _defineProperty(this, "providers", {
-      HttpProvider: HttpProvider
-    });
+      HttpProvider: HttpProvider // library method
 
-    _defineProperty(this, "config", config);
+    });
 
     _defineProperty(this, "isConnected",
     /*#__PURE__*/
@@ -123,13 +124,16 @@ function () {
 
     var url = args || config.defaultNodeUrl;
     this.util = _objectSpread({}, util, core);
+    this.config = config;
     this.currentProvider = {
       node: new HttpProvider(url),
       scilla: new HttpProvider(url)
     };
     this.messenger = new laksaCoreMessenger.Messenger(this.currentProvider.node);
-    this.zil = new Zil(this);
+    this.zil = new Zil(this.messenger, this.config);
     this.contracts = new Contracts(this.messenger);
+    this.account = new laksaAccount.Account(this.messenger);
+    this.wallet = new laksaWallet.Wallet(this.messenger);
   }
 
   _createClass(Laksa, [{

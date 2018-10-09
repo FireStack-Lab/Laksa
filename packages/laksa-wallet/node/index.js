@@ -49,7 +49,7 @@
   });
 
   class Wallet {
-    constructor() {
+    constructor(messenger) {
       _defineProperty(this, "updateLength", () => {
         this.length = this.getIndexKeys().length;
       });
@@ -299,6 +299,7 @@
       });
 
       this.length = 0;
+      this.messenger = messenger;
     }
 
     get accounts() {

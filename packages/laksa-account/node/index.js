@@ -128,13 +128,14 @@
     return laksaCoreCrypto.createTransactionJson(privateKey, transactionObject);
   };
   class Account {
-    constructor() {
+    constructor(messenger) {
       _defineProperty(this, "createAccount", () => {
         const accountObject = createAccount();
         const newObject = new Account();
         return Object.assign({}, accountObject, {
           encrypt: newObject.encrypt,
           decrypt: newObject.decrypt,
+          sign: newObject.sign,
           signTransaction: newObject.signTransaction,
           signTransactionWithPassword: newObject.signTransactionWithPassword
         });
@@ -146,11 +147,15 @@
         return Object.assign({}, accountObject, {
           encrypt: newObject.encrypt,
           decrypt: newObject.decrypt,
+          sign: newObject.sign,
           signTransaction: newObject.signTransaction,
           signTransactionWithPassword: newObject.signTransactionWithPassword
         });
       });
-    }
+
+      this.messenger = messenger;
+    } // prototype.createAccount
+
 
     // sub object
     async encrypt(password, level = 1024) {
@@ -164,7 +169,15 @@
       const decrypted = await decryptAccount(that, password);
       delete this.crypto;
       return Object.assign(this, decrypted);
-    } // sub object
+    }
+
+    sign(bytes) {
+      if (this.privateKey === ENCRYPTED) {
+        throw new Error('This account is encrypted, please decrypt it first or use "signTransactionWithPassword"');
+      }
+
+      return laksaCoreCrypto.sign(bytes, this.privateKey, this.publicKey);
+    } // sign plain object
 
 
     signTransaction(transactionObject) {
@@ -173,7 +186,7 @@
       }
 
       return signTransaction(this.privateKey, transactionObject);
-    } // sub object
+    } // sign plain object with password
 
 
     signTransactionWithPassword(transactionObject, password) {

@@ -427,7 +427,7 @@
   };
 
   class Zil {
-    constructor(Laksa) {
+    constructor(messenger, config) {
       _defineProperty(this, "extendMethod", object => {
         if (typeof object !== 'object') {
           throw new Error('Method has to be an object');
@@ -439,8 +439,8 @@
         return true;
       });
 
-      this.messenger = Laksa.messenger;
-      this.config = Laksa.config;
+      this.messenger = messenger;
+      this.config = config;
       mapObjectToMethods(this);
       mapPropertyToObjects(this);
     }

@@ -35,7 +35,7 @@ var _accounts = immutable.Map({
 var Wallet =
 /*#__PURE__*/
 function () {
-  function Wallet() {
+  function Wallet(messenger) {
     var _this = this;
 
     _classCallCheck(this, Wallet);
@@ -368,6 +368,7 @@ function () {
     }());
 
     this.length = 0;
+    this.messenger = messenger;
   }
 
   _createClass(Wallet, [{

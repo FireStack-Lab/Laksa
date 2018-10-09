@@ -25,11 +25,50 @@
     return new Error(message);
   };
 
+  /* eslint-disable no-param-reassign */
+  const format = (input, output) => (target, key, descriptor) => {
+    const method = descriptor.value;
+
+    descriptor.value = (...inArgs) => {
+      const rawOutput = method(input(...inArgs));
+      return output(rawOutput);
+    };
+  };
+
+  /* eslint-disable no-param-reassign */
+
+  /**
+   * sign
+   *
+   * This decorates a method by attempting to sign the first argument of the
+   * intercepted method.
+   *
+   * @param {T} target
+   * @param {K} key
+   * @param {PropertyDescriptor} descriptor
+   * @returns {PropertyDescriptor | undefined}
+   */
+  const sign = (target, key, descriptor) => {
+    const original = descriptor.value;
+
+    async function interceptor(arg) {
+      if (original && arg.bytes) {
+        const signed = await this.signer.sign(arg);
+        return original.call(this, signed);
+      }
+    }
+
+    descriptor.value = interceptor;
+    return descriptor;
+  };
+
   exports.ConnectionTimeout = ConnectionTimeout;
   exports.InvalidResponse = InvalidResponse;
   exports.InvalidConnection = InvalidConnection;
   exports.InvalidProvider = InvalidProvider;
   exports.InvalidNumberOfRPCParams = InvalidNumberOfRPCParams;
+  exports.format = format;
+  exports.sign = sign;
 
   Object.defineProperty(exports, '__esModule', { value: true });
 

@@ -1,8 +1,8 @@
 (function (global, factory) {
-  typeof exports === 'object' && typeof module !== 'undefined' ? module.exports = factory(require('laksa-utils'), require('laksa-core-crypto'), require('laksa-core-messenger'), require('laksa-contracts'), require('laksa-providers-http'), require('laksa-zil')) :
-  typeof define === 'function' && define.amd ? define(['laksa-utils', 'laksa-core-crypto', 'laksa-core-messenger', 'laksa-contracts', 'laksa-providers-http', 'laksa-zil'], factory) :
-  (global.Laksa = factory(global.util,global.core,global.laksaCoreMessenger,global.Contracts,global.HttpProvider,global.Zil));
-}(this, (function (util,core,laksaCoreMessenger,Contracts,HttpProvider,Zil) { 'use strict';
+  typeof exports === 'object' && typeof module !== 'undefined' ? module.exports = factory(require('laksa-utils'), require('laksa-core-crypto'), require('laksa-core-messenger'), require('laksa-contracts'), require('laksa-account'), require('laksa-wallet'), require('laksa-providers-http'), require('laksa-zil')) :
+  typeof define === 'function' && define.amd ? define(['laksa-utils', 'laksa-core-crypto', 'laksa-core-messenger', 'laksa-contracts', 'laksa-account', 'laksa-wallet', 'laksa-providers-http', 'laksa-zil'], factory) :
+  (global.Laksa = factory(global.util,global.core,global.laksaCoreMessenger,global.Contracts,global.laksaAccount,global.laksaWallet,global.HttpProvider,global.Zil));
+}(this, (function (util,core,laksaCoreMessenger,Contracts,laksaAccount,laksaWallet,HttpProvider,Zil) { 'use strict';
 
   Contracts = Contracts && Contracts.hasOwnProperty('default') ? Contracts['default'] : Contracts;
   HttpProvider = HttpProvider && HttpProvider.hasOwnProperty('default') ? HttpProvider['default'] : HttpProvider;
@@ -54,10 +54,9 @@
   class Laksa {
     constructor(args) {
       _defineProperty(this, "providers", {
-        HttpProvider
-      });
+        HttpProvider // library method
 
-      _defineProperty(this, "config", config);
+      });
 
       _defineProperty(this, "isConnected", async callback => {
         const result = await this.zil.isConnected();
@@ -102,13 +101,16 @@
 
       const url = args || config.defaultNodeUrl;
       this.util = _objectSpread({}, util, core);
+      this.config = config;
       this.currentProvider = {
         node: new HttpProvider(url),
         scilla: new HttpProvider(url)
       };
       this.messenger = new laksaCoreMessenger.Messenger(this.currentProvider.node);
-      this.zil = new Zil(this);
+      this.zil = new Zil(this.messenger, this.config);
       this.contracts = new Contracts(this.messenger);
+      this.account = new laksaAccount.Account(this.messenger);
+      this.wallet = new laksaWallet.Wallet(this.messenger);
     }
 
     register({

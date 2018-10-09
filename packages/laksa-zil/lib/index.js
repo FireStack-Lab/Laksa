@@ -416,7 +416,7 @@ var mapPropertyToObjects = function mapPropertyToObjects(main) {
 var Zil =
 /*#__PURE__*/
 function () {
-  function Zil(Laksa) {
+  function Zil(messenger, config) {
     var _this = this;
 
     _classCallCheck(this, Zil);
@@ -432,8 +432,8 @@ function () {
       return true;
     });
 
-    this.messenger = Laksa.messenger;
-    this.config = Laksa.config;
+    this.messenger = messenger;
+    this.config = config;
     mapObjectToMethods(this);
     mapPropertyToObjects(this);
   }
