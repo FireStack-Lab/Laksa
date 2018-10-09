@@ -16,35 +16,35 @@ class ABI {
     this.transitions = abi !== undefined ? abi.transitions : [] // Array<object>
   }
 
-  getName = () => {
+  getName() {
     return this.name
   }
 
-  getInitParams = () => {
+  getInitParams() {
     return this.params
   }
 
-  getInitParamTypes = () => {
+  getInitParamTypes() {
     if (this.params.length > 0) {
       return getParamTypes(this.params)
     }
   }
 
-  getFields = () => {
+  getFields() {
     return this.fields
   }
 
-  getFieldsTypes = () => {
+  getFieldsTypes() {
     if (this.fields.length > 0) {
       return getParamTypes(this.fields)
     }
   }
 
-  getTransitions = () => {
+  getTransitions() {
     return this.transitions
   }
 
-  getTransitionsParamTypes = () => {
+  getTransitionsParamTypes() {
     const returnArray = []
     if (this.transitions.length > 0) {
       for (let i = 0; i < this.transitions.length; i += 1) {
@@ -54,7 +54,7 @@ class ABI {
     return returnArray
   }
 
-  getEvents = () => {
+  getEvents() {
     return this.events
   }
 }

@@ -11,8 +11,8 @@ packages/*/babel.rc
 
 # lerna
 lerna.json
-packages/*/lib/
-packages/*/node/
+lib/
+node/
 *.log
 
 # Xcode
