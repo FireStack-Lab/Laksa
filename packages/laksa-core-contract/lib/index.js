@@ -8,13 +8,13 @@ require('core-js/modules/es6.regexp.match');
 var laksaUtils = require('laksa-utils');
 require('core-js/modules/es6.function.name');
 var _classCallCheck = _interopDefault(require('@babel/runtime/helpers/classCallCheck'));
-var _defineProperty = _interopDefault(require('@babel/runtime/helpers/defineProperty'));
+var _createClass = _interopDefault(require('@babel/runtime/helpers/createClass'));
 require('core-js/modules/es6.regexp.to-string');
 var _objectSpread = _interopDefault(require('@babel/runtime/helpers/objectSpread'));
 var _regeneratorRuntime = _interopDefault(require('@babel/runtime/regenerator'));
 require('regenerator-runtime/runtime');
 var _asyncToGenerator = _interopDefault(require('@babel/runtime/helpers/asyncToGenerator'));
-var _createClass = _interopDefault(require('@babel/runtime/helpers/createClass'));
+var _defineProperty = _interopDefault(require('@babel/runtime/helpers/defineProperty'));
 require('core-js/modules/es6.object.assign');
 require('core-js/modules/web.dom.iterable');
 
@@ -82,72 +82,88 @@ function getParamTypes(list) {
   return result;
 }
 
-var ABI = function ABI(abi) {
-  var _this = this;
+var ABI =
+/*#__PURE__*/
+function () {
+  function ABI(abi) {
+    _classCallCheck(this, ABI);
 
-  _classCallCheck(this, ABI);
+    this.events = abi !== undefined ? abi.events : []; // Array<object>
 
-  _defineProperty(this, "getName", function () {
-    return _this.name;
-  });
+    this.fields = abi !== undefined ? abi.fields : []; // Array<object>
 
-  _defineProperty(this, "getInitParams", function () {
-    return _this.params;
-  });
+    this.name = abi !== undefined ? abi.name : ''; // string
 
-  _defineProperty(this, "getInitParamTypes", function () {
-    if (_this.params.length > 0) {
-      return getParamTypes(_this.params);
+    this.params = abi !== undefined ? abi.params : []; // Array<object>
+
+    this.transitions = abi !== undefined ? abi.transitions : []; // Array<object>
+  }
+
+  _createClass(ABI, [{
+    key: "getName",
+    value: function getName() {
+      return this.name;
     }
-  });
-
-  _defineProperty(this, "getFields", function () {
-    return _this.fields;
-  });
-
-  _defineProperty(this, "getFieldsTypes", function () {
-    if (_this.fields.length > 0) {
-      return getParamTypes(_this.fields);
+  }, {
+    key: "getInitParams",
+    value: function getInitParams() {
+      return this.params;
     }
-  });
-
-  _defineProperty(this, "getTransitions", function () {
-    return _this.transitions;
-  });
-
-  _defineProperty(this, "getTransitionsParamTypes", function () {
-    var returnArray = [];
-
-    if (_this.transitions.length > 0) {
-      for (var i = 0; i < _this.transitions.length; i += 1) {
-        returnArray[i] = getParamTypes(_this.transitions[i].params);
+  }, {
+    key: "getInitParamTypes",
+    value: function getInitParamTypes() {
+      if (this.params.length > 0) {
+        return getParamTypes(this.params);
       }
     }
+  }, {
+    key: "getFields",
+    value: function getFields() {
+      return this.fields;
+    }
+  }, {
+    key: "getFieldsTypes",
+    value: function getFieldsTypes() {
+      if (this.fields.length > 0) {
+        return getParamTypes(this.fields);
+      }
+    }
+  }, {
+    key: "getTransitions",
+    value: function getTransitions() {
+      return this.transitions;
+    }
+  }, {
+    key: "getTransitionsParamTypes",
+    value: function getTransitionsParamTypes() {
+      var returnArray = [];
 
-    return returnArray;
-  });
+      if (this.transitions.length > 0) {
+        for (var i = 0; i < this.transitions.length; i += 1) {
+          returnArray[i] = getParamTypes(this.transitions[i].params);
+        }
+      }
 
-  _defineProperty(this, "getEvents", function () {
-    return _this.events;
-  });
+      return returnArray;
+    }
+  }, {
+    key: "getEvents",
+    value: function getEvents() {
+      return this.events;
+    }
+  }]);
 
-  this.events = abi !== undefined ? abi.events : []; // Array<object>
-
-  this.fields = abi !== undefined ? abi.fields : []; // Array<object>
-
-  this.name = abi !== undefined ? abi.name : ''; // string
-
-  this.params = abi !== undefined ? abi.params : []; // Array<object>
-
-  this.transitions = abi !== undefined ? abi.transitions : []; // Array<object>
-};
+  return ABI;
+}();
 
 var setParamValues = function setParamValues(rawParams, newValues) {
   var newParams = [];
   rawParams.forEach(function (v, i) {
     if (!validate(v.type, newValues[i])) {
       throw new TypeError("Type validator failed,with <".concat(v.vname, ":").concat(v.type, ">"));
-    }
+    } // FIXME:it may change cause local scilla runner return the `name` not `vname`
+    // But when call or make transaction, remote node only accpet `vname`
+
 
     var newObj = Object.assign({}, v, {
       value: newValues[i],
@@ -172,9 +188,7 @@ var defaultContractJson = {
 var Contract =
 /*#__PURE__*/
 function () {
-  function Contract(_messenger) {
-    var _this = this;
-
+  function Contract(messenger) {
     _classCallCheck(this, Contract);
 
     _defineProperty(this, "contractStatus", '');
@@ -191,10 +205,14 @@ function () {
 
     _defineProperty(this, "on", function () {});
 
-    _defineProperty(this, "testCall",
-    /*#__PURE__*/
-    function () {
-      var _ref2 = _asyncToGenerator(
+    this.messenger = messenger;
+  }
+
+  _createClass(Contract, [{
+    key: "testCall",
+    // test call to scilla runner
+    value: function () {
+      var _testCall = _asyncToGenerator(
       /*#__PURE__*/
       _regeneratorRuntime.mark(function _callee(_ref) {
         var gasLimit, callContractJson, result;
@@ -204,22 +222,23 @@ function () {
               case 0:
                 gasLimit = _ref.gasLimit;
                 callContractJson = {
-                  code: _this.code,
-                  init: JSON.stringify(_this.initParams),
-                  blockchain: JSON.stringify(_this.blockchain),
-                  gaslimit: JSON.stringify(gasLimit)
+                  code: this.code,
+                  init: JSON.stringify(this.initParams),
+                  blockchain: JSON.stringify(this.blockchain),
+                  gaslimit: JSON.stringify(gasLimit) // the endpoint for sendServer has been set to scillaProvider
+
                 };
                 _context.next = 4;
-                return _this.messenger.sendServer('/contract/call', callContractJson);
+                return this.messenger.sendServer('/contract/call', callContractJson);
 
               case 4:
                 result = _context.sent;
 
                 if (result.result) {
-                  _this.setContractStatus('waitForSign');
+                  this.setContractStatus('waitForSign');
                 }
 
-                return _context.abrupt("return", _this);
+                return _context.abrupt("return", this);
 
               case 7:
               case "end":
@@ -229,26 +248,14 @@ function () {
         }, _callee, this);
       }));
 
-      return function (_x) {
-        return _ref2.apply(this, arguments);
+      return function testCall(_x) {
+        return _testCall.apply(this, arguments);
       };
-    }());
-
-    _defineProperty(this, "generateNewContractJson", function () {
-      _this.contractJson = _objectSpread({}, defaultContractJson, {
-        code: JSON.stringify(_this.code),
-        data: JSON.stringify(_this.initParams.concat(_this.blockchain))
-      });
-
-      _this.setContractStatus('initialized');
-
-      return _this;
-    });
-
-    _defineProperty(this, "deploy",
-    /*#__PURE__*/
-    function () {
-      var _ref3 = _asyncToGenerator(
+    }()
+  }, {
+    key: "deploy",
+    value: function () {
+      var _deploy = _asyncToGenerator(
       /*#__PURE__*/
       _regeneratorRuntime.mark(function _callee2(signedTxn) {
         var deployedTxn, result;
@@ -268,7 +275,7 @@ function () {
                   amount: signedTxn.amount.toNumber()
                 }));
                 _context2.next = 5;
-                return _this.messenger.send({
+                return this.messenger.send({
                   method: 'CreateTransaction',
                   params: [deployedTxn]
                 });
@@ -277,10 +284,10 @@ function () {
                 result = _context2.sent;
 
                 if (result) {
-                  _this.setContractStatus('deployed');
+                  this.setContractStatus('deployed');
                 }
 
-                return _context2.abrupt("return", _objectSpread({}, _this, {
+                return _context2.abrupt("return", _objectSpread({}, this, {
                   txnId: result
                 }));
 
@@ -292,25 +299,25 @@ function () {
         }, _callee2, this);
       }));
 
-      return function (_x2) {
-        return _ref3.apply(this, arguments);
+      return function deploy(_x2) {
+        return _deploy.apply(this, arguments);
       };
-    }());
+    }() //-------------------------------
 
-    _defineProperty(this, "getABI",
-    /*#__PURE__*/
-    function () {
-      var _ref5 = _asyncToGenerator(
+  }, {
+    key: "getABI",
+    value: function () {
+      var _getABI = _asyncToGenerator(
       /*#__PURE__*/
-      _regeneratorRuntime.mark(function _callee3(_ref4) {
+      _regeneratorRuntime.mark(function _callee3(_ref2) {
         var code, result;
         return _regeneratorRuntime.wrap(function _callee3$(_context3) {
           while (1) {
             switch (_context3.prev = _context3.next) {
               case 0:
-                code = _ref4.code;
+                code = _ref2.code;
                 _context3.next = 3;
-                return _this.messenger.sendServer('/contract/check', {
+                return this.messenger.sendServer('/contract/check', {
                   code: code
                 });
 
@@ -332,37 +339,32 @@ function () {
         }, _callee3, this);
       }));
 
-      return function (_x3) {
-        return _ref5.apply(this, arguments);
+      return function getABI(_x3) {
+        return _getABI.apply(this, arguments);
       };
-    }());
-
-    _defineProperty(this, "decodeABI",
-    /*#__PURE__*/
-    function () {
-      var _ref7 = _asyncToGenerator(
+    }()
+  }, {
+    key: "decodeABI",
+    value: function () {
+      var _decodeABI = _asyncToGenerator(
       /*#__PURE__*/
-      _regeneratorRuntime.mark(function _callee4(_ref6) {
+      _regeneratorRuntime.mark(function _callee4(_ref3) {
         var code, abiObj;
         return _regeneratorRuntime.wrap(function _callee4$(_context4) {
           while (1) {
             switch (_context4.prev = _context4.next) {
               case 0:
-                code = _ref6.code;
-
-                _this.setCode(code);
-
+                code = _ref3.code;
+                this.setCode(code);
                 _context4.next = 4;
-                return _this.getABI({
+                return this.getABI({
                   code: code
                 });
 
               case 4:
                 abiObj = _context4.sent;
-
-                _this.setABI(abiObj);
-
-                return _context4.abrupt("return", _this);
+                this.setABI(abiObj);
+                return _context4.abrupt("return", this);
 
               case 7:
               case "end":
@@ -372,66 +374,68 @@ function () {
         }, _callee4, this);
       }));
 
-      return function (_x4) {
-        return _ref7.apply(this, arguments);
+      return function decodeABI(_x4) {
+        return _decodeABI.apply(this, arguments);
       };
-    }());
+    }()
+  }, {
+    key: "setBlockNumber",
+    value: function () {
+      var _setBlockNumber = _asyncToGenerator(
+      /*#__PURE__*/
+      _regeneratorRuntime.mark(function _callee5() {
+        var result;
+        return _regeneratorRuntime.wrap(function _callee5$(_context5) {
+          while (1) {
+            switch (_context5.prev = _context5.next) {
+              case 0:
+                _context5.next = 2;
+                return this.messenger.send({
+                  method: 'GetLatestTxBlock',
+                  param: []
+                });
 
-    _defineProperty(this, "setBlockNumber",
-    /*#__PURE__*/
-    _asyncToGenerator(
-    /*#__PURE__*/
-    _regeneratorRuntime.mark(function _callee5() {
-      var result;
-      return _regeneratorRuntime.wrap(function _callee5$(_context5) {
-        while (1) {
-          switch (_context5.prev = _context5.next) {
-            case 0:
-              _context5.next = 2;
-              return _this.messenger.send({
-                method: 'GetLatestTxBlock',
-                param: []
-              });
+              case 2:
+                result = _context5.sent;
 
-            case 2:
-              result = _context5.sent;
+                if (!result) {
+                  _context5.next = 7;
+                  break;
+                }
 
-              if (!result) {
-                _context5.next = 7;
-                break;
-              }
+                this.setBlockchain(result.header.BlockNum);
+                this.setCreationBlock(result.header.BlockNum);
+                return _context5.abrupt("return", this);
 
-              _this.setBlockchain(result.header.BlockNum);
+              case 7:
+                return _context5.abrupt("return", false);
 
-              _this.setCreationBlock(result.header.BlockNum);
-
-              return _context5.abrupt("return", _this);
-
-            case 7:
-              return _context5.abrupt("return", false);
-
-            case 8:
-            case "end":
-              return _context5.stop();
+              case 8:
+              case "end":
+                return _context5.stop();
+            }
           }
-        }
-      }, _callee5, this);
-    })));
+        }, _callee5, this);
+      }));
 
-    _defineProperty(this, "setMessenger", function (messenger) {
-      _this.messenger = messenger || undefined;
-    });
+      return function setBlockNumber() {
+        return _setBlockNumber.apply(this, arguments);
+      };
+    }() //-------------------------------
+    // new contract json for deploy
 
-    _defineProperty(this, "setContractStatus", function (status) {
-      _this.contractStatus = status;
-    });
-
-    this.messenger = _messenger;
-  }
-
-  _createClass(Contract, [{
+  }, {
+    key: "generateNewContractJson",
+    value: function generateNewContractJson() {
+      this.contractJson = _objectSpread({}, defaultContractJson, {
+        code: JSON.stringify(this.code),
+        data: JSON.stringify(this.initParams.concat(this.blockchain))
+      });
+      this.setContractStatus('initialized');
+      return this;
+    }
+  }, {
     key: "setABI",
-    //-------------------------------
     value: function setABI(abi) {
       this.abi = new ABI(abi) || {};
       return this;
@@ -470,6 +474,16 @@ function () {
       return this;
     } // messenger Setter
 
+  }, {
+    key: "setMessenger",
+    value: function setMessenger(messenger) {
+      this.messenger = messenger || undefined;
+    }
+  }, {
+    key: "setContractStatus",
+    value: function setContractStatus(status) {
+      this.contractStatus = status;
+    }
   }]);
 
   return Contract;

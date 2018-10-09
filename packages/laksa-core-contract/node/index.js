@@ -82,50 +82,6 @@
 
   class ABI {
     constructor(abi) {
-      _defineProperty(this, "getName", () => {
-        return this.name;
-      });
-
-      _defineProperty(this, "getInitParams", () => {
-        return this.params;
-      });
-
-      _defineProperty(this, "getInitParamTypes", () => {
-        if (this.params.length > 0) {
-          return getParamTypes(this.params);
-        }
-      });
-
-      _defineProperty(this, "getFields", () => {
-        return this.fields;
-      });
-
-      _defineProperty(this, "getFieldsTypes", () => {
-        if (this.fields.length > 0) {
-          return getParamTypes(this.fields);
-        }
-      });
-
-      _defineProperty(this, "getTransitions", () => {
-        return this.transitions;
-      });
-
-      _defineProperty(this, "getTransitionsParamTypes", () => {
-        const returnArray = [];
-
-        if (this.transitions.length > 0) {
-          for (let i = 0; i < this.transitions.length; i += 1) {
-            returnArray[i] = getParamTypes(this.transitions[i].params);
-          }
-        }
-
-        return returnArray;
-      });
-
-      _defineProperty(this, "getEvents", () => {
-        return this.events;
-      });
-
       this.events = abi !== undefined ? abi.events : []; // Array<object>
 
       this.fields = abi !== undefined ? abi.fields : []; // Array<object>
@@ -137,6 +93,50 @@
       this.transitions = abi !== undefined ? abi.transitions : []; // Array<object>
     }
 
+    getName() {
+      return this.name;
+    }
+
+    getInitParams() {
+      return this.params;
+    }
+
+    getInitParamTypes() {
+      if (this.params.length > 0) {
+        return getParamTypes(this.params);
+      }
+    }
+
+    getFields() {
+      return this.fields;
+    }
+
+    getFieldsTypes() {
+      if (this.fields.length > 0) {
+        return getParamTypes(this.fields);
+      }
+    }
+
+    getTransitions() {
+      return this.transitions;
+    }
+
+    getTransitionsParamTypes() {
+      const returnArray = [];
+
+      if (this.transitions.length > 0) {
+        for (let i = 0; i < this.transitions.length; i += 1) {
+          returnArray[i] = getParamTypes(this.transitions[i].params);
+        }
+      }
+
+      return returnArray;
+    }
+
+    getEvents() {
+      return this.events;
+    }
+
   }
 
   const setParamValues = (rawParams, newValues) => {
@@ -144,7 +144,9 @@
     rawParams.forEach((v, i) => {
       if (!validate(v.type, newValues[i])) {
         throw new TypeError(`Type validator failed,with <${v.vname}:${v.type}>`);
-      }
+      } // FIXME:it may change cause local scilla runner return the `name` not `vname`
+      // But when call or make transaction, remote node only accpet `vname`
+
 
       const newObj = Object.assign({}, v, {
         value: newValues[i],
@@ -167,7 +169,7 @@
   };
 
   class Contract {
-    constructor(_messenger) {
+    constructor(messenger) {
       _defineProperty(this, "contractStatus", '');
 
       _defineProperty(this, "contractJson", {});
@@ -182,102 +184,99 @@
 
       _defineProperty(this, "on", () => {});
 
-      _defineProperty(this, "testCall", async ({
-        gasLimit
-      }) => {
-        const callContractJson = {
-          code: this.code,
-          init: JSON.stringify(this.initParams),
-          blockchain: JSON.stringify(this.blockchain),
-          gaslimit: JSON.stringify(gasLimit)
-        };
-        const result = await this.messenger.sendServer('/contract/call', callContractJson);
-
-        if (result.result) {
-          this.setContractStatus('waitForSign');
-        }
-
-        return this;
-      });
-
-      _defineProperty(this, "generateNewContractJson", () => {
-        this.contractJson = _objectSpread({}, defaultContractJson, {
-          code: JSON.stringify(this.code),
-          data: JSON.stringify(this.initParams.concat(this.blockchain))
-        });
-        this.setContractStatus('initialized');
-        return this;
-      });
-
-      _defineProperty(this, "deploy", async signedTxn => {
-        if (!signedTxn.signature) throw new Error('transaction has not been signed');
-        const deployedTxn = Object.assign({}, _objectSpread({}, signedTxn, {
-          amount: signedTxn.amount.toNumber()
-        }));
-        const result = await this.messenger.send({
-          method: 'CreateTransaction',
-          params: [deployedTxn]
-        });
-
-        if (result) {
-          this.setContractStatus('deployed');
-        }
-
-        return _objectSpread({}, this, {
-          txnId: result
-        });
-      });
-
-      _defineProperty(this, "getABI", async ({
-        code
-      }) => {
-        const result = await this.messenger.sendServer('/contract/check', {
-          code
-        });
-
-        if (result.result && result.message !== undefined) {
-          return JSON.parse(result.message);
-        }
-      });
-
-      _defineProperty(this, "decodeABI", async ({
-        code
-      }) => {
-        this.setCode(code);
-        const abiObj = await this.getABI({
-          code
-        });
-        this.setABI(abiObj);
-        return this;
-      });
-
-      _defineProperty(this, "setBlockNumber", async () => {
-        const result = await this.messenger.send({
-          method: 'GetLatestTxBlock',
-          param: []
-        });
-
-        if (result) {
-          this.setBlockchain(result.header.BlockNum);
-          this.setCreationBlock(result.header.BlockNum);
-          return this;
-        }
-
-        return false;
-      });
-
-      _defineProperty(this, "setMessenger", messenger => {
-        this.messenger = messenger || undefined;
-      });
-
-      _defineProperty(this, "setContractStatus", status => {
-        this.contractStatus = status;
-      });
-
-      this.messenger = _messenger;
+      this.messenger = messenger;
     }
 
-    //-------------------------------
+    // test call to scilla runner
+    async testCall({
+      gasLimit
+    }) {
+      const callContractJson = {
+        code: this.code,
+        init: JSON.stringify(this.initParams),
+        blockchain: JSON.stringify(this.blockchain),
+        gaslimit: JSON.stringify(gasLimit) // the endpoint for sendServer has been set to scillaProvider
+
+      };
+      const result = await this.messenger.sendServer('/contract/call', callContractJson);
+
+      if (result.result) {
+        this.setContractStatus('waitForSign');
+      }
+
+      return this;
+    }
+
+    async deploy(signedTxn) {
+      if (!signedTxn.signature) throw new Error('transaction has not been signed');
+      const deployedTxn = Object.assign({}, _objectSpread({}, signedTxn, {
+        amount: signedTxn.amount.toNumber()
+      }));
+      const result = await this.messenger.send({
+        method: 'CreateTransaction',
+        params: [deployedTxn]
+      });
+
+      if (result) {
+        this.setContractStatus('deployed');
+      }
+
+      return _objectSpread({}, this, {
+        txnId: result
+      });
+    } //-------------------------------
+
+
+    async getABI({
+      code
+    }) {
+      // the endpoint for sendServer has been set to scillaProvider
+      const result = await this.messenger.sendServer('/contract/check', {
+        code
+      });
+
+      if (result.result && result.message !== undefined) {
+        return JSON.parse(result.message);
+      }
+    }
+
+    async decodeABI({
+      code
+    }) {
+      this.setCode(code);
+      const abiObj = await this.getABI({
+        code
+      });
+      this.setABI(abiObj);
+      return this;
+    }
+
+    async setBlockNumber() {
+      const result = await this.messenger.send({
+        method: 'GetLatestTxBlock',
+        param: []
+      });
+
+      if (result) {
+        this.setBlockchain(result.header.BlockNum);
+        this.setCreationBlock(result.header.BlockNum);
+        return this;
+      }
+
+      return false;
+    } //-------------------------------
+    // new contract json for deploy
+
+
+    generateNewContractJson() {
+      this.contractJson = _objectSpread({}, defaultContractJson, {
+        code: JSON.stringify(this.code),
+        data: JSON.stringify(this.initParams.concat(this.blockchain))
+      });
+      this.setContractStatus('initialized');
+      return this;
+    }
+
     setABI(abi) {
       this.abi = new ABI(abi) || {};
       return this;
@@ -312,6 +311,14 @@
       return this;
     } // messenger Setter
 
+
+    setMessenger(messenger) {
+      this.messenger = messenger || undefined;
+    }
+
+    setContractStatus(status) {
+      this.contractStatus = status;
+    }
 
   }
 

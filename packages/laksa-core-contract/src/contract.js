@@ -7,6 +7,8 @@ const setParamValues = (rawParams, newValues) => {
     if (!validate(v.type, newValues[i])) {
       throw new TypeError(`Type validator failed,with <${v.vname}:${v.type}>`)
     }
+    // FIXME:it may change cause local scilla runner return the `name` not `vname`
+    // But when call or make transaction, remote node only accpet `vname`
     const newObj = Object.assign({}, v, { value: newValues[i], vname: v.name ? v.name : v.vname })
     if (newObj.name) {
       delete newObj.name
@@ -42,14 +44,15 @@ class Contract {
   // event
   on = () => {}
 
-  // action call
-  testCall = async ({ gasLimit }) => {
+  // test call to scilla runner
+  async testCall({ gasLimit }) {
     const callContractJson = {
       code: this.code,
       init: JSON.stringify(this.initParams),
       blockchain: JSON.stringify(this.blockchain),
       gaslimit: JSON.stringify(gasLimit)
     }
+    // the endpoint for sendServer has been set to scillaProvider
     const result = await this.messenger.sendServer('/contract/call', callContractJson)
     if (result.result) {
       this.setContractStatus('waitForSign')
@@ -57,18 +60,7 @@ class Contract {
     return this
   }
 
-  // new contract json for deploy
-  generateNewContractJson = () => {
-    this.contractJson = {
-      ...defaultContractJson,
-      code: JSON.stringify(this.code),
-      data: JSON.stringify(this.initParams.concat(this.blockchain))
-    }
-    this.setContractStatus('initialized')
-    return this
-  }
-
-  deploy = async (signedTxn) => {
+  async deploy(signedTxn) {
     if (!signedTxn.signature) throw new Error('transaction has not been signed')
     const deployedTxn = Object.assign({}, { ...signedTxn, amount: signedTxn.amount.toNumber() })
     const result = await this.messenger.send({ method: 'CreateTransaction', params: [deployedTxn] })
@@ -79,21 +71,22 @@ class Contract {
   }
 
   //-------------------------------
-  getABI = async ({ code }) => {
+  async getABI({ code }) {
+    // the endpoint for sendServer has been set to scillaProvider
     const result = await this.messenger.sendServer('/contract/check', { code })
     if (result.result && result.message !== undefined) {
       return JSON.parse(result.message)
     }
   }
 
-  decodeABI = async ({ code }) => {
+  async decodeABI({ code }) {
     this.setCode(code)
     const abiObj = await this.getABI({ code })
     this.setABI(abiObj)
     return this
   }
 
-  setBlockNumber = async () => {
+  async setBlockNumber() {
     const result = await this.messenger.send({ method: 'GetLatestTxBlock', param: [] })
     if (result) {
       this.setBlockchain(result.header.BlockNum)
@@ -104,6 +97,16 @@ class Contract {
   }
 
   //-------------------------------
+  // new contract json for deploy
+  generateNewContractJson() {
+    this.contractJson = {
+      ...defaultContractJson,
+      code: JSON.stringify(this.code),
+      data: JSON.stringify(this.initParams.concat(this.blockchain))
+    }
+    this.setContractStatus('initialized')
+    return this
+  }
 
   setABI(abi) {
     this.abi = new ABI(abi) || {}
@@ -140,11 +143,11 @@ class Contract {
   }
 
   // messenger Setter
-  setMessenger = (messenger) => {
+  setMessenger(messenger) {
     this.messenger = messenger || undefined
   }
 
-  setContractStatus = (status) => {
+  setContractStatus(status) {
     this.contractStatus = status
   }
 }
