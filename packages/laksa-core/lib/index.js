@@ -13,6 +13,7 @@ var _defineProperty = _interopDefault(require('@babel/runtime/helpers/defineProp
 var util = require('laksa-utils');
 var core = require('laksa-core-crypto');
 var laksaCoreMessenger = require('laksa-core-messenger');
+var Contracts = _interopDefault(require('laksa-contracts'));
 var HttpProvider = _interopDefault(require('laksa-providers-http'));
 var Zil = _interopDefault(require('laksa-zil'));
 
@@ -108,8 +109,7 @@ function () {
         node: newProvider
       });
 
-      _this.messenger.setProvider(newProvider); // this.contract.setNodeProvider(newProvider)
-
+      _this.messenger.setProvider(newProvider);
     });
 
     _defineProperty(this, "setScillaProvider", function (provider) {
@@ -118,8 +118,7 @@ function () {
         scilla: newProvider
       });
 
-      _this.messenger.setScillaProvider(newProvider); // this.contract.setScillaProvider(newProvider)
-
+      _this.messenger.setScillaProvider(newProvider);
     });
 
     var url = args || config.defaultNodeUrl;
@@ -130,6 +129,7 @@ function () {
     };
     this.messenger = new laksaCoreMessenger.Messenger(this.currentProvider.node);
     this.zil = new Zil(this);
+    this.contracts = new Contracts(this.messenger);
   }
 
   _createClass(Laksa, [{

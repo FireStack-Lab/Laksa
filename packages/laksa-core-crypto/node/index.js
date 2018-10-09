@@ -350,9 +350,20 @@
       code: txnDetails.code || '',
       data: txnDetails.data || ''
     };
-    const encodedTx = encodeTransaction(txn); // sign using schnorr lib
+    const encodedTx = encodeTransaction(txn);
+    txn.signature = sign$1(encodedTx, Buffer.from(privateKey, 'hex'), Buffer.from(pubKey, 'hex'));
+    return txn;
+  };
+  /**
+   * sign
+   *
+   * @param {string} hash - hex-encoded hash of the data to be signed
+   *
+   * @returns {string} the signature
+   */
 
-    const sig = sign(encodedTx, Buffer.from(privateKey, 'hex'), Buffer.from(pubKey, 'hex'));
+  const sign$1 = (msg, privateKey, pubKey) => {
+    const sig = sign(msg, Buffer.from(privateKey, 'hex'), Buffer.from(pubKey, 'hex'));
     let r = sig.r.toString('hex');
     let s = sig.s.toString('hex');
 
@@ -364,8 +375,7 @@
       s = `0${s}`;
     }
 
-    txn.signature = r + s;
-    return txn;
+    return r + s;
   };
   const toChecksumAddress = address => {
     const newAddress = address.toLowerCase().replace('0x', '');
@@ -407,6 +417,7 @@
   exports.verifyPrivateKey = verifyPrivateKey;
   exports.encodeTransaction = encodeTransaction;
   exports.createTransactionJson = createTransactionJson;
+  exports.sign = sign$1;
   exports.toChecksumAddress = toChecksumAddress;
   exports.isValidChecksumAddress = isValidChecksumAddress;
   exports.randomBytes = randomBytes$1;

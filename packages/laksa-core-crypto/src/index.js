@@ -204,8 +204,19 @@ export const createTransactionJson = (privateKey, txnDetails) => {
 
   const encodedTx = encodeTransaction(txn)
 
-  // sign using schnorr lib
-  const sig = schnorr.sign(encodedTx, Buffer.from(privateKey, 'hex'), Buffer.from(pubKey, 'hex'))
+  txn.signature = sign(encodedTx, Buffer.from(privateKey, 'hex'), Buffer.from(pubKey, 'hex'))
+  return txn
+}
+
+/**
+ * sign
+ *
+ * @param {string} hash - hex-encoded hash of the data to be signed
+ *
+ * @returns {string} the signature
+ */
+export const sign = (msg, privateKey, pubKey) => {
+  const sig = schnorr.sign(msg, Buffer.from(privateKey, 'hex'), Buffer.from(pubKey, 'hex'))
 
   let r = sig.r.toString('hex')
   let s = sig.s.toString('hex')
@@ -216,9 +227,7 @@ export const createTransactionJson = (privateKey, txnDetails) => {
     s = `0${s}`
   }
 
-  txn.signature = r + s
-
-  return txn
+  return r + s
 }
 
 export const toChecksumAddress = (address) => {
