@@ -348,9 +348,20 @@ var createTransactionJson = function createTransactionJson(privateKey, txnDetail
     code: txnDetails.code || '',
     data: txnDetails.data || ''
   };
-  var encodedTx = encodeTransaction(txn); // sign using schnorr lib
+  var encodedTx = encodeTransaction(txn);
+  txn.signature = sign$1(encodedTx, Buffer.from(privateKey, 'hex'), Buffer.from(pubKey, 'hex'));
+  return txn;
+};
+/**
+ * sign
+ *
+ * @param {string} hash - hex-encoded hash of the data to be signed
+ *
+ * @returns {string} the signature
+ */
 
-  var sig = sign(encodedTx, Buffer.from(privateKey, 'hex'), Buffer.from(pubKey, 'hex'));
+var sign$1 = function sign$$1(msg, privateKey, pubKey) {
+  var sig = sign(msg, Buffer.from(privateKey, 'hex'), Buffer.from(pubKey, 'hex'));
   var r = sig.r.toString('hex');
   var s = sig.s.toString('hex');
 
@@ -362,8 +373,7 @@ var createTransactionJson = function createTransactionJson(privateKey, txnDetail
     s = "0".concat(s);
   }
 
-  txn.signature = r + s;
-  return txn;
+  return r + s;
 };
 var toChecksumAddress = function toChecksumAddress(address) {
   var newAddress = address.toLowerCase().replace('0x', '');
@@ -405,6 +415,7 @@ exports.getAddressFromPublicKey = getAddressFromPublicKey;
 exports.verifyPrivateKey = verifyPrivateKey;
 exports.encodeTransaction = encodeTransaction;
 exports.createTransactionJson = createTransactionJson;
+exports.sign = sign$1;
 exports.toChecksumAddress = toChecksumAddress;
 exports.isValidChecksumAddress = isValidChecksumAddress;
 exports.randomBytes = randomBytes$1;

@@ -8,6 +8,7 @@
 import * as util from 'laksa-utils'
 import * as core from 'laksa-core-crypto'
 import { Messenger } from 'laksa-core-messenger'
+import Contracts from 'laksa-contracts'
 import HttpProvider from 'laksa-providers-http'
 import Zil from 'laksa-zil'
 import config from './config'
@@ -19,6 +20,7 @@ class Laksa {
     this.currentProvider = { node: new HttpProvider(url), scilla: new HttpProvider(url) }
     this.messenger = new Messenger(this.currentProvider.node)
     this.zil = new Zil(this)
+    this.contracts = new Contracts(this.messenger)
   }
 
   providers = {
@@ -56,14 +58,12 @@ class Laksa {
     const newProvider = new HttpProvider(provider)
     this.currentProvider = { ...this.currentProvider, node: newProvider }
     this.messenger.setProvider(newProvider)
-    // this.contract.setNodeProvider(newProvider)
   }
 
   setScillaProvider = (provider) => {
     const newProvider = new HttpProvider(provider)
     this.currentProvider = { ...this.currentProvider, scilla: newProvider }
     this.messenger.setScillaProvider(newProvider)
-    // this.contract.setScillaProvider(newProvider)
   }
 
   register({ name, pkg }) {

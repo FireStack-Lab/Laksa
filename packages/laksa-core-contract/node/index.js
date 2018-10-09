@@ -1,8 +1,8 @@
 (function (global, factory) {
-  typeof exports === 'object' && typeof module !== 'undefined' ? factory(exports, require('laksa-utils'), require('laksa-core-crypto')) :
-  typeof define === 'function' && define.amd ? define(['exports', 'laksa-utils', 'laksa-core-crypto'], factory) :
-  (factory((global.Laksa = {}),global.laksaUtils,global.laksaCoreCrypto));
-}(this, (function (exports,laksaUtils,laksaCoreCrypto) { 'use strict';
+  typeof exports === 'object' && typeof module !== 'undefined' ? factory(exports, require('laksa-utils')) :
+  typeof define === 'function' && define.amd ? define(['exports', 'laksa-utils'], factory) :
+  (factory((global.Laksa = {}),global.laksaUtils));
+}(this, (function (exports,laksaUtils) { 'use strict';
 
   function _defineProperty(obj, key, value) {
     if (key in obj) {
@@ -37,6 +37,39 @@
 
     return target;
   }
+
+  const Matchers = {
+    ByStrX: /^ByStr[0-9]+$/,
+    String: /^String$/,
+    Uint: /^Uint(32|64|128|256)$/,
+    Int: /^Int(32|64|128|256)$/,
+    BNum: /^BNum$/
+  };
+  const validators = [{
+    type: 'ByStrX',
+    match: type => Matchers.ByStrX.test(type),
+    validatorFn: value => laksaUtils.isByStrX.test(value)
+  }, {
+    type: 'UInt',
+    match: type => Matchers.Uint.test(type),
+    validatorFn: value => laksaUtils.isUint.test(value)
+  }, {
+    type: 'Int',
+    match: type => Matchers.Int.test(type),
+    validatorFn: value => laksaUtils.isInt.test(value)
+  }, {
+    type: 'BNum',
+    match: type => Matchers.BNum.test(type),
+    validatorFn: value => laksaUtils.isBN.test(laksaUtils.toBN(value))
+  }, {
+    type: 'String',
+    match: type => Matchers.String.test(type),
+    validatorFn: value => laksaUtils.isString.test(value)
+  }];
+
+  const validate = (type, value) => {
+    return validators.some(val => val.match(type) && val.validatorFn(value));
+  };
 
   function getParamTypes(list) {
     const result = [];
@@ -106,39 +139,6 @@
 
   }
 
-  const Matchers = {
-    ByStrX: /^ByStr[0-9]+$/,
-    String: /^String$/,
-    Uint: /^Uint(32|64|128|256)$/,
-    Int: /^Int(32|64|128|256)$/,
-    BNum: /^BNum$/
-  };
-  const validators = [{
-    type: 'ByStrX',
-    match: type => Matchers.ByStrX.test(type),
-    validatorFn: value => laksaUtils.isByStrX.test(value)
-  }, {
-    type: 'UInt',
-    match: type => Matchers.Uint.test(type),
-    validatorFn: value => laksaUtils.isUint.test(value)
-  }, {
-    type: 'Int',
-    match: type => Matchers.Int.test(type),
-    validatorFn: value => laksaUtils.isInt.test(value)
-  }, {
-    type: 'BNum',
-    match: type => Matchers.BNum.test(type),
-    validatorFn: value => laksaUtils.isBN.test(laksaUtils.toBN(value))
-  }, {
-    type: 'String',
-    match: type => Matchers.String.test(type),
-    validatorFn: value => laksaUtils.isString.test(value)
-  }];
-
-  const validate = (type, value) => {
-    return validators.some(val => val.match(type) && val.validatorFn(value));
-  };
-
   const setParamValues = (rawParams, newValues) => {
     const newParams = [];
     rawParams.forEach((v, i) => {
@@ -160,18 +160,21 @@
     return newParams;
   };
 
+  const defaultContractJson = {
+    to: '0000000000000000000000000000000000000000',
+    code: '',
+    data: ''
+  };
+
   class Contract {
-    constructor(abi, code, nodeProvider, scillaProvider) {
-      _defineProperty(this, "rawTxObject", {
-        version: 0,
-        nonce: 1,
-        to: '0000000000000000000000000000000000000000',
-        amount: laksaUtils.toBN(0),
-        gasPrice: 1,
-        gasLimit: 50,
-        code: '',
-        data: ''
-      });
+    constructor(_messenger) {
+      _defineProperty(this, "contractStatus", '');
+
+      _defineProperty(this, "contractJson", {});
+
+      _defineProperty(this, "abi", {});
+
+      _defineProperty(this, "code", '');
 
       _defineProperty(this, "initParams", []);
 
@@ -179,61 +182,116 @@
 
       _defineProperty(this, "on", () => {});
 
-      _defineProperty(this, "deploy", ({
-        blockNumber,
-        privateKey,
-        amount,
-        gasPrice,
-        gasLimit,
-        nonce
+      _defineProperty(this, "testCall", async ({
+        gasLimit
       }) => {
-        this.setBlockchain(blockNumber);
-        this.setCreationBlock(blockNumber);
+        const callContractJson = {
+          code: this.code,
+          init: JSON.stringify(this.initParams),
+          blockchain: JSON.stringify(this.blockchain),
+          gaslimit: JSON.stringify(gasLimit)
+        };
+        const result = await this.messenger.sendServer('/contract/call', callContractJson);
 
-        const newDeployment = _objectSpread({}, this.rawTxObject, {
-          nonce,
-          amount: amount !== undefined ? laksaUtils.toBN(amount) : laksaUtils.toBN(0),
-          gasPrice: gasPrice !== undefined ? laksaUtils.toBN(gasPrice).toNumber() : 1,
-          gasLimit: gasLimit !== undefined ? laksaUtils.toBN(gasLimit).toNumber() : 50,
-          code: JSON.stringify(this.code),
-          data: JSON.stringify(this.initParams.concat(this.blockchain)) // console.log(newDeployment)
+        if (result.result) {
+          this.setContractStatus('waitForSign');
+        }
 
-        });
-
-        const txn = laksaCoreCrypto.createTransactionJson(privateKey, newDeployment);
-        return txn;
+        return this;
       });
 
-      _defineProperty(this, "call", () => {});
+      _defineProperty(this, "generateNewContractJson", () => {
+        this.contractJson = _objectSpread({}, defaultContractJson, {
+          code: JSON.stringify(this.code),
+          data: JSON.stringify(this.initParams.concat(this.blockchain))
+        });
+        this.setContractStatus('initialized');
+        return this;
+      });
 
-      this.abi = abi || {};
-      this.code = code || '';
-      this.nodeProvider = nodeProvider || undefined;
-      this.scillaProvider = scillaProvider || undefined;
+      _defineProperty(this, "deploy", async signedTxn => {
+        if (!signedTxn.signature) throw new Error('transaction has not been signed');
+        const deployedTxn = Object.assign({}, _objectSpread({}, signedTxn, {
+          amount: signedTxn.amount.toNumber()
+        }));
+        const result = await this.messenger.send({
+          method: 'CreateTransaction',
+          params: [deployedTxn]
+        });
+
+        if (result) {
+          this.setContractStatus('deployed');
+        }
+
+        return _objectSpread({}, this, {
+          txnId: result
+        });
+      });
+
+      _defineProperty(this, "getABI", async ({
+        code
+      }) => {
+        const result = await this.messenger.sendServer('/contract/check', {
+          code
+        });
+
+        if (result.result && result.message !== undefined) {
+          return JSON.parse(result.message);
+        }
+      });
+
+      _defineProperty(this, "decodeABI", async ({
+        code
+      }) => {
+        this.setCode(code);
+        const abiObj = await this.getABI({
+          code
+        });
+        this.setABI(abiObj);
+        return this;
+      });
+
+      _defineProperty(this, "setBlockNumber", async () => {
+        const result = await this.messenger.send({
+          method: 'GetLatestTxBlock',
+          param: []
+        });
+
+        if (result) {
+          this.setBlockchain(result.header.BlockNum);
+          this.setCreationBlock(result.header.BlockNum);
+          return this;
+        }
+
+        return false;
+      });
+
+      _defineProperty(this, "setMessenger", messenger => {
+        this.messenger = messenger || undefined;
+      });
+
+      _defineProperty(this, "setContractStatus", status => {
+        this.contractStatus = status;
+      });
+
+      this.messenger = _messenger;
     }
 
-    // provider Setter
-    setNodeProvider(provider) {
-      this.nodeProvider = provider;
-    } // scilla provider Setter
-
-
-    setScillaProvider(provider) {
-      this.scillaProvider = provider;
-    }
-
+    //-------------------------------
     setABI(abi) {
-      this.abi = abi !== undefined ? new ABI(abi) : {};
+      this.abi = new ABI(abi) || {};
+      return this;
     }
 
     setCode(code) {
-      this.code = JSON.stringify(code) || '';
+      this.code = code || '';
+      return this;
     }
 
     setInitParamsValues(initParams, arrayOfValues) {
       const result = setParamValues(initParams, arrayOfValues);
       this.initParams = result;
-      return result;
+      return this;
     }
 
     setCreationBlock(blockNumber) {
@@ -242,7 +300,7 @@
         type: 'BNum'
       }], [laksaUtils.toBN(blockNumber).toString()]);
       this.initParams.push(result[0]);
-      return result[0];
+      return this;
     }
 
     setBlockchain(blockNumber) {
@@ -251,11 +309,13 @@
         type: 'BNum'
       }], [laksaUtils.toBN(blockNumber).toString()]);
       this.blockchain.push(result[0]);
-      return result[0];
-    }
+      return this;
+    } // messenger Setter
+
 
   }
 
+  exports.toBN = laksaUtils.toBN;
   exports.Contract = Contract;
   exports.ABI = ABI;
 

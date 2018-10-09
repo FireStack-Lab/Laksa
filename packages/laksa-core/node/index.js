@@ -1,9 +1,10 @@
 (function (global, factory) {
-  typeof exports === 'object' && typeof module !== 'undefined' ? module.exports = factory(require('laksa-utils'), require('laksa-core-crypto'), require('laksa-core-messenger'), require('laksa-providers-http'), require('laksa-zil')) :
-  typeof define === 'function' && define.amd ? define(['laksa-utils', 'laksa-core-crypto', 'laksa-core-messenger', 'laksa-providers-http', 'laksa-zil'], factory) :
-  (global.Laksa = factory(global.util,global.core,global.laksaCoreMessenger,global.HttpProvider,global.Zil));
-}(this, (function (util,core,laksaCoreMessenger,HttpProvider,Zil) { 'use strict';
+  typeof exports === 'object' && typeof module !== 'undefined' ? module.exports = factory(require('laksa-utils'), require('laksa-core-crypto'), require('laksa-core-messenger'), require('laksa-contracts'), require('laksa-providers-http'), require('laksa-zil')) :
+  typeof define === 'function' && define.amd ? define(['laksa-utils', 'laksa-core-crypto', 'laksa-core-messenger', 'laksa-contracts', 'laksa-providers-http', 'laksa-zil'], factory) :
+  (global.Laksa = factory(global.util,global.core,global.laksaCoreMessenger,global.Contracts,global.HttpProvider,global.Zil));
+}(this, (function (util,core,laksaCoreMessenger,Contracts,HttpProvider,Zil) { 'use strict';
 
+  Contracts = Contracts && Contracts.hasOwnProperty('default') ? Contracts['default'] : Contracts;
   HttpProvider = HttpProvider && HttpProvider.hasOwnProperty('default') ? HttpProvider['default'] : HttpProvider;
   Zil = Zil && Zil.hasOwnProperty('default') ? Zil['default'] : Zil;
 
@@ -88,7 +89,7 @@
         this.currentProvider = _objectSpread({}, this.currentProvider, {
           node: newProvider
         });
-        this.messenger.setProvider(newProvider); // this.contract.setNodeProvider(newProvider)
+        this.messenger.setProvider(newProvider);
       });
 
       _defineProperty(this, "setScillaProvider", provider => {
@@ -96,7 +97,7 @@
         this.currentProvider = _objectSpread({}, this.currentProvider, {
           scilla: newProvider
         });
-        this.messenger.setScillaProvider(newProvider); // this.contract.setScillaProvider(newProvider)
+        this.messenger.setScillaProvider(newProvider);
       });
 
       const url = args || config.defaultNodeUrl;
@@ -107,6 +108,7 @@
       };
       this.messenger = new laksaCoreMessenger.Messenger(this.currentProvider.node);
       this.zil = new Zil(this);
+      this.contracts = new Contracts(this.messenger);
     }
 
     register({
