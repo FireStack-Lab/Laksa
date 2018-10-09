@@ -180,7 +180,7 @@ var _signTransaction = function signTransaction(privateKey, transactionObject) {
 var Account =
 /*#__PURE__*/
 function () {
-  function Account() {
+  function Account(messenger) {
     _classCallCheck(this, Account);
 
     _defineProperty(this, "createAccount", function () {
@@ -189,6 +189,7 @@ function () {
       return Object.assign({}, accountObject, {
         encrypt: newObject.encrypt,
         decrypt: newObject.decrypt,
+        sign: newObject.sign,
         signTransaction: newObject.signTransaction,
         signTransactionWithPassword: newObject.signTransactionWithPassword
       });
@@ -200,11 +201,15 @@ function () {
       return Object.assign({}, accountObject, {
         encrypt: newObject.encrypt,
         decrypt: newObject.decrypt,
+        sign: newObject.sign,
         signTransaction: newObject.signTransaction,
         signTransactionWithPassword: newObject.signTransactionWithPassword
       });
     });
-  }
+
+    this.messenger = messenger;
+  } // prototype.createAccount
+
 
   _createClass(Account, [{
     key: "encrypt",
@@ -272,7 +277,16 @@ function () {
       return function decrypt(_x6) {
         return _decrypt.apply(this, arguments);
       };
-    }() // sub object
+    }()
+  }, {
+    key: "sign",
+    value: function sign(bytes) {
+      if (this.privateKey === ENCRYPTED) {
+        throw new Error('This account is encrypted, please decrypt it first or use "signTransactionWithPassword"');
+      }
+
+      return laksaCoreCrypto.sign(bytes, this.privateKey, this.publicKey);
+    } // sign plain object
 
   }, {
     key: "signTransaction",
@@ -282,7 +296,7 @@ function () {
       }
 
       return _signTransaction(this.privateKey, transactionObject);
-    } // sub object
+    } // sign plain object with password
 
   }, {
     key: "signTransactionWithPassword",

@@ -9,8 +9,9 @@ import { encryptedBy, ENCRYPTED } from './symbols'
 let _accounts = Map({ accounts: List([]) })
 
 class Wallet {
-  constructor() {
+  constructor(messenger) {
     this.length = 0
+    this.messenger = messenger
   }
 
   get accounts() {

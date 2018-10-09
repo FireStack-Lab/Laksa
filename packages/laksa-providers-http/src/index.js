@@ -1,4 +1,5 @@
 import axios from 'axios'
+import Mitt from 'mitt'
 
 class HttpProvider {
   constructor(url, timeout, user, password, headers) {
@@ -8,9 +9,12 @@ class HttpProvider {
     this.password = password || null
     this.headers = headers
     this.request = this.instance()
+    this.broadcaster = new Mitt()
   }
 
-  instance = () => {
+  subscribers = new Map()
+
+  instance() {
     const request = axios.create()
     if (this.user && this.password) {
       const AUTH_TOKEN = `Basic ${Buffer.from(`${this.user}:${this.password}`).toString('base64')}`
@@ -68,6 +72,18 @@ class HttpProvider {
           callback(err)
         }
       })
+  }
+
+  subscribe = (event, subscriber) => {
+    const subToken = Symbol('subToken')
+    this.subscribers.set(subToken, subscriber)
+    return subToken
+  }
+
+  unsubscribe = (token) => {
+    if (this.subscribers.has(token)) {
+      this.subscribers.delete(token)
+    }
   }
 }
 

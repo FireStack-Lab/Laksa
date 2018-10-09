@@ -5,7 +5,8 @@ import {
   generatePrivateKey,
   getAddressFromPrivateKey,
   getPubKeyFromPrivateKey,
-  createTransactionJson
+  createTransactionJson,
+  sign
 } from 'laksa-core-crypto'
 
 import { encrypt, decrypt } from 'laksa-extend-keystore'
@@ -97,6 +98,10 @@ export const signTransaction = (privateKey, transactionObject) => {
 }
 
 export class Account {
+  constructor(messenger) {
+    this.messenger = messenger
+  }
+
   // prototype.createAccount
   createAccount = () => {
     const accountObject = createAccount()
@@ -104,6 +109,7 @@ export class Account {
     return Object.assign({}, accountObject, {
       encrypt: newObject.encrypt,
       decrypt: newObject.decrypt,
+      sign: newObject.sign,
       signTransaction: newObject.signTransaction,
       signTransactionWithPassword: newObject.signTransactionWithPassword
     })
@@ -116,6 +122,7 @@ export class Account {
     return Object.assign({}, accountObject, {
       encrypt: newObject.encrypt,
       decrypt: newObject.decrypt,
+      sign: newObject.sign,
       signTransaction: newObject.signTransaction,
       signTransactionWithPassword: newObject.signTransactionWithPassword
     })
@@ -135,7 +142,16 @@ export class Account {
     return Object.assign(this, decrypted)
   }
 
-  // sub object
+  sign(bytes) {
+    if (this.privateKey === ENCRYPTED) {
+      throw new Error(
+        'This account is encrypted, please decrypt it first or use "signTransactionWithPassword"'
+      )
+    }
+    return sign(bytes, this.privateKey, this.publicKey)
+  }
+
+  // sign plain object
   signTransaction(transactionObject) {
     if (this.privateKey === ENCRYPTED) {
       throw new Error(
@@ -145,7 +161,7 @@ export class Account {
     return signTransaction(this.privateKey, transactionObject)
   }
 
-  // sub object
+  // sign plain object with password
   signTransactionWithPassword(transactionObject, password) {
     if (this.privateKey === ENCRYPTED) {
       const decrypted = this.decrypt(password)

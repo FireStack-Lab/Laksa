@@ -22,9 +22,9 @@ const mapPropertyToObjects = (main) => {
 }
 
 class Zil {
-  constructor(Laksa) {
-    this.messenger = Laksa.messenger
-    this.config = Laksa.config
+  constructor(messenger, config) {
+    this.messenger = messenger
+    this.config = config
     mapObjectToMethods(this)
     mapPropertyToObjects(this)
   }

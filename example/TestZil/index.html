@@ -22,7 +22,7 @@
 </div>
 <script src="../../dist/Laksa.browser.js"></script>
 <!-- <script src="../../dist/LaksaZil.browser.js"></script> -->
-<script src="../../dist/LaksaWallet.browser.js"></script>
+<!-- <script src="../../dist/LaksaWallet.browser.js"></script> -->
 <!-- <script src="../../dist/LaksaContract.browser.js"></script> -->
 <script>
 
@@ -172,10 +172,9 @@ function callback(err, data) {
   console.log({ err, data });
 }
 
-const {Wallet}=LaksaWallet
-const wallet=new Wallet()
 
-const accountA=wallet.createAccount()
+
+const accountA=laksa.wallet.createAccount()
 
 laksa.contracts.new(code,[laksa.util.toHex(accountA.address)])
   .then( (newContract) =>
