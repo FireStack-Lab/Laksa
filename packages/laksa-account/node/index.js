@@ -129,35 +129,36 @@
   };
   class Account {
     constructor(messenger) {
-      _defineProperty(this, "createAccount", () => {
-        const accountObject = createAccount();
-        const newObject = new Account();
-        return Object.assign({}, accountObject, {
-          encrypt: newObject.encrypt,
-          decrypt: newObject.decrypt,
-          sign: newObject.sign,
-          signTransaction: newObject.signTransaction,
-          signTransactionWithPassword: newObject.signTransactionWithPassword
-        });
-      });
-
-      _defineProperty(this, "importAccount", privateKey => {
-        const accountObject = importAccount(privateKey);
-        const newObject = new Account();
-        return Object.assign({}, accountObject, {
-          encrypt: newObject.encrypt,
-          decrypt: newObject.decrypt,
-          sign: newObject.sign,
-          signTransaction: newObject.signTransaction,
-          signTransactionWithPassword: newObject.signTransactionWithPassword
-        });
-      });
-
       this.messenger = messenger;
     } // prototype.createAccount
 
 
-    // sub object
+    createAccount() {
+      const accountObject = createAccount();
+      const newObject = new Account();
+      return Object.assign({}, accountObject, {
+        encrypt: newObject.encrypt,
+        decrypt: newObject.decrypt,
+        sign: newObject.sign,
+        signTransaction: newObject.signTransaction,
+        signTransactionWithPassword: newObject.signTransactionWithPassword
+      });
+    } // prototype.importAccount
+
+
+    importAccount(privateKey) {
+      const accountObject = importAccount(privateKey);
+      const newObject = new Account();
+      return Object.assign({}, accountObject, {
+        encrypt: newObject.encrypt,
+        decrypt: newObject.decrypt,
+        sign: newObject.sign,
+        signTransaction: newObject.signTransaction,
+        signTransactionWithPassword: newObject.signTransactionWithPassword
+      });
+    } // sub object
+
+
     async encrypt(password, level = 1024) {
       const encryptedAccount = await encryptAccount(this, password, level);
       return Object.assign(this, encryptedAccount);

@@ -6,10 +6,12 @@ import { Map, List } from 'immutable'
 import * as account from 'laksa-account'
 import { encryptedBy, ENCRYPTED } from './symbols'
 
-let _accounts = Map({ accounts: List([]) })
+// let this.#_accounts = Map({ accounts: List([]) })
 
 class Wallet {
   defaultAccount
+
+  #_accounts = Map({ accounts: List([]) })
 
   constructor(messenger) {
     this.length = 0
@@ -18,7 +20,7 @@ class Wallet {
   }
 
   get accounts() {
-    return _accounts.get('accounts').toArray()
+    return this.#_accounts.get('accounts').toArray()
   }
 
   set accounts(value) {
@@ -31,17 +33,17 @@ class Wallet {
    * [updateLength description]
    * @return {[type]} [description]
    */
-  updateLength = () => {
+  updateLength() {
     this.length = this.getIndexKeys().length
   }
 
-  getIndexKeys = () => {
+  getIndexKeys() {
     const isCorrectKeys = n => /^\d+$/i.test(n) && parseInt(n, 10) <= 9e20
-    const arrays = _accounts.get('accounts').toArray()
+    const arrays = this.#_accounts.get('accounts').toArray()
     return Object.keys(arrays).filter(isCorrectKeys)
   }
 
-  getCurrentMaxIndex = () => {
+  getCurrentMaxIndex() {
     const diff = (a, b) => {
       return b - a
     }
@@ -50,7 +52,7 @@ class Wallet {
     return sorted[0] === undefined ? -1 : parseInt(sorted[0], 10)
   }
 
-  addAccount = (accountObject) => {
+  addAccount(accountObject) {
     if (!isObject(accountObject)) throw new Error('account Object is not correct')
     const newAccountObject = Object.assign({}, accountObject, {
       createTime: new Date(),
@@ -58,11 +60,11 @@ class Wallet {
     })
     const objectKey = newAccountObject.address
     const newIndex = newAccountObject.index
-    let newArrays = _accounts.get('accounts')
+    let newArrays = this.#_accounts.get('accounts')
     newArrays = newArrays.set(newIndex, objectKey)
-    _accounts = _accounts.set(objectKey, newAccountObject)
-    _accounts = _accounts.set('accounts', List(newArrays))
-    // _accounts = _accounts.concat(newArrays)
+    this.#_accounts = this.#_accounts.set(objectKey, newAccountObject)
+    this.#_accounts = this.#_accounts.set('accounts', List(newArrays))
+    // this.#_accounts = this.#_accounts.concat(newArrays)
     this.updateLength()
     return {
       ...newAccountObject
@@ -90,7 +92,7 @@ class Wallet {
     return this.addAccount(accountObject)
   }
 
-  importAccountsFromPrivateKeyList = (privateKeyList) => {
+  importAccountsFromPrivateKeyList(privateKeyList) {
     if (!isArray(privateKeyList)) throw new Error('privateKeyList has to be Array<String>')
     const Imported = []
     for (let i = 0; i < privateKeyList.length; i += 1) {
@@ -104,15 +106,15 @@ class Wallet {
     if (!isAddress(address)) throw new Error('address is not correct')
     const { index } = this.getAccountByAddress(address)
     if (index !== undefined) {
-      const currentArray = _accounts.get('accounts').toArray()
+      const currentArray = this.#_accounts.get('accounts').toArray()
       delete currentArray[index]
-      _accounts = _accounts.set('accounts', List(currentArray))
-      _accounts = _accounts.delete(address)
+      this.#_accounts = this.#_accounts.set('accounts', List(currentArray))
+      this.#_accounts = this.#_accounts.delete(address)
       this.updateLength()
     }
   }
 
-  removeOneAccountByIndex = (index) => {
+  removeOneAccountByIndex(index) {
     if (!isNumber(index)) throw new Error('index is not correct')
     const addressRef = this.getAccountByIndex(index)
     if (addressRef !== undefined && addressRef.address) {
@@ -123,18 +125,18 @@ class Wallet {
   //---------
   getAccountByAddress = (address) => {
     if (!isAddress(address)) throw new Error('address is not correct')
-    return _accounts.get(address)
+    return this.#_accounts.get(address)
   }
 
   getAccountByIndex = (index) => {
     if (!isNumber(index)) throw new Error('index is not correct')
-    const address = _accounts.get('accounts').get(index)
+    const address = this.#_accounts.get('accounts').get(index)
     if (address !== undefined) {
       return this.getAccountByAddress(address)
     } else return undefined
   }
 
-  getWalletAddresses = () => {
+  getWalletAddresses() {
     return this.getIndexKeys()
       .map((index) => {
         const accountFound = this.getAccountByIndex(parseInt(index, 10))
@@ -146,7 +148,7 @@ class Wallet {
       .filter(d => !!d)
   }
 
-  getWalletPublicKeys = () => {
+  getWalletPublicKeys() {
     return this.getIndexKeys()
       .map((index) => {
         const accountFound = this.getAccountByIndex(parseInt(index, 10))
@@ -158,7 +160,7 @@ class Wallet {
       .filter(d => !!d)
   }
 
-  getWalletPrivateKeys = () => {
+  getWalletPrivateKeys() {
     return this.getIndexKeys()
       .map((index) => {
         const accountFound = this.getAccountByIndex(parseInt(index, 10))
@@ -181,11 +183,11 @@ class Wallet {
 
   // -----------
 
-  updateAccountByAddress = (address, newObject) => {
+  updateAccountByAddress(address, newObject) {
     if (!isAddress(address)) throw new Error('address is not correct')
     if (!isObject(newObject)) throw new Error('new account Object is not correct')
     const newAccountObject = Object.assign({}, newObject, { updatedTime: new Date() })
-    _accounts = _accounts.update(address, () => newAccountObject)
+    this.#_accounts = this.#_accounts.update(address, () => newAccountObject)
     return true
   }
 
@@ -196,7 +198,7 @@ class Wallet {
   }
 
   // -----------
-  encryptAllAccounts = (password, level) => {
+  async encryptAllAccounts(password, level) {
     this.getIndexKeys().forEach((index) => {
       const accountObject = this.getAccountByIndex(parseInt(index, 10))
       if (accountObject) {
@@ -207,7 +209,7 @@ class Wallet {
     return true
   }
 
-  decryptAllAccounts = (password) => {
+  async decryptAllAccounts(password) {
     this.getIndexKeys().forEach((index) => {
       const accountObject = this.getAccountByIndex(parseInt(index, 10))
       if (accountObject) {
@@ -223,7 +225,7 @@ class Wallet {
     return true
   }
 
-  encryptAccountByAddress = async (address, password, level, by) => {
+  async encryptAccountByAddress(address, password, level, by) {
     const accountObject = this.getAccountByAddress(address)
     if (accountObject !== undefined) {
       const { privateKey, crypto } = accountObject
@@ -240,7 +242,7 @@ class Wallet {
     return false
   }
 
-  decryptAccountByAddress = async (address, password, by) => {
+  async decryptAccountByAddress(address, password, by) {
     const accountObject = this.getAccountByAddress(address)
     if (accountObject !== undefined) {
       const { privateKey, crypto } = accountObject
@@ -259,7 +261,7 @@ class Wallet {
     return false
   }
 
-  setDefaultAccount = (obj) => {
+  setDefaultAccount(obj) {
     if (isAddress(obj)) {
       this.defaultAccount = this.getAccountByAddress(obj)
     } else if (isAddress(obj.address)) {
@@ -269,7 +271,7 @@ class Wallet {
     return this
   }
 
-  setSigner = (obj) => {
+  setSigner(obj) {
     if (isAddress(obj)) {
       this.signer = this.getAccountByAddress(obj)
     } else if (isAddress(obj.address)) {

@@ -21,24 +21,33 @@ class Laksa {
   constructor(args) {
     const url = args || config.defaultNodeUrl
     this.util = { ...util, ...core }
-    this.config = config
     this.currentProvider = { node: new HttpProvider(url), scilla: new HttpProvider(url) }
     this.messenger = new Messenger(this.currentProvider.node)
-    this.zil = new Zil(this.messenger, this.config)
-
-    this.account = new Account(this.messenger)
+    this.zil = new Zil(this.messenger)
     this.wallet = new Wallet(this.messenger)
     this.contracts = new Contracts(this.messenger, this.wallet)
   }
 
-  providers = {
-    HttpProvider
+  methods = {
+    Account,
+    Contracts,
+    HttpProvider,
+    Messenger,
+    Transaction,
+    Wallet,
+    Zil
   }
 
-  Transaction = Transaction
+  get version() {
+    return config.version
+  }
+
+  get isConnected() {
+    return this.connection
+  }
 
   // library method
-  isConnected = async (callback) => {
+  async connection(callback) {
     const result = await this.zil.isConnected()
     try {
       return callback === undefined ? !(result instanceof Error) : callback(null, true)
@@ -47,33 +56,33 @@ class Laksa {
     }
   }
 
-  getLibraryVersion = () => this.config.version
+  setProvider = (provider) => {
+    this.setNodeProvider(provider)
+    this.setScillaProvider(provider)
+  }
 
-  getDefaultProviderUrl = () => this.config.defaultProviderUrl
+  getProvider() {
+    return this.currentProvider
+  }
 
-  getDefaultAccount = () => {
+  getLibraryVersion() {
+    return this.version
+  }
+
+  getDefaultAccount() {
     if (this.wallet.defaultAccount) {
       return this.wallet.defaultAccount
     }
     return this.config.defaultAccount
   }
 
-  getDefaultBlock = () => this.config.defaultBlock
-
-  getProvider = () => this.currentProvider
-
-  setProvider = (provider) => {
-    this.setNodeProvider(provider)
-    this.setScillaProvider(provider)
-  }
-
-  setNodeProvider = (provider) => {
+  setNodeProvider(provider) {
     const newProvider = new HttpProvider(provider)
     this.currentProvider = { ...this.currentProvider, node: newProvider }
     this.messenger.setProvider(newProvider)
   }
 
-  setScillaProvider = (provider) => {
+  setScillaProvider(provider) {
     const newProvider = new HttpProvider(provider)
     this.currentProvider = { ...this.currentProvider, scilla: newProvider }
     this.messenger.setScillaProvider(newProvider)

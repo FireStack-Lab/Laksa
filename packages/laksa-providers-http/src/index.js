@@ -43,15 +43,15 @@ class HttpProvider {
     return result
   }
 
-  sendAsync = (payload, callback) => {
+  sendAsync(payload, callback) {
     this.requestFunc({ payload, callback })
   }
 
-  sendAsyncServer = (endpoint, payload, callback) => {
+  sendAsyncServer(endpoint, payload, callback) {
     this.requestFunc({ endpoint, payload, callback })
   }
 
-  requestFunc = ({ endpoint, payload, callback }) => {
+  requestFunc({ endpoint, payload, callback }) {
     const dest = endpoint !== null && endpoint !== undefined ? `${this.url}${endpoint}` : this.url
     return this.request
       .post(dest, JSON.stringify(payload))

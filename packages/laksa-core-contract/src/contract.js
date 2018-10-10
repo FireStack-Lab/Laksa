@@ -3,6 +3,13 @@ import { sign } from 'laksa-shared'
 import { validate, toBN, isInt } from './validate'
 import ABI from './abi'
 
+export const ContractStatus = {
+  initialised: Symbol('initialised'),
+  waitForSign: Symbol('waitForSign'),
+  rejected: Symbol('rejected'),
+  deployed: Symbol('deployed')
+}
+
 const setParamValues = (rawParams, newValues) => {
   const newParams = []
   rawParams.forEach((v, i) => {
@@ -26,23 +33,30 @@ const defaultContractJson = {
   data: ''
 }
 
-class Contract {
-  constructor(messenger, signer) {
-    this.messenger = messenger
-    this.signer = signer
-  }
-
-  contractStatus = ''
-
+export class Contract {
   contractJson = {}
 
-  abi = {}
-
-  code = ''
-
-  initParams = []
-
   blockchain = []
+
+  constructor(factory, abi, address, code, initParams, state) {
+    this.messenger = factory.messenger
+    this.signer = factory.signer
+
+    this.address = address || undefined
+    if (address) {
+      this.abi = abi
+      this.address = address
+      this.initParams = initParams
+      this.state = state
+      this.contractStatus = ContractStatus.deployed
+    } else {
+      // assume we're deploying
+      this.abi = abi
+      this.code = code
+      this.initParams = initParams
+      this.contractStatus = ContractStatus.initialised
+    }
+  }
 
   // event
   on = () => {}
@@ -58,7 +72,7 @@ class Contract {
     // the endpoint for sendServer has been set to scillaProvider
     const result = await this.messenger.sendServer('/contract/call', callContractJson)
     if (result.result) {
-      this.setContractStatus('waitForSign')
+      this.setContractStatus(ContractStatus.waitForSign)
     }
     return this
   }
@@ -84,7 +98,6 @@ class Contract {
       Transaction.setMessenger(this.messenger)
       const tx = await this.prepareTx(
         new Transaction({
-          nonce: 0,
           version: 0,
           to: defaultContractJson.to,
           // pubKey: this.signer.publicKey,
@@ -98,10 +111,10 @@ class Contract {
       )
 
       if (!tx.receipt || !tx.receipt.success) {
-        this.setContractStatus('rejected')
+        this.setContractStatus(ContractStatus.rejected)
         return this
       }
-      this.setContractStatus('deployed')
+      this.setContractStatus(ContractStatus.deployed)
 
       return this
     } catch (err) {
@@ -114,9 +127,39 @@ class Contract {
     const deployedTxn = Object.assign({}, { ...signedTxn, amount: signedTxn.amount.toNumber() })
     const result = await this.messenger.send({ method: 'CreateTransaction', params: [deployedTxn] })
     if (result) {
-      this.setContractStatus('deployed')
+      this.setContractStatus(ContractStatus.deployed)
     }
     return { ...this, txnId: result }
+  }
+
+  /**
+   * call
+   *
+   * @param {string} transition
+   * @param {any} params
+   * @returns {Promise<Transaction>}
+   */
+  async call(transition, params, amount = toBN(0)) {
+    const msg = {
+      _tag: transition,
+      // TODO: this should be string, but is not yet supported by lookup.
+      params
+    }
+
+    try {
+      return await this.prepareTx(
+        new Transaction({
+          version: 0,
+          to: defaultContractJson.to,
+          amount: toBN(amount),
+          gasPrice: 1000,
+          gasLimit: 1000,
+          data: JSON.stringify(msg)
+        })
+      )
+    } catch (err) {
+      throw err
+    }
   }
 
   //-------------------------------
@@ -159,7 +202,7 @@ class Contract {
       code: JSON.stringify(this.code),
       data: JSON.stringify(this.initParams.concat(this.blockchain))
     }
-    this.setContractStatus('initialized')
+    this.setContractStatus(ContractStatus.initialised)
     return this
   }
 
@@ -206,5 +249,3 @@ class Contract {
     this.contractStatus = status
   }
 }
-
-export default Contract

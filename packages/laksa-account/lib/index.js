@@ -8,7 +8,6 @@ require('core-js/modules/es7.symbol.async-iterator');
 require('core-js/modules/es6.symbol');
 var _classCallCheck = _interopDefault(require('@babel/runtime/helpers/classCallCheck'));
 var _createClass = _interopDefault(require('@babel/runtime/helpers/createClass'));
-var _defineProperty = _interopDefault(require('@babel/runtime/helpers/defineProperty'));
 require('core-js/modules/es6.object.assign');
 var _regeneratorRuntime = _interopDefault(require('@babel/runtime/regenerator'));
 var _objectSpread = _interopDefault(require('@babel/runtime/helpers/objectSpread'));
@@ -44,7 +43,7 @@ function generateAccountObject(privateKey) {
  */
 
 
-var createAccount = function createAccount() {
+var _createAccount = function createAccount() {
   var privateKey = laksaCoreCrypto.generatePrivateKey();
 
   try {
@@ -53,7 +52,8 @@ var createAccount = function createAccount() {
     return e;
   }
 };
-var importAccount = function importAccount(privateKey) {
+
+var _importAccount = function importAccount(privateKey) {
   try {
     return generateAccountObject(privateKey);
   } catch (e) {
@@ -183,37 +183,42 @@ function () {
   function Account(messenger) {
     _classCallCheck(this, Account);
 
-    _defineProperty(this, "createAccount", function () {
-      var accountObject = createAccount();
-      var newObject = new Account();
-      return Object.assign({}, accountObject, {
-        encrypt: newObject.encrypt,
-        decrypt: newObject.decrypt,
-        sign: newObject.sign,
-        signTransaction: newObject.signTransaction,
-        signTransactionWithPassword: newObject.signTransactionWithPassword
-      });
-    });
-
-    _defineProperty(this, "importAccount", function (privateKey) {
-      var accountObject = importAccount(privateKey);
-      var newObject = new Account();
-      return Object.assign({}, accountObject, {
-        encrypt: newObject.encrypt,
-        decrypt: newObject.decrypt,
-        sign: newObject.sign,
-        signTransaction: newObject.signTransaction,
-        signTransactionWithPassword: newObject.signTransactionWithPassword
-      });
-    });
-
     this.messenger = messenger;
   } // prototype.createAccount
 
 
   _createClass(Account, [{
+    key: "createAccount",
+    value: function createAccount() {
+      var accountObject = _createAccount();
+
+      var newObject = new Account();
+      return Object.assign({}, accountObject, {
+        encrypt: newObject.encrypt,
+        decrypt: newObject.decrypt,
+        sign: newObject.sign,
+        signTransaction: newObject.signTransaction,
+        signTransactionWithPassword: newObject.signTransactionWithPassword
+      });
+    } // prototype.importAccount
+
+  }, {
+    key: "importAccount",
+    value: function importAccount(privateKey) {
+      var accountObject = _importAccount(privateKey);
+
+      var newObject = new Account();
+      return Object.assign({}, accountObject, {
+        encrypt: newObject.encrypt,
+        decrypt: newObject.decrypt,
+        sign: newObject.sign,
+        signTransaction: newObject.signTransaction,
+        signTransactionWithPassword: newObject.signTransactionWithPassword
+      });
+    } // sub object
+
+  }, {
     key: "encrypt",
-    // sub object
     value: function () {
       var _encrypt = _asyncToGenerator(
       /*#__PURE__*/
@@ -316,8 +321,8 @@ function () {
   return Account;
 }();
 
-exports.createAccount = createAccount;
-exports.importAccount = importAccount;
+exports.createAccount = _createAccount;
+exports.importAccount = _importAccount;
 exports.encryptAccount = encryptAccount;
 exports.decryptAccount = decryptAccount;
 exports.signTransaction = _signTransaction;

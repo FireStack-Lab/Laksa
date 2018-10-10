@@ -103,7 +103,7 @@ export class Account {
   }
 
   // prototype.createAccount
-  createAccount = () => {
+  createAccount() {
     const accountObject = createAccount()
     const newObject = new Account()
     return Object.assign({}, accountObject, {
@@ -116,7 +116,7 @@ export class Account {
   }
 
   // prototype.importAccount
-  importAccount = (privateKey) => {
+  importAccount(privateKey) {
     const accountObject = importAccount(privateKey)
     const newObject = new Account()
     return Object.assign({}, accountObject, {

@@ -189,11 +189,11 @@ const accountA=laksa.wallet.importAccountFromPrivateKey('be52242876374b3438e10d1
 laksa.wallet.setDefaultAccount(accountA).setSigner(accountA)
 // console.log(laksa.contracts);
 
-laksa.contracts.new(code,[laksa.util.toHex(accountA.address)])
-  .then((newContract) =>{
-    newContract.deployTxn({gasLimit:50,gasPrice:1})
-  }
- ).then(console.log);
+// laksa.contracts.new(code,[laksa.util.toHex(accountA.address)])
+//   .then((newContract) =>{
+//     newContract.deployTxn({gasLimit:50,gasPrice:1})
+//   }
+//  ).then(console.log);
 
 
 

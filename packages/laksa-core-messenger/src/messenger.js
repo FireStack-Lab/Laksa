@@ -23,7 +23,7 @@ class Messanger {
     }
   }
 
-  sendAsync = (data, callback) => {
+  sendAsync(data, callback) {
     this.providerCheck()
     const payload = this.JsonRpc.toPayload(data.method, data.params)
     this.provider.sendAsync(payload, (err, result) => {
@@ -35,7 +35,7 @@ class Messanger {
     })
   }
 
-  sendBatch = (data, callback) => {
+  sendBatch(data, callback) {
     this.providerCheck()
     const payload = this.JsonRpc.toBatchPayload(data)
     this.provider.sendAsync(payload, (err, results) => {
@@ -56,7 +56,7 @@ class Messanger {
     }
   }
 
-  sendAsyncServer = (endpoint, data, callback) => {
+  sendAsyncServer(endpoint, data, callback) {
     this.providerCheck()
     this.scillaProvider.sendAsyncServer(endpoint, data, (err, result) => {
       if (err || result.error) {
@@ -67,7 +67,7 @@ class Messanger {
     })
   }
 
-  sendBatchServer = (data, callback) => {
+  sendBatchServer(data, callback) {
     this.providerCheck()
     this.scillaProvider.sendAsync(data, (err, results) => {
       if (err) {
@@ -77,15 +77,15 @@ class Messanger {
     })
   }
 
-  setProvider = (provider) => {
+  setProvider(provider) {
     this.provider = provider
   }
 
-  setScillaProvider = (provider) => {
+  setScillaProvider(provider) {
     this.scillaProvider = provider
   }
 
-  providerCheck = () => {
+  providerCheck() {
     if (!this.provider) {
       InvalidProvider()
       return null

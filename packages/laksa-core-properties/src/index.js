@@ -7,11 +7,11 @@ class Property {
     this.messanger = null
   }
 
-  setMessanger = (msg) => {
+  setMessanger(msg) {
     this.messanger = msg
   }
 
-  assignToObject = (object) => {
+  assignToObject(object) {
     const zilName = this.name
     const asyncGetterName = (getName) => {
       return `get${getName.charAt(0).toUpperCase()}${getName.slice(1)}`
@@ -26,7 +26,7 @@ class Property {
     Object.assign(object, newZilObject)
   }
 
-  propertyBuilder = () => {
+  propertyBuilder() {
     if (this.messanger !== null) {
       return (callback) => {
         if (callback) {
