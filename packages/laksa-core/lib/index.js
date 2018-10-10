@@ -20,7 +20,7 @@ var Contracts = _interopDefault(require('laksa-contracts'));
 var laksaWallet = require('laksa-wallet');
 var Zil = _interopDefault(require('laksa-zil'));
 
-var version = "0.0.47";
+var version = "0.0.48";
 
 var config = {
   version: version,

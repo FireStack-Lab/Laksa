@@ -43,7 +43,7 @@
     return target;
   }
 
-  var version = "0.0.47";
+  var version = "0.0.48";
 
   var config = {
     version,
