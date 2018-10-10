@@ -1,8 +1,9 @@
 import { Contract, toBN } from 'laksa-core-contract'
 
 class Contracts {
-  constructor(messenger) {
+  constructor(messenger, signer) {
     this.messenger = messenger
+    this.signer = signer
   }
 
   storage = {
@@ -16,19 +17,19 @@ class Contracts {
    * @param  {[Array<object>]}  initParams [description]
    * @return {Promise}            [description]
    */
-  async new(code, initParams) {
-    const contract = new Contract(this.messenger)
+  async new(code, initParams, options) {
+    const contract = new Contract(this.messenger, this.signer)
     const result = await contract
       // decode ABI from code first
       .decodeABI({ code })
       // we set the init params to decoded ABI
       .then(decoded => decoded.setInitParamsValues(decoded.abi.getInitParams(), initParams))
       // we get the current block number from node, and set it to params
-      .then(inited => inited.setBlockNumber())
+      .then(inited => inited.setBlockNumber(options ? options.blockNumber : undefined))
       // we have a contract json now
       .then(setted => setted.generateNewContractJson())
       // but we have to give it a test
-      .then(ready => ready.testCall({ gasLimit: 2000 }))
+      .then(ready => ready.testCall(options ? options.gasLimit : 2000))
       // now we change the status to wait for sign
       .then((state) => {
         if (state.contractStatus === 'waitForSign') {

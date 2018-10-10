@@ -7,11 +7,14 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "laksa-account": "^0.0.47",
     "laksa-contracts": "^0.0.1",
     "laksa-core-crypto": "^0.0.47",
     "laksa-core-messenger": "^0.0.47",
+    "laksa-core-transaction": "^0.0.1",
     "laksa-providers-http": "^0.0.47",
     "laksa-utils": "^0.0.47",
+    "laksa-wallet": "^0.0.47",
     "laksa-zil": "^0.0.47"
   }
 }

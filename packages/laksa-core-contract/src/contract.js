@@ -1,4 +1,6 @@
-import { validate, toBN } from './validate'
+import Transaction from 'laksa-core-transaction'
+import { sign } from 'laksa-shared'
+import { validate, toBN, isInt } from './validate'
 import ABI from './abi'
 
 const setParamValues = (rawParams, newValues) => {
@@ -25,8 +27,9 @@ const defaultContractJson = {
 }
 
 class Contract {
-  constructor(messenger) {
+  constructor(messenger, signer) {
     this.messenger = messenger
+    this.signer = signer
   }
 
   contractStatus = ''
@@ -45,7 +48,7 @@ class Contract {
   on = () => {}
 
   // test call to scilla runner
-  async testCall({ gasLimit }) {
+  async testCall(gasLimit) {
     const callContractJson = {
       code: this.code,
       init: JSON.stringify(this.initParams),
@@ -58,6 +61,52 @@ class Contract {
       this.setContractStatus('waitForSign')
     }
     return this
+  }
+
+  @sign
+  async prepareTx(tx) {
+    const raw = tx.txParams
+
+    // const { code, ...rest } = raw
+    const response = await this.messenger.send({
+      method: 'CreateTransaction',
+      params: [{ ...raw, amount: raw.amount.toNumber() }]
+    })
+    return tx.confirm(response.TranID)
+  }
+
+  async deployTxn({ gasPrice, gasLimit }) {
+    if (!this.code || !this.initParams) {
+      throw new Error('Cannot deploy without code or ABI.')
+    }
+    // console.log(this.signer)
+    try {
+      Transaction.setMessenger(this.messenger)
+      const tx = await this.prepareTx(
+        new Transaction({
+          nonce: 0,
+          version: 0,
+          to: defaultContractJson.to,
+          // pubKey: this.signer.publicKey,
+          // amount should be 0.  we don't accept implicitly anymore.
+          amount: toBN(0),
+          gasPrice: toBN(gasPrice).toNumber(),
+          gasLimit: toBN(gasLimit).toNumber(),
+          code: this.code,
+          data: JSON.stringify(this.initParams).replace(/\\"/g, '"')
+        })
+      )
+
+      if (!tx.receipt || !tx.receipt.success) {
+        this.setContractStatus('rejected')
+        return this
+      }
+      this.setContractStatus('deployed')
+
+      return this
+    } catch (err) {
+      throw err
+    }
   }
 
   async deploy(signedTxn) {
@@ -86,12 +135,18 @@ class Contract {
     return this
   }
 
-  async setBlockNumber() {
-    const result = await this.messenger.send({ method: 'GetLatestTxBlock', param: [] })
-    if (result) {
-      this.setBlockchain(result.header.BlockNum)
-      this.setCreationBlock(result.header.BlockNum)
+  async setBlockNumber(number) {
+    if (number && isInt(Number(number))) {
+      this.setBlockchain(String(number))
+      this.setCreationBlock(String(number))
       return this
+    } else if (number === undefined) {
+      const result = await this.messenger.send({ method: 'GetLatestTxBlock', param: [] })
+      if (result) {
+        this.setBlockchain(result.header.BlockNum)
+        this.setCreationBlock(result.header.BlockNum)
+        return this
+      }
     }
     return false
   }

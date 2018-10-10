@@ -142,11 +142,10 @@ export class Account {
     return Object.assign(this, decrypted)
   }
 
+  // sign method for Transaction bytes
   sign(bytes) {
     if (this.privateKey === ENCRYPTED) {
-      throw new Error(
-        'This account is encrypted, please decrypt it first or use "signTransactionWithPassword"'
-      )
+      throw new Error('This account is encrypted, please decrypt it first')
     }
     return sign(bytes, this.privateKey, this.publicKey)
   }

@@ -9,9 +9,12 @@ import { encryptedBy, ENCRYPTED } from './symbols'
 let _accounts = Map({ accounts: List([]) })
 
 class Wallet {
+  defaultAccount
+
   constructor(messenger) {
     this.length = 0
     this.messenger = messenger
+    this.signer = this.defaultAccount || undefined
   }
 
   get accounts() {
@@ -254,6 +257,61 @@ class Wallet {
       }
     }
     return false
+  }
+
+  setDefaultAccount = (obj) => {
+    if (isAddress(obj)) {
+      this.defaultAccount = this.getAccountByAddress(obj)
+    } else if (isAddress(obj.address)) {
+      this.defaultAccount = this.getAccountByAddress(obj.address).address
+    }
+
+    return this
+  }
+
+  setSigner = (obj) => {
+    if (isAddress(obj)) {
+      this.signer = this.getAccountByAddress(obj)
+    } else if (isAddress(obj.address)) {
+      this.signer = this.getAccountByAddress(obj.address).address
+    }
+    return this
+  }
+
+  // sign method for Transaction bytes
+  async sign(tx) {
+    if (!this.signer) {
+      throw new Error('This signer is not found')
+    }
+    try {
+      const signerAccount = this.getAccountByAddress(this.signer)
+      const balance = await this.messenger.send({
+        method: 'GetBalance',
+        params: [signerAccount.address]
+      })
+
+      if (typeof balance.nonce !== 'number') {
+        throw new Error('Could not get nonce')
+      }
+
+      const withNonce = tx.map((txObj) => {
+        return {
+          ...txObj,
+          nonce: balance.nonce + 1,
+          pubKey: signerAccount.publicKey
+        }
+      })
+
+      return withNonce.map((txObj) => {
+        // @ts-ignore
+        return {
+          ...txObj,
+          signature: signerAccount.sign(withNonce.bytes)
+        }
+      })
+    } catch (err) {
+      throw err
+    }
   }
 }
 

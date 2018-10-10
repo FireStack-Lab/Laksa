@@ -41,4 +41,4 @@ const validate = (type, value) => {
   return validators.some(val => val.match(type) && val.validatorFn(value))
 }
 
-export { toBN, validate }
+export { isInt, toBN, validate }

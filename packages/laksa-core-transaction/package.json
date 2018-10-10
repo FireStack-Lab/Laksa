@@ -7,5 +7,8 @@
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "neeboo",
-  "license": "ISC"
+  "license": "ISC",
+  "dependencies": {
+    "laksa-utils": "^0.0.47"
+  }
 }

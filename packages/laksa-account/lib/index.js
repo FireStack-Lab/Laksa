@@ -277,12 +277,13 @@ function () {
       return function decrypt(_x6) {
         return _decrypt.apply(this, arguments);
       };
-    }()
+    }() // sign method for Transaction bytes
+
   }, {
     key: "sign",
     value: function sign(bytes) {
       if (this.privateKey === ENCRYPTED) {
-        throw new Error('This account is encrypted, please decrypt it first or use "signTransactionWithPassword"');
+        throw new Error('This account is encrypted, please decrypt it first');
       }
 
       return laksaCoreCrypto.sign(bytes, this.privateKey, this.publicKey);

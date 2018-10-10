@@ -27,6 +27,7 @@ export {
 } from './generator'
 export {
   intToByteArray,
+  intToHexArray,
   toHex,
   toUtf8,
   toAscii,

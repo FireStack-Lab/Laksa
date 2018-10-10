@@ -8,11 +8,13 @@
 import * as util from 'laksa-utils'
 import * as core from 'laksa-core-crypto'
 import { Messenger } from 'laksa-core-messenger'
-import Contracts from 'laksa-contracts'
-import { Account } from 'laksa-account'
-import { Wallet } from 'laksa-wallet'
+import Transaction from 'laksa-core-transaction'
 import HttpProvider from 'laksa-providers-http'
+import { Account } from 'laksa-account'
+import Contracts from 'laksa-contracts'
+import { Wallet } from 'laksa-wallet'
 import Zil from 'laksa-zil'
+
 import config from './config'
 
 class Laksa {
@@ -23,14 +25,17 @@ class Laksa {
     this.currentProvider = { node: new HttpProvider(url), scilla: new HttpProvider(url) }
     this.messenger = new Messenger(this.currentProvider.node)
     this.zil = new Zil(this.messenger, this.config)
-    this.contracts = new Contracts(this.messenger)
+
     this.account = new Account(this.messenger)
     this.wallet = new Wallet(this.messenger)
+    this.contracts = new Contracts(this.messenger, this.wallet)
   }
 
   providers = {
     HttpProvider
   }
+
+  Transaction = Transaction
 
   // library method
   isConnected = async (callback) => {
@@ -46,7 +51,12 @@ class Laksa {
 
   getDefaultProviderUrl = () => this.config.defaultProviderUrl
 
-  getDefaultAccount = () => this.config.defaultAccount
+  getDefaultAccount = () => {
+    if (this.wallet.defaultAccount) {
+      return this.wallet.defaultAccount
+    }
+    return this.config.defaultAccount
+  }
 
   getDefaultBlock = () => this.config.defaultBlock
 
