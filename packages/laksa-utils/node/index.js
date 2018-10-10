@@ -461,6 +461,35 @@
     return arr;
   };
   /**
+   * intToHexArray
+   *
+   * @param {number} int - the number to be converted to hex
+   * @param {number)} size - the desired width of the hex value. will pad.
+   *
+   * @returns {string[]}
+   */
+
+
+  const intToHexArray = (int, size) => {
+    const hex = [];
+    const hexRep = [];
+    const hexVal = int.toString(16); // TODO: this really needs to be refactored.
+
+    for (let i = 0; i < hexVal.length; i += 1) {
+      hexRep[i] = hexVal[i].toString();
+    }
+
+    for (let i = 0; i < size - hexVal.length; i += 1) {
+      hex.push('0');
+    }
+
+    for (let i = 0; i < hexVal.length; i += 1) {
+      hex.push(hexRep[i]);
+    }
+
+    return hex;
+  };
+  /**
    * Converts value to it's hex representation
    *
    * @method numberToHex
@@ -702,6 +731,7 @@
   exports.validateFunctionArgs = validateFunctionArgs;
   exports.extractValidator = extractValidator;
   exports.intToByteArray = intToByteArray;
+  exports.intToHexArray = intToHexArray;
   exports.toHex = toHex;
   exports.toUtf8 = toUtf8;
   exports.toAscii = toAscii;

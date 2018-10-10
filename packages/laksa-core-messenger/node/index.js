@@ -50,7 +50,7 @@
   }
 
   class Messanger {
-    constructor(_provider) {
+    constructor(provider) {
       _defineProperty(this, "send", async data => {
         this.providerCheck();
 
@@ -61,31 +61,6 @@
         } catch (e) {
           throw new Error(e);
         }
-      });
-
-      _defineProperty(this, "sendAsync", (data, callback) => {
-        this.providerCheck();
-        const payload = this.JsonRpc.toPayload(data.method, data.params);
-        this.provider.sendAsync(payload, (err, result) => {
-          if (err || result.error) {
-            const errors = err || result.error;
-            return callback(errors);
-          }
-
-          callback(null, getResultForData(result));
-        });
-      });
-
-      _defineProperty(this, "sendBatch", (data, callback) => {
-        this.providerCheck();
-        const payload = this.JsonRpc.toBatchPayload(data);
-        this.provider.sendAsync(payload, (err, results) => {
-          if (err) {
-            return callback(err);
-          }
-
-          callback(null, results);
-        });
       });
 
       _defineProperty(this, "sendServer", async (endpoint, data) => {
@@ -99,47 +74,72 @@
         }
       });
 
-      _defineProperty(this, "sendAsyncServer", (endpoint, data, callback) => {
-        this.providerCheck();
-        this.scillaProvider.sendAsyncServer(endpoint, data, (err, result) => {
-          if (err || result.error) {
-            const errors = err || result.error;
-            return callback(errors);
-          }
-
-          callback(null, result);
-        });
-      });
-
-      _defineProperty(this, "sendBatchServer", (data, callback) => {
-        this.providerCheck();
-        this.scillaProvider.sendAsync(data, (err, results) => {
-          if (err) {
-            return callback(err);
-          }
-
-          callback(null, results);
-        });
-      });
-
-      _defineProperty(this, "setProvider", provider => {
-        this.provider = provider;
-      });
-
-      _defineProperty(this, "setScillaProvider", provider => {
-        this.scillaProvider = provider;
-      });
-
-      _defineProperty(this, "providerCheck", () => {
-        if (!this.provider) {
-          laksaShared.InvalidProvider();
-          return null;
-        }
-      });
-
-      this.provider = _provider;
-      this.scillaProvider = _provider;
+      this.provider = provider;
+      this.scillaProvider = provider;
       this.JsonRpc = new JsonRpc();
+    }
+
+    sendAsync(data, callback) {
+      this.providerCheck();
+      const payload = this.JsonRpc.toPayload(data.method, data.params);
+      this.provider.sendAsync(payload, (err, result) => {
+        if (err || result.error) {
+          const errors = err || result.error;
+          return callback(errors);
+        }
+
+        callback(null, getResultForData(result));
+      });
+    }
+
+    sendBatch(data, callback) {
+      this.providerCheck();
+      const payload = this.JsonRpc.toBatchPayload(data);
+      this.provider.sendAsync(payload, (err, results) => {
+        if (err) {
+          return callback(err);
+        }
+
+        callback(null, results);
+      });
+    }
+
+    sendAsyncServer(endpoint, data, callback) {
+      this.providerCheck();
+      this.scillaProvider.sendAsyncServer(endpoint, data, (err, result) => {
+        if (err || result.error) {
+          const errors = err || result.error;
+          return callback(errors);
+        }
+
+        callback(null, result);
+      });
+    }
+
+    sendBatchServer(data, callback) {
+      this.providerCheck();
+      this.scillaProvider.sendAsync(data, (err, results) => {
+        if (err) {
+          return callback(err);
+        }
+
+        callback(null, results);
+      });
+    }
+
+    setProvider(provider) {
+      this.provider = provider;
+    }
+
+    setScillaProvider(provider) {
+      this.scillaProvider = provider;
+    }
+
+    providerCheck() {
+      if (!this.provider) {
+        laksaShared.InvalidProvider();
+        return null;
+      }
     }
 
   }

@@ -1,8 +1,9 @@
-import { Contract, toBN } from 'laksa-core-contract'
+import { Contract, ContractStatus, toBN } from 'laksa-core-contract'
 
 class Contracts {
-  constructor(messenger) {
+  constructor(messenger, signer) {
     this.messenger = messenger
+    this.signer = signer
   }
 
   storage = {
@@ -11,27 +12,40 @@ class Contracts {
   }
 
   /**
+   * [at description]
+   * @param  {[type]} address [description]
+   * @param  {[type]} abi     [description]
+   * @param  {[type]} code    [description]
+   * @param  {[type]} init    [description]
+   * @param  {[type]} state   [description]
+   * @return {[type]}         [description]
+   */
+  at(address, abi, code, initParams, state) {
+    return new Contract(this, abi, address, code, initParams, state)
+  }
+
+  /**
    * [new description]
    * @param  {[String]}  code       [description]
    * @param  {[Array<object>]}  initParams [description]
    * @return {Promise}            [description]
    */
-  async new(code, initParams) {
-    const contract = new Contract(this.messenger)
+  async new(code, initParams, options) {
+    const contract = new Contract(this)
     const result = await contract
       // decode ABI from code first
       .decodeABI({ code })
       // we set the init params to decoded ABI
       .then(decoded => decoded.setInitParamsValues(decoded.abi.getInitParams(), initParams))
       // we get the current block number from node, and set it to params
-      .then(inited => inited.setBlockNumber())
+      .then(inited => inited.setBlockNumber(options ? options.blockNumber : undefined))
       // we have a contract json now
       .then(setted => setted.generateNewContractJson())
       // but we have to give it a test
-      .then(ready => ready.testCall({ gasLimit: 2000 }))
+      .then(ready => ready.testCall(options ? options.gasLimit : 2000))
       // now we change the status to wait for sign
       .then((state) => {
-        if (state.contractStatus === 'waitForSign') {
+        if (state.contractStatus === ContractStatus.waitForSign) {
           return state
         }
       })
@@ -81,7 +95,7 @@ class Contracts {
       : signer.signTransactionWithPassword(password)
 
     // if only the contract status is waitForSign, and we have a signature with signer
-    if (contract.contractStatus === 'waitForSign' && signedContract.signature) {
+    if (contract.contractStatus === ContractStatus.waitForSign && signedContract.signature) {
       // then we can deploy it
       const result = await contract.deploy(signedContract)
       // after that we save it to storage

@@ -3,20 +3,21 @@
 function _interopDefault (ex) { return (ex && (typeof ex === 'object') && 'default' in ex) ? ex['default'] : ex; }
 
 require('core-js/modules/es6.function.name');
-var _objectSpread = _interopDefault(require('@babel/runtime/helpers/objectSpread'));
 var _regeneratorRuntime = _interopDefault(require('@babel/runtime/regenerator'));
 require('regenerator-runtime/runtime');
 var _asyncToGenerator = _interopDefault(require('@babel/runtime/helpers/asyncToGenerator'));
+var _objectSpread = _interopDefault(require('@babel/runtime/helpers/objectSpread'));
 var _classCallCheck = _interopDefault(require('@babel/runtime/helpers/classCallCheck'));
 var _createClass = _interopDefault(require('@babel/runtime/helpers/createClass'));
 var _defineProperty = _interopDefault(require('@babel/runtime/helpers/defineProperty'));
 var util = require('laksa-utils');
 var core = require('laksa-core-crypto');
 var laksaCoreMessenger = require('laksa-core-messenger');
-var Contracts = _interopDefault(require('laksa-contracts'));
-var laksaAccount = require('laksa-account');
-var laksaWallet = require('laksa-wallet');
+var Transaction = _interopDefault(require('laksa-core-transaction'));
 var HttpProvider = _interopDefault(require('laksa-providers-http'));
+var laksaAccount = require('laksa-account');
+var Contracts = _interopDefault(require('laksa-contracts'));
+var laksaWallet = require('laksa-wallet');
 var Zil = _interopDefault(require('laksa-zil'));
 
 var version = "0.0.47";
@@ -36,15 +37,39 @@ function () {
 
     _classCallCheck(this, Laksa);
 
-    _defineProperty(this, "providers", {
-      HttpProvider: HttpProvider // library method
-
+    _defineProperty(this, "methods", {
+      Account: laksaAccount.Account,
+      Contracts: Contracts,
+      HttpProvider: HttpProvider,
+      Messenger: laksaCoreMessenger.Messenger,
+      Transaction: Transaction,
+      Wallet: laksaWallet.Wallet,
+      Zil: Zil
     });
 
-    _defineProperty(this, "isConnected",
-    /*#__PURE__*/
-    function () {
-      var _ref = _asyncToGenerator(
+    _defineProperty(this, "setProvider", function (provider) {
+      _this.setNodeProvider(provider);
+
+      _this.setScillaProvider(provider);
+    });
+
+    var url = args || config.defaultNodeUrl;
+    this.util = _objectSpread({}, util, core);
+    this.currentProvider = {
+      node: new HttpProvider(url),
+      scilla: new HttpProvider(url)
+    };
+    this.messenger = new laksaCoreMessenger.Messenger(this.currentProvider.node);
+    this.zil = new Zil(this.messenger);
+    this.wallet = new laksaWallet.Wallet(this.messenger);
+    this.contracts = new Contracts(this.messenger, this.wallet);
+  }
+
+  _createClass(Laksa, [{
+    key: "connection",
+    // library method
+    value: function () {
+      var _connection = _asyncToGenerator(
       /*#__PURE__*/
       _regeneratorRuntime.mark(function _callee(callback) {
         var result;
@@ -53,7 +78,7 @@ function () {
             switch (_context.prev = _context.next) {
               case 0:
                 _context.next = 2;
-                return _this.zil.isConnected();
+                return this.zil.isConnected();
 
               case 2:
                 result = _context.sent;
@@ -73,79 +98,67 @@ function () {
         }, _callee, this, [[3, 7]]);
       }));
 
-      return function (_x) {
-        return _ref.apply(this, arguments);
+      return function connection(_x) {
+        return _connection.apply(this, arguments);
       };
-    }());
+    }()
+  }, {
+    key: "getProvider",
+    value: function getProvider() {
+      return this.currentProvider;
+    }
+  }, {
+    key: "getLibraryVersion",
+    value: function getLibraryVersion() {
+      return this.version;
+    }
+  }, {
+    key: "getDefaultAccount",
+    value: function getDefaultAccount() {
+      if (this.wallet.defaultAccount) {
+        return this.wallet.defaultAccount;
+      }
 
-    _defineProperty(this, "getLibraryVersion", function () {
-      return _this.config.version;
-    });
-
-    _defineProperty(this, "getDefaultProviderUrl", function () {
-      return _this.config.defaultProviderUrl;
-    });
-
-    _defineProperty(this, "getDefaultAccount", function () {
-      return _this.config.defaultAccount;
-    });
-
-    _defineProperty(this, "getDefaultBlock", function () {
-      return _this.config.defaultBlock;
-    });
-
-    _defineProperty(this, "getProvider", function () {
-      return _this.currentProvider;
-    });
-
-    _defineProperty(this, "setProvider", function (provider) {
-      _this.setNodeProvider(provider);
-
-      _this.setScillaProvider(provider);
-    });
-
-    _defineProperty(this, "setNodeProvider", function (provider) {
+      return this.config.defaultAccount;
+    }
+  }, {
+    key: "setNodeProvider",
+    value: function setNodeProvider(provider) {
       var newProvider = new HttpProvider(provider);
-      _this.currentProvider = _objectSpread({}, _this.currentProvider, {
+      this.currentProvider = _objectSpread({}, this.currentProvider, {
         node: newProvider
       });
-
-      _this.messenger.setProvider(newProvider);
-    });
-
-    _defineProperty(this, "setScillaProvider", function (provider) {
+      this.messenger.setProvider(newProvider);
+    }
+  }, {
+    key: "setScillaProvider",
+    value: function setScillaProvider(provider) {
       var newProvider = new HttpProvider(provider);
-      _this.currentProvider = _objectSpread({}, _this.currentProvider, {
+      this.currentProvider = _objectSpread({}, this.currentProvider, {
         scilla: newProvider
       });
-
-      _this.messenger.setScillaProvider(newProvider);
-    });
-
-    var url = args || config.defaultNodeUrl;
-    this.util = _objectSpread({}, util, core);
-    this.config = config;
-    this.currentProvider = {
-      node: new HttpProvider(url),
-      scilla: new HttpProvider(url)
-    };
-    this.messenger = new laksaCoreMessenger.Messenger(this.currentProvider.node);
-    this.zil = new Zil(this.messenger, this.config);
-    this.contracts = new Contracts(this.messenger);
-    this.account = new laksaAccount.Account(this.messenger);
-    this.wallet = new laksaWallet.Wallet(this.messenger);
-  }
-
-  _createClass(Laksa, [{
+      this.messenger.setScillaProvider(newProvider);
+    }
+  }, {
     key: "register",
-    value: function register(_ref2) {
-      var name = _ref2.name,
-          pkg = _ref2.pkg;
+    value: function register(_ref) {
+      var name = _ref.name,
+          pkg = _ref.pkg;
       var pkgObject = {
         get: pkg,
         enumerable: true
       };
       Object.defineProperty(this, name, pkgObject);
+    }
+  }, {
+    key: "version",
+    get: function get() {
+      return config.version;
+    }
+  }, {
+    key: "isConnected",
+    get: function get() {
+      return this.connection;
     }
   }]);
 

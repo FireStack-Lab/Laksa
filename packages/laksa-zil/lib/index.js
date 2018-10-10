@@ -4,7 +4,6 @@ function _interopDefault (ex) { return (ex && (typeof ex === 'object') && 'defau
 
 var _typeof = _interopDefault(require('@babel/runtime/helpers/typeof'));
 var _classCallCheck = _interopDefault(require('@babel/runtime/helpers/classCallCheck'));
-var _createClass = _interopDefault(require('@babel/runtime/helpers/createClass'));
 var _defineProperty = _interopDefault(require('@babel/runtime/helpers/defineProperty'));
 var Method = _interopDefault(require('laksa-core-methods'));
 var Property = _interopDefault(require('laksa-core-properties'));
@@ -413,52 +412,25 @@ var mapPropertyToObjects = function mapPropertyToObjects(main) {
   });
 };
 
-var Zil =
-/*#__PURE__*/
-function () {
-  function Zil(messenger, config) {
-    var _this = this;
+var Zil = function Zil(messenger) {
+  var _this = this;
 
-    _classCallCheck(this, Zil);
+  _classCallCheck(this, Zil);
 
-    _defineProperty(this, "extendMethod", function (object) {
-      if (_typeof(object) !== 'object') {
-        throw new Error('Method has to be an object');
-      }
-
-      var zilMethod = new Method(object);
-      zilMethod.setMessanger(_this.messenger);
-      zilMethod.assignToObject(_this);
-      return true;
-    });
-
-    this.messenger = messenger;
-    this.config = config;
-    mapObjectToMethods(this);
-    mapPropertyToObjects(this);
-  }
-
-  _createClass(Zil, [{
-    key: "defaultBlock",
-    get: function get() {
-      return this.config.defaultBlock;
-    },
-    set: function set(block) {
-      this.config.defaultBlock = block;
-      return block;
+  _defineProperty(this, "extendMethod", function (object) {
+    if (_typeof(object) !== 'object') {
+      throw new Error('Method has to be an object');
     }
-  }, {
-    key: "defaultAccount",
-    get: function get() {
-      return this.config.defaultAccount;
-    },
-    set: function set(account) {
-      this.config.defaultAccount = account;
-      return account;
-    }
-  }]);
 
-  return Zil;
-}();
+    var zilMethod = new Method(object);
+    zilMethod.setMessanger(_this.messenger);
+    zilMethod.assignToObject(_this);
+    return true;
+  });
+
+  this.messenger = messenger;
+  mapObjectToMethods(this);
+  mapPropertyToObjects(this);
+};
 
 module.exports = Zil;

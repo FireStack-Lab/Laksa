@@ -45,7 +45,7 @@ setButton.onclick=function(e){
 
 var URL ='https://api-scilla.zilliqa.com'
 laksa.setProvider(URL)
-laksa.setScillaProvider('http://localhost:8080')
+laksa.setScillaProvider('https://scilla-runner.zilliqa.com')
 // webz.isConnected().then(console.log)
 let code = `
 (* HelloWorld contract *)
@@ -91,30 +91,41 @@ end
 `
 // //
 // // the immutable initialisation variables
-// let initParams = [
-//   {
-//     vname: "dummy",
-//     type: "String",
-//     value: `ASDF`
-//   }
-// ];
+let initParams = [
+  {
+    vname: "dummy",
+    type: "String",
+    value: `ASDF`
+  }
+];
+
+let txnDetails = {
+  version: 0,
+  nonce: 2,
+  to: "0000000000000000000000000000000000000000",
+  amount: laksa.util.toBN(0),
+  gasPrice: 1,
+  gasLimit: 50,
+  code: code,
+  data: JSON.stringify(initParams).replace(/\\"/g, '"')
+};
 //
-// let txnDetails = {
-//   version: 0,
-//   nonce: 2,
-//   to: "0000000000000000000000000000000000000000",
-//   amount: laksa.util.toBN(0),
-//   gasPrice: 1,
-//   gasLimit: 50,
-//   code: code,
-//   data: JSON.stringify(initParams).replace(/\\"/g, '"')
-// };
-//
-// // sign the transaction using util methods
-// let txn = laksa.util.createTransactionJson(
-//   "e19d05c5452598e24caad4a0d85a49146f7be089515c905ae6a19e8a578a6930",
-//   txnDetails
-// );
+let txnDetails2={
+  version: 0,
+  nonce:0,
+  to: '0000000000000000000000000000000000000000',
+  // amount should be 0.  we don't accept implicitly anymore.
+  amount: laksa.util.toBN(0),
+  gasPrice: laksa.util.toBN(1).toNumber(),
+  gasLimit: laksa.util.toBN(50).toNumber(),
+  code: code,
+  data: JSON.stringify(initParams).replace(/\\"/g, '"')
+}
+// sign the transaction using util methods
+let txn = laksa.util.createTransactionJson(
+  "e19d05c5452598e24caad4a0d85a49146f7be089515c905ae6a19e8a578a6930",
+  txnDetails2
+);
 
 
 
@@ -174,12 +185,15 @@ function callback(err, data) {
 
 
 
-const accountA=laksa.wallet.createAccount()
+const accountA=laksa.wallet.importAccountFromPrivateKey('be52242876374b3438e10d13cae1a9ea3b8783212c49ad800d26c308fbf5e8fb')
+laksa.wallet.setDefaultAccount(accountA).setSigner(accountA)
+// console.log(laksa.contracts);
 
-laksa.contracts.new(code,[laksa.util.toHex(accountA.address)])
-  .then( (newContract) =>
-    laksa.contracts.deploy({gasLimit:2000,gasPrice:10},newContract,accountA)
- ).then(console.log);
+// laksa.contracts.new(code,[laksa.util.toHex(accountA.address)])
+//   .then((newContract) =>{
+//     newContract.deployTxn({gasLimit:50,gasPrice:1})
+//   }
+//  ).then(console.log);
 
 
 

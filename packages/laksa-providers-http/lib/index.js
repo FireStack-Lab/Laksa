@@ -95,46 +95,6 @@ function () {
       };
     }());
 
-    _defineProperty(this, "sendAsync", function (payload, callback) {
-      _this.requestFunc({
-        payload: payload,
-        callback: callback
-      });
-    });
-
-    _defineProperty(this, "sendAsyncServer", function (endpoint, payload, callback) {
-      _this.requestFunc({
-        endpoint: endpoint,
-        payload: payload,
-        callback: callback
-      });
-    });
-
-    _defineProperty(this, "requestFunc", function (_ref3) {
-      var endpoint = _ref3.endpoint,
-          payload = _ref3.payload,
-          callback = _ref3.callback;
-      var dest = endpoint !== null && endpoint !== undefined ? "".concat(_this.url).concat(endpoint) : _this.url;
-      return _this.request.post(dest, JSON.stringify(payload)).then(function (response) {
-        var data = response.data,
-            status = response.status;
-
-        if (data && status >= 200 && status < 400) {
-          if (callback === undefined) {
-            return data;
-          } else {
-            callback(null, data);
-          }
-        }
-      }).catch(function (err) {
-        if (callback === undefined) {
-          return err;
-        } else {
-          callback(err);
-        }
-      });
-    });
-
     _defineProperty(this, "subscribe", function (event, subscriber) {
       var subToken = Symbol('subToken');
 
@@ -181,6 +141,49 @@ function () {
       }
 
       return request;
+    }
+  }, {
+    key: "sendAsync",
+    value: function sendAsync(payload, callback) {
+      this.requestFunc({
+        payload: payload,
+        callback: callback
+      });
+    }
+  }, {
+    key: "sendAsyncServer",
+    value: function sendAsyncServer(endpoint, payload, callback) {
+      this.requestFunc({
+        endpoint: endpoint,
+        payload: payload,
+        callback: callback
+      });
+    }
+  }, {
+    key: "requestFunc",
+    value: function requestFunc(_ref3) {
+      var endpoint = _ref3.endpoint,
+          payload = _ref3.payload,
+          callback = _ref3.callback;
+      var dest = endpoint !== null && endpoint !== undefined ? "".concat(this.url).concat(endpoint) : this.url;
+      return this.request.post(dest, JSON.stringify(payload)).then(function (response) {
+        var data = response.data,
+            status = response.status;
+
+        if (data && status >= 200 && status < 400) {
+          if (callback === undefined) {
+            return data;
+          } else {
+            callback(null, data);
+          }
+        }
+      }).catch(function (err) {
+        if (callback === undefined) {
+          return err;
+        } else {
+          callback(err);
+        }
+      });
     }
   }]);
 

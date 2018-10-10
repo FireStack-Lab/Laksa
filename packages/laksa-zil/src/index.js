@@ -22,29 +22,10 @@ const mapPropertyToObjects = (main) => {
 }
 
 class Zil {
-  constructor(messenger, config) {
+  constructor(messenger) {
     this.messenger = messenger
-    this.config = config
     mapObjectToMethods(this)
     mapPropertyToObjects(this)
-  }
-
-  get defaultBlock() {
-    return this.config.defaultBlock
-  }
-
-  set defaultBlock(block) {
-    this.config.defaultBlock = block
-    return block
-  }
-
-  get defaultAccount() {
-    return this.config.defaultAccount
-  }
-
-  set defaultAccount(account) {
-    this.config.defaultAccount = account
-    return account
   }
 
   extendMethod = (object) => {

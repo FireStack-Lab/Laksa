@@ -1,4 +1,4 @@
-import { encodeTransaction } from 'laksa-core-crypto'
+import { encodeTransaction } from './util'
 
 const TxStatus = {
   Pending: Symbol('Pending'),
@@ -61,10 +61,7 @@ class Transaction {
 
   data
 
-  receipt = {
-    success: false,
-    cumulative_gas: 0
-  }
+  receipt
 
   nonce
 

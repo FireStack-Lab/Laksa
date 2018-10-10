@@ -52,11 +52,11 @@ class Method {
     this.isSendJson = isSendJson || false
   }
 
-  setMessanger = (msg) => {
+  setMessanger(msg) {
     this.messanger = msg
   }
 
-  generateValidateObjects = () => {
+  generateValidateObjects() {
     const validatorObject = this.params
 
     const requiredArgs = {}
@@ -76,7 +76,7 @@ class Method {
     return { requiredArgs, optionalArgs }
   }
 
-  validateArgs = (args, requiredArgs, optionalArgs) => {
+  validateArgs(args, requiredArgs, optionalArgs) {
     const reArgs = requiredArgs === undefined ? {} : requiredArgs
     const opArgs = optionalArgs === undefined ? {} : optionalArgs
     if (args && this.params !== {}) {
@@ -85,7 +85,7 @@ class Method {
     return true
   }
 
-  extractParams = (args) => {
+  extractParams(args) {
     const paramsObject = isObject(args) ? args : {}
     let result
     const keyArrayLength = Object.keys(paramsObject).length
@@ -105,20 +105,20 @@ class Method {
     return result
   }
 
-  transformedBeforeSend = (value, key) => {
+  transformedBeforeSend(value, key) {
     const transformMethod = this.transformer[key]
     if (transformMethod !== undefined) {
       return transformerArray[transformMethod](value)
     } else return value
   }
 
-  assignToObject = (object) => {
+  assignToObject(object) {
     const newObject = {}
     newObject[this.name] = this.methodBuilder()
     return Object.assign(object, newObject)
   }
 
-  methodBuilder = () => {
+  methodBuilder() {
     if (this.messanger !== null && this.endpoint === 'client') {
       return (args, callback) => {
         const { requiredArgs, optionalArgs } = this.generateValidateObjects()
