@@ -54,7 +54,7 @@
 
   class Laksa {
     constructor(args) {
-      _defineProperty(this, "methods", {
+      _defineProperty(this, "Modules", {
         Account: laksaAccount.Account,
         Contracts,
         HttpProvider,
@@ -67,6 +67,7 @@
       _defineProperty(this, "setProvider", provider => {
         this.setNodeProvider(provider);
         this.setScillaProvider(provider);
+        return true;
       });
 
       const url = args || config.defaultNodeUrl;

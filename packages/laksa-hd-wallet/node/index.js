@@ -1,8 +1,8 @@
 (function (global, factory) {
-  typeof exports === 'object' && typeof module !== 'undefined' ? factory(exports, require('bip39'), require('hdkey'), require('laksa-wallet')) :
-  typeof define === 'function' && define.amd ? define(['exports', 'bip39', 'hdkey', 'laksa-wallet'], factory) :
-  (factory((global.Laksa = {}),global.bip,global.npmhdkeyobject,global.laksaWallet));
-}(this, (function (exports,bip,npmhdkeyobject,laksaWallet) { 'use strict';
+  typeof exports === 'object' && typeof module !== 'undefined' ? module.exports = factory(require('bip39'), require('hdkey'), require('laksa-wallet')) :
+  typeof define === 'function' && define.amd ? define(['bip39', 'hdkey', 'laksa-wallet'], factory) :
+  (global.Laksa = factory(global.bip,global.npmhdkeyobject,global.laksaWallet));
+}(this, (function (bip,npmhdkeyobject,laksaWallet) { 'use strict';
 
   npmhdkeyobject = npmhdkeyobject && npmhdkeyobject.hasOwnProperty('default') ? npmhdkeyobject['default'] : npmhdkeyobject;
 
@@ -114,8 +114,6 @@
 
   }
 
-  exports.HDWallet = HDWallet;
-
-  Object.defineProperty(exports, '__esModule', { value: true });
+  return HDWallet;
 
 })));

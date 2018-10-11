@@ -37,7 +37,7 @@ function () {
 
     _classCallCheck(this, Laksa);
 
-    _defineProperty(this, "methods", {
+    _defineProperty(this, "Modules", {
       Account: laksaAccount.Account,
       Contracts: Contracts,
       HttpProvider: HttpProvider,
@@ -51,6 +51,8 @@ function () {
       _this.setNodeProvider(provider);
 
       _this.setScillaProvider(provider);
+
+      return true;
     });
 
     var url = args || config.defaultNodeUrl;

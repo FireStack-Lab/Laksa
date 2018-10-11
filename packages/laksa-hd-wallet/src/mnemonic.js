@@ -4,7 +4,7 @@ export const getAvailableWordLists = () => {
   return bip.wordlists
 }
 
-export const generateMnemonic = (language) => {
+export const generateMnemonic = language => {
   const languageToMnemonic = language || 'EN'
   const wordlists = getAvailableWordLists()
 

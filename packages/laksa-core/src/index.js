@@ -20,15 +20,21 @@ import config from './config'
 class Laksa {
   constructor(args) {
     const url = args || config.defaultNodeUrl
-    this.util = { ...util, ...core }
-    this.currentProvider = { node: new HttpProvider(url), scilla: new HttpProvider(url) }
+    this.util = {
+      ...util,
+      ...core
+    }
+    this.currentProvider = {
+      node: new HttpProvider(url),
+      scilla: new HttpProvider(url)
+    }
     this.messenger = new Messenger(this.currentProvider.node)
     this.zil = new Zil(this.messenger)
     this.wallet = new Wallet(this.messenger)
     this.contracts = new Contracts(this.messenger, this.wallet)
   }
 
-  methods = {
+  Modules = {
     Account,
     Contracts,
     HttpProvider,
@@ -56,9 +62,10 @@ class Laksa {
     }
   }
 
-  setProvider = (provider) => {
+  setProvider = provider => {
     this.setNodeProvider(provider)
     this.setScillaProvider(provider)
+    return true
   }
 
   getProvider() {
@@ -78,13 +85,19 @@ class Laksa {
 
   setNodeProvider(provider) {
     const newProvider = new HttpProvider(provider)
-    this.currentProvider = { ...this.currentProvider, node: newProvider }
+    this.currentProvider = {
+      ...this.currentProvider,
+      node: newProvider
+    }
     this.messenger.setProvider(newProvider)
   }
 
   setScillaProvider(provider) {
     const newProvider = new HttpProvider(provider)
-    this.currentProvider = { ...this.currentProvider, scilla: newProvider }
+    this.currentProvider = {
+      ...this.currentProvider,
+      scilla: newProvider
+    }
     this.messenger.setScillaProvider(newProvider)
   }
 

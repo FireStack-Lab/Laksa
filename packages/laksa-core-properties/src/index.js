@@ -13,7 +13,7 @@ class Property {
 
   assignToObject(object) {
     const zilName = this.name
-    const asyncGetterName = (getName) => {
+    const asyncGetterName = getName => {
       return `get${getName.charAt(0).toUpperCase()}${getName.slice(1)}`
     }
     const zilObject = {
@@ -28,7 +28,7 @@ class Property {
 
   propertyBuilder() {
     if (this.messanger !== null) {
-      return (callback) => {
+      return callback => {
         if (callback) {
           return this.messanger.sendAsync({ method: this.getter }, callback)
         }

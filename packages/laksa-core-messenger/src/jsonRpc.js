@@ -18,8 +18,8 @@ class JsonRpc {
     }
   }
 
-  toBatchPayload = (messages) => {
-    return messages.map((message) => {
+  toBatchPayload = messages => {
+    return messages.map(message => {
       return this.toPayload(message.method, message.params)
     })
   }

@@ -76,7 +76,7 @@ const intToHexArray = (int, size) => {
  * @param {String|Number|BN} value
  * @return {String}
  */
-const numberToHex = (value) => {
+const numberToHex = value => {
   validateTypes(value, [isString, isNumber, isBN, isNull, isUndefined])
   if (isNull(value) || isUndefined(value)) {
     return value
@@ -105,7 +105,7 @@ const fromAscii = () => {
   // to be implemented
 }
 
-const toBN = (data) => {
+const toBN = data => {
   try {
     return numToBN(data)
   } catch (e) {
@@ -120,7 +120,7 @@ const toBN = (data) => {
  * @param {String|Number|BN} value
  * @return {String}
  */
-const hexToNumber = (value) => {
+const hexToNumber = value => {
   validateTypes(value, [isNumber, isString, isHex, isBN, isUndefined])
   if (!value) {
     return value
@@ -134,7 +134,7 @@ const hexToNumber = (value) => {
  * @param {string} hex
  * @returns {number[]}
  */
-const hexToIntArray = (hex) => {
+const hexToIntArray = hex => {
   if (!hex || !isHex(hex)) {
     return []
   }
@@ -161,7 +161,7 @@ const hexToIntArray = (hex) => {
  * @param {String} str
  * @returns {String} hex representation of input string
  */
-const utf8ToHex = (str) => {
+const utf8ToHex = str => {
   validateTypes(str, [isAddress, isString, isHex])
   let hex = ''
 
@@ -230,7 +230,7 @@ const toHex = (value, returnType) => {
   return returnType ? (value < 0 ? 'int256' : 'uint256') : numberToHex(value)
 }
 
-const strip0x = (value) => {
+const strip0x = value => {
   const newString = toHex(value)
   return `${newString.replace(/^0x/i, '')}`
 }
@@ -240,7 +240,7 @@ const strip0x = (value) => {
  * @param  {[String|Number|Hex|BN]} value [description]
  * @return {[String]}       [description]
  */
-const add0x = (value) => {
+const add0x = value => {
   validateTypes(value, [isString, isNumber, isHex, isBN])
   let newString
   if (!isString(value)) {

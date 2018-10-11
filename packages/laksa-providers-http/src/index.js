@@ -23,7 +23,7 @@ class HttpProvider {
     request.defaults.headers.post['Content-Type'] = 'application/json'
 
     if (this.headers) {
-      this.headers.forEach((header) => {
+      this.headers.forEach(header => {
         request.defaults.headers.post[header.name] = header.value
       })
     }
@@ -33,7 +33,7 @@ class HttpProvider {
     return request
   }
 
-  send = async (payload) => {
+  send = async payload => {
     const result = await this.requestFunc({ payload })
     return result
   }
@@ -55,7 +55,7 @@ class HttpProvider {
     const dest = endpoint !== null && endpoint !== undefined ? `${this.url}${endpoint}` : this.url
     return this.request
       .post(dest, JSON.stringify(payload))
-      .then((response) => {
+      .then(response => {
         const { data, status } = response
         if (data && status >= 200 && status < 400) {
           if (callback === undefined) {
@@ -65,7 +65,7 @@ class HttpProvider {
           }
         }
       })
-      .catch((err) => {
+      .catch(err => {
         if (callback === undefined) {
           return err
         } else {
@@ -80,7 +80,7 @@ class HttpProvider {
     return subToken
   }
 
-  unsubscribe = (token) => {
+  unsubscribe = token => {
     if (this.subscribers.has(token)) {
       this.subscribers.delete(token)
     }

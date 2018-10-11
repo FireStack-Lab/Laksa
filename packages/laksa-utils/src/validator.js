@@ -6,7 +6,7 @@ import { isBN } from 'bn.js'
  * @param  {[type]}  obj [value]
  * @return {Boolean}     [boolean]
  */
-const isNumber = (obj) => {
+const isNumber = obj => {
   return obj === +obj
 }
 
@@ -15,7 +15,7 @@ const isNumber = (obj) => {
  * @param  {[type]}  obj [value]
  * @return {Boolean}     [boolean]
  */
-const isInt = (obj) => {
+const isInt = obj => {
   return isNumber(obj) && Number.isInteger(obj)
 }
 
@@ -24,7 +24,7 @@ const isInt = (obj) => {
  * @param  {[type]}  obj [value]
  * @return {Boolean}     [boolean]
  */
-const isString = (obj) => {
+const isString = obj => {
   return obj === `${obj}`
 }
 
@@ -33,7 +33,7 @@ const isString = (obj) => {
  * @param  {[type]}  obj [value]
  * @return {Boolean}     [boolean]
  */
-const isBoolean = (obj) => {
+const isBoolean = obj => {
   return obj === !!obj
 }
 
@@ -42,7 +42,7 @@ const isBoolean = (obj) => {
  * @param  {[type]}  obj [value]
  * @return {Boolean}     [boolean]
  */
-const isArray = (obj) => {
+const isArray = obj => {
   return Array.isArray(obj)
 }
 
@@ -51,7 +51,7 @@ const isArray = (obj) => {
  * @param  {[type]}  obj [value]
  * @return {Boolean}     [boolean]
  */
-const isJson = (obj) => {
+const isJson = obj => {
   try {
     return !!JSON.parse(obj) && isObject(JSON.parse(obj))
   } catch (e) {
@@ -64,7 +64,7 @@ const isJson = (obj) => {
  * @param  {[type]}  obj [value]
  * @return {Boolean}     [boolean]
  */
-const isObject = (obj) => {
+const isObject = obj => {
   return obj !== null && !Array.isArray(obj) && typeof obj === 'object'
 }
 
@@ -74,7 +74,7 @@ const isObject = (obj) => {
  * @return {Boolean}     [description]
  */
 
-const isFunction = (obj) => {
+const isFunction = obj => {
   return typeof obj === 'function'
 }
 
@@ -87,7 +87,7 @@ const isFunction = (obj) => {
 //   return !!address.match(/^[0-9a-fA-F]{40}$/)
 // }
 
-const isAddress = (address) => {
+const isAddress = address => {
   if (!/^(0x)?[0-9a-f]{40}$/i.test(address)) {
     // check if it has the basic requirements of an address
     return false
@@ -103,7 +103,7 @@ const isAddress = (address) => {
  * @param  {[hex|string]}  privateKey [description]
  * @return {Boolean}            [description]
  */
-const isPrivateKey = (privateKey) => {
+const isPrivateKey = privateKey => {
   if (!/^(0x)?[0-9a-f]{64}$/i.test(privateKey)) {
     // check if it has the basic requirements of an privatekey
     return false
@@ -119,7 +119,7 @@ const isPrivateKey = (privateKey) => {
  * @param  {[hex|string]}  pubkey [description]
  * @return {Boolean}        [description]
  */
-const isPubkey = (pubkey) => {
+const isPubkey = pubkey => {
   if (!/^(0x)?[0-9a-f]{66}$/i.test(pubkey)) {
     // check if it has the basic requirements of an pubkey
     return false
@@ -135,7 +135,7 @@ const isPubkey = (pubkey) => {
  * @param  {[string]}  url [description]
  * @return {Boolean}     [description]
  */
-const isUrl = (url) => {
+const isUrl = url => {
   if (typeof url === 'string') {
     return isWebUri(url)
   }
@@ -147,7 +147,7 @@ const isUrl = (url) => {
  * @param  {[string]}  txHash [description]
  * @return {Boolean}        [description]
  */
-const isHash = (txHash) => {
+const isHash = txHash => {
   if (!/^(0x)?[0-9a-f]{64}$/i.test(txHash)) {
     // check if it has the basic requirements of an txHash
     return false
@@ -165,7 +165,7 @@ const isHash = (txHash) => {
  * @param {String} hex to be checked
  * @returns {Boolean}
  */
-const isHex = (hex) => {
+const isHex = hex => {
   return (isString(hex) || isNumber(hex)) && /^0x?[0-9a-f]*$/i.test(hex)
 }
 
@@ -174,7 +174,7 @@ const isHex = (hex) => {
  * @param  {[type]}  obj [description]
  * @return {Boolean}     [description]
  */
-const isNull = (obj) => {
+const isNull = obj => {
   return obj === null
 }
 
@@ -183,7 +183,7 @@ const isNull = (obj) => {
  * @param  {[type]}  obj [description]
  * @return {Boolean}     [description]
  */
-const isUndefined = (obj) => {
+const isUndefined = obj => {
   return obj === undefined
 }
 
@@ -192,7 +192,7 @@ const isUndefined = (obj) => {
  * @param  {[type]}  obj [description]
  * @return {Boolean}     [description]
  */
-const isUnit = (obj) => {
+const isUnit = obj => {
   return isInt(obj) && obj >= 0
 }
 
@@ -201,7 +201,7 @@ const isUnit = (obj) => {
  * @param  {[type]}  obj [description]
  * @return {Boolean}     [description]
  */
-const isByStrX = (obj) => {
+const isByStrX = obj => {
   return /^0x[A-F0-9]{20,65}$/i.test(obj)
 }
 
