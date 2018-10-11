@@ -44,7 +44,7 @@ export const createAccount = () => {
   }
 }
 
-export const importAccount = (privateKey) => {
+export const importAccount = privateKey => {
   try {
     return generateAccountObject(privateKey)
   } catch (e) {

@@ -40,7 +40,7 @@ export const intToByteArray = (val, paddedSize) => {
  * @param {string} str - string to be tested
  * @returns {boolean}
  */
-const isHex = (str) => {
+const isHex = str => {
   const plain = str.replace('0x', '')
   return /[0-9a-f]*$/i.test(plain)
 }
@@ -51,7 +51,7 @@ const isHex = (str) => {
  * @param {string} hex
  * @returns {number[]}
  */
-export const hexToIntArray = (hex) => {
+export const hexToIntArray = hex => {
   if (!hex || !isHex(hex)) {
     return []
   }
@@ -89,7 +89,7 @@ export const generatePrivateKey = () => {
  * @param {string} Key
  * @returns {string}
  */
-export const getAddressFromPrivateKey = (privateKey) => {
+export const getAddressFromPrivateKey = privateKey => {
   const keyPair = secp256k1.keyFromPrivate(privateKey, 'hex')
   const pub = keyPair.getPublic(true, 'hex')
 
@@ -109,7 +109,7 @@ export const getAddressFromPrivateKey = (privateKey) => {
  * @param {string} privateKey
  * @returns {string}
  */
-export const getPubKeyFromPrivateKey = (privateKey) => {
+export const getPubKeyFromPrivateKey = privateKey => {
   const keyPair = secp256k1.keyFromPrivate(privateKey, 'hex')
   return keyPair.getPublic(true, 'hex')
 }
@@ -121,7 +121,7 @@ export const getPubKeyFromPrivateKey = (privateKey) => {
  *
  * @returns {string}
  */
-export const compressPublicKey = (publicKey) => {
+export const compressPublicKey = publicKey => {
   return secp256k1.keyFromPublic(publicKey, 'hex').getPublic(true, 'hex')
 }
 
@@ -133,7 +133,7 @@ export const compressPublicKey = (publicKey) => {
  * @param {string} pubKey
  * @returns {string}
  */
-export const getAddressFromPublicKey = (pubKey) => {
+export const getAddressFromPublicKey = pubKey => {
   return hashjs
     .sha256()
     .update(pubKey, 'hex')
@@ -147,7 +147,7 @@ export const getAddressFromPublicKey = (pubKey) => {
  * @param {string|Buffer} privateKey
  * @returns {boolean}
  */
-export const verifyPrivateKey = (privateKey) => {
+export const verifyPrivateKey = privateKey => {
   const keyPair = secp256k1.keyFromPrivate(privateKey, 'hex')
   const { result } = keyPair.validate()
   return result
@@ -159,21 +159,22 @@ export const verifyPrivateKey = (privateKey) => {
  * @param {any} txn
  * @returns {Buffer}
  */
-export const encodeTransaction = (txn) => {
+export const encodeTransaction = txn => {
   const codeHex = Buffer.from(txn.code).toString('hex')
   const dataHex = Buffer.from(txn.data).toString('hex')
 
-  const encoded = intToByteArray(txn.version, 64).join('')
-    + intToByteArray(txn.nonce, 64).join('')
-    + txn.to
-    + txn.pubKey
-    + txn.amount.toString('hex', 64)
-    + intToByteArray(txn.gasPrice, 64).join('')
-    + intToByteArray(txn.gasLimit, 64).join('')
-    + intToByteArray(txn.code.length, 8).join('') // size of code
-    + codeHex
-    + intToByteArray(txn.data.length, 8).join('') // size of data
-    + dataHex
+  const encoded =
+    intToByteArray(txn.version, 64).join('') +
+    intToByteArray(txn.nonce, 64).join('') +
+    txn.to +
+    txn.pubKey +
+    txn.amount.toString('hex', 64) +
+    intToByteArray(txn.gasPrice, 64).join('') +
+    intToByteArray(txn.gasLimit, 64).join('') +
+    intToByteArray(txn.code.length, 8).join('') + // size of code
+    codeHex +
+    intToByteArray(txn.data.length, 8).join('') + // size of data
+    dataHex
 
   return Buffer.from(encoded, 'hex')
 }
@@ -230,7 +231,7 @@ export const sign = (msg, privateKey, pubKey) => {
   return r + s
 }
 
-export const toChecksumAddress = (address) => {
+export const toChecksumAddress = address => {
   const newAddress = address.toLowerCase().replace('0x', '')
   const hash = hashjs
     .sha256()
@@ -255,7 +256,7 @@ export const toChecksumAddress = (address) => {
  * @param {string} address
  * @returns {boolean}
  */
-export const isValidChecksumAddress = (address) => {
+export const isValidChecksumAddress = address => {
   const replacedAddress = address.replace('0x', '')
   return !!replacedAddress.match(/^[0-9a-fA-F]{40}$/) && toChecksumAddress(address) === address
 }

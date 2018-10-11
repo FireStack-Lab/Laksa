@@ -5,7 +5,7 @@ import packages from '../packages'
 import browserConfig from '../babel/babel.browser.config.js'
 
 function bundles() {
-  return packages.map((p) => {
+  return packages.map(p => {
     return {
       input: `packages/${p}/src/index.js`,
       output: {

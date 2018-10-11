@@ -201,7 +201,7 @@ class Transaction {
     const result = Transaction.messenger.send({ method: 'GetTransaction', params: [txHash] })
 
     result
-      .then((res) => {
+      .then(res => {
         if (res.result && res.result.error) {
           this.trackTx(txHash, resolve, reject, cancelTimeout)
           return
@@ -216,7 +216,7 @@ class Transaction {
           resolve(this)
         }
       })
-      .catch((err) => {
+      .catch(err => {
         cancelTimeout()
         this.status = TxStatus.Rejected
         reject(err)

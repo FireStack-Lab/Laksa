@@ -9,7 +9,7 @@
  */
 import { randomBytes as RB } from 'randomBytes'
 
-export const randomBytes = (bytes) => {
+export const randomBytes = bytes => {
   let randBz
 
   if (typeof window !== 'undefined' && window.crypto && window.crypto.getRandomValues) {

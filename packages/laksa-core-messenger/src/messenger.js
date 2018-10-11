@@ -12,7 +12,7 @@ class Messanger {
     this.JsonRpc = new JsonRpc()
   }
 
-  send = async (data) => {
+  send = async data => {
     this.providerCheck()
     try {
       const payload = this.JsonRpc.toPayload(data.method, data.params)

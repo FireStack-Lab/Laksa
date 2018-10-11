@@ -76,7 +76,7 @@ function Validator(stringToTest, validatorString) {
 function tester(value, callback) {
   try {
     const validateResult = valArray
-      .map((func) => {
+      .map(func => {
         return func.test(value) ? func.validator.substring(2) : false
       })
       .filter(d => d !== false)
@@ -151,7 +151,7 @@ function validateTypes(arg, validatorArray) {
   const valsKey = validator.test(arg)
 
   const getValidators = []
-  const finalReduceArray = validatorArray.map((v) => {
+  const finalReduceArray = validatorArray.map(v => {
     getValidators.push(v.validator)
     return valsKey.includes(v.validator.substring(2)) ? 1 : 0
   })
@@ -173,7 +173,7 @@ function validateTypesMatch(arg, validatorArray) {
   const valsKey = validator.test(arg)
 
   const getValidators = []
-  const finalReduceArray = validatorArray.map((v) => {
+  const finalReduceArray = validatorArray.map(v => {
     getValidators.push(v.validator)
     return valsKey.includes(v.validator.substring(2)) ? 1 : 0
   })

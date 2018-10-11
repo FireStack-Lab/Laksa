@@ -143,7 +143,7 @@ export const verify = (msg, signature, key) => {
   return r1.eq(sig.r)
 }
 
-export const toSignature = (serialised) => {
+export const toSignature = serialised => {
   const r = serialised.slice(0, 64)
   const s = serialised.slice(64)
 

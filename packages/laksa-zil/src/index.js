@@ -3,8 +3,8 @@ import Property from 'laksa-core-properties'
 import methodObjects from './methodObjects'
 import propertyObjects from './propertyObjects'
 
-const mapObjectToMethods = (main) => {
-  methodObjects.map((data) => {
+const mapObjectToMethods = main => {
+  methodObjects.map(data => {
     const zilMethod = new Method(data)
     zilMethod.setMessanger(main.messenger)
     zilMethod.assignToObject(main)
@@ -12,8 +12,8 @@ const mapObjectToMethods = (main) => {
   })
 }
 
-const mapPropertyToObjects = (main) => {
-  propertyObjects.map((data) => {
+const mapPropertyToObjects = main => {
+  propertyObjects.map(data => {
     const zilProperty = new Property(data)
     zilProperty.setMessanger(main.messenger)
     zilProperty.assignToObject(main)
@@ -28,7 +28,7 @@ class Zil {
     mapPropertyToObjects(this)
   }
 
-  extendMethod = (object) => {
+  extendMethod = object => {
     if (typeof object !== 'object') {
       throw new Error('Method has to be an object')
     }

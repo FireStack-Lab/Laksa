@@ -77,7 +77,7 @@ class Wallet {
     return this.addAccount(accountObject)
   }
 
-  createBatchAccounts = (number) => {
+  createBatchAccounts = number => {
     if (!isNumber(number) || (isNumber(number) && number === 0)) throw new Error('number has to be >0 Number')
     const Batch = []
     for (let i = 0; i < number; i += 1) {
@@ -86,7 +86,7 @@ class Wallet {
     return Batch
   }
 
-  importAccountFromPrivateKey = (privateKey) => {
+  importAccountFromPrivateKey = privateKey => {
     const accountInstance = new account.Account()
     const accountObject = accountInstance.importAccount(privateKey)
     return this.addAccount(accountObject)
@@ -102,7 +102,7 @@ class Wallet {
   }
 
   //-------
-  removeOneAccountByAddress = (address) => {
+  removeOneAccountByAddress = address => {
     if (!isAddress(address)) throw new Error('address is not correct')
     const { index } = this.getAccountByAddress(address)
     if (index !== undefined) {
@@ -123,12 +123,12 @@ class Wallet {
   }
 
   //---------
-  getAccountByAddress = (address) => {
+  getAccountByAddress = address => {
     if (!isAddress(address)) throw new Error('address is not correct')
     return this.#_accounts.get(address)
   }
 
-  getAccountByIndex = (index) => {
+  getAccountByIndex = index => {
     if (!isNumber(index)) throw new Error('index is not correct')
     const address = this.#_accounts.get('accounts').get(index)
     if (address !== undefined) {
@@ -138,7 +138,7 @@ class Wallet {
 
   getWalletAddresses() {
     return this.getIndexKeys()
-      .map((index) => {
+      .map(index => {
         const accountFound = this.getAccountByIndex(parseInt(index, 10))
         if (accountFound) {
           return accountFound.address
@@ -150,7 +150,7 @@ class Wallet {
 
   getWalletPublicKeys() {
     return this.getIndexKeys()
-      .map((index) => {
+      .map(index => {
         const accountFound = this.getAccountByIndex(parseInt(index, 10))
         if (accountFound) {
           return accountFound.publicKey
@@ -162,7 +162,7 @@ class Wallet {
 
   getWalletPrivateKeys() {
     return this.getIndexKeys()
-      .map((index) => {
+      .map(index => {
         const accountFound = this.getAccountByIndex(parseInt(index, 10))
         if (accountFound) {
           return accountFound.privateKey
@@ -174,7 +174,7 @@ class Wallet {
 
   getWalletAccounts = () => {
     return this.getIndexKeys()
-      .map((index) => {
+      .map(index => {
         const accountFound = this.getAccountByIndex(parseInt(index, 10))
         return accountFound || false
       })
@@ -199,7 +199,7 @@ class Wallet {
 
   // -----------
   async encryptAllAccounts(password, level) {
-    this.getIndexKeys().forEach((index) => {
+    this.getIndexKeys().forEach(index => {
       const accountObject = this.getAccountByIndex(parseInt(index, 10))
       if (accountObject) {
         const { address } = accountObject
@@ -210,7 +210,7 @@ class Wallet {
   }
 
   async decryptAllAccounts(password) {
-    this.getIndexKeys().forEach((index) => {
+    this.getIndexKeys().forEach(index => {
       const accountObject = this.getAccountByIndex(parseInt(index, 10))
       if (accountObject) {
         const { address, LastEncryptedBy } = accountObject
@@ -296,7 +296,7 @@ class Wallet {
         throw new Error('Could not get nonce')
       }
 
-      const withNonce = tx.map((txObj) => {
+      const withNonce = tx.map(txObj => {
         return {
           ...txObj,
           nonce: balance.nonce + 1,
@@ -304,7 +304,7 @@ class Wallet {
         }
       })
 
-      return withNonce.map((txObj) => {
+      return withNonce.map(txObj => {
         // @ts-ignore
         return {
           ...txObj,

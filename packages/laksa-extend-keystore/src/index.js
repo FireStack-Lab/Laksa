@@ -26,9 +26,10 @@ const getDerivedKey = (key, kdf, params) => {
       reject(new Error('Only pbkdf2 and scrypt are supported'))
     }
 
-    const derivedKey = kdf === 'scrypt'
-      ? scrypt(key, salt, n, r, p, dklen)
-      : pbkdf2sync(key, salt, n, dklen, 'sha256')
+    const derivedKey =
+      kdf === 'scrypt'
+        ? scrypt(key, salt, n, r, p, dklen)
+        : pbkdf2sync(key, salt, n, dklen, 'sha256')
 
     resolve(derivedKey)
   })

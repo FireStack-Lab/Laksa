@@ -44,7 +44,7 @@ class Contracts {
       // but we have to give it a test
       .then(ready => ready.testCall(options ? options.gasLimit : 2000))
       // now we change the status to wait for sign
-      .then((state) => {
+      .then(state => {
         if (state.contractStatus === ContractStatus.waitForSign) {
           return state
         }
@@ -90,9 +90,10 @@ class Contracts {
     const txnDetail = Object.assign({}, contract.contractJson, txnJson)
 
     // check if the signer is encrypted
-    const signedContract = typeof signer.privateKey !== 'symbol'
-      ? signer.signTransaction(txnDetail)
-      : signer.signTransactionWithPassword(password)
+    const signedContract =
+      typeof signer.privateKey !== 'symbol'
+        ? signer.signTransaction(txnDetail)
+        : signer.signTransactionWithPassword(password)
 
     // if only the contract status is waitForSign, and we have a signature with signer
     if (contract.contractStatus === ContractStatus.waitForSign && signedContract.signature) {

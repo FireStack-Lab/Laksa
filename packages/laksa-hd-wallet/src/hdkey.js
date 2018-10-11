@@ -1,23 +1,23 @@
 import npmhdkeyobject from 'hdkey'
 
 class HDKey {
-  fromHDKey = (npmhdkey) => {
+  fromHDKey = npmhdkey => {
     const ret = new HDKey()
     ret.npmhdkey = npmhdkey
     return ret
   }
 
-  fromMasterSeed = (seedBuffer) => {
+  fromMasterSeed = seedBuffer => {
     return this.fromHDKey(npmhdkeyobject.fromMasterSeed(seedBuffer))
   }
 
   npmhdkey
 
-  derivePath = (path) => {
+  derivePath = path => {
     return this.fromHDKey(this.npmhdkey.derive(path))
   }
 
-  deriveChild = (index) => {
+  deriveChild = index => {
     return this.fromHDKey(this.npmhdkey.deriveChild(index))
   }
 

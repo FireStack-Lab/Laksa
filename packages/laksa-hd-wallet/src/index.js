@@ -1,1 +1,3 @@
-export HDWallet from './hdWallet'
+import HDWallet from './hdWallet'
+
+export default HDWallet

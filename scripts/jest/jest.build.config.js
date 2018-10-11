@@ -4,7 +4,7 @@ const baseConfig = require('./jest.src.config')
 
 // Find all folders in packages/* with package.json
 const packagesRoot = join(__dirname, '..', '..', 'packages')
-const packages = readdirSync(packagesRoot).filter((dir) => {
+const packages = readdirSync(packagesRoot).filter(dir => {
   if (dir.charAt(0) === '.') {
     return false
   }
@@ -18,7 +18,7 @@ const packages = readdirSync(packagesRoot).filter((dir) => {
 })
 // Create a module map to point packages to the build output
 const moduleNameMapper = {}
-packages.forEach((name) => {
+packages.forEach(name => {
   // Root entry point
   moduleNameMapper[`^${name}$`] = `<rootDir>/dist/node_modules/${name}`
   // Named entry points

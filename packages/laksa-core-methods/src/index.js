@@ -96,7 +96,7 @@ class Method {
       result = [this.transformedBeforeSend(paramsObject[resultKey], resultKey)]
     } else if (keyArrayLength > 0 && this.isSendJson) {
       const newObject = {}
-      Object.keys(paramsObject).map((k) => {
+      Object.keys(paramsObject).map(k => {
         newObject[k] = this.transformedBeforeSend(paramsObject[k], k)
         return false
       })

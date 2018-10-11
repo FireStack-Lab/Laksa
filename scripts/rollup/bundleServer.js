@@ -4,7 +4,7 @@ import packages from '../packages'
 import serverConfig from '../babel/babel.server.config.js'
 
 function bundles() {
-  return packages.map((p) => {
+  return packages.map(p => {
     return {
       input: `packages/${p}/src/index.js`,
       output: {
