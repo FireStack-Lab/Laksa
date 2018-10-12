@@ -134,6 +134,7 @@ end
 
 
     const myAddress = { address: "9bfec715a6bd658fcb62b0f8cc9bfa2ade71434a" };
+    laksa.zil.createTransaction(txn).then((err, data) => console.log({ err, data }))
     // with callback
     // laksa.zil.getNetworkId((err,data)=>{console.log({err,data})})
 
@@ -186,15 +187,16 @@ end
 
 
 
-    const accountA = laksa.wallet.importAccountFromPrivateKey('be52242876374b3438e10d13cae1a9ea3b8783212c49ad800d26c308fbf5e8fb')
-    laksa.wallet.setDefaultAccount(accountA).setSigner(accountA)
-    // console.log(laksa.contracts);
+    // const accountA = laksa.wallet.importAccountFromPrivateKey('e19d05c5452598e24caad4a0d85a49146f7be089515c905ae6a19e8a578a6930')
+    // laksa.wallet.setDefaultAccount(accountA).setSigner(accountA)
+    // // console.log(laksa.contracts);
 
-    laksa.contracts.new(code, [laksa.util.toHex(accountA.address)])
-      .then((newContract) => {
-        newContract.deployTxn({ gasLimit: 50, gasPrice: 1 })
-      }
-      ).then(console.log);
+    // laksa.contracts
+    //   .new(code, [laksa.util.toHex(accountA.address)])
+    //   .then((newContract) => {
+    //     newContract.deployTxn({ gasLimit: 50, gasPrice: 1 })
+    //   })
+    //   .then(console.log);
 
 
 

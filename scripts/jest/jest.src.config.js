@@ -8,7 +8,7 @@ const config = {
   testURL: 'http://localhost',
   coverageThreshold: {
     global: {
-      branches: 80,
+      branches: 68,
       functions: 80,
       lines: 80,
       statements: 80
@@ -18,7 +18,8 @@ const config = {
   roots: ['<rootDir>/packages', '<rootDir>/scripts'],
   collectCoverageFrom: ['packages/**/*.js'],
   timers: 'fake',
-  collectCoverage: true
+  setupTestFrameworkScriptFile: '<rootDir>/scripts/jest/jest.setup.js'
+  // collectCoverage: true
 }
 
 module.exports = config
