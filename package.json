@@ -67,7 +67,6 @@
     "test:src": "cross-env NODE_ENV=test jest --config ./scripts/jest/jest.src.config.js --silent --runInBand",
     "test:node": "cross-env NODE_ENV=development jest --config ./scripts/jest/jest.src.config.js --silent --runInBand",
     "test:lib": "cross-env NODE_ENV=production jest --config ./scripts/jest/jest.src.config.js --silent --runInBand",
-    "test:report": "yarn test:src && codecov",
     "test:all": "yarn packages:bundle && yarn test:src && yarn test:node && yarn test:lib",
     "packages:cleanBrowser": "gulp cleanBrowser",
     "packages:cleanServer": "gulp cleanServer",

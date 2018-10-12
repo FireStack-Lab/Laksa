@@ -11,7 +11,7 @@ install:
   - npm install -g codecov
 script:
   - yarn packages:bundle
-  - istanbul cover ./node_modules/mocha/bin/_mocha --reporter lcovonly -- -R spec
+  - yarn test:src
   - codecov
 cache:
   directories:
