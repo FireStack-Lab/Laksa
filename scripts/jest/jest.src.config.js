@@ -19,6 +19,7 @@ const config = {
   collectCoverageFrom: ['packages/**/*.js'],
   timers: 'fake',
   setupTestFrameworkScriptFile: '<rootDir>/scripts/jest/jest.setup.js',
+  testEnvironment: process.env.NODE_ENV === 'development' ? 'node' : 'jsdom',
   collectCoverage: true
 }
 

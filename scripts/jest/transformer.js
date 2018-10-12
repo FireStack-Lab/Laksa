@@ -5,16 +5,7 @@ const babelOptions = require('../babel/babel.src.config.js')
 
 // Use require.resolve to be resilient to file moves, npm updates, etc
 const pathToBabel = path.join(require.resolve('@babel/core'), '../', '../', 'package.json')
-// const pathToBabelrc = path.join(__dirname, '../babel/babel.test.src.js')
-
-const pathToBabelrc =
-  process.env.NODE_ENV === 'test'
-    ? path.join(__dirname, '../babel/babel.src.config.js')
-    : process.env.NODE_ENV === 'development'
-      ? path.join(__dirname, '../babel/babel.server.config.js')
-      : process.env.NODE_ENV === 'production'
-        ? path.join(__dirname, '../babel/babel.browser.config.js')
-        : path.join(__dirname, '../babel/babel.src.config.js')
+const pathToBabelrc = path.join(__dirname, '../babel/babel.src.config.js')
 
 module.exports = {
   process(src, filePath) {

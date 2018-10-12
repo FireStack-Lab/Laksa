@@ -5,25 +5,18 @@
       {
         "modules": false,
         "targets": {
-          "browsers": [
-            ">0.25%"
-          ]
+          "browsers": [">0.25%"]
         },
         "useBuiltIns": "usage"
       }
-    ],
+    ]
   ],
   "env": {
     "development": {
-      "plugins": [
-        "@babel/transform-runtime"
-      ]
+      "plugins": ["@babel/transform-runtime"]
     },
     "production": {
-      "plugins": [
-        "@babel/transform-runtime",
-        "transform-remove-console"
-      ]
+      "plugins": ["@babel/transform-runtime", "transform-remove-console"]
     },
     "test": {
       "presets": [
@@ -35,7 +28,7 @@
               "node": "current"
             }
           }
-        ],
+        ]
       ]
     }
   },
