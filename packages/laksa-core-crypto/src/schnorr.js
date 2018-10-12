@@ -3,6 +3,7 @@ import elliptic from 'elliptic'
 import BN from 'bn.js'
 import hashjs from 'hash.js'
 import DRBG from 'hmac-drbg'
+
 import Signature from 'elliptic/lib/elliptic/ec/signature'
 
 const { curve } = elliptic.ec('secp256k1')
@@ -12,7 +13,7 @@ const { curve } = elliptic.ec('secp256k1')
 // and the sign for y.
 // Hence a total of 33 bytes.
 const PUBKEY_COMPRESSED_SIZE_BYTES = 33
-
+export { Signature }
 /**
  * Hash (r | M).
  * @param {Buffer} msg

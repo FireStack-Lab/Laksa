@@ -12,6 +12,8 @@ import {
 import { encrypt, decrypt } from 'laksa-extend-keystore'
 import { ENCRYPTED } from './symbols'
 
+export { ENCRYPTED }
+
 function generateAccountObject(privateKey) {
   if (!isPrivateKey(privateKey)) throw new Error('private key is not correct')
   const address = getAddressFromPrivateKey(privateKey)
@@ -52,7 +54,7 @@ export const importAccount = privateKey => {
   }
 }
 
-export const encryptAccount = async (accountObject, password, level = 1024) => {
+export const encryptAccount = async (accountObject, password, options = { level: 1024 }) => {
   if (!isString(password)) throw new Error('password is not found')
   validateArgs(accountObject, {
     address: [isAddress],
@@ -60,7 +62,7 @@ export const encryptAccount = async (accountObject, password, level = 1024) => {
     publicKey: [isPubkey]
   })
   try {
-    const encrypted = await encrypt(accountObject.privateKey, password, { level })
+    const encrypted = await encrypt(accountObject.privateKey, password, options)
     const encryptedObj = {
       ...accountObject,
       privateKey: ENCRYPTED,
@@ -129,8 +131,8 @@ export class Account {
   }
 
   // sub object
-  async encrypt(password, level = 1024) {
-    const encryptedAccount = await encryptAccount(this, password, level)
+  async encrypt(password, options = { level: 1024 }) {
+    const encryptedAccount = await encryptAccount(this, password, options)
     return Object.assign(this, encryptedAccount)
   }
 
@@ -161,11 +163,12 @@ export class Account {
   }
 
   // sign plain object with password
-  signTransactionWithPassword(transactionObject, password) {
+  async signTransactionWithPassword(transactionObject, password) {
     if (this.privateKey === ENCRYPTED) {
-      const decrypted = this.decrypt(password)
+      const decrypted = await this.decrypt(password)
       const signed = signTransaction(decrypted.privateKey, transactionObject)
-      Object.assign(this, encryptAccount(decrypted, password))
+      const encryptAfterSign = await this.encrypt(password)
+      Object.assign(this, encryptAfterSign)
       return signed
     }
   }

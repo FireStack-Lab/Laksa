@@ -20,9 +20,9 @@ const packages = readdirSync(packagesRoot).filter(dir => {
 const moduleNameMapper = {}
 packages.forEach(name => {
   // Root entry point
-  moduleNameMapper[`^${name}$`] = `<rootDir>/dist/node_modules/${name}`
+  moduleNameMapper[`^${name}$`] = `<rootDir>/packages/${name}/lib/index.js`
   // Named entry points
-  moduleNameMapper[`^${name}/(.*)$`] = `<rootDir>/dist/node_modules/${name}/$1`
+  // moduleNameMapper[`^${name}/(.*)$`] = `<rootDir>/dist/node_modules/${name}/$1`
 })
 
 module.exports = Object.assign({}, baseConfig, {

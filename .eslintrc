@@ -56,5 +56,8 @@
     "window": true,
     "navigator": true,
     "document": true
+  },
+  "env": {
+    "jest": true
   }
 }

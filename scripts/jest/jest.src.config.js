@@ -4,7 +4,7 @@ const config = {
   },
   testMatch: ['<rootDir>/packages/**/__test__/?(*.)+(spec|test).js'],
   moduleDirectories: ['src', 'node_modules'],
-  moduleFileExtensions: ['js'],
+  moduleFileExtensions: ['ts', 'tsx', 'js', 'jsx', 'json', 'node'],
   testURL: 'http://localhost',
   coverageThreshold: {
     global: {
@@ -17,8 +17,8 @@ const config = {
   rootDir: process.cwd(),
   roots: ['<rootDir>/packages', '<rootDir>/scripts'],
   collectCoverageFrom: ['packages/**/*.js'],
-  timers: 'fake'
-  // collectCoverage: true
+  timers: 'fake',
+  collectCoverage: true
 }
 
 module.exports = config

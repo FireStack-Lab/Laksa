@@ -80,7 +80,9 @@
       return e;
     }
   };
-  const encryptAccount = async (accountObject, password, level = 1024) => {
+  const encryptAccount = async (accountObject, password, options = {
+    level: 1024
+  }) => {
     if (!laksaUtils.isString(password)) throw new Error('password is not found');
     laksaUtils.validateArgs(accountObject, {
       address: [laksaUtils.isAddress],
@@ -89,9 +91,7 @@
     });
 
     try {
-      const encrypted = await laksaExtendKeystore.encrypt(accountObject.privateKey, password, {
-        level
-      });
+      const encrypted = await laksaExtendKeystore.encrypt(accountObject.privateKey, password, options);
 
       const encryptedObj = _objectSpread({}, accountObject, {
         privateKey: ENCRYPTED
@@ -159,8 +159,10 @@
     } // sub object
 
 
-    async encrypt(password, level = 1024) {
-      const encryptedAccount = await encryptAccount(this, password, level);
+    async encrypt(password, options = {
+      level: 1024
+    }) {
+      const encryptedAccount = await encryptAccount(this, password, options);
       return Object.assign(this, encryptedAccount);
     } // sub object
 
@@ -191,17 +193,19 @@
     } // sign plain object with password
 
 
-    signTransactionWithPassword(transactionObject, password) {
+    async signTransactionWithPassword(transactionObject, password) {
       if (this.privateKey === ENCRYPTED) {
-        const decrypted = this.decrypt(password);
+        const decrypted = await this.decrypt(password);
         const signed = signTransaction(decrypted.privateKey, transactionObject);
-        Object.assign(this, encryptAccount(decrypted, password));
+        const encryptAfterSign = await this.encrypt(password);
+        Object.assign(this, encryptAfterSign);
         return signed;
       }
     }
 
   }
 
+  exports.ENCRYPTED = ENCRYPTED;
   exports.createAccount = createAccount;
   exports.importAccount = importAccount;
   exports.encryptAccount = encryptAccount;

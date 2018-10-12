@@ -1,4 +1,5 @@
 module.exports = {
+  babelrc: false,
   presets: ['@babel/env'],
   plugins: [
     ['@babel/transform-runtime'],

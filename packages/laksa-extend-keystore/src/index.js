@@ -1,5 +1,5 @@
 import aes from 'aes-js'
-import { pbkdf2sync } from 'pbkdf2'
+import { pbkdf2Sync } from 'pbkdf2'
 import scrypt from 'scrypt.js'
 import uuid from 'uuid'
 import { randomBytes, hashjs } from 'laksa-core-crypto'
@@ -29,7 +29,7 @@ const getDerivedKey = (key, kdf, params) => {
     const derivedKey =
       kdf === 'scrypt'
         ? scrypt(key, salt, n, r, p, dklen)
-        : pbkdf2sync(key, salt, n, dklen, 'sha256')
+        : pbkdf2Sync(key, salt, n, dklen, 'sha256')
 
     resolve(derivedKey)
   })
@@ -51,14 +51,15 @@ const getDerivedKey = (key, kdf, params) => {
  *
  * @returns {Promise<string>}
  */
-export const encrypt = async (privateKey, passphrase, options = {}) => {
+export const encrypt = async (privateKey, passphrase, options) => {
   const salt = randomBytes(32)
   const iv = Buffer.from(randomBytes(16), 'hex')
-  const kdf = options.kdf || 'scrypt'
-  const level = options.level || 8192
+  const kdf = options.kdf !== undefined ? options.kdf : 'scrypt'
+  const level = options.level !== undefined ? options.level : 8192
+  const n = kdf === 'pbkdf2' ? 262144 : level
   const kdfparams = {
     salt,
-    n: kdf === 'pbkdf2' ? 262144 : level,
+    n,
     r: 8,
     p: 1,
     dklen: 32
