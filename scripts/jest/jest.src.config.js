@@ -18,8 +18,8 @@ const config = {
   roots: ['<rootDir>/packages', '<rootDir>/scripts'],
   collectCoverageFrom: ['packages/**/*.js'],
   timers: 'fake',
-  setupTestFrameworkScriptFile: '<rootDir>/scripts/jest/jest.setup.js'
-  // collectCoverage: true
+  setupTestFrameworkScriptFile: '<rootDir>/scripts/jest/jest.setup.js',
+  collectCoverage: true
 }
 
 module.exports = config
