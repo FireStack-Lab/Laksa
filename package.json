@@ -63,6 +63,7 @@
     "url": "git+https://github.com/FireStack-Lab/Laksa.git"
   },
   "scripts": {
+    "test:debug": "cross-env NODE_ENV=test node --inspect-brk node_modules/.bin/jest --runInBand --config ./scripts/jest/jest.src.config.js --silent",
     "test:src": "cross-env NODE_ENV=test jest --config ./scripts/jest/jest.src.config.js --silent --runInBand",
     "test:node": "cross-env NODE_ENV=development jest --config ./scripts/jest/jest.src.config.js --silent --runInBand",
     "test:lib": "cross-env NODE_ENV=production jest --config ./scripts/jest/jest.src.config.js --silent --runInBand",
