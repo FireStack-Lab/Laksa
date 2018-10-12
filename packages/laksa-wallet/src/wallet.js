@@ -198,12 +198,12 @@ class Wallet {
   }
 
   // -----------
-  async encryptAllAccounts(password, level) {
+  async encryptAllAccounts(password, options) {
     this.getIndexKeys().forEach(index => {
       const accountObject = this.getAccountByIndex(parseInt(index, 10))
       if (accountObject) {
         const { address } = accountObject
-        this.encryptAccountByAddress(address, password, level, encryptedBy.WALLET)
+        this.encryptAccountByAddress(address, password, options, encryptedBy.WALLET)
       }
     })
     return true
@@ -225,12 +225,12 @@ class Wallet {
     return true
   }
 
-  async encryptAccountByAddress(address, password, level, by) {
+  async encryptAccountByAddress(address, password, options, by) {
     const accountObject = this.getAccountByAddress(address)
     if (accountObject !== undefined) {
       const { privateKey, crypto } = accountObject
       if (privateKey !== undefined && privateKey !== ENCRYPTED && crypto === undefined) {
-        const encryptedObject = await accountObject.encrypt(password, level)
+        const encryptedObject = await accountObject.encrypt(password, options)
         return this.updateAccountByAddress(
           address,
           Object.assign({}, encryptedObject, {

@@ -86,6 +86,7 @@ export class Contract {
       method: 'CreateTransaction',
       params: [{ ...raw, amount: raw.amount.toNumber() }]
     })
+
     return tx.confirm(response.TranID)
   }
 

@@ -39,7 +39,7 @@ var getDerivedKey = function getDerivedKey(key, kdf, params) {
       reject(new Error('Only pbkdf2 and scrypt are supported'));
     }
 
-    var derivedKey = kdf === 'scrypt' ? scrypt(key, salt, n, r, p, dklen) : pbkdf2.pbkdf2sync(key, salt, n, dklen, 'sha256');
+    var derivedKey = kdf === 'scrypt' ? scrypt(key, salt, n, r, p, dklen) : pbkdf2.pbkdf2Sync(key, salt, n, dklen, 'sha256');
     resolve(derivedKey);
   });
 };
@@ -66,30 +66,20 @@ var encrypt =
 function () {
   var _ref = _asyncToGenerator(
   /*#__PURE__*/
-  _regeneratorRuntime.mark(function _callee(privateKey, passphrase) {
-    var options,
-        salt,
-        iv,
-        kdf,
-        level,
-        kdfparams,
-        derivedKey,
-        CTR,
-        cipher,
-        ciphertext,
-        _args = arguments;
+  _regeneratorRuntime.mark(function _callee(privateKey, passphrase, options) {
+    var salt, iv, kdf, level, n, kdfparams, derivedKey, CTR, cipher, ciphertext;
     return _regeneratorRuntime.wrap(function _callee$(_context) {
       while (1) {
         switch (_context.prev = _context.next) {
           case 0:
-            options = _args.length > 2 && _args[2] !== undefined ? _args[2] : {};
             salt = laksaCoreCrypto.randomBytes(32);
             iv = Buffer.from(laksaCoreCrypto.randomBytes(16), 'hex');
-            kdf = options.kdf || 'scrypt';
-            level = options.level || 8192;
+            kdf = options.kdf !== undefined ? options.kdf : 'scrypt';
+            level = options.level !== undefined ? options.level : 8192;
+            n = kdf === 'pbkdf2' ? 262144 : level;
             kdfparams = {
               salt: salt,
-              n: kdf === 'pbkdf2' ? 262144 : level,
+              n: n,
               r: 8,
               p: 1,
               dklen: 32
@@ -127,7 +117,7 @@ function () {
     }, _callee, this);
   }));
 
-  return function encrypt(_x, _x2) {
+  return function encrypt(_x, _x2, _x3) {
     return _ref.apply(this, arguments);
   };
 }();
@@ -183,7 +173,7 @@ function () {
     }, _callee2, this);
   }));
 
-  return function decrypt(_x3, _x4) {
+  return function decrypt(_x4, _x5) {
     return _ref2.apply(this, arguments);
   };
 }();

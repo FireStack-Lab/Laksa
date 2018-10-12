@@ -66,7 +66,7 @@ function () {
   var _ref = _asyncToGenerator(
   /*#__PURE__*/
   _regeneratorRuntime.mark(function _callee(accountObject, password) {
-    var level,
+    var options,
         encrypted,
         encryptedObj,
         _args = arguments;
@@ -74,7 +74,9 @@ function () {
       while (1) {
         switch (_context.prev = _context.next) {
           case 0:
-            level = _args.length > 2 && _args[2] !== undefined ? _args[2] : 1024;
+            options = _args.length > 2 && _args[2] !== undefined ? _args[2] : {
+              level: 1024
+            };
 
             if (laksaUtils.isString(password)) {
               _context.next = 3;
@@ -91,9 +93,7 @@ function () {
             });
             _context.prev = 4;
             _context.next = 7;
-            return laksaExtendKeystore.encrypt(accountObject.privateKey, password, {
-              level: level
-            });
+            return laksaExtendKeystore.encrypt(accountObject.privateKey, password, options);
 
           case 7:
             encrypted = _context.sent;
@@ -223,16 +223,18 @@ function () {
       var _encrypt = _asyncToGenerator(
       /*#__PURE__*/
       _regeneratorRuntime.mark(function _callee3(password) {
-        var level,
+        var options,
             encryptedAccount,
             _args3 = arguments;
         return _regeneratorRuntime.wrap(function _callee3$(_context3) {
           while (1) {
             switch (_context3.prev = _context3.next) {
               case 0:
-                level = _args3.length > 1 && _args3[1] !== undefined ? _args3[1] : 1024;
+                options = _args3.length > 1 && _args3[1] !== undefined ? _args3[1] : {
+                  level: 1024
+                };
                 _context3.next = 3;
-                return encryptAccount(this, password, level);
+                return encryptAccount(this, password, options);
 
               case 3:
                 encryptedAccount = _context3.sent;
@@ -306,21 +308,52 @@ function () {
 
   }, {
     key: "signTransactionWithPassword",
-    value: function signTransactionWithPassword(transactionObject, password) {
-      if (this.privateKey === ENCRYPTED) {
-        var decrypted = this.decrypt(password);
+    value: function () {
+      var _signTransactionWithPassword = _asyncToGenerator(
+      /*#__PURE__*/
+      _regeneratorRuntime.mark(function _callee5(transactionObject, password) {
+        var decrypted, signed, encryptAfterSign;
+        return _regeneratorRuntime.wrap(function _callee5$(_context5) {
+          while (1) {
+            switch (_context5.prev = _context5.next) {
+              case 0:
+                if (!(this.privateKey === ENCRYPTED)) {
+                  _context5.next = 10;
+                  break;
+                }
 
-        var signed = _signTransaction(decrypted.privateKey, transactionObject);
+                _context5.next = 3;
+                return this.decrypt(password);
 
-        Object.assign(this, encryptAccount(decrypted, password));
-        return signed;
-      }
-    }
+              case 3:
+                decrypted = _context5.sent;
+                signed = _signTransaction(decrypted.privateKey, transactionObject);
+                _context5.next = 7;
+                return this.encrypt(password);
+
+              case 7:
+                encryptAfterSign = _context5.sent;
+                Object.assign(this, encryptAfterSign);
+                return _context5.abrupt("return", signed);
+
+              case 10:
+              case "end":
+                return _context5.stop();
+            }
+          }
+        }, _callee5, this);
+      }));
+
+      return function signTransactionWithPassword(_x7, _x8) {
+        return _signTransactionWithPassword.apply(this, arguments);
+      };
+    }()
   }]);
 
   return Account;
 }();
 
+exports.ENCRYPTED = ENCRYPTED;
 exports.createAccount = _createAccount;
 exports.importAccount = _importAccount;
 exports.encryptAccount = encryptAccount;

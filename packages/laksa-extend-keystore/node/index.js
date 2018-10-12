@@ -34,7 +34,7 @@
         reject(new Error('Only pbkdf2 and scrypt are supported'));
       }
 
-      const derivedKey = kdf === 'scrypt' ? scrypt(key, salt, n, r, p, dklen) : pbkdf2.pbkdf2sync(key, salt, n, dklen, 'sha256');
+      const derivedKey = kdf === 'scrypt' ? scrypt(key, salt, n, r, p, dklen) : pbkdf2.pbkdf2Sync(key, salt, n, dklen, 'sha256');
       resolve(derivedKey);
     });
   };
@@ -56,14 +56,15 @@
    */
 
 
-  const encrypt = async (privateKey, passphrase, options = {}) => {
+  const encrypt = async (privateKey, passphrase, options) => {
     const salt = laksaCoreCrypto.randomBytes(32);
     const iv = Buffer.from(laksaCoreCrypto.randomBytes(16), 'hex');
-    const kdf = options.kdf || 'scrypt';
-    const level = options.level || 8192;
+    const kdf = options.kdf !== undefined ? options.kdf : 'scrypt';
+    const level = options.level !== undefined ? options.level : 8192;
+    const n = kdf === 'pbkdf2' ? 262144 : level;
     const kdfparams = {
       salt,
-      n: kdf === 'pbkdf2' ? 262144 : level,
+      n,
       r: 8,
       p: 1,
       dklen: 32

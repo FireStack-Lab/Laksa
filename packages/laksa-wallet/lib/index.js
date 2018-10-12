@@ -281,7 +281,7 @@ function () {
     value: function () {
       var _encryptAllAccounts = _asyncToGenerator(
       /*#__PURE__*/
-      _regeneratorRuntime.mark(function _callee(password, level) {
+      _regeneratorRuntime.mark(function _callee(password, options) {
         var _this5 = this;
 
         return _regeneratorRuntime.wrap(function _callee$(_context) {
@@ -294,7 +294,7 @@ function () {
                   if (accountObject) {
                     var address = accountObject.address;
 
-                    _this5.encryptAccountByAddress(address, password, level, encryptedBy.WALLET);
+                    _this5.encryptAccountByAddress(address, password, options, encryptedBy.WALLET);
                   }
                 });
                 return _context.abrupt("return", true);
@@ -357,7 +357,7 @@ function () {
     value: function () {
       var _encryptAccountByAddress = _asyncToGenerator(
       /*#__PURE__*/
-      _regeneratorRuntime.mark(function _callee3(address, password, level, by) {
+      _regeneratorRuntime.mark(function _callee3(address, password, options, by) {
         var accountObject, privateKey, crypto, encryptedObject;
         return _regeneratorRuntime.wrap(function _callee3$(_context3) {
           while (1) {
@@ -378,7 +378,7 @@ function () {
                 }
 
                 _context3.next = 6;
-                return accountObject.encrypt(password, level);
+                return accountObject.encrypt(password, options);
 
               case 6:
                 encryptedObject = _context3.sent;

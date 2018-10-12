@@ -1,53 +1,54 @@
-
 <!doctype html>
 <html>
+
 <head>
-<meta charset="utf-8" />
-<meta name="apple-mobile-web-app-capable" content="yes"/>
-<meta name="apple-mobile-web-app-status-bar-style" content="black"/>
-<meta name="format-detection" content="telephone=no"/>
-<meta name="format-detection" content="email=no"/>
-<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, minimum-scale=1, user-scalable=no" />
-<title></title>
+  <meta charset="utf-8" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black" />
+  <meta name="format-detection" content="telephone=no" />
+  <meta name="format-detection" content="email=no" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, minimum-scale=1, user-scalable=no" />
+  <title></title>
 
 </head>
+
 <body>
-<div id="root">
-<h1>This is Laksa.js simple example</h1>
+  <div id="root">
+    <h1>This is Laksa.js simple example</h1>
 
-<h3>Current Provider is:</h3>
-<h4 id="currenProvider">http://localhost:4200 </h4>
-<input id="nodeUrl" value="http://localhost:4200" />
-<button id="setProviderButton">Set Provider</button>
-</div>
-<script src="../../dist/Laksa.browser.js"></script>
-<!-- <script src="../../dist/LaksaZil.browser.js"></script> -->
-<!-- <script src="../../dist/LaksaWallet.browser.js"></script> -->
-<!-- <script src="../../dist/LaksaContract.browser.js"></script> -->
-<script>
+    <h3>Current Provider is:</h3>
+    <h4 id="currenProvider">http://localhost:4200 </h4>
+    <input id="nodeUrl" value="http://localhost:4200" />
+    <button id="setProviderButton">Set Provider</button>
+  </div>
+  <script src="../../dist/Laksa.browser.js"></script>
+  <!-- <script src="../../dist/LaksaZil.browser.js"></script> -->
+  <!-- <script src="../../dist/LaksaWallet.browser.js"></script> -->
+  <!-- <script src="../../dist/LaksaContract.browser.js"></script> -->
+  <script>
 
-var currenProvider=document.getElementById('nodeUrl').value
-var setButton=document.getElementById('setProviderButton')
-//For local testing, use URL = 'http://localhost:4200'
-//To connect to the external network, use URL = 'https://api-scilla.zilliqa.com'
-var laksa =new Laksa()
-// var URL = undefined
-// const {Wallet}=window.LaksaWallet
+    var currenProvider = document.getElementById('nodeUrl').value
+    var setButton = document.getElementById('setProviderButton')
+    //For local testing, use URL = 'http://localhost:4200'
+    //To connect to the external network, use URL = 'https://api-scilla.zilliqa.com'
+    var laksa = new Laksa()
+    // var URL = undefined
+    // const {Wallet}=window.LaksaWallet
 
-// const {Contract}=  LaksaContract
-// const contract= new Contract()
-// const Zil=LaksaZil
+    // const {Contract}=  LaksaContract
+    // const contract= new Contract()
+    // const Zil=LaksaZil
 
 
-setButton.onclick=function(e){
-  console.log('lll')
-};
+    setButton.onclick = function (e) {
+      console.log('lll')
+    };
 
-var URL ='https://api-scilla.zilliqa.com'
-laksa.setProvider(URL)
-laksa.setScillaProvider('https://scilla-runner.zilliqa.com')
-// webz.isConnected().then(console.log)
-let code = `
+    var URL = 'https://api-scilla.zilliqa.com'
+    laksa.setProvider(URL)
+    laksa.setScillaProvider('https://scilla-runner.zilliqa.com')
+    // webz.isConnected().then(console.log)
+    let code = `
 (* HelloWorld contract *)
 
 import ListUtils
@@ -89,117 +90,118 @@ transition getHello ()
     send msgs
 end
 `
-// //
-// // the immutable initialisation variables
-let initParams = [
-  {
-    vname: "dummy",
-    type: "String",
-    value: `ASDF`
-  }
-];
+    // //
+    // // the immutable initialisation variables
+    let initParams = [
+      {
+        vname: "dummy",
+        type: "String",
+        value: `ASDF`
+      }
+    ];
 
-let txnDetails = {
-  version: 0,
-  nonce: 2,
-  to: "0000000000000000000000000000000000000000",
-  amount: laksa.util.toBN(0),
-  gasPrice: 1,
-  gasLimit: 50,
-  code: code,
-  data: JSON.stringify(initParams).replace(/\\"/g, '"')
-};
-//
-let txnDetails2={
-  version: 0,
-  nonce:0,
-  to: '0000000000000000000000000000000000000000',
-  // amount should be 0.  we don't accept implicitly anymore.
-  amount: laksa.util.toBN(0),
-  gasPrice: laksa.util.toBN(1).toNumber(),
-  gasLimit: laksa.util.toBN(50).toNumber(),
-  code: code,
-  data: JSON.stringify(initParams).replace(/\\"/g, '"')
-}
-// sign the transaction using util methods
-let txn = laksa.util.createTransactionJson(
-  "e19d05c5452598e24caad4a0d85a49146f7be089515c905ae6a19e8a578a6930",
-  txnDetails2
-);
-
-
-
-// console.log({txn});
-
-
-const myAddress = { address: "9bfec715a6bd658fcb62b0f8cc9bfa2ade71434a" };
-// with callback
-// laksa.zil.getNetworkId((err,data)=>{console.log({err,data})})
-
-// laksa.contract.decodeABI({code:code})
-//   .then(decoded=>
-//       decoded.setInitParamsValues(
-//        decoded.abi.getInitParams(),[laksa.util.toHex(myAddress.address)]
-//      ))
-//   .then(inited=>inited.setBlockNumber())
-//   .then(setted=>setted.generateNewContractJson())
-//   .then(ready=>ready.testCall({gasLimit:2000}))
-//   .then(state=>console.log(state.contractJson))
+    let txnDetails = {
+      version: 0,
+      nonce: 2,
+      to: "0000000000000000000000000000000000000000",
+      amount: laksa.util.toBN(0),
+      gasPrice: 1,
+      gasLimit: 50,
+      code: code,
+      data: JSON.stringify(initParams).replace(/\\"/g, '"')
+    };
+    //
+    let txnDetails2 = {
+      version: 0,
+      nonce: 0,
+      to: '0000000000000000000000000000000000000000',
+      // amount should be 0.  we don't accept implicitly anymore.
+      amount: laksa.util.toBN(0),
+      gasPrice: laksa.util.toBN(1).toNumber(),
+      gasLimit: laksa.util.toBN(50).toNumber(),
+      code: code,
+      data: JSON.stringify(initParams).replace(/\\"/g, '"')
+    }
+    // sign the transaction using util methods
+    let txn = laksa.util.createTransactionJson(
+      "e19d05c5452598e24caad4a0d85a49146f7be089515c905ae6a19e8a578a6930",
+      txnDetails2
+    );
 
 
 
-// laksa.contracts.new(code,[laksa.util.toHex(myAddress.address)]).then(console.log)
-// console.log(laksa.contracts.waitForSign);
+    // console.log({txn});
 
-//laksa.isConnected().then(console.log);
 
-// laksa.zil.getSmartContracts(myAddress,(err,data)=>{
-//   if(data.length>0){
-//     data.map(d=>{
-//       laksa.zil.getSmartContractState({address:d.address},(err,data)=>{
-//         console.log({smartContractState:data});
-//       })
-//       laksa.zil.getSmartContractCode({address:d.address},(err,data)=>{
-//         console.log({smartContractCode:data});
-//       })
-//       laksa.zil.getSmartContractInit({address:d.address},(err,data)=>{
-//         console.log({smartContractInit:data})
-//       })
-//     })
-//   }
-// });
+    const myAddress = { address: "9bfec715a6bd658fcb62b0f8cc9bfa2ade71434a" };
+    // with callback
+    // laksa.zil.getNetworkId((err,data)=>{console.log({err,data})})
 
-// laksa.zil.createMessage({
-//   to:'2E3C9B415B19AE4035503A06192A0FAD76E04243',
-//   from:'9bfec715a6bd658fcb62b0f8cc9bfa2ade71434a',
-//   gas:10,
-//   gasPrice:10
-// }).then(console.log)
-
-// send the transaction to the node
-// Laksa.zil.createTransaction(txn, callback);
-
-function callback(err, data) {
-  console.log({ err, data });
-}
+    // laksa.contract.decodeABI({code:code})
+    //   .then(decoded=>
+    //       decoded.setInitParamsValues(
+    //        decoded.abi.getInitParams(),[laksa.util.toHex(myAddress.address)]
+    //      ))
+    //   .then(inited=>inited.setBlockNumber())
+    //   .then(setted=>setted.generateNewContractJson())
+    //   .then(ready=>ready.testCall({gasLimit:2000}))
+    //   .then(state=>console.log(state.contractJson))
 
 
 
-const accountA=laksa.wallet.importAccountFromPrivateKey('be52242876374b3438e10d13cae1a9ea3b8783212c49ad800d26c308fbf5e8fb')
-laksa.wallet.setDefaultAccount(accountA).setSigner(accountA)
-// console.log(laksa.contracts);
+    // laksa.contracts.new(code,[laksa.util.toHex(myAddress.address)]).then(console.log)
+    // console.log(laksa.contracts.waitForSign);
 
-// laksa.contracts.new(code,[laksa.util.toHex(accountA.address)])
-//   .then((newContract) =>{
-//     newContract.deployTxn({gasLimit:50,gasPrice:1})
-//   }
-//  ).then(console.log);
+    //laksa.isConnected().then(console.log);
+
+    // laksa.zil.getSmartContracts(myAddress,(err,data)=>{
+    //   if(data.length>0){
+    //     data.map(d=>{
+    //       laksa.zil.getSmartContractState({address:d.address},(err,data)=>{
+    //         console.log({smartContractState:data});
+    //       })
+    //       laksa.zil.getSmartContractCode({address:d.address},(err,data)=>{
+    //         console.log({smartContractCode:data});
+    //       })
+    //       laksa.zil.getSmartContractInit({address:d.address},(err,data)=>{
+    //         console.log({smartContractInit:data})
+    //       })
+    //     })
+    //   }
+    // });
+
+    // laksa.zil.createMessage({
+    //   to:'2E3C9B415B19AE4035503A06192A0FAD76E04243',
+    //   from:'9bfec715a6bd658fcb62b0f8cc9bfa2ade71434a',
+    //   gas:10,
+    //   gasPrice:10
+    // }).then(console.log)
+
+    // send the transaction to the node
+    // Laksa.zil.createTransaction(txn, callback);
+
+    function callback(err, data) {
+      console.log({ err, data });
+    }
 
 
+
+    const accountA = laksa.wallet.importAccountFromPrivateKey('be52242876374b3438e10d13cae1a9ea3b8783212c49ad800d26c308fbf5e8fb')
+    laksa.wallet.setDefaultAccount(accountA).setSigner(accountA)
+    // console.log(laksa.contracts);
+
+    laksa.contracts.new(code, [laksa.util.toHex(accountA.address)])
+      .then((newContract) => {
+        newContract.deployTxn({ gasLimit: 50, gasPrice: 1 })
+      }
+      ).then(console.log);
 
 
 
 
-</script>
+
+
+  </script>
 </body>
+
 </html>

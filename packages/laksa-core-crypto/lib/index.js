@@ -6,7 +6,7 @@ function _interopDefault (ex) { return (ex && (typeof ex === 'object') && 'defau
 
 require('core-js/modules/es6.regexp.to-string');
 require('core-js/modules/es6.typed.uint8-array');
-var randomBytes = require('randomBytes');
+var RB = _interopDefault(require('randomBytes'));
 require('core-js/modules/es6.array.fill');
 var assert = _interopDefault(require('bsert'));
 var elliptic = _interopDefault(require('elliptic'));
@@ -17,14 +17,14 @@ var Signature = _interopDefault(require('elliptic/lib/elliptic/ec/signature'));
 require('core-js/modules/es6.regexp.match');
 require('core-js/modules/es6.regexp.replace');
 
-var randomBytes$1 = function randomBytes$$1(bytes) {
+var randomBytes = function randomBytes(bytes) {
   var randBz;
 
   if (typeof window !== 'undefined' && window.crypto && window.crypto.getRandomValues) {
     randBz = window.crypto.getRandomValues(new Uint8Array(bytes));
   } else if (typeof require !== 'undefined') {
     // randBz = require('crypto').randomBytes(bytes)
-    randBz = randomBytes.randomBytes(bytes);
+    randBz = RB(bytes);
   } else {
     throw new Error('Unable to generate safe random numbers.');
   }
@@ -131,6 +131,44 @@ var trySign = function trySign(msg, prv, k, pubKey) {
   });
 };
 /**
+ * Verify signature.
+ *
+ * @param {Buffer} msg
+ * @param {Buffer} signature
+ * @param {Buffer} key
+ *
+ * @returns {boolean}
+ *
+ * 1. Check if r,s is in [1, ..., order-1]
+ * 2. Compute Q = sG + r*kpub
+ * 3. If Q = O (the neutral point), return 0;
+ * 4. r' = H(Q, kpub, m)
+ * 5. return r' == r
+ */
+
+var verify = function verify(msg, signature, key) {
+  var sig = new Signature(signature);
+  if (sig.s.gte(curve.n)) throw new Error('Invalid S value.');
+  if (sig.r.gt(curve.n)) throw new Error('Invalid R value.');
+  var kpub = curve.decodePoint(key);
+  var l = kpub.mul(sig.r);
+  var r = curve.g.mul(sig.s);
+  var Q = l.add(r);
+  var compressedQ = new BN(Q.encodeCompressed());
+  var r1 = hash(compressedQ, key, msg);
+  if (r1.gte(curve.n)) throw new Error('Invalid hash.');
+  if (r1.isZero()) throw new Error('Invalid hash.');
+  return r1.eq(sig.r);
+};
+var toSignature = function toSignature(serialised) {
+  var r = serialised.slice(0, 64);
+  var s = serialised.slice(64);
+  return new Signature({
+    r: r,
+    s: s
+  });
+};
+/**
  * Schnorr personalization string.
  * @const {Buffer}
  */
@@ -163,6 +201,39 @@ var getDRBG = function getDRBG(msg, priv, data) {
     pers: pers
   });
 };
+/**
+ * Generate pub+priv nonce pair.
+ *
+ * @param {Buffer} msg
+ * @param {Buffer} priv
+ * @param {Buffer} data
+ *
+ * @returns {Buffer}
+ */
+
+var generateNoncePair = function generateNoncePair(msg, priv, data) {
+  var drbg = getDRBG(msg, priv, data);
+  var len = curve.n.byteLength();
+  var k = new BN(drbg.generate(len));
+
+  while (k.isZero() && k.gte(curve.n)) {
+    k = new BN(drbg.generate(len));
+  }
+
+  return Buffer.from(curve.g.mul(k).encode('array', true));
+};
+
+var schnorr = /*#__PURE__*/Object.freeze({
+  Signature: Signature,
+  hash: hash,
+  sign: sign,
+  trySign: trySign,
+  verify: verify,
+  toSignature: toSignature,
+  alg: alg,
+  getDRBG: getDRBG,
+  generateNoncePair: generateNoncePair
+});
 
 var NUM_BYTES = 32; // const HEX_PREFIX = '0x';
 
@@ -241,7 +312,7 @@ var hexToIntArray = function hexToIntArray(hex) {
  */
 
 var generatePrivateKey = function generatePrivateKey() {
-  return randomBytes$1(NUM_BYTES);
+  return randomBytes(NUM_BYTES);
 };
 /**
  * getAddressFromPrivateKey
@@ -418,4 +489,5 @@ exports.createTransactionJson = createTransactionJson;
 exports.sign = sign$1;
 exports.toChecksumAddress = toChecksumAddress;
 exports.isValidChecksumAddress = isValidChecksumAddress;
-exports.randomBytes = randomBytes$1;
+exports.randomBytes = randomBytes;
+exports.schnorr = schnorr;

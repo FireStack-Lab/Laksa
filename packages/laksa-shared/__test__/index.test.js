@@ -1,18 +1,10 @@
-const ErrorCodes = process.env.NODE_ENV === 'test'
-  ? require('../src')
-  : process.env.NODE_ENV === 'development'
-    ? require('../node')
-    : process.env.NODE_ENV === 'production'
-      ? require('../lib')
-      : require('../src')
-
-const {
+import {
   ConnectionTimeout,
   InvalidResponse,
   InvalidConnection,
   InvalidProvider,
   InvalidNumberOfRPCParams
-} = ErrorCodes
+} from 'laksa-shared'
 
 test('test ConnectionTimeout', () => {
   expect(ConnectionTimeout(500)).toEqual(new Error('CONNECTION TIMEOUT: timeout of 500 ms achived'))

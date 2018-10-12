@@ -1,9 +1,10 @@
 (function (global, factory) {
   typeof exports === 'object' && typeof module !== 'undefined' ? factory(exports, require('randomBytes'), require('bsert'), require('elliptic'), require('bn.js'), require('hash.js'), require('hmac-drbg'), require('elliptic/lib/elliptic/ec/signature')) :
   typeof define === 'function' && define.amd ? define(['exports', 'randomBytes', 'bsert', 'elliptic', 'bn.js', 'hash.js', 'hmac-drbg', 'elliptic/lib/elliptic/ec/signature'], factory) :
-  (factory((global.Laksa = {}),global.randomBytes,global.assert,global.elliptic,global.BN,global.hashjs,global.DRBG,global.Signature));
-}(this, (function (exports,randomBytes,assert,elliptic,BN,hashjs,DRBG,Signature) { 'use strict';
+  (factory((global.Laksa = {}),global.RB,global.assert,global.elliptic,global.BN,global.hashjs,global.DRBG,global.Signature));
+}(this, (function (exports,RB,assert,elliptic,BN,hashjs,DRBG,Signature) { 'use strict';
 
+  RB = RB && RB.hasOwnProperty('default') ? RB['default'] : RB;
   assert = assert && assert.hasOwnProperty('default') ? assert['default'] : assert;
   elliptic = elliptic && elliptic.hasOwnProperty('default') ? elliptic['default'] : elliptic;
   BN = BN && BN.hasOwnProperty('default') ? BN['default'] : BN;
@@ -20,14 +21,14 @@
    * @param {number} bytes
    * @returns {string}
    */
-  const randomBytes$1 = bytes => {
+  const randomBytes = bytes => {
     let randBz;
 
     if (typeof window !== 'undefined' && window.crypto && window.crypto.getRandomValues) {
       randBz = window.crypto.getRandomValues(new Uint8Array(bytes));
     } else if (typeof require !== 'undefined') {
       // randBz = require('crypto').randomBytes(bytes)
-      randBz = randomBytes.randomBytes(bytes);
+      randBz = RB(bytes);
     } else {
       throw new Error('Unable to generate safe random numbers.');
     }
@@ -134,6 +135,44 @@
     });
   };
   /**
+   * Verify signature.
+   *
+   * @param {Buffer} msg
+   * @param {Buffer} signature
+   * @param {Buffer} key
+   *
+   * @returns {boolean}
+   *
+   * 1. Check if r,s is in [1, ..., order-1]
+   * 2. Compute Q = sG + r*kpub
+   * 3. If Q = O (the neutral point), return 0;
+   * 4. r' = H(Q, kpub, m)
+   * 5. return r' == r
+   */
+
+  const verify = (msg, signature, key) => {
+    const sig = new Signature(signature);
+    if (sig.s.gte(curve.n)) throw new Error('Invalid S value.');
+    if (sig.r.gt(curve.n)) throw new Error('Invalid R value.');
+    const kpub = curve.decodePoint(key);
+    const l = kpub.mul(sig.r);
+    const r = curve.g.mul(sig.s);
+    const Q = l.add(r);
+    const compressedQ = new BN(Q.encodeCompressed());
+    const r1 = hash(compressedQ, key, msg);
+    if (r1.gte(curve.n)) throw new Error('Invalid hash.');
+    if (r1.isZero()) throw new Error('Invalid hash.');
+    return r1.eq(sig.r);
+  };
+  const toSignature = serialised => {
+    const r = serialised.slice(0, 64);
+    const s = serialised.slice(64);
+    return new Signature({
+      r,
+      s
+    });
+  };
+  /**
    * Schnorr personalization string.
    * @const {Buffer}
    */
@@ -166,6 +205,39 @@
       pers
     });
   };
+  /**
+   * Generate pub+priv nonce pair.
+   *
+   * @param {Buffer} msg
+   * @param {Buffer} priv
+   * @param {Buffer} data
+   *
+   * @returns {Buffer}
+   */
+
+  const generateNoncePair = (msg, priv, data) => {
+    const drbg = getDRBG(msg, priv, data);
+    const len = curve.n.byteLength();
+    let k = new BN(drbg.generate(len));
+
+    while (k.isZero() && k.gte(curve.n)) {
+      k = new BN(drbg.generate(len));
+    }
+
+    return Buffer.from(curve.g.mul(k).encode('array', true));
+  };
+
+  var schnorr = /*#__PURE__*/Object.freeze({
+    Signature: Signature,
+    hash: hash,
+    sign: sign,
+    trySign: trySign,
+    verify: verify,
+    toSignature: toSignature,
+    alg: alg,
+    getDRBG: getDRBG,
+    generateNoncePair: generateNoncePair
+  });
 
   const NUM_BYTES = 32; // const HEX_PREFIX = '0x';
 
@@ -244,7 +316,7 @@
    */
 
   const generatePrivateKey = () => {
-    return randomBytes$1(NUM_BYTES);
+    return randomBytes(NUM_BYTES);
   };
   /**
    * getAddressFromPrivateKey
@@ -420,7 +492,8 @@
   exports.sign = sign$1;
   exports.toChecksumAddress = toChecksumAddress;
   exports.isValidChecksumAddress = isValidChecksumAddress;
-  exports.randomBytes = randomBytes$1;
+  exports.randomBytes = randomBytes;
+  exports.schnorr = schnorr;
 
   Object.defineProperty(exports, '__esModule', { value: true });
 
