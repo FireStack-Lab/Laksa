@@ -8,8 +8,11 @@ branches:
     - /^v[0-9]/
 install:
   - yarn install --pure-lockfile
+  - yarn add --global codecov
 script:
   - yarn packages:bundle
+  - istanbul cover ./node_modules/mocha/bin/_mocha --reporter lcovonly -- -R spec
+  - codecov
 cache:
   directories:
     - '$HOME/.yarn-cache'
