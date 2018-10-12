@@ -7,7 +7,7 @@
  * @param {number} bytes
  * @returns {string}
  */
-import RB from 'randomBytes'
+import RB from 'randombytes'
 
 export const randomBytes = bytes => {
   const randBz = RB(bytes)
