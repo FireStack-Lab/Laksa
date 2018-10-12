@@ -10,7 +10,7 @@ install:
   - yarn install --pure-lockfile
   - npm install -g codecov
 script:
-  - yarn packages:bundle
+  - yarn dist
   - yarn test:node
   - codecov
 cache:
