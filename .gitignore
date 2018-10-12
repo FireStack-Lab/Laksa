@@ -1,7 +1,7 @@
 # OSX
 #
 .DS_Store
-.vscode/
+.vscode
 # package.json
 
 package-lock.json
