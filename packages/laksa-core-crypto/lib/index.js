@@ -5,8 +5,7 @@ Object.defineProperty(exports, '__esModule', { value: true });
 function _interopDefault (ex) { return (ex && (typeof ex === 'object') && 'default' in ex) ? ex['default'] : ex; }
 
 require('core-js/modules/es6.regexp.to-string');
-require('core-js/modules/es6.typed.uint8-array');
-var RB = _interopDefault(require('randomBytes'));
+var RB = _interopDefault(require('randombytes'));
 require('core-js/modules/es6.array.fill');
 var assert = _interopDefault(require('bsert'));
 var elliptic = _interopDefault(require('elliptic'));
@@ -18,16 +17,14 @@ require('core-js/modules/es6.regexp.match');
 require('core-js/modules/es6.regexp.replace');
 
 var randomBytes = function randomBytes(bytes) {
-  var randBz;
-
-  if (typeof window !== 'undefined' && window.crypto && window.crypto.getRandomValues) {
-    randBz = window.crypto.getRandomValues(new Uint8Array(bytes));
-  } else if (typeof require !== 'undefined') {
-    // randBz = require('crypto').randomBytes(bytes)
-    randBz = RB(bytes);
-  } else {
-    throw new Error('Unable to generate safe random numbers.');
-  }
+  var randBz = RB(bytes); // if (typeof window !== 'undefined' && window.crypto && window.crypto.getRandomValues) {
+  //   randBz = window.crypto.getRandomValues(new Uint8Array(bytes))
+  // } else if (typeof require !== 'undefined') {
+  //   // randBz = require('crypto').randomBytes(bytes)
+  //   randBz = RB(bytes)
+  // } else {
+  //   throw new Error('Unable to generate safe random numbers.')
+  // }
 
   var randStr = '';
 

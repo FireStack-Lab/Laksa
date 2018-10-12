@@ -1,6 +1,6 @@
 (function (global, factory) {
-  typeof exports === 'object' && typeof module !== 'undefined' ? factory(exports, require('randomBytes'), require('bsert'), require('elliptic'), require('bn.js'), require('hash.js'), require('hmac-drbg'), require('elliptic/lib/elliptic/ec/signature')) :
-  typeof define === 'function' && define.amd ? define(['exports', 'randomBytes', 'bsert', 'elliptic', 'bn.js', 'hash.js', 'hmac-drbg', 'elliptic/lib/elliptic/ec/signature'], factory) :
+  typeof exports === 'object' && typeof module !== 'undefined' ? factory(exports, require('randombytes'), require('bsert'), require('elliptic'), require('bn.js'), require('hash.js'), require('hmac-drbg'), require('elliptic/lib/elliptic/ec/signature')) :
+  typeof define === 'function' && define.amd ? define(['exports', 'randombytes', 'bsert', 'elliptic', 'bn.js', 'hash.js', 'hmac-drbg', 'elliptic/lib/elliptic/ec/signature'], factory) :
   (factory((global.Laksa = {}),global.RB,global.assert,global.elliptic,global.BN,global.hashjs,global.DRBG,global.Signature));
 }(this, (function (exports,RB,assert,elliptic,BN,hashjs,DRBG,Signature) { 'use strict';
 
@@ -22,16 +22,14 @@
    * @returns {string}
    */
   const randomBytes = bytes => {
-    let randBz;
-
-    if (typeof window !== 'undefined' && window.crypto && window.crypto.getRandomValues) {
-      randBz = window.crypto.getRandomValues(new Uint8Array(bytes));
-    } else if (typeof require !== 'undefined') {
-      // randBz = require('crypto').randomBytes(bytes)
-      randBz = RB(bytes);
-    } else {
-      throw new Error('Unable to generate safe random numbers.');
-    }
+    const randBz = RB(bytes); // if (typeof window !== 'undefined' && window.crypto && window.crypto.getRandomValues) {
+    //   randBz = window.crypto.getRandomValues(new Uint8Array(bytes))
+    // } else if (typeof require !== 'undefined') {
+    //   // randBz = require('crypto').randomBytes(bytes)
+    //   randBz = RB(bytes)
+    // } else {
+    //   throw new Error('Unable to generate safe random numbers.')
+    // }
 
     let randStr = '';
 

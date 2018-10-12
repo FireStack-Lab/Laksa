@@ -88,6 +88,8 @@
   "license": "MIT",
   "dependencies": {},
   "jest": {
-    "transform": {}
+    "transform": {},
+    "coverageDirectory": "./coverage/",
+    "collectCoverage": true
   }
 }
