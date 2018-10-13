@@ -63,7 +63,7 @@ class Contracts {
    * @param  {[String]}  password [description]
    * @return {Promise}          [description]
    */
-  async deploy({ gasLimit, gasPrice }, contract, signer, password) {
+  async deploy({ contract, gasLimit, gasPrice }, { signer, password }) {
     // we need singer address to get the nonce
     const { nonce } = await this.messenger.send({
       method: 'GetBalance',
@@ -93,10 +93,10 @@ class Contracts {
     const signedContract =
       typeof signer.privateKey !== 'symbol'
         ? signer.signTransaction(txnDetail)
-        : signer.signTransactionWithPassword(password)
+        : await signer.signTransactionWithPassword(txnDetail, password)
 
-    // if only the contract status is waitForSign, and we have a signature with signer
-    if (contract.contractStatus === ContractStatus.waitForSign && signedContract.signature) {
+    // if only the contract  have a signature with signer
+    if (signedContract.signature) {
       // then we can deploy it
       const result = await contract.deploy(signedContract)
       // after that we save it to storage

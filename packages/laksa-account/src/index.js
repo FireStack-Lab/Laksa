@@ -14,6 +14,13 @@ import { ENCRYPTED } from './symbols'
 
 export { ENCRYPTED }
 
+/**
+ * gernerate account object
+ * @function generateAccountObject
+ * @param  {string} privateKey {description}
+ * @return {Account} {Account object}
+ */
+
 function generateAccountObject(privateKey) {
   if (!isPrivateKey(privateKey)) throw new Error('private key is not correct')
   const address = getAddressFromPrivateKey(privateKey)
@@ -42,7 +49,7 @@ export const createAccount = () => {
   try {
     return generateAccountObject(privateKey)
   } catch (e) {
-    return e
+    throw new Error(e)
   }
 }
 
@@ -50,7 +57,7 @@ export const importAccount = privateKey => {
   try {
     return generateAccountObject(privateKey)
   } catch (e) {
-    return e
+    throw new Error(e)
   }
 }
 

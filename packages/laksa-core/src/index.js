@@ -19,7 +19,7 @@ import config from './config'
 
 class Laksa {
   constructor(args) {
-    const url = args || config.defaultNodeUrl
+    const url = (args && util.isUrl(args) ? args : undefined) || config.defaultNodeUrl
     this.util = {
       ...util,
       ...core
