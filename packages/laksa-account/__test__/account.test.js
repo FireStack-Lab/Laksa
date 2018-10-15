@@ -1,20 +1,13 @@
 import { generatePrivateKey, schnorr } from 'laksa-core-crypto'
 import { toBN } from 'laksa-utils'
 import Transaction from 'laksa-core-transaction'
-import {
-  Account,
-  ENCRYPTED,
-  importAccount,
-  createAccount,
-  encryptAccount,
-  decryptAccount
-} from '../src'
+import { Account, ENCRYPTED } from '../src'
 
 describe('test createAccount', () => {
   it('should be able to generate an object with keys,address,and 5 functions', async () => {
     const account = new Account()
     const mock = account.createAccount()
-    const instantMock = createAccount()
+
     expect(mock).toEqual(
       expect.objectContaining({
         address: expect.any(String),
@@ -27,19 +20,12 @@ describe('test createAccount', () => {
         signTransactionWithPassword: expect.any(Function)
       })
     )
-    expect(instantMock).toEqual(
-      expect.objectContaining({
-        address: expect.any(String),
-        privateKey: expect.any(String),
-        publicKey: expect.any(String)
-      })
-    )
   })
   it('should be able to import an private keys, then generate publicKey,address,and 5 functions', async () => {
     const account = new Account()
     const prvKey = generatePrivateKey()
     const normalAccount = account.importAccount(prvKey)
-    const instantImport = importAccount(prvKey)
+
     expect(normalAccount).toEqual(
       expect.objectContaining({
         address: expect.any(String),
@@ -52,17 +38,9 @@ describe('test createAccount', () => {
         signTransactionWithPassword: expect.any(Function)
       })
     )
-    expect(instantImport).toEqual(
-      expect.objectContaining({
-        address: expect.any(String),
-        privateKey: expect.any(String),
-        publicKey: expect.any(String)
-      })
-    )
+
     expect(() => account.importAccount(123)).toThrowError(/private key is not correct/)
     expect(() => account.importAccount()).toThrowError(/private key is not correct/)
-    expect(() => importAccount(123)).toThrowError(/private key is not correct/)
-    expect(() => importAccount()).toThrowError(/private key is not correct/)
   })
   it('should be able to encrypt the privateKey', async () => {
     const account = new Account().createAccount()
@@ -80,19 +58,6 @@ describe('test createAccount', () => {
       return encrypted2x
     } catch (err) {
       expect(err.message).toEqual('Cannot convert a Symbol value to a string')
-    }
-    const emptyAccount = {}
-    try {
-      const result = await encryptAccount(emptyAccount)
-      return result
-    } catch (err) {
-      expect(err.message).toEqual('password is not found')
-    }
-    try {
-      const result = await encryptAccount(emptyAccount, 'simple')
-      return result
-    } catch (err) {
-      expect(err.message).toEqual('Key not found: address')
     }
   })
 
@@ -113,26 +78,13 @@ describe('test createAccount', () => {
       const decrypted = await encrypted.decrypt('weak_password')
       return decrypted
     } catch (err) {
-      expect(err.message).toEqual('Error: Failed to decrypt.')
+      expect(err.message).toEqual('Failed to decrypt.')
     }
     try {
       const decrypted = await encrypted.decrypt()
       return decrypted
     } catch (err) {
       expect(err.message).toEqual('password is not found')
-    }
-    const emptyAccount = {}
-    try {
-      const decrypted = await decryptAccount(emptyAccount)
-      return decrypted
-    } catch (err) {
-      expect(err.message).toEqual('password is not found')
-    }
-    try {
-      const decrypted = await decryptAccount(emptyAccount, '111')
-      return decrypted
-    } catch (err) {
-      expect(err.message).toEqual('Key not found: address')
     }
   })
   it('should be able to sign a transaction bytes', async () => {
@@ -200,7 +152,7 @@ describe('test createAccount', () => {
     const privateKey = '97d2d3a21d829800eeb01aa7f244926f993a1427d9ba79d9dc3bf14fe04d9e37'
 
     const account = new Account().importAccount(privateKey)
-
+    const nonEncryptedAccount = new Account().importAccount(privateKey)
     const rawTx = {
       version: 1,
       nonce: 1,
@@ -224,10 +176,17 @@ describe('test createAccount', () => {
     }
 
     const signedWithPsw = await encrypted.signTransactionWithPassword(rawTx, 'my4wes0me p6ssw04d')
-
+    const signedWithPswButNotEncrypted = await nonEncryptedAccount.signTransactionWithPassword(
+      rawTx,
+      'my4wes0me p6ssw04d'
+    )
     expect(signedWithPsw.signature).toEqual(
       '24767c0588e91291a560d158b9e05762feafb9e4b58540528058c65b8e0b3eb1652317594d6cbff5c5a3c00e91698fa667da5b5e1952d47157e137e757e48b32'
     )
     expect(encrypted.privateKey).toEqual(ENCRYPTED)
+
+    expect(signedWithPswButNotEncrypted.signature).toEqual(
+      '24767c0588e91291a560d158b9e05762feafb9e4b58540528058c65b8e0b3eb1652317594d6cbff5c5a3c00e91698fa667da5b5e1952d47157e137e757e48b32'
+    )
   })
 })

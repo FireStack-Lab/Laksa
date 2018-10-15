@@ -4,6 +4,8 @@
   (factory((global.Laksa = {}),global.laksaUtils,global.laksaCoreCrypto,global.laksaExtendKeystore));
 }(this, (function (exports,laksaUtils,laksaCoreCrypto,laksaExtendKeystore) { 'use strict';
 
+  const ENCRYPTED = Symbol('ENCRYPTED');
+
   function _defineProperty(obj, key, value) {
     if (key in obj) {
       Object.defineProperty(obj, key, {
@@ -38,25 +40,25 @@
     return target;
   }
 
-  const ENCRYPTED = Symbol('ENCRYPTED');
+  /**
+   * gernerate account object
+   * @function generateAccountObject
+   * @param  {string} privateKey {description}
+   * @return {Account} {Account object}
+   */
 
   function generateAccountObject(privateKey) {
-    if (!laksaUtils.isPrivateKey(privateKey)) throw new Error('private key is not correct');
-    const address = laksaCoreCrypto.getAddressFromPrivateKey(privateKey);
-    const publicKey = laksaCoreCrypto.getPubKeyFromPrivateKey(privateKey);
-    let accountObject = {}; // set accountObject
-
-    if (laksaUtils.isPubkey(publicKey) && laksaUtils.isPrivateKey(privateKey) && laksaUtils.isAddress(address)) {
-      accountObject = {
-        privateKey,
-        address,
-        publicKey // push account object to accountArray
-
-      };
-      return accountObject;
+    if (!laksaUtils.isPrivateKey(privateKey)) {
+      throw new Error('private key is not correct');
     }
 
-    throw new Error('account generate failure');
+    const address = laksaCoreCrypto.getAddressFromPrivateKey(privateKey);
+    const publicKey = laksaCoreCrypto.getPubKeyFromPrivateKey(privateKey);
+    return {
+      privateKey,
+      address,
+      publicKey
+    };
   }
   /**
    * create an raw accountObject
@@ -65,68 +67,57 @@
 
 
   const createAccount = () => {
-    const privateKey = laksaCoreCrypto.generatePrivateKey();
-
-    try {
-      return generateAccountObject(privateKey);
-    } catch (e) {
-      return e;
-    }
+    return generateAccountObject(laksaCoreCrypto.generatePrivateKey());
   };
   const importAccount = privateKey => {
-    try {
-      return generateAccountObject(privateKey);
-    } catch (e) {
-      return e;
-    }
+    return generateAccountObject(privateKey);
   };
   const encryptAccount = async (accountObject, password, options = {
     level: 1024
   }) => {
-    if (!laksaUtils.isString(password)) throw new Error('password is not found');
     laksaUtils.validateArgs(accountObject, {
       address: [laksaUtils.isAddress],
       privateKey: [laksaUtils.isPrivateKey],
       publicKey: [laksaUtils.isPubkey]
     });
 
-    try {
-      const encrypted = await laksaExtendKeystore.encrypt(accountObject.privateKey, password, options);
-
-      const encryptedObj = _objectSpread({}, accountObject, {
-        privateKey: ENCRYPTED
-      }, encrypted);
-
-      return encryptedObj;
-    } catch (e) {
-      throw new Error(e);
+    if (!laksaUtils.isString(password)) {
+      throw new Error('password is not found');
     }
+
+    const encrypted = await laksaExtendKeystore.encrypt(accountObject.privateKey, password, options);
+
+    const encryptedObj = _objectSpread({}, accountObject, {
+      privateKey: ENCRYPTED
+    }, encrypted);
+
+    return encryptedObj;
   };
   const decryptAccount = async (accountObject, password) => {
-    if (!laksaUtils.isString(password)) throw new Error('password is not found');
     laksaUtils.validateArgs(accountObject, {
       address: [laksaUtils.isAddress],
       crypto: [laksaUtils.isObject],
       publicKey: [laksaUtils.isPubkey]
     });
 
-    try {
-      const newObject = Object.assign({}, accountObject);
-      delete newObject.crypto;
-      const decrypted = await laksaExtendKeystore.decrypt(accountObject, password);
-
-      const decryptedObj = _objectSpread({}, newObject, {
-        privateKey: decrypted
-      });
-
-      return decryptedObj;
-    } catch (e) {
-      throw new Error(e);
+    if (!laksaUtils.isString(password)) {
+      throw new Error('password is not found');
     }
+
+    const newObject = Object.assign({}, accountObject);
+    delete newObject.crypto;
+    const decrypted = await laksaExtendKeystore.decrypt(accountObject, password);
+
+    const decryptedObj = _objectSpread({}, newObject, {
+      privateKey: decrypted
+    });
+
+    return decryptedObj;
   };
   const signTransaction = (privateKey, transactionObject) => {
     return laksaCoreCrypto.createTransactionJson(privateKey, transactionObject);
   };
+
   class Account {
     constructor(messenger) {
       this.messenger = messenger;
@@ -200,18 +191,22 @@
         const encryptAfterSign = await this.encrypt(password);
         Object.assign(this, encryptAfterSign);
         return signed;
+      } else {
+        const nonEncryptSigned = signTransaction(this.privateKey, transactionObject);
+        Object.assign(this, nonEncryptSigned);
+        return nonEncryptSigned;
       }
     }
 
   }
 
+  exports.Account = Account;
   exports.ENCRYPTED = ENCRYPTED;
   exports.createAccount = createAccount;
   exports.importAccount = importAccount;
   exports.encryptAccount = encryptAccount;
   exports.decryptAccount = decryptAccount;
   exports.signTransaction = signTransaction;
-  exports.Account = Account;
 
   Object.defineProperty(exports, '__esModule', { value: true });
 

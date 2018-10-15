@@ -6,8 +6,6 @@ function _interopDefault (ex) { return (ex && (typeof ex === 'object') && 'defau
 
 require('core-js/modules/es7.symbol.async-iterator');
 require('core-js/modules/es6.symbol');
-var _classCallCheck = _interopDefault(require('@babel/runtime/helpers/classCallCheck'));
-var _createClass = _interopDefault(require('@babel/runtime/helpers/createClass'));
 require('core-js/modules/es6.object.assign');
 var _regeneratorRuntime = _interopDefault(require('@babel/runtime/regenerator'));
 var _objectSpread = _interopDefault(require('@babel/runtime/helpers/objectSpread'));
@@ -16,26 +14,30 @@ var _asyncToGenerator = _interopDefault(require('@babel/runtime/helpers/asyncToG
 var laksaUtils = require('laksa-utils');
 var laksaCoreCrypto = require('laksa-core-crypto');
 var laksaExtendKeystore = require('laksa-extend-keystore');
+var _classCallCheck = _interopDefault(require('@babel/runtime/helpers/classCallCheck'));
+var _createClass = _interopDefault(require('@babel/runtime/helpers/createClass'));
 
 var ENCRYPTED = Symbol('ENCRYPTED');
 
+/**
+ * gernerate account object
+ * @function generateAccountObject
+ * @param  {string} privateKey {description}
+ * @return {Account} {Account object}
+ */
+
 function generateAccountObject(privateKey) {
-  if (!laksaUtils.isPrivateKey(privateKey)) throw new Error('private key is not correct');
-  var address = laksaCoreCrypto.getAddressFromPrivateKey(privateKey);
-  var publicKey = laksaCoreCrypto.getPubKeyFromPrivateKey(privateKey);
-  var accountObject = {}; // set accountObject
-
-  if (laksaUtils.isPubkey(publicKey) && laksaUtils.isPrivateKey(privateKey) && laksaUtils.isAddress(address)) {
-    accountObject = {
-      privateKey: privateKey,
-      address: address,
-      publicKey: publicKey // push account object to accountArray
-
-    };
-    return accountObject;
+  if (!laksaUtils.isPrivateKey(privateKey)) {
+    throw new Error('private key is not correct');
   }
 
-  throw new Error('account generate failure');
+  var address = laksaCoreCrypto.getAddressFromPrivateKey(privateKey);
+  var publicKey = laksaCoreCrypto.getPubKeyFromPrivateKey(privateKey);
+  return {
+    privateKey: privateKey,
+    address: address,
+    publicKey: publicKey
+  };
 }
 /**
  * create an raw accountObject
@@ -43,22 +45,11 @@ function generateAccountObject(privateKey) {
  */
 
 
-var _createAccount = function createAccount() {
-  var privateKey = laksaCoreCrypto.generatePrivateKey();
-
-  try {
-    return generateAccountObject(privateKey);
-  } catch (e) {
-    return e;
-  }
+var createAccount = function createAccount() {
+  return generateAccountObject(laksaCoreCrypto.generatePrivateKey());
 };
-
-var _importAccount = function importAccount(privateKey) {
-  try {
-    return generateAccountObject(privateKey);
-  } catch (e) {
-    return e;
-  }
+var importAccount = function importAccount(privateKey) {
+  return generateAccountObject(privateKey);
 };
 var encryptAccount =
 /*#__PURE__*/
@@ -77,42 +68,36 @@ function () {
             options = _args.length > 2 && _args[2] !== undefined ? _args[2] : {
               level: 1024
             };
-
-            if (laksaUtils.isString(password)) {
-              _context.next = 3;
-              break;
-            }
-
-            throw new Error('password is not found');
-
-          case 3:
             laksaUtils.validateArgs(accountObject, {
               address: [laksaUtils.isAddress],
               privateKey: [laksaUtils.isPrivateKey],
               publicKey: [laksaUtils.isPubkey]
             });
-            _context.prev = 4;
-            _context.next = 7;
+
+            if (laksaUtils.isString(password)) {
+              _context.next = 4;
+              break;
+            }
+
+            throw new Error('password is not found');
+
+          case 4:
+            _context.next = 6;
             return laksaExtendKeystore.encrypt(accountObject.privateKey, password, options);
 
-          case 7:
+          case 6:
             encrypted = _context.sent;
             encryptedObj = _objectSpread({}, accountObject, {
               privateKey: ENCRYPTED
             }, encrypted);
             return _context.abrupt("return", encryptedObj);
 
-          case 12:
-            _context.prev = 12;
-            _context.t0 = _context["catch"](4);
-            throw new Error(_context.t0);
-
-          case 15:
+          case 9:
           case "end":
             return _context.stop();
         }
       }
-    }, _callee, this, [[4, 12]]);
+    }, _callee, this);
   }));
 
   return function encryptAccount(_x, _x2) {
@@ -130,53 +115,48 @@ function () {
       while (1) {
         switch (_context2.prev = _context2.next) {
           case 0:
-            if (laksaUtils.isString(password)) {
-              _context2.next = 2;
-              break;
-            }
-
-            throw new Error('password is not found');
-
-          case 2:
             laksaUtils.validateArgs(accountObject, {
               address: [laksaUtils.isAddress],
               crypto: [laksaUtils.isObject],
               publicKey: [laksaUtils.isPubkey]
             });
-            _context2.prev = 3;
+
+            if (laksaUtils.isString(password)) {
+              _context2.next = 3;
+              break;
+            }
+
+            throw new Error('password is not found');
+
+          case 3:
             newObject = Object.assign({}, accountObject);
             delete newObject.crypto;
-            _context2.next = 8;
+            _context2.next = 7;
             return laksaExtendKeystore.decrypt(accountObject, password);
 
-          case 8:
+          case 7:
             decrypted = _context2.sent;
             decryptedObj = _objectSpread({}, newObject, {
               privateKey: decrypted
             });
             return _context2.abrupt("return", decryptedObj);
 
-          case 13:
-            _context2.prev = 13;
-            _context2.t0 = _context2["catch"](3);
-            throw new Error(_context2.t0);
-
-          case 16:
+          case 10:
           case "end":
             return _context2.stop();
         }
       }
-    }, _callee2, this, [[3, 13]]);
+    }, _callee2, this);
   }));
 
   return function decryptAccount(_x3, _x4) {
     return _ref2.apply(this, arguments);
   };
 }();
-
-var _signTransaction = function signTransaction(privateKey, transactionObject) {
+var signTransaction = function signTransaction(privateKey, transactionObject) {
   return laksaCoreCrypto.createTransactionJson(privateKey, transactionObject);
 };
+
 var Account =
 /*#__PURE__*/
 function () {
@@ -189,8 +169,8 @@ function () {
 
   _createClass(Account, [{
     key: "createAccount",
-    value: function createAccount() {
-      var accountObject = _createAccount();
+    value: function createAccount$$1() {
+      var accountObject = createAccount();
 
       var newObject = new Account();
       return Object.assign({}, accountObject, {
@@ -204,8 +184,8 @@ function () {
 
   }, {
     key: "importAccount",
-    value: function importAccount(privateKey) {
-      var accountObject = _importAccount(privateKey);
+    value: function importAccount$$1(privateKey) {
+      var accountObject = importAccount(privateKey);
 
       var newObject = new Account();
       return Object.assign({}, accountObject, {
@@ -222,33 +202,33 @@ function () {
     value: function () {
       var _encrypt = _asyncToGenerator(
       /*#__PURE__*/
-      _regeneratorRuntime.mark(function _callee3(password) {
+      _regeneratorRuntime.mark(function _callee(password) {
         var options,
             encryptedAccount,
-            _args3 = arguments;
-        return _regeneratorRuntime.wrap(function _callee3$(_context3) {
+            _args = arguments;
+        return _regeneratorRuntime.wrap(function _callee$(_context) {
           while (1) {
-            switch (_context3.prev = _context3.next) {
+            switch (_context.prev = _context.next) {
               case 0:
-                options = _args3.length > 1 && _args3[1] !== undefined ? _args3[1] : {
+                options = _args.length > 1 && _args[1] !== undefined ? _args[1] : {
                   level: 1024
                 };
-                _context3.next = 3;
+                _context.next = 3;
                 return encryptAccount(this, password, options);
 
               case 3:
-                encryptedAccount = _context3.sent;
-                return _context3.abrupt("return", Object.assign(this, encryptedAccount));
+                encryptedAccount = _context.sent;
+                return _context.abrupt("return", Object.assign(this, encryptedAccount));
 
               case 5:
               case "end":
-                return _context3.stop();
+                return _context.stop();
             }
           }
-        }, _callee3, this);
+        }, _callee, this);
       }));
 
-      return function encrypt(_x5) {
+      return function encrypt(_x) {
         return _encrypt.apply(this, arguments);
       };
     }() // sub object
@@ -258,30 +238,30 @@ function () {
     value: function () {
       var _decrypt = _asyncToGenerator(
       /*#__PURE__*/
-      _regeneratorRuntime.mark(function _callee4(password) {
+      _regeneratorRuntime.mark(function _callee2(password) {
         var that, decrypted;
-        return _regeneratorRuntime.wrap(function _callee4$(_context4) {
+        return _regeneratorRuntime.wrap(function _callee2$(_context2) {
           while (1) {
-            switch (_context4.prev = _context4.next) {
+            switch (_context2.prev = _context2.next) {
               case 0:
                 that = this;
-                _context4.next = 3;
+                _context2.next = 3;
                 return decryptAccount(that, password);
 
               case 3:
-                decrypted = _context4.sent;
+                decrypted = _context2.sent;
                 delete this.crypto;
-                return _context4.abrupt("return", Object.assign(this, decrypted));
+                return _context2.abrupt("return", Object.assign(this, decrypted));
 
               case 6:
               case "end":
-                return _context4.stop();
+                return _context2.stop();
             }
           }
-        }, _callee4, this);
+        }, _callee2, this);
       }));
 
-      return function decrypt(_x6) {
+      return function decrypt(_x2) {
         return _decrypt.apply(this, arguments);
       };
     }() // sign method for Transaction bytes
@@ -298,12 +278,12 @@ function () {
 
   }, {
     key: "signTransaction",
-    value: function signTransaction(transactionObject) {
+    value: function signTransaction$$1(transactionObject) {
       if (this.privateKey === ENCRYPTED) {
         throw new Error('This account is encrypted, please decrypt it first or use "signTransactionWithPassword"');
       }
 
-      return _signTransaction(this.privateKey, transactionObject);
+      return signTransaction(this.privateKey, transactionObject);
     } // sign plain object with password
 
   }, {
@@ -311,40 +291,45 @@ function () {
     value: function () {
       var _signTransactionWithPassword = _asyncToGenerator(
       /*#__PURE__*/
-      _regeneratorRuntime.mark(function _callee5(transactionObject, password) {
-        var decrypted, signed, encryptAfterSign;
-        return _regeneratorRuntime.wrap(function _callee5$(_context5) {
+      _regeneratorRuntime.mark(function _callee3(transactionObject, password) {
+        var decrypted, signed, encryptAfterSign, nonEncryptSigned;
+        return _regeneratorRuntime.wrap(function _callee3$(_context3) {
           while (1) {
-            switch (_context5.prev = _context5.next) {
+            switch (_context3.prev = _context3.next) {
               case 0:
                 if (!(this.privateKey === ENCRYPTED)) {
-                  _context5.next = 10;
+                  _context3.next = 12;
                   break;
                 }
 
-                _context5.next = 3;
+                _context3.next = 3;
                 return this.decrypt(password);
 
               case 3:
-                decrypted = _context5.sent;
-                signed = _signTransaction(decrypted.privateKey, transactionObject);
-                _context5.next = 7;
+                decrypted = _context3.sent;
+                signed = signTransaction(decrypted.privateKey, transactionObject);
+                _context3.next = 7;
                 return this.encrypt(password);
 
               case 7:
-                encryptAfterSign = _context5.sent;
+                encryptAfterSign = _context3.sent;
                 Object.assign(this, encryptAfterSign);
-                return _context5.abrupt("return", signed);
+                return _context3.abrupt("return", signed);
 
-              case 10:
+              case 12:
+                nonEncryptSigned = signTransaction(this.privateKey, transactionObject);
+                Object.assign(this, nonEncryptSigned);
+                return _context3.abrupt("return", nonEncryptSigned);
+
+              case 15:
               case "end":
-                return _context5.stop();
+                return _context3.stop();
             }
           }
-        }, _callee5, this);
+        }, _callee3, this);
       }));
 
-      return function signTransactionWithPassword(_x7, _x8) {
+      return function signTransactionWithPassword(_x3, _x4) {
         return _signTransactionWithPassword.apply(this, arguments);
       };
     }()
@@ -353,10 +338,10 @@ function () {
   return Account;
 }();
 
+exports.Account = Account;
 exports.ENCRYPTED = ENCRYPTED;
-exports.createAccount = _createAccount;
-exports.importAccount = _importAccount;
+exports.createAccount = createAccount;
+exports.importAccount = importAccount;
 exports.encryptAccount = encryptAccount;
 exports.decryptAccount = decryptAccount;
-exports.signTransaction = _signTransaction;
-exports.Account = Account;
+exports.signTransaction = signTransaction;

@@ -8,7 +8,7 @@ const config = {
   testURL: 'http://localhost',
   coverageThreshold: {
     global: {
-      branches: 68,
+      branches: 80,
       functions: 80,
       lines: 80,
       statements: 80
