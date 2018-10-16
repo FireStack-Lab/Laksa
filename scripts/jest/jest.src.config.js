@@ -16,7 +16,7 @@ const config = {
   },
   rootDir: process.cwd(),
   roots: ['<rootDir>/packages', '<rootDir>/scripts'],
-  collectCoverageFrom: ['packages/**/src/*.js'],
+  collectCoverageFrom: ['packages/!(laksa-hd-wallet)/src/*.js'],
   timers: 'fake',
   setupTestFrameworkScriptFile: '<rootDir>/scripts/jest/jest.setup.js',
   testEnvironment: process.env.NODE_ENV === 'development' ? 'node' : 'jsdom',

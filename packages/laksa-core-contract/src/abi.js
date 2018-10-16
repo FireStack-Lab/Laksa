@@ -7,7 +7,7 @@ function getParamTypes(list) {
   return result
 }
 
-class ABI {
+export class ABI {
   constructor(abi) {
     this.events = abi !== undefined ? abi.events : [] // Array<object>
     this.fields = abi !== undefined ? abi.fields : [] // Array<object>
@@ -58,5 +58,3 @@ class ABI {
     return this.events
   }
 }
-
-export default ABI

@@ -1,7 +1,7 @@
 import Transaction from 'laksa-core-transaction'
 import { sign } from 'laksa-shared'
 import { validate, toBN, isInt } from './validate'
-import ABI from './abi'
+import { ABI } from './abi'
 
 export const ContractStatus = {
   initialised: Symbol('initialised'),

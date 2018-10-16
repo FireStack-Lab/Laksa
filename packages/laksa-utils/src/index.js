@@ -4,7 +4,7 @@ export {
   isString,
   isBoolean,
   isArray,
-  isJson,
+  isJsonString,
   isObject,
   isUnit,
   isFunction,

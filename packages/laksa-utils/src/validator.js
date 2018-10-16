@@ -51,7 +51,7 @@ const isArray = obj => {
  * @param  {[type]}  obj [value]
  * @return {Boolean}     [boolean]
  */
-const isJson = obj => {
+const isJsonString = obj => {
   try {
     return !!JSON.parse(obj) && isObject(JSON.parse(obj))
   } catch (e) {
@@ -104,14 +104,7 @@ const isAddress = address => {
  * @return {Boolean}            [description]
  */
 const isPrivateKey = privateKey => {
-  if (!/^(0x)?[0-9a-f]{64}$/i.test(privateKey)) {
-    // check if it has the basic requirements of an privatekey
-    return false
-  } else if (/^(0x)?[0-9a-f]{64}$/.test(privateKey) || /^(0x)?[0-9A-F]{64}$/.test(privateKey)) {
-    // If it's all small caps or all all caps, return true
-    return true
-  }
-  // return !!privateKey.match(/^[0-9a-fA-F]{64}$/)
+  return /^[0-9a-fA-F]{64}$/.test(privateKey)
 }
 
 /**
@@ -120,14 +113,7 @@ const isPrivateKey = privateKey => {
  * @return {Boolean}        [description]
  */
 const isPubkey = pubkey => {
-  if (!/^(0x)?[0-9a-f]{66}$/i.test(pubkey)) {
-    // check if it has the basic requirements of an pubkey
-    return false
-  } else if (/^(0x)?[0-9a-f]{66}$/.test(pubkey) || /^(0x)?[0-9A-F]{66}$/.test(pubkey)) {
-    // If it's all small caps or all all caps, return true
-    return true
-  }
-  // return !!pubkey.match(/^[0-9a-fA-F]{66}$/)
+  return /^[0-9a-fA-F]{66}$/.test(pubkey)
 }
 
 /**
@@ -136,8 +122,8 @@ const isPubkey = pubkey => {
  * @return {Boolean}     [description]
  */
 const isUrl = url => {
-  if (typeof url === 'string') {
-    return isWebUri(url)
+  if (isString(url)) {
+    return !!isWebUri(url)
   }
   return false
 }
@@ -148,14 +134,7 @@ const isUrl = url => {
  * @return {Boolean}        [description]
  */
 const isHash = txHash => {
-  if (!/^(0x)?[0-9a-f]{64}$/i.test(txHash)) {
-    // check if it has the basic requirements of an txHash
-    return false
-  } else if (/^(0x)?[0-9a-f]{64}$/.test(txHash) || /^(0x)?[0-9A-F]{64}$/.test(txHash)) {
-    // If it's all small caps or all all caps, return true
-    return true
-  }
-  // return !!txHash.match(/^[0-9a-fA-F]{64}$/)
+  return /^[0-9a-fA-F]{64}$/.test(txHash)
 }
 
 /**
@@ -211,7 +190,7 @@ export {
   isString,
   isBoolean,
   isArray,
-  isJson,
+  isJsonString,
   isObject,
   isUnit,
   isFunction,

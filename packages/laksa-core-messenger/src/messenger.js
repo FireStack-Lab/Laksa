@@ -1,11 +1,10 @@
 import { InvalidProvider } from 'laksa-shared'
-import JsonRpc from './jsonRpc'
+import { JsonRpc } from './rpcbuilder'
 
 function getResultForData(data) {
   return data.error ? data.error : data.message ? data : data.result
 }
-
-class Messanger {
+export default class Messanger {
   constructor(provider) {
     this.provider = provider
     this.scillaProvider = provider
@@ -92,5 +91,3 @@ class Messanger {
     }
   }
 }
-
-export default Messanger
