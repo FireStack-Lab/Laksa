@@ -92,18 +92,18 @@ const numberToHex = value => {
   return number.lt(toBN(0)) ? `-0x${result.substr(1)}` : `0x${result}`
 }
 
-const toUtf8 = () => {
-  // to utf 8
-}
-const toAscii = () => {
-  // to be implemented
-}
-const fromUtf8 = () => {
-  // to be implemented
-}
-const fromAscii = () => {
-  // to be implemented
-}
+// const toUtf8 = () => {
+//   // to utf 8
+// }
+// const toAscii = () => {
+//   // to be implemented
+// }
+// const fromUtf8 = () => {
+//   // to be implemented
+// }
+// const fromAscii = () => {
+//   // to be implemented
+// }
 
 const toBN = data => {
   try {
@@ -113,47 +113,47 @@ const toBN = data => {
   }
   // to be implemented
 }
-/**
- * Converts value to it's number representation
- *
- * @method hexToNumber
- * @param {String|Number|BN} value
- * @return {String}
- */
-const hexToNumber = value => {
-  validateTypes(value, [isNumber, isString, isHex, isBN, isUndefined])
-  if (!value) {
-    return value
-  }
-  return toBN(value).toNumber()
-}
+// /**
+//  * Converts value to it's number representation
+//  *
+//  * @method hexToNumber
+//  * @param {String|Number|BN} value
+//  * @return {String}
+//  */
+// const hexToNumber = value => {
+//   validateTypes(value, [isNumber, isString, isHex, isBN, isUndefined])
+//   if (!value) {
+//     return value
+//   }
+//   return toBN(value).toNumber()
+// }
 
-/**
- * hexToIntArray
- *
- * @param {string} hex
- * @returns {number[]}
- */
-const hexToIntArray = hex => {
-  if (!hex || !isHex(hex)) {
-    return []
-  }
+// /**
+//  * hexToIntArray
+//  *
+//  * @param {string} hex
+//  * @returns {number[]}
+//  */
+// const hexToIntArray = hex => {
+//   if (!hex || !isHex(hex)) {
+//     return []
+//   }
 
-  const res = []
+//   const res = []
 
-  for (let i = 0; i < hex.length; i += 1) {
-    const c = hex.charCodeAt(i)
-    const hi = c >> 8
-    const lo = c & 0xff
-    if (hi) {
-      res.push(hi, lo)
-    } else {
-      res.push(lo)
-    }
-  }
+//   for (let i = 0; i < hex.length; i += 1) {
+//     const c = hex.charCodeAt(i)
+//     const hi = c >> 8
+//     const lo = c & 0xff
+//     if (hi) {
+//       res.push(hi, lo)
+//     } else {
+//       res.push(lo)
+//     }
+//   }
 
-  return res
-}
+//   return res
+// }
 /**
  * Should be called to get hex representation (prefixed by 0x) of utf8 string
  *
@@ -251,47 +251,32 @@ const add0x = value => {
   return newString
 }
 
-/**
- * Should be called to pad string to expected length
- *
- * @method padLeft
- * @param {String} string to be padded
- * @param {Number} characters that result string should have
- * @param {String} sign, by default 0
- * @returns {String} right aligned string
- */
-const padLeft = (string, chars, sign) => {
-  return new Array(chars - string.length + 1).join(sign || '0') + string
-}
+// /**
+//  * Should be called to pad string to expected length
+//  *
+//  * @method padLeft
+//  * @param {String} string to be padded
+//  * @param {Number} characters that result string should have
+//  * @param {String} sign, by default 0
+//  * @returns {String} right aligned string
+//  */
+// const padLeft = (string, chars, sign) => {
+//   return new Array(chars - string.length + 1).join(sign || '0') + string
+// }
 
-/**
- * Should be called to pad string to expected length
- *
- * @method padRight
- * @param {String} string to be padded
- * @param {Number} characters that result string should have
- * @param {String} sign, by default 0
- * @returns {String} right aligned string
- */
-const padRight = (string, chars, sign) => {
-  return string + new Array(chars - string.length + 1).join(sign || '0')
-}
+// /**
+//  * Should be called to pad string to expected length
+//  *
+//  * @method padRight
+//  * @param {String} string to be padded
+//  * @param {Number} characters that result string should have
+//  * @param {String} sign, by default 0
+//  * @returns {String} right aligned string
+//  */
+// const padRight = (string, chars, sign) => {
+//   return string + new Array(chars - string.length + 1).join(sign || '0')
+// }
 
 export {
-  intToByteArray,
-  intToHexArray,
-  toHex,
-  toUtf8,
-  toAscii,
-  fromUtf8,
-  fromAscii,
-  toBN,
-  hexToNumber,
-  hexToIntArray,
-  utf8ToHex,
-  numberToHex,
-  padLeft,
-  padRight,
-  strip0x,
-  add0x
+  intToByteArray, intToHexArray, toHex, toBN, strip0x, add0x
 }

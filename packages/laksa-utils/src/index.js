@@ -26,21 +26,5 @@ export {
   extractValidator
 } from './generator'
 export {
-  intToByteArray,
-  intToHexArray,
-  toHex,
-  toUtf8,
-  toAscii,
-  toBN,
-  hexToNumber,
-  hexToIntArray,
-  utf8ToHex,
-  numberToHex,
-  //-------
-  fromUtf8,
-  fromAscii,
-  padLeft,
-  padRight,
-  strip0x,
-  add0x
+  intToByteArray, intToHexArray, toHex, toBN, strip0x, add0x
 } from './transformer'
