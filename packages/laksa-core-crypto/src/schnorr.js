@@ -46,15 +46,18 @@ export const hash = (q, pubkey, msg) => {
  *
  * @returns {Signature}
  */
-export const sign = (msg, key, pubkey) => {
+export const sign = (msg, key, pubkey, pubNonce) => {
   const prv = new BN(key)
-  const drbg = getDRBG(msg, key)
+  const drbg = getDRBG(msg, key, pubNonce)
   const len = curve.n.byteLength()
+
+  let pn
+  if (pubNonce) pn = curve.decodePoint(pubNonce)
 
   let sig
   while (!sig) {
     const k = new BN(drbg.generate(len))
-    sig = trySign(msg, prv, k, pubkey)
+    sig = trySign(msg, prv, k, pn, pubkey)
   }
 
   return sig
@@ -71,7 +74,7 @@ export const sign = (msg, key, pubkey) => {
  *
  * @returns {Signature | null =>}
  */
-export const trySign = (msg, prv, k, pubKey) => {
+export const trySign = (msg, prv, k, pn, pubKey) => {
   if (prv.isZero()) throw new Error('Bad private key.')
 
   if (prv.gte(curve.n)) throw new Error('Bad private key.')

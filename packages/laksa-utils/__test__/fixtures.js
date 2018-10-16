@@ -1,4 +1,4 @@
-import * as util from 'laksa-utils'
+import * as util from '../src'
 
 export const basicType = {
   zero: 0,

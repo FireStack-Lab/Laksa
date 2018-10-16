@@ -1,8 +1,8 @@
-import { Messenger } from 'laksa-core-messenger'
-import HttpProvider from 'laksa-providers-http'
-import { Wallet } from 'laksa-wallet'
-import { toHex } from 'laksa-utils'
 import { ContractStatus } from 'laksa-core-contract'
+import { Messenger } from '../../laksa-core-messenger/src'
+import HttpProvider from '../../laksa-providers-http/src'
+import { Wallet } from '../../laksa-wallet/src'
+import { toHex } from '../../laksa-utils/src'
 import Contracts from '../src'
 import { testContract } from './fixtures'
 

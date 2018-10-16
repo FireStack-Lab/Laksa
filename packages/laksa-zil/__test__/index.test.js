@@ -1,5 +1,5 @@
-import HttpProvider from 'laksa-providers-http'
-import { Messenger } from 'laksa-core-messenger'
+import HttpProvider from '../../laksa-providers-http/src'
+import { Messenger } from '../../laksa-core-messenger/src'
 import Zil from '../src'
 
 describe('test createAccount', () => {

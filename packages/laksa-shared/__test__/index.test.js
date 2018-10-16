@@ -4,7 +4,7 @@ import {
   InvalidConnection,
   InvalidProvider,
   InvalidNumberOfRPCParams
-} from 'laksa-shared'
+} from '../src'
 
 test('test ConnectionTimeout', () => {
   expect(ConnectionTimeout(500)).toEqual(new Error('CONNECTION TIMEOUT: timeout of 500 ms achived'))

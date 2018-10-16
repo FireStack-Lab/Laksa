@@ -1,6 +1,6 @@
-import { generatePrivateKey, schnorr } from 'laksa-core-crypto'
-import { toBN } from 'laksa-utils'
-import Transaction from 'laksa-core-transaction'
+import { toBN } from '../../laksa-utils/src'
+import Transaction from '../../laksa-core-transaction/src'
+import { generatePrivateKey, schnorr } from '../../laksa-core-crypto/src'
 import { Account, ENCRYPTED } from '../src'
 
 describe('test createAccount', () => {

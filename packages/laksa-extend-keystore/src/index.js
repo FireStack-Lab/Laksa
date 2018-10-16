@@ -54,8 +54,8 @@ const getDerivedKey = (key, kdf, params) => {
 export const encrypt = async (privateKey, passphrase, options) => {
   const salt = randomBytes(32)
   const iv = Buffer.from(randomBytes(16), 'hex')
-  const kdf = options.kdf !== undefined ? options.kdf : 'scrypt'
-  const level = options.level !== undefined ? options.level : 8192
+  const kdf = options !== undefined ? options.kdf : 'scrypt'
+  const level = options !== undefined ? options.level : 8192
   const n = kdf === 'pbkdf2' ? 262144 : level
   const kdfparams = {
     salt,

@@ -1,5 +1,5 @@
-import { generatePrivateKey } from 'laksa-core-crypto'
-import { toBN } from 'laksa-utils'
+import { generatePrivateKey } from '../../laksa-core-crypto/src'
+import { toBN } from '../../laksa-utils/src'
 import {
   createAccount,
   importAccount,
