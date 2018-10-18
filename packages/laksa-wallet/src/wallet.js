@@ -4,7 +4,7 @@ import {
 import { Map, List } from 'immutable'
 
 import * as account from 'laksa-account'
-import { encryptedBy, ENCRYPTED } from './symbols'
+import { encryptedBy } from './symbols'
 
 // let this.#_accounts = Map({ accounts: List([]) })
 
@@ -104,14 +104,15 @@ class Wallet {
   //-------
   removeOneAccountByAddress = address => {
     if (!isAddress(address)) throw new Error('address is not correct')
-    const { index } = this.getAccountByAddress(address)
-    if (index !== undefined) {
+    const addressRef = this.getAccountByAddress(address)
+    if (addressRef !== undefined) {
       const currentArray = this.#_accounts.get('accounts').toArray()
-      delete currentArray[index]
+      delete currentArray[addressRef.index]
       this.#_accounts = this.#_accounts.set('accounts', List(currentArray))
       this.#_accounts = this.#_accounts.delete(address)
       this.updateLength()
     }
+    this.updateLength()
   }
 
   removeOneAccountByIndex(index) {
@@ -199,44 +200,50 @@ class Wallet {
 
   // -----------
   async encryptAllAccounts(password, options) {
-    this.getIndexKeys().forEach(index => {
+    const keys = this.getIndexKeys()
+    const results = []
+    for (const index of keys) {
       const accountObject = this.getAccountByIndex(parseInt(index, 10))
       if (accountObject) {
         const { address } = accountObject
-        this.encryptAccountByAddress(address, password, options, encryptedBy.WALLET)
+        const things = this.encryptAccountByAddress(address, password, options, encryptedBy.WALLET)
+        results.push(things)
       }
-    })
-    return true
+    }
+    await Promise.all(results)
   }
 
   async decryptAllAccounts(password) {
-    this.getIndexKeys().forEach(index => {
+    const keys = this.getIndexKeys()
+    const results = []
+    for (const index of keys) {
       const accountObject = this.getAccountByIndex(parseInt(index, 10))
       if (accountObject) {
         const { address, LastEncryptedBy } = accountObject
         if (LastEncryptedBy === encryptedBy.WALLET) {
-          this.decryptAccountByAddress(address, password, encryptedBy.WALLET)
-        } else {
-          console.error(`address ${address} is protected by account psw`)
-          console.error('use /decryptAccountByAddress/ instead')
+          const things = this.decryptAccountByAddress(address, password, encryptedBy.WALLET)
+          results.push(things)
         }
       }
-    })
-    return true
+    }
+    await Promise.all(results)
   }
 
   async encryptAccountByAddress(address, password, options, by) {
     const accountObject = this.getAccountByAddress(address)
     if (accountObject !== undefined) {
       const { privateKey, crypto } = accountObject
-      if (privateKey !== undefined && privateKey !== ENCRYPTED && crypto === undefined) {
+      if (privateKey !== undefined && typeof privateKey !== 'symbol' && crypto === undefined) {
         const encryptedObject = await accountObject.encrypt(password, options)
-        return this.updateAccountByAddress(
+        const updateStatus = this.updateAccountByAddress(
           address,
           Object.assign({}, encryptedObject, {
             LastEncryptedBy: by || encryptedBy.ACCOUNT
           })
         )
+        if (updateStatus === true) {
+          return this
+        } else return false
       }
     }
     return false
@@ -246,36 +253,29 @@ class Wallet {
     const accountObject = this.getAccountByAddress(address)
     if (accountObject !== undefined) {
       const { privateKey, crypto } = accountObject
-
-      if (privateKey !== undefined && privateKey === ENCRYPTED && isObject(crypto)) {
+      if (privateKey !== undefined && typeof privateKey === 'symbol' && isObject(crypto)) {
         const decryptedObject = await accountObject.decrypt(password)
-
-        return this.updateAccountByAddress(
+        const updateStatus = this.updateAccountByAddress(
           address,
           Object.assign({}, decryptedObject, {
             LastEncryptedBy: by || encryptedBy.ACCOUNT
           })
         )
+        if (updateStatus === true) {
+          return this
+        } else return false
       }
     }
     return false
   }
 
-  setDefaultAccount(obj) {
-    if (isAddress(obj)) {
-      this.defaultAccount = this.getAccountByAddress(obj)
-    } else if (isAddress(obj.address)) {
-      this.defaultAccount = this.getAccountByAddress(obj.address).address
-    }
-
-    return this
-  }
-
   setSigner(obj) {
     if (isAddress(obj)) {
       this.signer = this.getAccountByAddress(obj)
+      this.defaultAccount = this.getAccountByAddress(obj)
     } else if (isAddress(obj.address)) {
       this.signer = this.getAccountByAddress(obj.address).address
+      this.defaultAccount = this.getAccountByAddress(obj.address).address
     }
     return this
   }

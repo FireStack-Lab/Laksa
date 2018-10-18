@@ -4,6 +4,7 @@ export default [
   'laksa-core-messenger',
   'laksa-core-contract',
   'laksa-core-transaction',
+  'laksa-core-provider',
   'laksa-contracts',
   'laksa-providers-http',
   'laksa-shared',

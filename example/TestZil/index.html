@@ -31,7 +31,7 @@
     var setButton = document.getElementById('setProviderButton')
     //For local testing, use URL = 'http://localhost:4200'
     //To connect to the external network, use URL = 'https://api-scilla.zilliqa.com'
-    var laksa = new Laksa()
+    var laksa = new Laksa('https://api-scilla.zilliqa.com')
     // var URL = undefined
     // const {Wallet}=window.LaksaWallet
 
@@ -44,9 +44,9 @@
       console.log('lll')
     };
 
-    var URL = 'https://api-scilla.zilliqa.com'
-    laksa.setProvider(URL)
-    laksa.setScillaProvider('https://scilla-runner.zilliqa.com')
+    // var URL = 'http://localhost:4200'
+    // laksa.setProvider(URL)
+    // laksa.setScillaProvider('https://scilla-runner.zilliqa.com')
     // webz.isConnected().then(console.log)
     let code = `
 (* HelloWorld contract *)

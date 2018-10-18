@@ -32,8 +32,6 @@ export default [
     params: {
       to: ['isAddress', 'required'],
       pubKey: ['isPubkey', 'required'],
-      // FIXME: core must be able to parse amount as string; it currently does
-      // not. the issue is being tracked here: https://github.com/Zilliqa/Zilliqa/issues/524
       amount: ['isBN', 'required'],
       gasPrice: ['isNumber', 'required'],
       gasLimit: ['isNumber', 'required']
