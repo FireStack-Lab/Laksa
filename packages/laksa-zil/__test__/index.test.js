@@ -2,14 +2,13 @@ import { ProtobufProvider as HttpProvider } from '../../laksa-providers-http/src
 import { Messenger } from '../../laksa-core-messenger/src'
 import Zil from '../src'
 
-describe('test createAccount', () => {
+describe('test zil', () => {
   const url = 'https://api-scilla.zilliqa.com'
   const provider = new HttpProvider(url)
   const messenger = new Messenger(provider)
   const zil = new Zil(messenger)
   it('should be test zil', async () => {
-    const connection = await zil.isConnected()
-
+    const connection = await zil.getNetworkId()
     expect(connection).toEqual('TestNet')
   })
   it('should extend a zil method', async () => {

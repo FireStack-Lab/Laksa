@@ -45,15 +45,15 @@ class Method {
     } = options
     this.name = name
     this.call = call
-    this.messanger = null
+    this.messenger = null
     this.params = params
     this.transformer = transformer || {}
     this.endpoint = endpoint || 'client'
     this.isSendJson = isSendJson || false
   }
 
-  setMessanger(msg) {
-    this.messanger = msg
+  setMessenger(msg) {
+    this.messenger = msg
   }
 
   generateValidateObjects() {
@@ -119,27 +119,27 @@ class Method {
   }
 
   methodBuilder() {
-    if (this.messanger !== null && this.endpoint === 'client') {
+    if (this.messenger !== null && this.endpoint === 'client') {
       return (args, callback) => {
         const { requiredArgs, optionalArgs } = this.generateValidateObjects()
         this.validateArgs(args, requiredArgs, optionalArgs)
         const params = this.extractParams(args)
         const newCallback = isFunction(args) ? args : callback
         if (newCallback) {
-          return this.messanger.sendAsync({ method: this.call, params }, newCallback)
+          return this.messenger.sendAsync({ method: this.call, params }, newCallback)
         }
-        return this.messanger.send({ method: this.call, params })
+        return this.messenger.send({ method: this.call, params })
       }
     }
-    if (this.messanger !== null && this.endpoint !== 'client') {
+    if (this.messenger !== null && this.endpoint !== 'client') {
       return (args, callback) => {
         const { requiredArgs, optionalArgs } = this.generateValidateObjects()
         this.validateArgs(args, requiredArgs, optionalArgs)
         const newCallback = isFunction(args) ? args : callback
         if (newCallback) {
-          return this.messanger.sendAsyncServer(this.endpoint, args, newCallback)
+          return this.messenger.sendAsyncServer(this.endpoint, args, newCallback)
         }
-        return this.messanger.sendServer(this.endpoint, args)
+        return this.messenger.sendServer(this.endpoint, args)
       }
     }
   }

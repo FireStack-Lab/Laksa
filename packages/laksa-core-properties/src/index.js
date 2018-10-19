@@ -4,11 +4,11 @@ class Property {
     this.name = name
     this.getter = getter
     this.setter = setter
-    this.messanger = null
+    this.messenger = null
   }
 
-  setMessanger(msg) {
-    this.messanger = msg
+  setMessenger(msg) {
+    this.messenger = msg
   }
 
   assignToObject(object) {
@@ -27,12 +27,12 @@ class Property {
   }
 
   propertyBuilder() {
-    if (this.messanger !== null) {
+    if (this.messenger !== null) {
       return callback => {
         if (callback) {
-          return this.messanger.sendAsync({ method: this.getter }, callback)
+          return this.messenger.sendAsync({ method: this.getter }, callback)
         }
-        return this.messanger.send({ method: this.getter })
+        return this.messenger.send({ method: this.getter })
       }
     }
   }

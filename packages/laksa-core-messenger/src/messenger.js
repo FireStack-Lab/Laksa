@@ -39,7 +39,7 @@ export default class Messanger {
   sendBatch(data, callback) {
     this.providerCheck()
     const payload = this.JsonRpc.toBatchPayload(data)
-    this.provider.sendAsync(payload, async (err, results) => {
+    this.provider.send(payload, async (err, results) => {
       if (err) {
         return callback(err)
       }
@@ -60,7 +60,7 @@ export default class Messanger {
 
   sendAsyncServer(endpoint, data, callback) {
     this.providerCheck()
-    this.scillaProvider.sendAsyncServer(endpoint, data, async (err, result) => {
+    this.scillaProvider.sendServer(endpoint, data, async (err, result) => {
       if (err || result.error) {
         const errors = err || result.error
         return callback(errors)
@@ -72,7 +72,7 @@ export default class Messanger {
 
   sendBatchServer(data, callback) {
     this.providerCheck()
-    this.scillaProvider.sendAsync(data, async (err, results) => {
+    this.scillaProvider.sendServer(data, async (err, results) => {
       if (err) {
         return callback(err)
       }

@@ -6,7 +6,7 @@ import propertyObjects from './propertyObjects'
 const mapObjectToMethods = main => {
   methodObjects.map(data => {
     const zilMethod = new Method(data)
-    zilMethod.setMessanger(main.messenger)
+    zilMethod.setMessenger(main.messenger)
     zilMethod.assignToObject(main)
     return false
   })
@@ -15,7 +15,7 @@ const mapObjectToMethods = main => {
 const mapPropertyToObjects = main => {
   propertyObjects.map(data => {
     const zilProperty = new Property(data)
-    zilProperty.setMessanger(main.messenger)
+    zilProperty.setMessenger(main.messenger)
     zilProperty.assignToObject(main)
     return false
   })
@@ -33,7 +33,7 @@ class Zil {
       throw new Error('Method has to be an object')
     }
     const zilMethod = new Method(object)
-    zilMethod.setMessanger(this.messenger)
+    zilMethod.setMessenger(this.messenger)
     zilMethod.assignToObject(this)
     return true
   }
