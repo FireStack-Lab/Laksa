@@ -1,4 +1,4 @@
-import HttpProvider from '../../laksa-providers-http/src'
+import { ProtobufProvider as HttpProvider } from '../../laksa-providers-http/src'
 import { Messenger } from '../../laksa-core-messenger/src'
 import Zil from '../src'
 
