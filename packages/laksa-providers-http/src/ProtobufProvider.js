@@ -1,9 +1,28 @@
 import { BaseProvider, composeMiddleware, performRPC } from 'laksa-core-provider'
 
+const defaultOptions = {
+  method: 'POST',
+  timeout: 120000,
+  user: null,
+  password: null,
+  headers: { 'Content-Type': 'application/json' }
+}
+
 export default class ProtobufProvider extends BaseProvider {
-  constructor(url, reqMiddleware = [], resMiddleware = []) {
+  constructor(url, options, reqMiddleware = [], resMiddleware = []) {
     super(reqMiddleware, resMiddleware)
     this.url = url || 'http://localhost:4200'
+    if (options) {
+      this.options = {
+        method: options.method || defaultOptions.method,
+        timeout: options.timeout || defaultOptions.timeout,
+        user: options.user || defaultOptions.user,
+        password: options.password || defaultOptions.password,
+        headers: options.headers || defaultOptions.headers
+      }
+    } else {
+      this.options = defaultOptions
+    }
   }
 
   send(payload, callback) {
@@ -17,6 +36,7 @@ export default class ProtobufProvider extends BaseProvider {
   requestFunc({ endpoint, payload, callback }) {
     const tReq = composeMiddleware(
       ...this.reqMiddleware,
+      obj => this.optionsHandler(obj),
       obj => this.endpointHandler(obj, endpoint),
       this.payloadHandler
     )
@@ -26,8 +46,10 @@ export default class ProtobufProvider extends BaseProvider {
       this.responseHandler,
       this.errorHandler
     )
+
     // FIXME: if the protobuff is due, we have to change the rpcbuilder from messenger as well
     // const payloadObject = { payload }
+
     const req = tReq(payload)
 
     return performRPC(req, tRes)
@@ -43,9 +65,20 @@ export default class ProtobufProvider extends BaseProvider {
     })
   }
 
+  optionsHandler(obj) {
+    if (this.options.user && this.options.password) {
+      const AUTH_TOKEN = `Basic ${Buffer.from(
+        `${this.options.user}:${this.options.password}`
+      ).toString('base64')}`
+      this.options.headers.Authorization = AUTH_TOKEN
+    }
+
+    return Object.assign({}, obj, { options: this.options })
+  }
+
   errorHandler(response) {
     if (!response.ok) {
-      throw Error(response.statusText)
+      throw new Error(response.statusText)
     }
     return response
   }

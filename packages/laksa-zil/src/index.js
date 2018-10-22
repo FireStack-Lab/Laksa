@@ -37,6 +37,16 @@ class Zil {
     zilMethod.assignToObject(this)
     return true
   }
+
+  extendProperty = object => {
+    if (typeof object !== 'object') {
+      throw new Error('Property has to be an object')
+    }
+    const zilProperty = new Property(object)
+    zilProperty.setMessenger(this.messenger)
+    zilProperty.assignToObject(this)
+    return true
+  }
 }
 
 export default Zil

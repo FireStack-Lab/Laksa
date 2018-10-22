@@ -86,7 +86,6 @@
   ],
   "author": "neeboo",
   "license": "MIT",
-  "dependencies": {},
   "jest": {
     "transform": {},
     "coverageDirectory": "./coverage/",
