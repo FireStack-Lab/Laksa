@@ -1,6 +1,6 @@
 {
   "name": "laksa-core-provider",
-  "version": "1.0.0",
+  "version": "0.0.50",
   "description": "",
   "main": "index.js",
   "scripts": {
