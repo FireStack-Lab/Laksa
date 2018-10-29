@@ -9,8 +9,8 @@ const defaultOptions = {
 }
 
 export default class ProtobufProvider extends BaseProvider {
-  constructor(url, options, reqMiddleware = [], resMiddleware = []) {
-    super(reqMiddleware, resMiddleware)
+  constructor(url, options) {
+    super()
     this.url = url || 'http://localhost:4200'
     if (options) {
       this.options = {
@@ -34,25 +34,18 @@ export default class ProtobufProvider extends BaseProvider {
   }
 
   requestFunc({ endpoint, payload, callback }) {
-    const tReq = composeMiddleware(
-      ...this.reqMiddleware,
+    const [tReq, tRes] = this.getMiddleware(payload.method)
+    const reqMiddleware = composeMiddleware(
+      ...tReq,
       obj => this.optionsHandler(obj),
       obj => this.endpointHandler(obj, endpoint),
       this.payloadHandler
     )
-    const tRes = composeMiddleware(
-      ...this.resMiddleware,
-      data => this.callbackHandler(data, callback),
-      this.responseHandler,
-      this.errorHandler
-    )
+    const resMiddleware = composeMiddleware(data => this.callbackHandler(data, callback), ...tRes)
 
-    // FIXME: if the protobuff is due, we have to change the rpcbuilder from messenger as well
-    // const payloadObject = { payload }
+    const req = reqMiddleware(payload)
 
-    const req = tReq(payload)
-
-    return performRPC(req, tRes)
+    return performRPC(req, resMiddleware)
   }
 
   payloadHandler(payload) {
@@ -74,17 +67,6 @@ export default class ProtobufProvider extends BaseProvider {
     }
 
     return Object.assign({}, obj, { options: this.options })
-  }
-
-  errorHandler(response) {
-    if (!response.ok) {
-      throw new Error(response.statusText)
-    }
-    return response
-  }
-
-  responseHandler(response) {
-    return response.json()
   }
 
   callbackHandler(data, cb) {

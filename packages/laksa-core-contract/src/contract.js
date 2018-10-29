@@ -80,13 +80,11 @@ export class Contract {
   @sign
   async prepareTx(tx) {
     const raw = tx.txParams
-
     // const { code, ...rest } = raw
     const response = await this.messenger.send({
       method: 'CreateTransaction',
       params: [{ ...raw, amount: raw.amount.toNumber() }]
     })
-
     return tx.confirm(response.TranID)
   }
 
@@ -127,6 +125,7 @@ export class Contract {
     if (!signedTxn.signature) throw new Error('transaction has not been signed')
     const deployedTxn = Object.assign({}, { ...signedTxn, amount: signedTxn.amount.toNumber() })
     const result = await this.messenger.send({ method: 'CreateTransaction', params: [deployedTxn] })
+    console.log(result)
     if (result) {
       this.setContractStatus(ContractStatus.deployed)
     }

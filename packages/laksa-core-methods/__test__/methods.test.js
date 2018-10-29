@@ -21,7 +21,7 @@ describe('', () => {
     newMethod.setMessenger(messenger)
     newMethod.assignToObject(zil)
     const result = await zil.getMyFavorTransaction({
-      txHash: '5E3124A5DB6AA12FAB6CBDB5F50D5B4037022EF37B2EAB8921F07642B422F250'
+      txHash: '2EA9AB9198D1638007400CD2C3BEF1CC745B864B76011A0E1BC52180AC6452D4'
     })
     expect(util.isAddress(result.toAddr)).toEqual(true)
   })
@@ -38,7 +38,7 @@ describe('', () => {
     newMethod.assignToObject(zil)
     zil.getMyFavorTransaction(
       {
-        txHash: '5E3124A5DB6AA12FAB6CBDB5F50D5B4037022EF37B2EAB8921F07642B422F250'
+        txHash: '2EA9AB9198D1638007400CD2C3BEF1CC745B864B76011A0E1BC52180AC6452D4'
       },
       (err, data) => {
         expect(util.isAddress(data.toAddr)).toEqual(true)

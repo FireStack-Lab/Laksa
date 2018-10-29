@@ -2,7 +2,12 @@ import { InvalidProvider } from 'laksa-shared'
 import { JsonRpc } from './rpcbuilder'
 
 function getResultForData(data) {
-  return data.error ? data.error : data.message ? data : data.result
+  if (data.error) {
+    return data.error
+  } else if (data.result) {
+    return data.result
+  }
+  return data
 }
 
 export default class Messanger {
@@ -16,8 +21,9 @@ export default class Messanger {
     this.providerCheck()
     try {
       const payload = this.JsonRpc.toPayload(data.method, data.params)
+      this.provider.middleware.response.use(getResultForData)
       const result = await this.provider.send(payload)
-      return getResultForData(result)
+      return result // getResultForData(result)
     } catch (e) {
       throw new Error(e)
     }
@@ -26,13 +32,14 @@ export default class Messanger {
   sendAsync(data, callback) {
     this.providerCheck()
     const payload = this.JsonRpc.toPayload(data.method, data.params)
+    this.provider.middleware.response.use(getResultForData)
     this.provider.send(payload, async (err, result) => {
       if (err || result.error) {
         const errors = err || result.error
         return callback(errors)
       }
       const promiseResult = await result
-      callback(null, getResultForData(promiseResult))
+      callback(null, promiseResult)
     })
   }
 
@@ -70,9 +77,9 @@ export default class Messanger {
     })
   }
 
-  sendBatchServer(data, callback) {
+  sendBatchServer(endpoint, data, callback) {
     this.providerCheck()
-    this.scillaProvider.sendServer(data, async (err, results) => {
+    this.scillaProvider.sendServer(endpoint, data, async (err, results) => {
       if (err) {
         return callback(err)
       }

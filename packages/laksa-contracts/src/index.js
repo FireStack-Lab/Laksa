@@ -12,23 +12,24 @@ class Contracts {
   }
 
   /**
-   * [at description]
-   * @param  {[type]} address [description]
-   * @param  {[type]} abi     [description]
-   * @param  {[type]} code    [description]
-   * @param  {[type]} init    [description]
-   * @param  {[type]} state   [description]
-   * @return {[type]}         [description]
+   * @function {function name}
+   * @param  {type} address    {description}
+   * @param  {type} abi        {description}
+   * @param  {type} code       {description}
+   * @param  {type} initParams {description}
+   * @param  {type} state      {description}
+   * @return {type} {description}
    */
   at(address, abi, code, initParams, state) {
     return new Contract(this, abi, address, code, initParams, state)
   }
 
   /**
-   * [new description]
-   * @param  {[String]}  code       [description]
-   * @param  {[Array<object>]}  initParams [description]
-   * @return {Promise}            [description]
+   * @function {function name}
+   * @param  {type} code       {description}
+   * @param  {type} initParams {description}
+   * @param  {type} options    {description}
+   * @return {type} {description}
    */
   async new(code, initParams, options) {
     const contract = new Contract(this)
@@ -55,13 +56,13 @@ class Contracts {
   }
 
   /**
-   * [deploy description]
-   * @param  {[BN|Number]}  gasLimit [description]
-   * @param  {[BN|Number]}  gasPrice [description]
-   * @param  {[Contract]}  contract [description]
-   * @param  {[Account]}  signer   [description]
-   * @param  {[String]}  password [description]
-   * @return {Promise}          [description]
+   * @function {function name}
+   * @param  {type} contract {description}
+   * @param  {type} gasLimit {description}
+   * @param  {type} gasPrice {description}
+   * @param  {type} signer   {description}
+   * @param  {type} password {description}
+   * @return {type} {description}
    */
   async deploy({ contract, gasLimit, gasPrice }, { signer, password }) {
     // we need singer address to get the nonce

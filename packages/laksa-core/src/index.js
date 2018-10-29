@@ -70,14 +70,11 @@ class Laksa {
     } else if (util.isObject(provider) && util.isUrl(provider.url)) {
       providerSetter = {
         url: provider.url,
-        options: provider.options,
-        reqMiddleware: provider.reqMiddleware,
-        resMiddleware: provider.resMiddleware
+        options: provider.options
       }
     } else {
       throw new Error('provider should be HttpProvider Module or url string')
     }
-
     this.setNodeProvider(providerSetter)
     this.setScillaProvider(providerSetter)
     return true
@@ -98,10 +95,9 @@ class Laksa {
     return this.config.defaultAccount
   }
 
-  setNodeProvider({
-    url, options, reqMiddleware, resMiddleware
-  }) {
-    const newProvider = new HttpProvider(url, options, reqMiddleware, resMiddleware)
+  setNodeProvider({ url, options }) {
+    const newProvider = new HttpProvider(url, options)
+
     this.currentProvider = {
       ...this.currentProvider,
       node: newProvider
@@ -109,10 +105,8 @@ class Laksa {
     this.messenger.setProvider(newProvider)
   }
 
-  setScillaProvider({
-    url, options, reqMiddleware, resMiddleware
-  }) {
-    const newProvider = new HttpProvider(url, options, reqMiddleware, resMiddleware)
+  setScillaProvider({ url, options }) {
+    const newProvider = new HttpProvider(url, options)
     this.currentProvider = {
       ...this.currentProvider,
       scilla: newProvider

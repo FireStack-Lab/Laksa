@@ -31,7 +31,7 @@
     var setButton = document.getElementById('setProviderButton')
     //For local testing, use URL = 'http://localhost:4200'
     //To connect to the external network, use URL = 'https://api-scilla.zilliqa.com'
-    var laksa = new Laksa('https://api-scilla.zilliqa.com')
+    var laksa = new Laksa()
     // var URL = undefined
     // const {Wallet}=window.LaksaWallet
 
@@ -44,12 +44,14 @@
       console.log('lll')
     };
 
-    // var URL = 'http://localhost:4200'
-    // laksa.setProvider(URL)
-    // laksa.setScillaProvider('https://scilla-runner.zilliqa.com')
+    // var URL = 'https://api-scilla.zilliqa.com'
+    const nodeProvider = new laksa.Modules.HttpProvider('https://api-scilla.zilliqa.com')
+    const scillaProvider = new laksa.Modules.HttpProvider('https://scilla-runner.zilliqa.com')
+    laksa.setNodeProvider(nodeProvider)
+    laksa.setScillaProvider(scillaProvider)
     // webz.isConnected().then(console.log)
     let code = `
-(* HelloWorld contract *)
+    (* HelloWorld contract *)
 
 import ListUtils
 
@@ -58,8 +60,8 @@ import ListUtils
 (***************************************************)
 library HelloWorld
 
-let one_msg =
-  fun (msg : Message) =>
+let one_msg = 
+  fun (msg : Message) => 
   let nil_msg = Nil {Message} in
   Cons {Message} msg nil_msg
 
@@ -76,10 +78,18 @@ contract HelloWorld
 field welcome_msg : String = ""
 
 transition setHello (msg : String)
+  is_owner = builtin eq owner _sender;
+  match is_owner with
+  | False =>
+    msg = {_tag : "Main"; _recipient : _sender; _amount : Uint128 0; code : not_owner_code};
+    msgs = one_msg msg;
+    send msgs
+  | True =>
     welcome_msg := msg;
     msg = {_tag : "Main"; _recipient : _sender; _amount : Uint128 0; code : set_hello_code};
     msgs = one_msg msg;
     send msgs
+  end
 end
 
 
@@ -131,28 +141,28 @@ end
 
 
 
-    // console.log({txn});
+    //  console.log({ txn });
 
 
-    // const myAddress = { address: "9bfec715a6bd658fcb62b0f8cc9bfa2ade71434a" };
-    // laksa.zil.createTransaction(txn).then((err, data) => console.log({ err, data }))
+    const myAddress = { address: "9bfec715a6bd658fcb62b0f8cc9bfa2ade71434a" };
+    laksa.zil.createTransaction(txn).then(data => console.log({ data }))
     // with callback
     // laksa.zil.getNetworkId((err,data)=>{console.log({err,data})})
 
-    // laksa.contract.decodeABI({code:code})
-    //   .then(decoded=>
-    //       decoded.setInitParamsValues(
-    //        decoded.abi.getInitParams(),[laksa.util.toHex(myAddress.address)]
-    //      ))
-    //   .then(inited=>inited.setBlockNumber())
-    //   .then(setted=>setted.generateNewContractJson())
-    //   .then(ready=>ready.testCall({gasLimit:2000}))
-    //   .then(state=>console.log(state.contractJson))
+    // laksa.contract.decodeABI({ code: code })
+    //   .then(decoded =>
+    //     decoded.setInitParamsValues(
+    //       decoded.abi.getInitParams(), [laksa.util.toHex(myAddress.address)]
+    //     ))
+    //   .then(inited => inited.setBlockNumber())
+    //   .then(setted => setted.generateNewContractJson())
+    //   .then(ready => ready.testCall({ gasLimit: 2000 }))
+    //   .then(state => console.log(state.contractJson))
 
 
 
-    // laksa.contracts.new(code,[laksa.util.toHex(myAddress.address)]).then(console.log)
-    // console.log(laksa.contracts.waitForSign);
+    // laksa.contracts.new(code, [laksa.util.toHex(myAddress.address)]).then(c => { console.log(c) })
+
 
     //laksa.isConnected().then(console.log);
 
@@ -189,12 +199,13 @@ end
 
 
     // const accountA = laksa.wallet.importAccountFromPrivateKey('e19d05c5452598e24caad4a0d85a49146f7be089515c905ae6a19e8a578a6930')
-    // laksa.wallet.setDefaultAccount(accountA).setSigner(accountA)
+    // laksa.wallet.setSigner(accountA)
     // // console.log(laksa.contracts);
 
     // laksa.contracts
     //   .new(code, [laksa.util.toHex(accountA.address)])
     //   .then((newContract) => {
+    //     console.log(newContract)
     //     newContract.deployTxn({ gasLimit: 50, gasPrice: 1 })
     //   })
     //   .then(console.log);
