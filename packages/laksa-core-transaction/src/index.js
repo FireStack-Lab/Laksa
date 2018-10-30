@@ -202,14 +202,14 @@ class Transaction {
 
     result
       .then(res => {
-        if (res.result && res.result.error) {
+        if (res && res.error) {
           this.trackTx(txHash, resolve, reject, cancelTimeout)
           return
         }
 
-        if (res.result) {
-          this.id = res.result.ID
-          this.receipt = res.result.receipt
+        if (res && !res.error) {
+          this.id = res.ID
+          this.receipt = res.receipt
           const isRecipt = this.receipt && this.receipt.success
           this.status = isRecipt ? TxStatus.Confirmed : TxStatus.Rejected
           cancelTimeout()

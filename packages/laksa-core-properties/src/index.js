@@ -7,10 +7,20 @@ class Property {
     this.messenger = null
   }
 
+  /**
+   * @function {setMessenger}
+   * @param  {Messenger} msg {messenger instance}
+   * @return {Messenger} {messenger setter}
+   */
   setMessenger(msg) {
     this.messenger = msg
   }
 
+  /**
+   * @function {assignToObject}
+   * @param  {object} object {method object}
+   * @return {object} {assiged to some object}
+   */
   assignToObject(object) {
     const zilName = this.name
     const asyncGetterName = getName => {
@@ -26,6 +36,10 @@ class Property {
     Object.assign(object, newZilObject)
   }
 
+  /**
+   * @function {propertyBuilder}
+   * @return {any} {property built}
+   */
   propertyBuilder() {
     if (this.messenger !== null) {
       return callback => {

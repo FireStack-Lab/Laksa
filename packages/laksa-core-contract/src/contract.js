@@ -10,6 +10,12 @@ export const ContractStatus = {
   deployed: Symbol('deployed')
 }
 
+/**
+ * @function setParamValues
+ * @param  {Array<object>} rawParams {init params get from ABI}
+ * @param  {Array<object>} newValues {init params set for ABI}
+ * @return {Array<object>} {new array of params objects}
+ */
 const setParamValues = (rawParams, newValues) => {
   const newParams = []
   rawParams.forEach((v, i) => {
@@ -58,10 +64,17 @@ export class Contract {
     }
   }
 
-  // event
+  /**
+   * @function {on}
+   * @return {Event} {description}
+   */
   on = () => {}
 
-  // test call to scilla runner
+  /**
+   * @function {testCall}
+   * @param  {Int} gasLimit {gasLimit for test call to scilla-runner}
+   * @return {Contract} {raw Contract object}
+   */
   async testCall(gasLimit) {
     const callContractJson = {
       code: this.code,
@@ -80,14 +93,28 @@ export class Contract {
   @sign
   async prepareTx(tx) {
     const raw = tx.txParams
-    // const { code, ...rest } = raw
+    /**
+     * @function response
+     * @returns {Object}
+     * @param {Address} ContractAddress {contract address that deployed}
+     * @param {string} Info  {Infomation that server returns}
+     * @param {TranID} TranID  {transaction ID that server returns},
+     */
+
     const response = await this.messenger.send({
       method: 'CreateTransaction',
       params: [{ ...raw, amount: raw.amount.toNumber() }]
     })
+
     return tx.confirm(response.TranID)
   }
 
+  /**
+   * @function {deployTxn}
+   * @param  {Int} gasPrice {gasPrice}
+   * @param  {Int} gasLimit {gasLimit}
+   * @return {Contract} {description}
+   */
   async deployTxn({ gasPrice, gasLimit }) {
     if (!this.code || !this.initParams) {
       throw new Error('Cannot deploy without code or ABI.')
@@ -108,28 +135,32 @@ export class Contract {
           data: JSON.stringify(this.initParams).replace(/\\"/g, '"')
         })
       )
-
       if (!tx.receipt || !tx.receipt.success) {
         this.setContractStatus(ContractStatus.rejected)
         return this
       }
-      this.setContractStatus(ContractStatus.deployed)
 
+      this.setContractStatus(ContractStatus.deployed)
       return this
     } catch (err) {
       throw err
     }
   }
 
+  /**
+   * @function {deploy}
+   * @param  {Transaction} signedTxn {description}
+   * @return {Contract} {Contract that deployed successfully}
+   */
   async deploy(signedTxn) {
     if (!signedTxn.signature) throw new Error('transaction has not been signed')
     const deployedTxn = Object.assign({}, { ...signedTxn, amount: signedTxn.amount.toNumber() })
     const result = await this.messenger.send({ method: 'CreateTransaction', params: [deployedTxn] })
-    console.log(result)
+
     if (result) {
       this.setContractStatus(ContractStatus.deployed)
     }
-    return { ...this, txnId: result }
+    return { ...this, TranID: result }
   }
 
   /**
@@ -163,6 +194,11 @@ export class Contract {
   }
 
   //-------------------------------
+  /**
+   * @function {getABI}
+   * @param  {string} { code {scilla code string}
+   * @return {ABI} {ABI object}
+   */
   async getABI({ code }) {
     // the endpoint for sendServer has been set to scillaProvider
     const result = await this.messenger.sendServer('/contract/check', { code })
@@ -171,6 +207,11 @@ export class Contract {
     }
   }
 
+  /**
+   * @function {decodeABI}
+   * @param  {string} { code {scilla code string}
+   * @return {Contract} {raw contract}
+   */
   async decodeABI({ code }) {
     this.setCode(code)
     const abiObj = await this.getABI({ code })
@@ -178,6 +219,11 @@ export class Contract {
     return this
   }
 
+  /**
+   * @function {setBlockNumber}
+   * @param  {Int} number {block number setted to blockchain}
+   * @return {Contract|false} {raw contract}
+   */
   async setBlockNumber(number) {
     if (number && isInt(Number(number))) {
       this.setBlockchain(String(number))
@@ -195,7 +241,11 @@ export class Contract {
   }
 
   //-------------------------------
-  // new contract json for deploy
+
+  /**
+   * @function {generateNewContractJson}
+   * @return {Contract} {raw contract with code and init params}
+   */
   generateNewContractJson() {
     this.contractJson = {
       ...defaultContractJson,
@@ -206,22 +256,43 @@ export class Contract {
     return this
   }
 
+  /**
+   * @function {setABIe}
+   * @param  {ABI} abi {ABI object}
+   * @return {Contract} {raw contract}
+   */
   setABI(abi) {
     this.abi = new ABI(abi) || {}
     return this
   }
 
+  /**
+   * @function {setCode}
+   * @param  {string} code {scilla code string}
+   * @return {Contract} {raw contract with code}
+   */
   setCode(code) {
     this.code = code || ''
     return this
   }
 
+  /**
+   * @function {setInitParamsValues}
+   * @param  {Array<Object>} initParams    {init params get from ABI}
+   * @param  {Array<Object>} arrayOfValues {init params set for ABI}
+   * @return {Contract} {raw contract object}
+   */
   setInitParamsValues(initParams, arrayOfValues) {
     const result = setParamValues(initParams, arrayOfValues)
     this.initParams = result
     return this
   }
 
+  /**
+   * @function {setCreationBlock}
+   * @param  {Int} blockNumber {block number for blockchain}
+   * @return {Contract} {raw contract object}
+   */
   setCreationBlock(blockNumber) {
     const result = setParamValues(
       [{ vname: '_creation_block', type: 'BNum' }],
@@ -231,6 +302,11 @@ export class Contract {
     return this
   }
 
+  /**
+   * @function {setBlockchain}
+   * @param  {Int} blockNumber {block number for blockchain}
+   * @return {Contract} {raw contract object}
+   */
   setBlockchain(blockNumber) {
     const result = setParamValues(
       [{ vname: 'BLOCKNUMBER', type: 'BNum' }],
@@ -240,11 +316,20 @@ export class Contract {
     return this
   }
 
-  // messenger Setter
+  /**
+   * @function {setMessenger}
+   * @param  {Messenger} messenger {messenger instance}
+   * @return {Messenger} {setter}
+   */
   setMessenger(messenger) {
     this.messenger = messenger || undefined
   }
 
+  /**
+   * @function {setContractStatus}
+   * @param  {Symbol} status {status symbol}
+   * @return {Symbol} {setter}
+   */
   setContractStatus(status) {
     this.contractStatus = status
   }

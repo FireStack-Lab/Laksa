@@ -52,10 +52,19 @@ class Method {
     this.isSendJson = isSendJson || false
   }
 
+  /**
+   * @function {setMessenger}
+   * @param  {Messenger} msg {messenger instance}
+   * @return {Messenger} {messenger setter}
+   */
   setMessenger(msg) {
     this.messenger = msg
   }
 
+  /**
+   * @function {generateValidateObjects}
+   * @return {object} {validate object}
+   */
   generateValidateObjects() {
     const validatorObject = this.params
 
@@ -76,6 +85,13 @@ class Method {
     return { requiredArgs, optionalArgs }
   }
 
+  /**
+   * @function {validateArgs}
+   * @param  {object} args         {args objects}
+   * @param  {object} requiredArgs {requred args object}
+   * @param  {object} optionalArgs {optional args object}
+   * @return {boolean|Error} {validate result}
+   */
   validateArgs(args, requiredArgs, optionalArgs) {
     const reArgs = requiredArgs === undefined ? {} : requiredArgs
     const opArgs = optionalArgs === undefined ? {} : optionalArgs
@@ -85,6 +101,11 @@ class Method {
     return true
   }
 
+  /**
+   * @function {extractParams}
+   * @param  {object} args {args object}
+   * @return {Array<object>} {extracted params}
+   */
   extractParams(args) {
     const paramsObject = isObject(args) ? args : {}
     let result
@@ -105,6 +126,12 @@ class Method {
     return result
   }
 
+  /**
+   * @function {transformedBeforeSend}
+   * @param  {any} value {value that waited to transform}
+   * @param  {string} key   {key to transform}
+   * @return {any} {value that transformed}
+   */
   transformedBeforeSend(value, key) {
     const transformMethod = this.transformer[key]
     if (transformMethod !== undefined) {
@@ -112,12 +139,21 @@ class Method {
     } else return value
   }
 
+  /**
+   * @function {assignToObject} {assign method to some object}
+   * @param  {object} object {method object}
+   * @return {object} {new object}
+   */
   assignToObject(object) {
     const newObject = {}
     newObject[this.name] = this.methodBuilder()
     return Object.assign(object, newObject)
   }
 
+  /**
+   * @function {methodBuilder}
+   * @return {any} {built method}
+   */
   methodBuilder() {
     if (this.messenger !== null && this.endpoint === 'client') {
       return (args, callback) => {

@@ -12,24 +12,24 @@ class Contracts {
   }
 
   /**
-   * @function {function name}
-   * @param  {type} address    {description}
-   * @param  {type} abi        {description}
-   * @param  {type} code       {description}
-   * @param  {type} initParams {description}
-   * @param  {type} state      {description}
-   * @return {type} {description}
+   * @function {at}
+   * @param  {string} address    {description}
+   * @param  {ABI} abi        {description}
+   * @param  {string} code       {scilla code string}
+   * @param  {Array<object>} initParams {description}
+   * @param  {Symbol} state      {description}
+   * @return {Contract} {description}
    */
   at(address, abi, code, initParams, state) {
     return new Contract(this, abi, address, code, initParams, state)
   }
 
   /**
-   * @function {function name}
-   * @param  {type} code       {description}
-   * @param  {type} initParams {description}
-   * @param  {type} options    {description}
-   * @return {type} {description}
+   * @function {new}
+   * @param  {string} code       {scilla code string}
+   * @param  {Array<object>} initParams {array of init params}
+   * @param  {object} options    {options that set for new contract}
+   * @return {Contract} {contract that created}
    */
   async new(code, initParams, options) {
     const contract = new Contract(this)
@@ -56,13 +56,13 @@ class Contracts {
   }
 
   /**
-   * @function {function name}
-   * @param  {type} contract {description}
-   * @param  {type} gasLimit {description}
-   * @param  {type} gasPrice {description}
-   * @param  {type} signer   {description}
-   * @param  {type} password {description}
-   * @return {type} {description}
+   * @function {deploy}
+   * @param  {Contract} contract {contract object}
+   * @param  {Int} gasLimit {gasLimit that set for contract}
+   * @param  {Int} gasPrice {gasPrice that set for contract}
+   * @param  {Account} signer   {account that for sign}
+   * @param  {string} password {password for signer if encrypted}
+   * @return {Contract} {contract that deployed}
    */
   async deploy({ contract, gasLimit, gasPrice }, { signer, password }) {
     // we need singer address to get the nonce

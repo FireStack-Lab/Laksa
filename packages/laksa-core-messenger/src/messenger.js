@@ -1,10 +1,13 @@
 import { InvalidProvider } from 'laksa-shared'
 import { JsonRpc } from './rpcbuilder'
 
+/**
+ * @function getResultForData
+ * @param  {object} data {object get from provider}
+ * @return {object} {data result or data}
+ */
 function getResultForData(data) {
-  if (data.error) {
-    return data.error
-  } else if (data.result) {
+  if (data.result) {
     return data.result
   }
   return data
@@ -17,6 +20,11 @@ export default class Messanger {
     this.JsonRpc = new JsonRpc()
   }
 
+  /**
+   * @function {send}
+   * @param  {object} data {data object with method and params}
+   * @return {object|Error} {result from provider}
+   */
   send = async data => {
     this.providerCheck()
     try {
@@ -29,6 +37,12 @@ export default class Messanger {
     }
   }
 
+  /**
+   * @function {sendAsync}
+   * @param  {object} data {data object with method and params}
+   * @param  {any} callback {callback function}
+   * @return {any} {callback function execution}
+   */
   sendAsync(data, callback) {
     this.providerCheck()
     const payload = this.JsonRpc.toPayload(data.method, data.params)
@@ -43,6 +57,12 @@ export default class Messanger {
     })
   }
 
+  /**
+   * @function {sendBatch}
+   * @param  {object} data {data object with method and params}
+   * @param  {any} callback {callback function}
+   * @return {any} {callback function execution}
+   */
   sendBatch(data, callback) {
     this.providerCheck()
     const payload = this.JsonRpc.toBatchPayload(data)
@@ -55,6 +75,12 @@ export default class Messanger {
     })
   }
 
+  /**
+   * @function {sendServer}
+   * @param  {string} endpoint {endpoint that point to server}
+   * @param  {object} data     {data object with method and params}
+   * @return {object|Error} {result from provider}
+   */
   sendServer = async (endpoint, data) => {
     this.providerCheck()
     try {
@@ -65,6 +91,13 @@ export default class Messanger {
     }
   }
 
+  /**
+   * @function {sendAsyncServer}
+   * @param  {string} endpoint {endpoint that point to server}
+   * @param  {object} data     {data object with method and params}
+   * @param  {any} callback {callback function}
+   * @return {any} {callback function execution}
+   */
   sendAsyncServer(endpoint, data, callback) {
     this.providerCheck()
     this.scillaProvider.sendServer(endpoint, data, async (err, result) => {
@@ -77,6 +110,13 @@ export default class Messanger {
     })
   }
 
+  /**
+   * @function {sendBatchServer}
+   * @param  {string} endpoint {endpoint that point to server}
+   * @param  {object} data     {data object with method and params}
+   * @param  {any} callback {callback function}
+   * @return {any} {callback function execution}
+   */
   sendBatchServer(endpoint, data, callback) {
     this.providerCheck()
     this.scillaProvider.sendServer(endpoint, data, async (err, results) => {
@@ -88,14 +128,28 @@ export default class Messanger {
     })
   }
 
+  /**
+   * @function {setProvider}
+   * @param  {Provider} provider {provider instance}
+   * @return {Provider} {provider setter}
+   */
   setProvider(provider) {
     this.provider = provider
   }
 
+  /**
+   * @function {setScillaProvider}
+   * @param  {Provider} provider {provider instance}
+   * @return {Provider} {provider setter}
+   */
   setScillaProvider(provider) {
     this.scillaProvider = provider
   }
 
+  /**
+   * @function {providerCheck}
+   * @return {Error|null} {provider validator}
+   */
   providerCheck() {
     if (!this.provider) {
       InvalidProvider()

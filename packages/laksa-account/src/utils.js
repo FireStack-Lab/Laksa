@@ -32,18 +32,29 @@ function generateAccountObject(privateKey) {
 }
 
 /**
- * create an raw accountObject
- * @return {[type]} [description]
+ * @function createAccount
+ * @return {Account} {account object}
  */
-
 export const createAccount = () => {
   return generateAccountObject(generatePrivateKey())
 }
 
+/**
+ * @function importAccount
+ * @param  {PrivateKey} privateKey {privatekey string}
+ * @return {Account} {account object}
+ */
 export const importAccount = privateKey => {
   return generateAccountObject(privateKey)
 }
 
+/**
+ * @function encryptAccount
+ * @param  {Account} accountObject {account object}
+ * @param  {string} password      {password string}
+ * @param  {object} options       {encryption options}
+ * @return {Account} {encrypted account object}
+ */
 export const encryptAccount = async (accountObject, password, options = { level: 1024 }) => {
   validateArgs(accountObject, {
     address: [isAddress],
@@ -62,6 +73,12 @@ export const encryptAccount = async (accountObject, password, options = { level:
   return encryptedObj
 }
 
+/**
+ * @function decryptAccount
+ * @param  {Account} accountObject {encrypted account object}
+ * @param  {string} password      {password string}
+ * @return {Account} {decrypted account object}
+ */
 export const decryptAccount = async (accountObject, password) => {
   validateArgs(accountObject, {
     address: [isAddress],
@@ -81,6 +98,12 @@ export const decryptAccount = async (accountObject, password) => {
   return decryptedObj
 }
 
+/**
+ * @function signTransaction
+ * @param  {PrivateKey} privateKey        {privatekey}
+ * @param  {Transaction} transactionObject {transaction object}
+ * @return {Transaction} {signed transaction}
+ */
 export const signTransaction = (privateKey, transactionObject) => {
   return createTransactionJson(privateKey, transactionObject)
 }

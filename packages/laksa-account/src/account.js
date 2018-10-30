@@ -14,7 +14,10 @@ export class Account {
     this.messenger = messenger
   }
 
-  // prototype.createAccount
+  /**
+   * @function {createAccount}
+   * @return {Account} {account object}
+   */
   createAccount() {
     const accountObject = createAccount()
     const newObject = new Account()
@@ -27,7 +30,11 @@ export class Account {
     })
   }
 
-  // prototype.importAccount
+  /**
+   * @function {importAccount}
+   * @param  {PrivateKey} privateKey {privatekey string}
+   * @return {Account} {account object}
+   */
   importAccount(privateKey) {
     const accountObject = importAccount(privateKey)
     const newObject = new Account()
@@ -41,12 +48,23 @@ export class Account {
   }
 
   // sub object
+  /**
+   * @function {encrypt}
+   * @param  {string} password {password string}
+   * @param  {object} options  {options object for encryption}
+   * @return {Account} {account object}
+   */
   async encrypt(password, options = { level: 1024 }) {
     const encryptedAccount = await encryptAccount(this, password, options)
     return Object.assign(this, encryptedAccount)
   }
 
   // sub object
+  /**
+   * @function {decrypt}
+   * @param  {string} password {password string}
+   * @return {object} {account object}
+   */
   async decrypt(password) {
     const that = this
     const decrypted = await decryptAccount(that, password)
@@ -54,7 +72,11 @@ export class Account {
     return Object.assign(this, decrypted)
   }
 
-  // sign method for Transaction bytes
+  /**
+   * @function {sign} {sign method for Transaction bytes}
+   * @param  {Buffer} bytes {Buffer that waited for sign}
+   * @return {object} {signed transaction object}
+   */
   sign(bytes) {
     if (this.privateKey === ENCRYPTED) {
       throw new Error('This account is encrypted, please decrypt it first')
@@ -62,7 +84,11 @@ export class Account {
     return sign(bytes, this.privateKey, this.publicKey)
   }
 
-  // sign plain object
+  /**
+   * @function {signTransaction} {sign plain object}
+   * @param  {object} transactionObject {transaction object that prepared for sign}
+   * @return {object} {signed transaction object}
+   */
   signTransaction(transactionObject) {
     if (this.privateKey === ENCRYPTED) {
       throw new Error(
@@ -72,7 +98,12 @@ export class Account {
     return signTransaction(this.privateKey, transactionObject)
   }
 
-  // sign plain object with password
+  /**
+   * @function {signTransactionWithPassword} {sign plain object with password}
+   * @param  {object} transactionObject {transaction object}
+   * @param  {string} password          {password string}
+   * @return {object} {signed transaction object}
+   */
   async signTransactionWithPassword(transactionObject, password) {
     if (this.privateKey === ENCRYPTED) {
       const decrypted = await this.decrypt(password)
