@@ -8,7 +8,7 @@
 import * as util from 'laksa-utils'
 import * as core from 'laksa-core-crypto'
 import { Messenger } from 'laksa-core-messenger'
-import Transaction from 'laksa-core-transaction'
+import { Transaction } from 'laksa-core-transaction'
 import { ProtobufProvider as HttpProvider } from 'laksa-providers-http'
 
 import { Account } from 'laksa-account'

@@ -30,19 +30,27 @@ class Wallet {
   }
 
   /**
-   * [updateLength description]
-   * @return {[type]} [description]
+   * @function {updateLength}
+   * @return {number} {wallet account counts}
    */
   updateLength() {
     this.length = this.getIndexKeys().length
   }
 
+  /**
+   * @function {getIndexKeys}
+   * @return {Array<string>} {index keys to the wallet}
+   */
   getIndexKeys() {
     const isCorrectKeys = n => /^\d+$/i.test(n) && parseInt(n, 10) <= 9e20
     const arrays = this.#_accounts.get('accounts').toArray()
     return Object.keys(arrays).filter(isCorrectKeys)
   }
 
+  /**
+   * @function {getCurrentMaxIndex}
+   * @return {number} {max index to the wallet}
+   */
   getCurrentMaxIndex() {
     const diff = (a, b) => {
       return b - a
@@ -52,6 +60,11 @@ class Wallet {
     return sorted[0] === undefined ? -1 : parseInt(sorted[0], 10)
   }
 
+  /**
+   * @function {addAccount}
+   * @param  {Account} accountObject {account object}
+   * @return {Account} {account object}
+   */
   addAccount(accountObject) {
     if (!isObject(accountObject)) throw new Error('account Object is not correct')
     const newAccountObject = Object.assign({}, accountObject, {
@@ -71,12 +84,21 @@ class Wallet {
     }
   }
 
+  /**
+   * @function {createAccount}
+   * @return {Account} {account object}
+   */
   createAccount = () => {
     const accountInstance = new account.Account()
     const accountObject = accountInstance.createAccount()
     return this.addAccount(accountObject)
   }
 
+  /**
+   * @function {createBatchAccounts}
+   * @param  {number} number {number of accounts you wanna create}
+   * @return {Array<Account>} {created accounts}
+   */
   createBatchAccounts = number => {
     if (!isNumber(number) || (isNumber(number) && number === 0)) throw new Error('number has to be >0 Number')
     const Batch = []
@@ -86,12 +108,22 @@ class Wallet {
     return Batch
   }
 
+  /**
+   * @function {importAccountFromPrivateKey}
+   * @param  {PrivateKey} privateKey {privatekey string}
+   * @return {Account} {account object}
+   */
   importAccountFromPrivateKey = privateKey => {
     const accountInstance = new account.Account()
     const accountObject = accountInstance.importAccount(privateKey)
     return this.addAccount(accountObject)
   }
 
+  /**
+   * @function {importAccountsFromPrivateKeyList}
+   * @param  {Array<PrivateKey>} privateKeyList {list of private keys}
+   * @return {Array<Account>} {array of accounts}
+   */
   importAccountsFromPrivateKeyList(privateKeyList) {
     if (!isArray(privateKeyList)) throw new Error('privateKeyList has to be Array<String>')
     const Imported = []
@@ -102,6 +134,11 @@ class Wallet {
   }
 
   //-------
+  /**
+   * @function {removeOneAccountByAddress}
+   * @param  {Address} address {account address}
+   * @return {undefined} {}
+   */
   removeOneAccountByAddress = address => {
     if (!isAddress(address)) throw new Error('address is not correct')
     const addressRef = this.getAccountByAddress(address)
@@ -115,6 +152,11 @@ class Wallet {
     this.updateLength()
   }
 
+  /**
+   * @function {removeOneAccountByIndex}
+   * @param  {number} index {index of account}
+   * @return {undefined} {}
+   */
   removeOneAccountByIndex(index) {
     if (!isNumber(index)) throw new Error('index is not correct')
     const addressRef = this.getAccountByIndex(index)
@@ -124,11 +166,21 @@ class Wallet {
   }
 
   //---------
+  /**
+   * @function {getAccountByAddress}
+   * @param  {Address} address {account address}
+   * @return {Account} {account object}
+   */
   getAccountByAddress = address => {
     if (!isAddress(address)) throw new Error('address is not correct')
     return this.#_accounts.get(address)
   }
 
+  /**
+   * @function {getAccountByIndex}
+   * @param  {number} index {index of account}
+   * @return {Account} {account object}
+   */
   getAccountByIndex = index => {
     if (!isNumber(index)) throw new Error('index is not correct')
     const address = this.#_accounts.get('accounts').get(index)
@@ -137,6 +189,10 @@ class Wallet {
     } else return undefined
   }
 
+  /**
+   * @function {getWalletAddresses}
+   * @return {Array<Address>} {array of address}
+   */
   getWalletAddresses() {
     return this.getIndexKeys()
       .map(index => {
@@ -149,6 +205,10 @@ class Wallet {
       .filter(d => !!d)
   }
 
+  /**
+   * @function {getWalletPublicKeys}
+   * @return {Array<PublicKey>} {array of public Key}
+   */
   getWalletPublicKeys() {
     return this.getIndexKeys()
       .map(index => {
@@ -161,6 +221,10 @@ class Wallet {
       .filter(d => !!d)
   }
 
+  /**
+   * @function {getWalletPrivateKeys}
+   * @return {Array<PrivateKey>} {array of private key}
+   */
   getWalletPrivateKeys() {
     return this.getIndexKeys()
       .map(index => {
@@ -173,6 +237,10 @@ class Wallet {
       .filter(d => !!d)
   }
 
+  /**
+   * @function getWalletAccounts
+   * @return {Array<Account>} {array of account}
+   */
   getWalletAccounts = () => {
     return this.getIndexKeys()
       .map(index => {
@@ -183,7 +251,12 @@ class Wallet {
   }
 
   // -----------
-
+  /**
+   * @function {updateAccountByAddress}
+   * @param  {Address} address   {account address}
+   * @param  {Account} newObject {account object to be updated}
+   * @return {boolean} {is successful}
+   */
   updateAccountByAddress(address, newObject) {
     if (!isAddress(address)) throw new Error('address is not correct')
     if (!isObject(newObject)) throw new Error('new account Object is not correct')
@@ -193,12 +266,22 @@ class Wallet {
   }
 
   // -----------
+  /**
+   * @function {cleanAllAccountsw}
+   * @return {boolean} {is successful}
+   */
   cleanAllAccounts = () => {
     this.getIndexKeys().forEach(index => this.removeOneAccountByIndex(parseInt(index, 10)))
     return true
   }
 
   // -----------
+  /**
+   * @function {encryptAllAccounts}
+   * @param  {string} password {password}
+   * @param  {object} options  {encryption options}
+   * @return {type} {description}
+   */
   async encryptAllAccounts(password, options) {
     const keys = this.getIndexKeys()
     const results = []
@@ -213,6 +296,11 @@ class Wallet {
     await Promise.all(results)
   }
 
+  /**
+   * @function {decryptAllAccounts}
+   * @param  {string} password {decrypt password}
+   * @return {type} {description}
+   */
   async decryptAllAccounts(password) {
     const keys = this.getIndexKeys()
     const results = []
@@ -229,6 +317,14 @@ class Wallet {
     await Promise.all(results)
   }
 
+  /**
+   * @function {encryptAccountByAddress}
+   * @param  {Address} address  {account address}
+   * @param  {string} password {password string for encryption}
+   * @param  {object} options  {encryption options}
+   * @param  {Symbol} by       {Symbol that encrypted by}
+   * @return {boolean} {status}
+   */
   async encryptAccountByAddress(address, password, options, by) {
     const accountObject = this.getAccountByAddress(address)
     if (accountObject !== undefined) {
@@ -249,6 +345,13 @@ class Wallet {
     return false
   }
 
+  /**
+   * @function {decryptAccountByAddress}
+   * @param  {Address} address  {account address}
+   * @param  {string} password {password string to decrypt}
+   * @param  {Symbol} by       {Symbol that decrypted by}
+   * @return {boolean} {status}
+   */
   async decryptAccountByAddress(address, password, by) {
     const accountObject = this.getAccountByAddress(address)
     if (accountObject !== undefined) {
@@ -269,6 +372,11 @@ class Wallet {
     return false
   }
 
+  /**
+   * @function {setSigner}
+   * @param  {Account} obj {account object}
+   * @return {Wallet} {wallet instance}
+   */
   setSigner(obj) {
     if (isAddress(obj)) {
       this.signer = this.getAccountByAddress(obj)
@@ -281,6 +389,11 @@ class Wallet {
   }
 
   // sign method for Transaction bytes
+  /**
+   * @function {sign}
+   * @param  {Transaction} tx {transaction bytes}
+   * @return {Transaction} {signed transaction object}
+   */
   async sign(tx) {
     if (!this.signer) {
       throw new Error('This signer is not found')

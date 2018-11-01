@@ -40,17 +40,31 @@ function generateAccountObject(privateKey) {
   };
 }
 /**
- * create an raw accountObject
- * @return {[type]} [description]
+ * @function createAccount
+ * @return {Account} {account object}
  */
 
 
 var createAccount = function createAccount() {
   return generateAccountObject(laksaCoreCrypto.generatePrivateKey());
 };
+/**
+ * @function importAccount
+ * @param  {PrivateKey} privateKey {privatekey string}
+ * @return {Account} {account object}
+ */
+
 var importAccount = function importAccount(privateKey) {
   return generateAccountObject(privateKey);
 };
+/**
+ * @function encryptAccount
+ * @param  {Account} accountObject {account object}
+ * @param  {string} password      {password string}
+ * @param  {object} options       {encryption options}
+ * @return {Account} {encrypted account object}
+ */
+
 var encryptAccount =
 /*#__PURE__*/
 function () {
@@ -104,6 +118,13 @@ function () {
     return _ref.apply(this, arguments);
   };
 }();
+/**
+ * @function decryptAccount
+ * @param  {Account} accountObject {encrypted account object}
+ * @param  {string} password      {password string}
+ * @return {Account} {decrypted account object}
+ */
+
 var decryptAccount =
 /*#__PURE__*/
 function () {
@@ -153,6 +174,13 @@ function () {
     return _ref2.apply(this, arguments);
   };
 }();
+/**
+ * @function signTransaction
+ * @param  {PrivateKey} privateKey        {privatekey}
+ * @param  {Transaction} transactionObject {transaction object}
+ * @return {Transaction} {signed transaction}
+ */
+
 var signTransaction = function signTransaction(privateKey, transactionObject) {
   return laksaCoreCrypto.createTransactionJson(privateKey, transactionObject);
 };
@@ -164,7 +192,11 @@ function () {
     _classCallCheck(this, Account);
 
     this.messenger = messenger;
-  } // prototype.createAccount
+  }
+  /**
+   * @function {createAccount}
+   * @return {Account} {account object}
+   */
 
 
   _createClass(Account, [{
@@ -180,7 +212,12 @@ function () {
         signTransaction: newObject.signTransaction,
         signTransactionWithPassword: newObject.signTransactionWithPassword
       });
-    } // prototype.importAccount
+    }
+    /**
+     * @function {importAccount}
+     * @param  {PrivateKey} privateKey {privatekey string}
+     * @return {Account} {account object}
+     */
 
   }, {
     key: "importAccount",
@@ -196,6 +233,13 @@ function () {
         signTransactionWithPassword: newObject.signTransactionWithPassword
       });
     } // sub object
+
+    /**
+     * @function {encrypt}
+     * @param  {string} password {password string}
+     * @param  {object} options  {options object for encryption}
+     * @return {Account} {account object}
+     */
 
   }, {
     key: "encrypt",
@@ -233,6 +277,12 @@ function () {
       };
     }() // sub object
 
+    /**
+     * @function {decrypt}
+     * @param  {string} password {password string}
+     * @return {object} {account object}
+     */
+
   }, {
     key: "decrypt",
     value: function () {
@@ -264,7 +314,12 @@ function () {
       return function decrypt(_x2) {
         return _decrypt.apply(this, arguments);
       };
-    }() // sign method for Transaction bytes
+    }()
+    /**
+     * @function {sign} {sign method for Transaction bytes}
+     * @param  {Buffer} bytes {Buffer that waited for sign}
+     * @return {object} {signed transaction object}
+     */
 
   }, {
     key: "sign",
@@ -274,7 +329,12 @@ function () {
       }
 
       return laksaCoreCrypto.sign(bytes, this.privateKey, this.publicKey);
-    } // sign plain object
+    }
+    /**
+     * @function {signTransaction} {sign plain object}
+     * @param  {object} transactionObject {transaction object that prepared for sign}
+     * @return {object} {signed transaction object}
+     */
 
   }, {
     key: "signTransaction",
@@ -284,7 +344,13 @@ function () {
       }
 
       return signTransaction(this.privateKey, transactionObject);
-    } // sign plain object with password
+    }
+    /**
+     * @function {signTransactionWithPassword} {sign plain object with password}
+     * @param  {object} transactionObject {transaction object}
+     * @param  {string} password          {password string}
+     * @return {object} {signed transaction object}
+     */
 
   }, {
     key: "signTransactionWithPassword",

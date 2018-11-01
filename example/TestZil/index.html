@@ -11,45 +11,78 @@
   <title></title>
 
 </head>
+<style>
+  #nodeUrl,#address {
+    width: 250px;
+    height: 50px;
+    font-size: 16px;
+  }
+
+  #setProviderButton,#getBlanceButton {
+    width: 100px;
+    height: 50px;
+    margin-left: 16px;
+    background: rgba(0, 0, 0, 1);
+    color: #ffffff
+  }
+</style>
 
 <body>
   <div id="root">
-    <h1>This is Laksa.js simple example</h1>
+    <h1>This is Laksa.js simple example, load this html in latest chrome please</h1>
 
     <h3>Current Provider is:</h3>
-    <h4 id="currenProvider">http://localhost:4200 </h4>
-    <input id="nodeUrl" value="http://localhost:4200" />
+    <h4 id="currentProvider"></h4>
+    <input id="nodeUrl" type="text" value="https://scilla-test-api.aws.z7a.xyz" />
     <button id="setProviderButton">Set Provider</button>
+    <h3>Input address, and get balance of it</h3>
+    <input id="address" type="text" />
+    <button id="getBlanceButton">Get Balance</button>
+    <div>
+      <span>balance:</span><span id="balance"></span>
+      <span>nonce:</span><span id="nonce"></span>
+    </div>
   </div>
   <script src="../../dist/Laksa.browser.js"></script>
-  <!-- <script src="../../dist/LaksaZil.browser.js"></script> -->
-  <!-- <script src="../../dist/LaksaWallet.browser.js"></script> -->
-  <!-- <script src="../../dist/LaksaContract.browser.js"></script> -->
   <script>
 
-    var currenProvider = document.getElementById('nodeUrl').value
-    var setButton = document.getElementById('setProviderButton')
-    //For local testing, use URL = 'http://localhost:4200'
-    //To connect to the external network, use URL = 'https://api-scilla.zilliqa.com'
-    var laksa = new Laksa()
-    // var URL = undefined
-    // const {Wallet}=window.LaksaWallet
+    let currentProvider = document.getElementById('nodeUrl').value
+    currentProvider = undefined || "https://scilla-test-api.aws.z7a.xyz"
+    const setButton = document.getElementById('setProviderButton')
+    const currentProviderText = document.getElementById('currentProvider')
+    const getBalanceButton = document.getElementById('getBlanceButton')
 
-    // const {Contract}=  LaksaContract
-    // const contract= new Contract()
-    // const Zil=LaksaZil
+    const laksa = new Laksa(currentProvider)
 
+    setProviderText(laksa.currentProvider.node.url)
 
     setButton.onclick = function (e) {
-      console.log('lll')
+      const newValue = (document.getElementById('nodeUrl').value)
+      const nodeProvider = new laksa.Modules.HttpProvider(newValue)
+      const scillaProvider = new laksa.Modules.HttpProvider('https://scilla-runner.zilliqa.com')
+      laksa.setNodeProvider(nodeProvider)
+      laksa.setScillaProvider(scillaProvider)
+      setProviderText(newValue)
     };
 
-    // var URL = 'https://api-scilla.zilliqa.com'
-    const nodeProvider = new laksa.Modules.HttpProvider('https://scilla-test-api.aws.z7a.xyz')
-    const scillaProvider = new laksa.Modules.HttpProvider('https://scilla-runner.zilliqa.com')
-    laksa.setNodeProvider(nodeProvider)
-    laksa.setScillaProvider(scillaProvider)
-    // webz.isConnected().then(console.log)
+    getBalanceButton.onclick = async function (e) {
+      const addressValue = document.getElementById('address').value
+      const balance = await laksa.zil.getBalance({ address: addressValue })
+      setBalanceText(balance)
+    }
+
+    function setProviderText(text) {
+      currentProviderText.innerText = text
+    }
+
+    function setBalanceText(data) {
+      const balanceText = document.getElementById('balance')
+      const nonceText = document.getElementById('nonce')
+      balanceText.innerText = data.balance || 0;
+      nonceText.innerText = data.nonce || 0;
+    }
+
+
     let code = `
     (* HelloWorld contract *)
 
@@ -201,12 +234,13 @@ end
     const accountA = laksa.wallet.importAccountFromPrivateKey('e19d05c5452598e24caad4a0d85a49146f7be089515c905ae6a19e8a578a6930')
     laksa.wallet.setSigner(accountA)
     // console.log(laksa.contracts);
-
+    // laksa.zil.getBalance({ address: accountA.address }).then(console.log)
     laksa.contracts
       .new(code, [laksa.util.toHex(accountA.address)])
       .then((newContract) => {
         // console.log(newContract)
-        newContract.deployTxn({ gasLimit: 50, gasPrice: 1 })
+        // laksa.contracts.deploy({ contract: newContract, gasLimit: 50, gasPrice: 1 }, { signer: accountA })
+        // newContract.deployTxn({ gasLimit: 50, gasPrice: 1 })
       })
 
   </script>

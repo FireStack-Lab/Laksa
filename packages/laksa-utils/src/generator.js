@@ -59,8 +59,8 @@ const {
 
 /**
  * [Validator description]
- * @param       {[type]} stringToTest    [description]
- * @param       {[type]} validatorString [description]
+ * @param       {type} stringToTest    [description]
+ * @param       {type} validatorString [description]
  * @constructor
  */
 function Validator(stringToTest, validatorString) {
@@ -92,10 +92,10 @@ const validator = Validator
 
 /**
  * make sure each of the keys in requiredArgs is present in args
- * @param  {[type]} args         [description]
- * @param  {[type]} requiredArgs [description]
- * @param  {[type]} optionalArgs [description]
- * @return {[type]}              [description]
+ * @param  {type} args         [description]
+ * @param  {type} requiredArgs [description]
+ * @param  {type} optionalArgs [description]
+ * @return {type}              [description]
  */
 function validateArgs(args, requiredArgs, optionalArgs) {
   for (const key in requiredArgs) {

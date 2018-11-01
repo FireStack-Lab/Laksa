@@ -61,17 +61,31 @@
     };
   }
   /**
-   * create an raw accountObject
-   * @return {[type]} [description]
+   * @function createAccount
+   * @return {Account} {account object}
    */
 
 
   const createAccount = () => {
     return generateAccountObject(laksaCoreCrypto.generatePrivateKey());
   };
+  /**
+   * @function importAccount
+   * @param  {PrivateKey} privateKey {privatekey string}
+   * @return {Account} {account object}
+   */
+
   const importAccount = privateKey => {
     return generateAccountObject(privateKey);
   };
+  /**
+   * @function encryptAccount
+   * @param  {Account} accountObject {account object}
+   * @param  {string} password      {password string}
+   * @param  {object} options       {encryption options}
+   * @return {Account} {encrypted account object}
+   */
+
   const encryptAccount = async (accountObject, password, options = {
     level: 1024
   }) => {
@@ -93,6 +107,13 @@
 
     return encryptedObj;
   };
+  /**
+   * @function decryptAccount
+   * @param  {Account} accountObject {encrypted account object}
+   * @param  {string} password      {password string}
+   * @return {Account} {decrypted account object}
+   */
+
   const decryptAccount = async (accountObject, password) => {
     laksaUtils.validateArgs(accountObject, {
       address: [laksaUtils.isAddress],
@@ -114,6 +135,13 @@
 
     return decryptedObj;
   };
+  /**
+   * @function signTransaction
+   * @param  {PrivateKey} privateKey        {privatekey}
+   * @param  {Transaction} transactionObject {transaction object}
+   * @return {Transaction} {signed transaction}
+   */
+
   const signTransaction = (privateKey, transactionObject) => {
     return laksaCoreCrypto.createTransactionJson(privateKey, transactionObject);
   };
@@ -121,7 +149,11 @@
   class Account {
     constructor(messenger) {
       this.messenger = messenger;
-    } // prototype.createAccount
+    }
+    /**
+     * @function {createAccount}
+     * @return {Account} {account object}
+     */
 
 
     createAccount() {
@@ -134,7 +166,12 @@
         signTransaction: newObject.signTransaction,
         signTransactionWithPassword: newObject.signTransactionWithPassword
       });
-    } // prototype.importAccount
+    }
+    /**
+     * @function {importAccount}
+     * @param  {PrivateKey} privateKey {privatekey string}
+     * @return {Account} {account object}
+     */
 
 
     importAccount(privateKey) {
@@ -149,6 +186,13 @@
       });
     } // sub object
 
+    /**
+     * @function {encrypt}
+     * @param  {string} password {password string}
+     * @param  {object} options  {options object for encryption}
+     * @return {Account} {account object}
+     */
+
 
     async encrypt(password, options = {
       level: 1024
@@ -157,13 +201,24 @@
       return Object.assign(this, encryptedAccount);
     } // sub object
 
+    /**
+     * @function {decrypt}
+     * @param  {string} password {password string}
+     * @return {object} {account object}
+     */
+
 
     async decrypt(password) {
       const that = this;
       const decrypted = await decryptAccount(that, password);
       delete this.crypto;
       return Object.assign(this, decrypted);
-    } // sign method for Transaction bytes
+    }
+    /**
+     * @function {sign} {sign method for Transaction bytes}
+     * @param  {Buffer} bytes {Buffer that waited for sign}
+     * @return {object} {signed transaction object}
+     */
 
 
     sign(bytes) {
@@ -172,7 +227,12 @@
       }
 
       return laksaCoreCrypto.sign(bytes, this.privateKey, this.publicKey);
-    } // sign plain object
+    }
+    /**
+     * @function {signTransaction} {sign plain object}
+     * @param  {object} transactionObject {transaction object that prepared for sign}
+     * @return {object} {signed transaction object}
+     */
 
 
     signTransaction(transactionObject) {
@@ -181,7 +241,13 @@
       }
 
       return signTransaction(this.privateKey, transactionObject);
-    } // sign plain object with password
+    }
+    /**
+     * @function {signTransactionWithPassword} {sign plain object with password}
+     * @param  {object} transactionObject {transaction object}
+     * @param  {string} password          {password string}
+     * @return {object} {signed transaction object}
+     */
 
 
     async signTransactionWithPassword(transactionObject, password) {

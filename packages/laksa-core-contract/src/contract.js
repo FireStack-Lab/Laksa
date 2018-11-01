@@ -1,4 +1,4 @@
-import Transaction from 'laksa-core-transaction'
+import { Transaction } from 'laksa-core-transaction'
 import { sign } from 'laksa-shared'
 import { validate, toBN, isInt } from './validate'
 import { ABI } from './abi'
@@ -157,10 +157,14 @@ export class Contract {
     const deployedTxn = Object.assign({}, { ...signedTxn, amount: signedTxn.amount.toNumber() })
     const result = await this.messenger.send({ method: 'CreateTransaction', params: [deployedTxn] })
 
-    if (result) {
+    if (result.TranID) {
+      this.address = result.ContractAddress
       this.setContractStatus(ContractStatus.deployed)
+      return { ...this, TranID: result.TranID }
+    } else {
+      this.setContractStatus(ContractStatus.rejected)
+      return this
     }
-    return { ...this, TranID: result }
   }
 
   /**

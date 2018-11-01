@@ -71,7 +71,7 @@ class Contracts {
       params: [signer.address]
     })
 
-    // to create a txn Json we
+    // to create a txn Json
     const txnJson = {
       // version number for deployment
       version: 0,

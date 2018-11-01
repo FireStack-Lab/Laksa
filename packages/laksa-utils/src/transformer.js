@@ -15,9 +15,9 @@ import {
 } from './generator'
 /**
  * convert number to array representing the padded hex form
- * @param  {[string]} val        [description]
- * @param  {[number]} paddedSize [description]
- * @return {[string]}            [description]
+ * @param  {string} val        [description]
+ * @param  {number} paddedSize [description]
+ * @return {string}            [description]
  */
 const intToByteArray = (val, paddedSize) => {
   const arr = []
@@ -45,7 +45,7 @@ const intToByteArray = (val, paddedSize) => {
  * intToHexArray
  *
  * @param {number} int - the number to be converted to hex
- * @param {number)} size - the desired width of the hex value. will pad.
+ * @param {number} size - the desired width of the hex value. will pad.
  *
  * @returns {string[]}
  */
@@ -195,7 +195,7 @@ const utf8ToHex = str => {
  * And even stringifys objects before.
  *
  * @method toHex
- * @param {String|Number|BN|Object} value
+ * @param {string|number|BN|object} value
  * @param {Boolean} returnType
  * @return {String}
  */
@@ -237,8 +237,8 @@ const strip0x = value => {
 
 /**
  * [add an '0x' prefix to value]
- * @param  {[String|Number|Hex|BN]} value [description]
- * @return {[String]}       [description]
+ * @param  {String|Number|Hex|BN} value [description]
+ * @return {String}       [description]
  */
 const add0x = value => {
   validateTypes(value, [isString, isNumber, isHex, isBN])

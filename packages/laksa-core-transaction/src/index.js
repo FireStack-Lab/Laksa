@@ -1,13 +1,13 @@
 import { encodeTransaction } from './util'
 
-const TxStatus = {
+export const TxStatus = {
   Pending: Symbol('Pending'),
   Initialised: Symbol('Initialised'),
   Confirmed: Symbol('Confirmed'),
   Rejected: Symbol('Rejected')
 }
 
-class Transaction {
+export class Transaction {
   constructor(params, status = TxStatus.Initialised) {
     // params
     this.version = params.version
@@ -42,6 +42,19 @@ class Transaction {
 
   static setMessenger(messenger) {
     Transaction.messenger = messenger
+  }
+
+  /**
+   * setStatus
+   *
+   * Escape hatch to imperatively set the state of the transaction.
+   *
+   * @param {TxStatus} status
+   * @returns {undefined}
+   */
+  setStatus(status) {
+    this.status = status
+    return this
   }
 
   // parameters
@@ -143,7 +156,7 @@ class Transaction {
    * @param {number} timeout
    * @returns {Promise<Transaction>}
    */
-  confirm(txHash, timeout = 60000) {
+  confirm(txHash, maxTry = 10, poll = 3000) {
     this.status = TxStatus.Pending
 
     return new Promise((resolve, reject) => {
@@ -152,13 +165,18 @@ class Transaction {
         reject(
           new Error('The transaction is taking unusually long to be confirmed. It may be lost.')
         )
-      }, timeout)
+      }, maxTry * poll * 2)
 
       const cancelTimeout = () => {
         clearTimeout(token)
       }
 
-      this.trackTx(txHash, resolve, reject, cancelTimeout)
+      this.trackTx(txHash, resolve, reject, {
+        cancelTimeout,
+        tried: 0,
+        maxTry,
+        poll
+      })
     })
   }
 
@@ -192,35 +210,49 @@ class Transaction {
     this.receipt = params.receipt
   }
 
-  trackTx(txHash, resolve, reject, cancelTimeout) {
+  trackTx(txHash, resolve, reject, options) {
+    const {
+      cancelTimeout, tried, maxTry, poll
+    } = options
     if (this.isRejected()) {
       return
     }
-
+    function sleep(time) {
+      return new Promise(res => setTimeout(res, time))
+    }
     // TODO: regex validation for txHash so we don't get garbage
     const result = Transaction.messenger.send({ method: 'GetTransaction', params: [txHash] })
 
-    result
-      .then(res => {
-        if (res && res.error) {
-          this.trackTx(txHash, resolve, reject, cancelTimeout)
-          return
-        }
+    const attemped = tried + 1
 
-        if (res && !res.error) {
-          this.id = res.ID
-          this.receipt = res.receipt
-          const isRecipt = this.receipt && this.receipt.success
-          this.status = isRecipt ? TxStatus.Confirmed : TxStatus.Rejected
+    if (attemped < (maxTry || 10)) {
+      result
+        .then(res => {
+          if (res && res.error) {
+            sleep(poll).then(() =>
+              this.trackTx(txHash, resolve, reject, {
+                ...options,
+                tried: attemped
+              }))
+            return
+          }
+
+          if (res && !res.error) {
+            this.id = res.ID
+            this.receipt = res.receipt
+            const isRecipt = this.receipt && this.receipt.success
+            this.status = isRecipt ? TxStatus.Confirmed : TxStatus.Rejected
+            cancelTimeout()
+            resolve(this)
+          }
+        })
+        .catch(err => {
           cancelTimeout()
-          resolve(this)
-        }
-      })
-      .catch(err => {
-        cancelTimeout()
-        this.status = TxStatus.Rejected
-        reject(err)
-      })
+          this.status = TxStatus.Rejected
+          reject(err)
+        })
+    } else {
+      cancelTimeout()
+    }
   }
 }
-export default Transaction

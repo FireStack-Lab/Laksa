@@ -3,7 +3,7 @@ import { isBN } from 'bn.js'
 
 /**
  * [isNumber verify param is a Number]
- * @param  {[type]}  obj [value]
+ * @param  {type}  obj [value]
  * @return {Boolean}     [boolean]
  */
 const isNumber = obj => {
@@ -12,8 +12,8 @@ const isNumber = obj => {
 
 /**
  * [isNumber verify param is a Number]
- * @param  {[type]}  obj [value]
- * @return {Boolean}     [boolean]
+ * @param  {type}  obj [value]
+ * @return {boolean}     [boolean]
  */
 const isInt = obj => {
   return isNumber(obj) && Number.isInteger(obj)
@@ -21,7 +21,7 @@ const isInt = obj => {
 
 /**
  * [isString verify param is a String]
- * @param  {[type]}  obj [value]
+ * @param  {type}  obj [value]
  * @return {Boolean}     [boolean]
  */
 const isString = obj => {
@@ -30,7 +30,7 @@ const isString = obj => {
 
 /**
  * [isBoolean verify param is a Boolean]
- * @param  {[type]}  obj [value]
+ * @param  {type}  obj [value]
  * @return {Boolean}     [boolean]
  */
 const isBoolean = obj => {
@@ -39,7 +39,7 @@ const isBoolean = obj => {
 
 /**
  * [isArray verify param input is an Array]
- * @param  {[type]}  obj [value]
+ * @param  {type}  obj [value]
  * @return {Boolean}     [boolean]
  */
 const isArray = obj => {
@@ -48,7 +48,7 @@ const isArray = obj => {
 
 /**
  * [isJson verify param input is a Json]
- * @param  {[type]}  obj [value]
+ * @param  {type}  obj [value]
  * @return {Boolean}     [boolean]
  */
 const isJsonString = obj => {
@@ -61,7 +61,7 @@ const isJsonString = obj => {
 
 /**
  * [isObject verify param is an Object]
- * @param  {[type]}  obj [value]
+ * @param  {type}  obj [value]
  * @return {Boolean}     [boolean]
  */
 const isObject = obj => {
@@ -70,7 +70,7 @@ const isObject = obj => {
 
 /**
  * [isFunction verify param is a Function]
- * @param  {[type]}  obj [value]
+ * @param  {type}  obj [value]
  * @return {Boolean}     [description]
  */
 
@@ -80,7 +80,7 @@ const isFunction = obj => {
 
 /**
  * verify if param is correct
- * @param  {[hex|string]}  address [description]
+ * @param  {hex|string}  address [description]
  * @return {Boolean}         [description]
  */
 // const isAddress = (address) => {
@@ -100,7 +100,7 @@ const isAddress = address => {
 
 /**
  * verify if privateKey is correct
- * @param  {[hex|string]}  privateKey [description]
+ * @param  {hex|string}  privateKey [description]
  * @return {Boolean}            [description]
  */
 const isPrivateKey = privateKey => {
@@ -109,7 +109,7 @@ const isPrivateKey = privateKey => {
 
 /**
  * verify if public key is correct
- * @param  {[hex|string]}  pubkey [description]
+ * @param  {hex|string}  pubkey [description]
  * @return {Boolean}        [description]
  */
 const isPubkey = pubkey => {
@@ -118,7 +118,7 @@ const isPubkey = pubkey => {
 
 /**
  * verify if url is correct
- * @param  {[string]}  url [description]
+ * @param  {string}  url [description]
  * @return {Boolean}     [description]
  */
 const isUrl = url => {
@@ -130,7 +130,7 @@ const isUrl = url => {
 
 /**
  * verify if hash is correct
- * @param  {[string]}  txHash [description]
+ * @param  {string}  txHash [description]
  * @return {Boolean}        [description]
  */
 const isHash = txHash => {
@@ -150,7 +150,7 @@ const isHex = hex => {
 
 /**
  * check Object isNull
- * @param  {[type]}  obj [description]
+ * @param  {type}  obj [description]
  * @return {Boolean}     [description]
  */
 const isNull = obj => {
@@ -159,7 +159,7 @@ const isNull = obj => {
 
 /**
  * check object is undefined
- * @param  {[type]}  obj [description]
+ * @param  {type}  obj [description]
  * @return {Boolean}     [description]
  */
 const isUndefined = obj => {
@@ -168,7 +168,7 @@ const isUndefined = obj => {
 
 /**
  * check object is undefined
- * @param  {[type]}  obj [description]
+ * @param  {type}  obj [description]
  * @return {Boolean}     [description]
  */
 const isUnit = obj => {
@@ -177,7 +177,7 @@ const isUnit = obj => {
 
 /**
  * [isByStrX description]
- * @param  {[type]}  obj [description]
+ * @param  {type}  obj [description]
  * @return {Boolean}     [description]
  */
 const isByStrX = obj => {

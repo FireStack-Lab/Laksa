@@ -25,14 +25,34 @@ export default class ProtobufProvider extends BaseProvider {
     }
   }
 
+  /**
+   * @function {send}
+   * @param  {object} payload  {payload object}
+   * @param  {function} callback {callback function}
+   * @return {function} {to requestFunc}
+   */
   send(payload, callback) {
     return this.requestFunc({ payload, callback })
   }
 
+  /**
+   * @function {sendServer}
+   * @param  {string} endpoint {endpoint to the server}
+   * @param  {object} payload  {payload object}
+   * @param  {function} callback {callback function}
+   * @return {function} {to requestFunc}
+   */
   sendServer(endpoint, payload, callback) {
     return this.requestFunc({ endpoint, payload, callback })
   }
 
+  /**
+   * @function {requestFunc}
+   * @param  {string} endpoint {endpoint to the server}
+   * @param  {object} payload  {payload object}
+   * @param  {function} callback {callback function}
+   * @return {function} {performRPC call from laksa-core-provider}
+   */
   requestFunc({ endpoint, payload, callback }) {
     const [tReq, tRes] = this.getMiddleware(payload.method)
     const reqMiddleware = composeMiddleware(
@@ -48,16 +68,32 @@ export default class ProtobufProvider extends BaseProvider {
     return performRPC(req, resMiddleware)
   }
 
+  /**
+   * @function {payloadHandler}
+   * @param  {object} payload {payload object}
+   * @return {object} {to payload object}
+   */
   payloadHandler(payload) {
     return { payload }
   }
 
+  /**
+   * @function {endpointHandler}
+   * @param  {object} obj      {payload object}
+   * @param  {string} endpoint {add the endpoint to payload object}
+   * @return {object} {assign a new object}
+   */
   endpointHandler(obj, endpoint) {
     return Object.assign({}, obj, {
       url: endpoint !== null && endpoint !== undefined ? `${this.url}${endpoint}` : this.url
     })
   }
 
+  /**
+   * @function {optionsHandler}
+   * @param  {object} obj {options object}
+   * @return {object} {assign a new option object}
+   */
   optionsHandler(obj) {
     if (this.options.user && this.options.password) {
       const AUTH_TOKEN = `Basic ${Buffer.from(
@@ -69,6 +105,12 @@ export default class ProtobufProvider extends BaseProvider {
     return Object.assign({}, obj, { options: this.options })
   }
 
+  /**
+   * @function {callbackHandler}
+   * @param  {object} data {from server}
+   * @param  {function} cb   {callback function}
+   * @return {object|function} {return object or callback function}
+   */
   callbackHandler(data, cb) {
     if (cb) {
       cb(null, data)
