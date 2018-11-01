@@ -1,6 +1,6 @@
 //
 //
-//  Copyright
+//  Copyright await release
 //
 //
 //
@@ -73,7 +73,7 @@ class Laksa {
         options: provider.options
       }
     } else {
-      throw new Error('provider should be HttpProvider Module or url string')
+      throw new Error('provider should be HttpProvider or url string')
     }
     this.setNodeProvider(providerSetter)
     this.setScillaProvider(providerSetter)
