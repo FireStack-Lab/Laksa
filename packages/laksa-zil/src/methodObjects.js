@@ -157,6 +157,17 @@ export default [
     params: { address: ['isAddress', 'required'] },
     isSendJson: false
   },
+
+  /**
+   * getRecentTransactions
+   * @params {}
+   */
+  {
+    name: 'getRecentTransactions',
+    call: 'GetRecentTransactions',
+    params: {},
+    isSendJson: false
+  },
   /**
    * getBlockTransactionCount
    * @params {blockNumber:Number}
