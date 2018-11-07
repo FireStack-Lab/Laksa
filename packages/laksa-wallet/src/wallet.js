@@ -67,6 +67,7 @@ class Wallet {
    */
   addAccount(accountObject) {
     if (!isObject(accountObject)) throw new Error('account Object is not correct')
+    if (this.getAccountByAddress(accountObject.address)) return false
     const newAccountObject = Object.assign({}, accountObject, {
       createTime: new Date(),
       index: this.getCurrentMaxIndex() + 1

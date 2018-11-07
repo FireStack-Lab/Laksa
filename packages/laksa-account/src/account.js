@@ -24,6 +24,8 @@ export class Account {
     return Object.assign({}, accountObject, {
       encrypt: newObject.encrypt,
       decrypt: newObject.decrypt,
+      toFile: newObject.toFile,
+      fromFile: newObject.fromFile,
       sign: newObject.sign,
       signTransaction: newObject.signTransaction,
       signTransactionWithPassword: newObject.signTransactionWithPassword
@@ -41,6 +43,8 @@ export class Account {
     return Object.assign({}, accountObject, {
       encrypt: newObject.encrypt,
       decrypt: newObject.decrypt,
+      toFile: newObject.toFile,
+      fromFile: newObject.fromFile,
       sign: newObject.sign,
       signTransaction: newObject.signTransaction,
       signTransactionWithPassword: newObject.signTransactionWithPassword
@@ -70,6 +74,31 @@ export class Account {
     const decrypted = await decryptAccount(that, password)
     delete this.crypto
     return Object.assign(this, decrypted)
+  }
+
+  /**
+   * @function {toFile}
+   * @param  {string} password {description}
+   * @param  {object} options  {description}
+   * @return {string} {description}
+   */
+  async toFile(password, options = { level: 1024 }) {
+    const encrypted = await this.encrypt(password, options)
+    return JSON.stringify(encrypted)
+  }
+
+  /**
+   * @function {fromFile}
+   * @param  {object} keyStore {description}
+   * @param  {string} password {description}
+   * @return {Account} {description}
+   */
+  async fromFile(keyStore, password) {
+    const keyStoreObject = JSON.parse(keyStore)
+    const decrypted = await decryptAccount(keyStoreObject, password)
+    if (decrypted) {
+      return this.importAccount(decrypted.privateKey)
+    } else throw new Error('cannot import file')
   }
 
   /**
