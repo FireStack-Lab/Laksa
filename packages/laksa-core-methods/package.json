@@ -1,6 +1,6 @@
 {
   "name": "laksa-core-methods",
-  "version": "0.0.53",
+  "version": "0.0.54",
   "description": "methods for laksa core",
   "main": "index.js",
   "scripts": {
@@ -9,6 +9,6 @@
   "author": "neeboo",
   "license": "ISC",
   "dependencies": {
-    "laksa-utils": "^0.0.53"
+    "laksa-utils": "^0.0.54"
   }
 }
