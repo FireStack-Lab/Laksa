@@ -110,6 +110,23 @@ class Wallet {
   }
 
   /**
+   * @function {exportAccountByAddress}
+   * @param  {Address} address  {description}
+   * @param  {string} password {description}
+   * @param  {object<T>} options  {description}
+   * @return {string|boolean} {description}
+   */
+  exportAccountByAddress = async (address, password, options = { level: 1024 }) => {
+    const accountToExport = this.getAccountByAddress(address)
+    if (accountToExport) {
+      const result = await accountToExport.toFile(password, options)
+      return result
+    } else {
+      return false
+    }
+  }
+
+  /**
    * @function {importAccountFromPrivateKey}
    * @param  {PrivateKey} privateKey {privatekey string}
    * @return {Account} {account object}
