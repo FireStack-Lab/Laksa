@@ -361,14 +361,12 @@ class Wallet {
       const { privateKey, crypto } = accountObject
       if (privateKey !== undefined && privateKey !== 'ENCRYPTED' && crypto === undefined) {
         const encryptedObject = await accountObject.encrypt(password, options)
-        const updateStatus = this.updateAccountByAddress(
-          address,
-          Object.assign({}, encryptedObject, {
-            LastEncryptedBy: by || encryptedBy.ACCOUNT
-          })
-        )
+        const encryptedAccount = Object.assign({}, encryptedObject, {
+          LastEncryptedBy: by || encryptedBy.ACCOUNT
+        })
+        const updateStatus = this.updateAccountByAddress(address, encryptedAccount)
         if (updateStatus === true) {
-          return this
+          return encryptedAccount
         } else return false
       }
     }
@@ -388,14 +386,12 @@ class Wallet {
       const { privateKey, crypto } = accountObject
       if (privateKey !== undefined && privateKey === 'ENCRYPTED' && isObject(crypto)) {
         const decryptedObject = await accountObject.decrypt(password)
-        const updateStatus = this.updateAccountByAddress(
-          address,
-          Object.assign({}, decryptedObject, {
-            LastEncryptedBy: by || encryptedBy.ACCOUNT
-          })
-        )
+        const decryptedAccount = Object.assign({}, decryptedObject, {
+          LastEncryptedBy: by || encryptedBy.ACCOUNT
+        })
+        const updateStatus = this.updateAccountByAddress(address, decryptedAccount)
         if (updateStatus === true) {
-          return this
+          return decryptedAccount
         } else return false
       }
     }
