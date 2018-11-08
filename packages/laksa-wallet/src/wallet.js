@@ -138,6 +138,18 @@ class Wallet {
   }
 
   /**
+   * @function {importAccountFromKeyStore}
+   * @param  {string} keyStore {description}
+   * @param  {password} password {description}
+   * @return {Account} {description}
+   */
+  importAccountFromKeyStore = async (keyStore, password) => {
+    const accountInstance = new account.Account()
+    const accountObject = await accountInstance.fromFile(keyStore, password)
+    return this.addAccount(accountObject)
+  }
+
+  /**
    * @function {importAccountsFromPrivateKeyList}
    * @param  {Array<PrivateKey>} privateKeyList {list of private keys}
    * @return {Array<Account>} {array of accounts}

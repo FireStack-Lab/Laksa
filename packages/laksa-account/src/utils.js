@@ -1,5 +1,5 @@
 import {
-  isPrivateKey, isPubkey, isAddress, isObject, isString, validateArgs
+  isPrivateKey, isAddress, isObject, isString, validateArgs
 } from 'laksa-utils'
 import {
   generatePrivateKey,
@@ -58,8 +58,7 @@ export const importAccount = privateKey => {
 export const encryptAccount = async (accountObject, password, options = { level: 1024 }) => {
   validateArgs(accountObject, {
     address: [isAddress],
-    privateKey: [isPrivateKey],
-    publicKey: [isPubkey]
+    privateKey: [isPrivateKey]
   })
   if (!isString(password)) {
     throw new Error('password is not found')
@@ -82,8 +81,7 @@ export const encryptAccount = async (accountObject, password, options = { level:
 export const decryptAccount = async (accountObject, password) => {
   validateArgs(accountObject, {
     address: [isAddress],
-    crypto: [isObject],
-    publicKey: [isPubkey]
+    crypto: [isObject]
   })
   if (!isString(password)) {
     throw new Error('password is not found')
