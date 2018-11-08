@@ -359,7 +359,7 @@ class Wallet {
     const accountObject = this.getAccountByAddress(address)
     if (accountObject !== undefined) {
       const { privateKey, crypto } = accountObject
-      if (privateKey !== undefined && typeof privateKey !== 'symbol' && crypto === undefined) {
+      if (privateKey !== undefined && privateKey !== 'ENCRYPTED' && crypto === undefined) {
         const encryptedObject = await accountObject.encrypt(password, options)
         const updateStatus = this.updateAccountByAddress(
           address,
@@ -386,7 +386,7 @@ class Wallet {
     const accountObject = this.getAccountByAddress(address)
     if (accountObject !== undefined) {
       const { privateKey, crypto } = accountObject
-      if (privateKey !== undefined && typeof privateKey === 'symbol' && isObject(crypto)) {
+      if (privateKey !== undefined && privateKey === 'ENCRYPTED' && isObject(crypto)) {
         const decryptedObject = await accountObject.decrypt(password)
         const updateStatus = this.updateAccountByAddress(
           address,

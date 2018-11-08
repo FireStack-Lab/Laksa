@@ -1,1 +1,1 @@
-export const ENCRYPTED = Symbol('ENCRYPTED')
+export const ENCRYPTED = 'ENCRYPTED'
