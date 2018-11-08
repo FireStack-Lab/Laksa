@@ -1,6 +1,6 @@
 {
   "name": "laksa-core-contract",
-  "version": "0.0.56",
+  "version": "0.0.57",
   "description": "",
   "main": "index.js",
   "scripts": {
@@ -9,6 +9,6 @@
   "author": "neeboo",
   "license": "ISC",
   "dependencies": {
-    "laksa-utils": "^0.0.56"
+    "laksa-utils": "^0.0.57"
   }
 }
