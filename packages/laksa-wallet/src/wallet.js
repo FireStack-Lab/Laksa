@@ -358,8 +358,8 @@ class Wallet {
   async encryptAccountByAddress(address, password, options, by) {
     const accountObject = this.getAccountByAddress(address)
     if (accountObject !== undefined) {
-      const { privateKey, crypto } = accountObject
-      if (privateKey !== undefined && privateKey !== 'ENCRYPTED' && crypto === undefined) {
+      const { crypto } = accountObject
+      if (crypto === undefined) {
         const encryptedObject = await accountObject.encrypt(password, options)
         const encryptedAccount = Object.assign({}, encryptedObject, {
           LastEncryptedBy: by || encryptedBy.ACCOUNT
@@ -383,8 +383,8 @@ class Wallet {
   async decryptAccountByAddress(address, password, by) {
     const accountObject = this.getAccountByAddress(address)
     if (accountObject !== undefined) {
-      const { privateKey, crypto } = accountObject
-      if (privateKey !== undefined && privateKey === 'ENCRYPTED' && isObject(crypto)) {
+      const { crypto } = accountObject
+      if (isObject(crypto)) {
         const decryptedObject = await accountObject.decrypt(password)
         const decryptedAccount = Object.assign({}, decryptedObject, {
           LastEncryptedBy: by || encryptedBy.ACCOUNT
