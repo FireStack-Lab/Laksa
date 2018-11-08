@@ -360,7 +360,14 @@ class Wallet {
     if (accountObject !== undefined) {
       const { crypto } = accountObject
       if (crypto === undefined) {
-        const encryptedObject = await accountObject.encrypt(password, options)
+        let encryptedObject = {}
+        if (typeof accountObject.encrypt === 'function') {
+          encryptedObject = await accountObject.encrypt(password, options)
+        } else {
+          const newAccount = new account.Account()
+          const tempAccount = newAccount.importAccount(accountObject.privateKey)
+          encryptedObject = await tempAccount.encrypt(password, options)
+        }
         const encryptedAccount = Object.assign({}, encryptedObject, {
           LastEncryptedBy: by || encryptedBy.ACCOUNT
         })
@@ -385,7 +392,15 @@ class Wallet {
     if (accountObject !== undefined) {
       const { crypto } = accountObject
       if (isObject(crypto)) {
-        const decryptedObject = await accountObject.decrypt(password)
+        let decryptedObject = {}
+        if (typeof accountObject.decrypt === 'function') {
+          decryptedObject = await accountObject.decrypt(password)
+        } else {
+          const decryptedTempObject = await account.decryptAccount(accountObject, password)
+          const newAccount = new account.Account()
+          decryptedObject = newAccount.importAccount(decryptedTempObject.privateKey)
+        }
+
         const decryptedAccount = Object.assign({}, decryptedObject, {
           LastEncryptedBy: by || encryptedBy.ACCOUNT
         })
