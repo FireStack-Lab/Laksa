@@ -125,8 +125,8 @@ export class Account {
    * @return {object} {signed transaction object}
    */
   sign(bytes) {
-    if (this.privateKey === ENCRYPTED) {
-      throw new Error('This account is encrypted, please decrypt it first')
+    if (this.privateKey === ENCRYPTED || this.privateKey === undefined) {
+      throw new Error('This account is encrypted or not found, please decrypt it first')
     }
     return sign(bytes, this.privateKey, this.publicKey)
   }
@@ -137,7 +137,7 @@ export class Account {
    * @return {object} {signed transaction object}
    */
   signTransaction(transactionObject) {
-    if (this.privateKey === ENCRYPTED) {
+    if (this.privateKey === ENCRYPTED || this.privateKey === undefined) {
       throw new Error(
         'This account is encrypted, please decrypt it first or use "signTransactionWithPassword"'
       )
@@ -152,7 +152,7 @@ export class Account {
    * @return {object} {signed transaction object}
    */
   async signTransactionWithPassword(transactionObject, password) {
-    if (this.privateKey === ENCRYPTED) {
+    if (this.privateKey === ENCRYPTED || this.privateKey === undefined) {
       const decrypted = await this.decrypt(password)
       const signed = signTransaction(decrypted.privateKey, transactionObject)
       const encryptAfterSign = await this.encrypt(password)
