@@ -420,8 +420,8 @@ class Wallet {
    */
   setSigner(obj) {
     if (isAddress(obj)) {
-      this.signer = this.getAccountByAddress(obj)
-      this.defaultAccount = this.getAccountByAddress(obj)
+      this.signer = this.getAccountByAddress(obj).address
+      this.defaultAccount = this.getAccountByAddress(obj).address
     } else if (isAddress(obj.address)) {
       this.signer = this.getAccountByAddress(obj.address).address
       this.defaultAccount = this.getAccountByAddress(obj.address).address
