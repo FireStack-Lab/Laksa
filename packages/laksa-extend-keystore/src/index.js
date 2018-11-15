@@ -121,3 +121,5 @@ export const decrypt = async (keystore, passphrase) => {
   const decrypted = Buffer.from(cipher.decrypt(ciphertext)).toString('hex')
   return decrypted
 }
+
+export { uuid }
