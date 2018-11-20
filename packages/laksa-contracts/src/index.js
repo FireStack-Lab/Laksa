@@ -39,7 +39,7 @@ class Contracts {
       // we set the init params to decoded ABI
       .then(decoded => decoded.setInitParamsValues(decoded.abi.getInitParams(), initParams))
       // we get the current block number from node, and set it to params
-      .then(inited => inited.setBlockNumber(options ? options.blockNumber : undefined))
+      // .then(inited => inited.setBlockNumber(options ? options.blockNumber : undefined))
       // we have a contract json now
       .then(setted => setted.generateNewContractJson())
       // but we have to give it a test

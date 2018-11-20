@@ -1,6 +1,6 @@
 import { Transaction } from 'laksa-core-transaction'
 import { sign } from 'laksa-shared'
-import { validate, toBN, isInt } from './validate'
+import { validate, toBN } from './validate'
 import { ABI } from './abi'
 
 export const ContractStatus = {
@@ -42,7 +42,7 @@ const defaultContractJson = {
 export class Contract {
   contractJson = {}
 
-  blockchain = []
+  // blockchain = []
 
   constructor(factory, abi, address, code, initParams, state) {
     this.messenger = factory.messenger
@@ -231,26 +231,26 @@ export class Contract {
     return this
   }
 
-  /**
-   * @function {setBlockNumber}
-   * @param  {Int} number {block number setted to blockchain}
-   * @return {Contract|false} {raw contract}
-   */
-  async setBlockNumber(number) {
-    if (number && isInt(Number(number))) {
-      this.setBlockchain(String(number))
-      this.setCreationBlock(String(number))
-      return this
-    } else if (number === undefined) {
-      const result = await this.messenger.send({ method: 'GetLatestTxBlock', param: [] })
-      if (result) {
-        this.setBlockchain(result.header.BlockNum)
-        this.setCreationBlock(result.header.BlockNum)
-        return this
-      }
-    }
-    return false
-  }
+  // /**
+  //  * @function {setBlockNumber}
+  //  * @param  {Int} number {block number setted to blockchain}
+  //  * @return {Contract|false} {raw contract}
+  //  */
+  // async setBlockNumber(number) {
+  //   if (number && isInt(Number(number))) {
+  //     this.setBlockchain(String(number))
+  //     this.setCreationBlock(String(number))
+  //     return this
+  //   } else if (number === undefined) {
+  //     const result = await this.messenger.send({ method: 'GetLatestTxBlock', param: [] })
+  //     if (result) {
+  //       this.setBlockchain(result.header.BlockNum)
+  //       this.setCreationBlock(result.header.BlockNum)
+  //       return this
+  //     }
+  //   }
+  //   return false
+  // }
 
   //-------------------------------
 
@@ -262,7 +262,7 @@ export class Contract {
     this.contractJson = {
       ...defaultContractJson,
       code: JSON.stringify(this.code),
-      data: JSON.stringify(this.initParams.concat(this.blockchain))
+      data: JSON.stringify(this.initParams)
     }
     this.setContractStatus(ContractStatus.initialised)
     return this
@@ -300,33 +300,33 @@ export class Contract {
     return this
   }
 
-  /**
-   * @function {setCreationBlock}
-   * @param  {Int} blockNumber {block number for blockchain}
-   * @return {Contract} {raw contract object}
-   */
-  setCreationBlock(blockNumber) {
-    const result = setParamValues(
-      [{ vname: '_creation_block', type: 'BNum' }],
-      [toBN(blockNumber).toString()]
-    )
-    this.initParams.push(result[0])
-    return this
-  }
+  // /**
+  //  * @function {setCreationBlock}
+  //  * @param  {Int} blockNumber {block number for blockchain}
+  //  * @return {Contract} {raw contract object}
+  //  */
+  // setCreationBlock(blockNumber) {
+  //   const result = setParamValues(
+  //     [{ vname: '_creation_block', type: 'BNum' }],
+  //     [toBN(blockNumber).toString()]
+  //   )
+  //   this.initParams.push(result[0])
+  //   return this
+  // }
 
-  /**
-   * @function {setBlockchain}
-   * @param  {Int} blockNumber {block number for blockchain}
-   * @return {Contract} {raw contract object}
-   */
-  setBlockchain(blockNumber) {
-    const result = setParamValues(
-      [{ vname: 'BLOCKNUMBER', type: 'BNum' }],
-      [toBN(blockNumber).toString()]
-    )
-    this.blockchain.push(result[0])
-    return this
-  }
+  // /**
+  //  * @function {setBlockchain}
+  //  * @param  {Int} blockNumber {block number for blockchain}
+  //  * @return {Contract} {raw contract object}
+  //  */
+  // setBlockchain(blockNumber) {
+  //   const result = setParamValues(
+  //     [{ vname: 'BLOCKNUMBER', type: 'BNum' }],
+  //     [toBN(blockNumber).toString()]
+  //   )
+  //   this.blockchain.push(result[0])
+  //   return this
+  // }
 
   /**
    * @function {setMessenger}
