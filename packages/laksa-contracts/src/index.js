@@ -40,10 +40,10 @@ class Contracts {
       .then(decoded => decoded.setInitParamsValues(decoded.abi.getInitParams(), initParams))
       // we get the current block number from node, and set it to params
       .then(inited => inited.setBlockNumber(options ? options.blockNumber : undefined))
-      // but we have to give it a test
-      .then(ready => ready.testCall(options ? options.gasLimit : 2000))
       // we have a contract json now
       .then(setted => setted.generateNewContractJson())
+      // but we have to give it a test
+      .then(ready => ready.testCall(options ? options.gasLimit : 2000))
       // now we change the status to wait for sign
       .then(state => {
         if (state.contractStatus === ContractStatus.waitForSign) {
