@@ -1,6 +1,6 @@
 {
   "name": "laksa-core-properties",
-  "version": "0.0.69",
+  "version": "0.0.70",
   "description": "properites for laksa core",
   "main": "index.js",
   "scripts": {
