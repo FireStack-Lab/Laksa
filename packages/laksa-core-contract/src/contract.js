@@ -79,7 +79,7 @@ export class Contract {
     const callContractJson = {
       code: this.code,
       init: JSON.stringify(this.initParams),
-      blockchain: JSON.stringify(this.blockchain),
+      // blockchain: JSON.stringify(this.blockchain),
       gaslimit: JSON.stringify(gasLimit)
     }
     // the endpoint for sendServer has been set to scillaProvider
@@ -195,8 +195,8 @@ export class Contract {
           version: 0,
           toAddr: defaultContractJson.toAddr,
           amount: toBN(amount),
-          gasPrice: 1000,
-          gasLimit: 1000,
+          gasPrice: toBN(1000),
+          gasLimit: toBN(1000),
           data: JSON.stringify(msg)
         })
       )
