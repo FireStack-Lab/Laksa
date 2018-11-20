@@ -42,6 +42,8 @@ const defaultContractJson = {
 export class Contract {
   contractJson = {}
 
+  testContractJson = {}
+
   blockchain = []
 
   constructor(factory, abi, address, code, initParams, state) {
@@ -53,6 +55,7 @@ export class Contract {
       this.abi = abi
       this.address = address
       this.initParams = initParams
+      this.initTestParams = initParams
       this.state = state
       this.contractStatus = ContractStatus.deployed
     } else {
@@ -60,6 +63,7 @@ export class Contract {
       this.abi = abi
       this.code = code
       this.initParams = initParams
+      this.initTestParams = initParams
       this.contractStatus = ContractStatus.initialised
     }
   }
@@ -78,7 +82,7 @@ export class Contract {
   async testCall(gasLimit) {
     const callContractJson = {
       code: this.code,
-      init: JSON.stringify(this.initParams),
+      init: JSON.stringify(this.initTestParams),
       blockchain: JSON.stringify(this.blockchain),
       gaslimit: JSON.stringify(gasLimit)
     }
@@ -262,6 +266,11 @@ export class Contract {
     this.contractJson = {
       ...defaultContractJson,
       code: JSON.stringify(this.code),
+      data: JSON.stringify(this.initParams)
+    }
+    this.contractTestJson = {
+      ...defaultContractJson,
+      code: JSON.stringify(this.code),
       data: JSON.stringify(this.initParams.concat(this.blockchain))
     }
     this.setContractStatus(ContractStatus.initialised)
@@ -297,6 +306,7 @@ export class Contract {
   setInitParamsValues(initParams, arrayOfValues) {
     const result = setParamValues(initParams, arrayOfValues)
     this.initParams = result
+    this.initTestParams = result
     return this
   }
 
@@ -310,7 +320,7 @@ export class Contract {
       [{ vname: '_creation_block', type: 'BNum' }],
       [toBN(blockNumber).toString()]
     )
-    this.initParams.push(result[0])
+    this.initTestParams.push(result[0])
     return this
   }
 
