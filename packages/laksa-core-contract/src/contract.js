@@ -42,9 +42,11 @@ const defaultContractJson = {
 export class Contract {
   contractJson = {}
 
-  testContractJson = {}
+  contractTestJson = {}
 
   blockchain = []
+
+  initTestParams = []
 
   constructor(factory, abi, address, code, initParams, state) {
     this.messenger = factory.messenger
@@ -55,7 +57,7 @@ export class Contract {
       this.abi = abi
       this.address = address
       this.initParams = initParams
-      this.initTestParams = initParams
+
       this.state = state
       this.contractStatus = ContractStatus.deployed
     } else {
@@ -63,7 +65,7 @@ export class Contract {
       this.abi = abi
       this.code = code
       this.initParams = initParams
-      this.initTestParams = initParams
+
       this.contractStatus = ContractStatus.initialised
     }
   }
@@ -253,7 +255,6 @@ export class Contract {
         return this
       }
     }
-    return false
   }
 
   //-------------------------------
@@ -306,7 +307,6 @@ export class Contract {
   setInitParamsValues(initParams, arrayOfValues) {
     const result = setParamValues(initParams, arrayOfValues)
     this.initParams = result
-    this.initTestParams = result
     return this
   }
 
@@ -320,7 +320,11 @@ export class Contract {
       [{ vname: '_creation_block', type: 'BNum' }],
       [toBN(blockNumber).toString()]
     )
-    this.initTestParams.push(result[0])
+
+    const [...arr] = this.initParams
+    arr.push(result[0])
+    this.initTestParams = arr
+
     return this
   }
 
@@ -334,7 +338,9 @@ export class Contract {
       [{ vname: 'BLOCKNUMBER', type: 'BNum' }],
       [toBN(blockNumber).toString()]
     )
-    this.blockchain.push(result[0])
+    const [...arr] = this.blockchain
+    arr.push(result[0])
+    this.blockchain = arr
     return this
   }
 
