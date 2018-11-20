@@ -94,11 +94,13 @@ export class Account {
    */
   async toFile(password, options = { level: 1024 }) {
     const {
-      privateKey, address, id, index, crypto, version
+      privateKey, address, id, index, crypto, version, publicKey
     } = this
     if (privateKey === ENCRYPTED) {
       return JSON.stringify({
         address,
+        privateKey,
+        publicKey,
         id,
         index,
         crypto,
@@ -108,6 +110,8 @@ export class Account {
     const encrypted = await this.encrypt(password, options)
     return JSON.stringify({
       address: encrypted.address,
+      privateKey: encrypted.privateKey,
+      publicKey: encrypted.publicKey,
       id: encrypted.id,
       index: encrypted.index,
       crypto: encrypted.crypto,

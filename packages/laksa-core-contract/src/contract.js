@@ -34,7 +34,7 @@ const setParamValues = (rawParams, newValues) => {
 }
 
 const defaultContractJson = {
-  to: '0000000000000000000000000000000000000000',
+  toAddr: '0000000000000000000000000000000000000000',
   code: '',
   data: ''
 }
@@ -185,7 +185,7 @@ export class Contract {
       return await this.prepareTx(
         new Transaction({
           version: 0,
-          to: defaultContractJson.to,
+          toAddr: defaultContractJson.toAddr,
           amount: toBN(amount),
           gasPrice: 1000,
           gasLimit: 1000,

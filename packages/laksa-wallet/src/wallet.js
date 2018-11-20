@@ -1,5 +1,5 @@
 import {
-  isAddress, isNumber, isObject, isArray
+  isAddress, isNumber, isObject, isArray, isString
 } from 'laksa-utils'
 import { Map, List } from 'immutable'
 
@@ -147,6 +147,19 @@ class Wallet {
     const accountInstance = new account.Account(this.messenger)
     const accountObject = await accountInstance.fromFile(keyStore, password)
     return this.addAccount(accountObject)
+  }
+
+  /**
+   * @function {importAccountFromObject}
+   * @param  {object} object {description}
+   * @return {Account} {description}
+   */
+  importAccountFromObject = object => {
+    if (!isObject(object) && !isString(object)) throw new Error('object imported should be plain Object or String')
+    const newObject = isString(object) ? JSON.parse(object) : object
+    const accountInstance = new account.Account(this.messenger)
+    const accountObject = accountInstance.createAccount()
+    return this.addAccount(Object.assign({}, accountObject, newObject))
   }
 
   /**
