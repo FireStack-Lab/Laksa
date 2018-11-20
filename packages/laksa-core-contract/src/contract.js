@@ -271,7 +271,7 @@ export class Contract {
     this.contractTestJson = {
       ...defaultContractJson,
       code: JSON.stringify(this.code),
-      data: JSON.stringify(this.initParams.concat(this.blockchain))
+      data: JSON.stringify(this.initTestParams.concat(this.blockchain))
     }
     this.setContractStatus(ContractStatus.initialised)
     return this
