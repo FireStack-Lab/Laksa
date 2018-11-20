@@ -154,7 +154,15 @@ export class Contract {
    */
   async deploy(signedTxn) {
     if (!signedTxn.signature) throw new Error('transaction has not been signed')
-    const deployedTxn = Object.assign({}, { ...signedTxn, amount: signedTxn.amount.toNumber() })
+    const deployedTxn = Object.assign(
+      {},
+      {
+        ...signedTxn,
+        amount: signedTxn.amount.toString(),
+        gasLimit: signedTxn.gasLimit.toString(),
+        gasPrice: signedTxn.gasPrice.toString()
+      }
+    )
     const result = await this.messenger.send({ method: 'CreateTransaction', params: [deployedTxn] })
 
     if (result.TranID) {
