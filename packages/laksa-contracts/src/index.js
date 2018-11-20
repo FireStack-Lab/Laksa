@@ -1,4 +1,6 @@
-import { Contract, ContractStatus, toBN } from 'laksa-core-contract'
+import {
+  Contract, ContractStatus, toBN, Transaction
+} from 'laksa-core-contract'
 
 class Contracts {
   constructor(messenger, signer) {
@@ -85,11 +87,13 @@ class Contracts {
     // generate a new txn json with contract json
     const txnDetail = Object.assign({}, contract.contractJson, txnJson)
 
+    const transaction = new Transaction(txnDetail)
+
     // check if the signer is encrypted
     const signedContract =
       signer.privateKey !== 'ENCRYPTED'
-        ? await signer.signTransaction(txnDetail)
-        : await signer.signTransactionWithPassword(txnDetail, password)
+        ? await signer.signTransaction(transaction)
+        : await signer.signTransactionWithPassword(transaction, password)
 
     // if only the contract  have a signature with signer
     if (signedContract.signature) {

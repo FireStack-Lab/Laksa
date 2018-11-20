@@ -266,13 +266,13 @@ export class Contract {
   generateNewContractJson() {
     this.contractJson = {
       ...defaultContractJson,
-      code: JSON.stringify(this.code),
-      data: JSON.stringify(this.initParams)
+      code: this.code,
+      data: JSON.stringify(this.initParams).replace(/\\"/g, '"')
     }
     this.contractTestJson = {
       ...defaultContractJson,
-      code: JSON.stringify(this.code),
-      data: JSON.stringify(this.initTestParams.concat(this.blockchain))
+      code: this.code,
+      data: JSON.stringify(this.initTestParams.concat(this.blockchain)).replace(/\\"/g, '"')
     }
     this.setContractStatus(ContractStatus.initialised)
     return this
