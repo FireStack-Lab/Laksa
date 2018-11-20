@@ -30,14 +30,16 @@ export default [
     name: 'createTransaction',
     call: 'CreateTransaction',
     params: {
-      to: ['isAddress', 'required'],
+      toAddr: ['isAddress', 'required'],
       pubKey: ['isPubkey', 'required'],
       amount: ['isBN', 'required'],
-      gasPrice: ['isNumber', 'required'],
-      gasLimit: ['isNumber', 'required']
+      gasPrice: ['isBN', 'required'],
+      gasLimit: ['isBN', 'required']
     },
     transformer: {
-      amount: 'toNumber'
+      amount: 'toString',
+      gasPrice: 'toString',
+      gasLimit: 'toString'
     },
     isSendJson: true
   },

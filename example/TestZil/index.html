@@ -1,249 +1,257 @@
-<!doctype html>
+<!DOCTYPE html>
 <html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black" />
+    <meta name="format-detection" content="telephone=no" />
+    <meta name="format-detection" content="email=no" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1, maximum-scale=1, minimum-scale=1, user-scalable=no"
+    />
+    <title></title>
+  </head>
+  <style>
+    #nodeUrl,
+    #address {
+      width: 250px;
+      height: 50px;
+      font-size: 16px;
+    }
 
-<head>
-  <meta charset="utf-8" />
-  <meta name="apple-mobile-web-app-capable" content="yes" />
-  <meta name="apple-mobile-web-app-status-bar-style" content="black" />
-  <meta name="format-detection" content="telephone=no" />
-  <meta name="format-detection" content="email=no" />
-  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, minimum-scale=1, user-scalable=no" />
-  <title></title>
+    #setProviderButton,
+    #getBlanceButton {
+      width: 100px;
+      height: 50px;
+      margin-left: 16px;
+      background: rgba(0, 0, 0, 1);
+      color: #ffffff;
+    }
+  </style>
 
-</head>
-<style>
-  #nodeUrl,#address {
-    width: 250px;
-    height: 50px;
-    font-size: 16px;
-  }
+  <body>
+    <div id="root">
+      <h1>
+        This is Laksa.js simple example, load this html in latest chrome please
+      </h1>
 
-  #setProviderButton,#getBlanceButton {
-    width: 100px;
-    height: 50px;
-    margin-left: 16px;
-    background: rgba(0, 0, 0, 1);
-    color: #ffffff
-  }
-</style>
-
-<body>
-  <div id="root">
-    <h1>This is Laksa.js simple example, load this html in latest chrome please</h1>
-
-    <h3>Current Provider is:</h3>
-    <h4 id="currentProvider"></h4>
-    <input id="nodeUrl" type="text" value="https://scilla-test-api.aws.z7a.xyz" />
-    <button id="setProviderButton">Set Provider</button>
-    <h3>Input address, and get balance of it</h3>
-    <input id="address" type="text" />
-    <button id="getBlanceButton">Get Balance</button>
-    <div>
-      <span>balance:</span><span id="balance"></span>
-      <span>nonce:</span><span id="nonce"></span>
+      <h3>Current Provider is:</h3>
+      <h4 id="currentProvider"></h4>
+      <input id="nodeUrl" type="text" value="https://api-scilla.zilliqa.com" />
+      <button id="setProviderButton">Set Provider</button>
+      <h3>Input address, and get balance of it</h3>
+      <input id="address" type="text" />
+      <button id="getBlanceButton">Get Balance</button>
+      <div>
+        <span>balance:</span><span id="balance"></span> <span>nonce:</span
+        ><span id="nonce"></span>
+      </div>
     </div>
-  </div>
-  <script src="../../dist/Laksa.browser.js"></script>
-  <script>
+    <script src="../../dist/Laksa.browser.js"></script>
+    <script>
+      let currentProvider = document.getElementById('nodeUrl').value
+      currentProvider = undefined || 'https://api-scilla.zilliqa.com'
+      const setButton = document.getElementById('setProviderButton')
+      const currentProviderText = document.getElementById('currentProvider')
+      const getBalanceButton = document.getElementById('getBlanceButton')
 
-    let currentProvider = document.getElementById('nodeUrl').value
-    currentProvider = undefined || "https://scilla-test-api.aws.z7a.xyz"
-    const setButton = document.getElementById('setProviderButton')
-    const currentProviderText = document.getElementById('currentProvider')
-    const getBalanceButton = document.getElementById('getBlanceButton')
-
-    const laksa = new Laksa(currentProvider)
-
-    setProviderText(laksa.currentProvider.node.url)
-
-    setButton.onclick = function (e) {
-      const newValue = (document.getElementById('nodeUrl').value)
-      const nodeProvider = new laksa.Modules.HttpProvider(newValue)
-      const scillaProvider = new laksa.Modules.HttpProvider('https://scilla-runner.zilliqa.com')
+      const laksa = new Laksa()
+      const nodeProvider = new laksa.Modules.HttpProvider(
+        'https://api-scilla.zilliqa.com'
+      )
+      const scillaProvider = new laksa.Modules.HttpProvider(
+        'https://scilla-runner.zilliqa.com'
+      )
       laksa.setNodeProvider(nodeProvider)
       laksa.setScillaProvider(scillaProvider)
-      setProviderText(newValue)
-    };
+      // setProviderText(laksa.currentProvider.node.url)
 
-    getBalanceButton.onclick = async function (e) {
-      const addressValue = document.getElementById('address').value
-      const balance = await laksa.zil.getBalance({ address: addressValue })
-      setBalanceText(balance)
-    }
+      // setButton.onclick = function (e) {
+      //   const newValue = (document.getElementById('nodeUrl').value)
+      //   const nodeProvider = new laksa.Modules.HttpProvider(newValue)
+      //   const scillaProvider = new laksa.Modules.HttpProvider('https://scilla-runner.zilliqa.com')
+      //   laksa.setNodeProvider(nodeProvider)
+      //   laksa.setScillaProvider(scillaProvider)
+      //   setProviderText(newValue)
+      // };
 
-    function setProviderText(text) {
-      currentProviderText.innerText = text
-    }
+      // getBalanceButton.onclick = async function (e) {
+      //   const addressValue = document.getElementById('address').value
+      //   const balance = await laksa.zil.getBalance({ address: addressValue })
+      //   setBalanceText(balance)
+      // }
 
-    function setBalanceText(data) {
-      const balanceText = document.getElementById('balance')
-      const nonceText = document.getElementById('nonce')
-      balanceText.innerText = data.balance || 0;
-      nonceText.innerText = data.nonce || 0;
-    }
+      // function setProviderText(text) {
+      //   currentProviderText.innerText = text
+      // }
 
+      // function setBalanceText(data) {
+      //   const balanceText = document.getElementById('balance')
+      //   const nonceText = document.getElementById('nonce')
+      //   balanceText.innerText = data.balance || 0;
+      //   nonceText.innerText = data.nonce || 0;
+      // }
 
-    let code = `
-    (* HelloWorld contract *)
+      let code = `
+                                                    (* HelloWorld contract *)
+                                                
+                                                import ListUtils
+                                                
+                                                (***************************************************)
+                                                (*               Associated library                *)
+                                                (***************************************************)
+                                                library HelloWorld
+                                                
+                                                let one_msg = 
+                                                  fun (msg : Message) => 
+                                                  let nil_msg = Nil {Message} in
+                                                  Cons {Message} msg nil_msg
+                                                
+                                                let not_owner_code = Int32 1
+                                                let set_hello_code = Int32 2
+                                                
+                                                (***************************************************)
+                                                (*             The contract definition             *)
+                                                (***************************************************)
+                                                
+                                                contract HelloWorld
+                                                (owner: ByStr20)
+                                                
+                                                field welcome_msg : String = ""
+                                                
+                                                transition setHello (msg : String)
+                                                  is_owner = builtin eq owner _sender;
+                                                  match is_owner with
+                                                  | False =>
+                                                    msg = {_tag : "Main"; _recipient : _sender; _amount : Uint128 0; code : not_owner_code};
+                                                    msgs = one_msg msg;
+                                                    send msgs
+                                                  | True =>
+                                                    welcome_msg := msg;
+                                                    msg = {_tag : "Main"; _recipient : _sender; _amount : Uint128 0; code : set_hello_code};
+                                                    msgs = one_msg msg;
+                                                    send msgs
+                                                  end
+                                                end
+                                                
+                                                
+                                                transition getHello ()
+                                                    r <- welcome_msg;
+                                                    msg = {_tag : "Main"; _recipient : _sender; _amount : Uint128 0; msg : r};
+                                                    msgs = one_msg msg;
+                                                    send msgs
+                                                end
+                                                `
+      // //
+      // // the immutable initialisation variables
+      let initParams = [
+        {
+          vname: 'dummy',
+          type: 'String',
+          value: `ASDF`
+        }
+      ]
 
-import ListUtils
-
-(***************************************************)
-(*               Associated library                *)
-(***************************************************)
-library HelloWorld
-
-let one_msg = 
-  fun (msg : Message) => 
-  let nil_msg = Nil {Message} in
-  Cons {Message} msg nil_msg
-
-let not_owner_code = Int32 1
-let set_hello_code = Int32 2
-
-(***************************************************)
-(*             The contract definition             *)
-(***************************************************)
-
-contract HelloWorld
-(owner: ByStr20)
-
-field welcome_msg : String = ""
-
-transition setHello (msg : String)
-  is_owner = builtin eq owner _sender;
-  match is_owner with
-  | False =>
-    msg = {_tag : "Main"; _recipient : _sender; _amount : Uint128 0; code : not_owner_code};
-    msgs = one_msg msg;
-    send msgs
-  | True =>
-    welcome_msg := msg;
-    msg = {_tag : "Main"; _recipient : _sender; _amount : Uint128 0; code : set_hello_code};
-    msgs = one_msg msg;
-    send msgs
-  end
-end
-
-
-transition getHello ()
-    r <- welcome_msg;
-    msg = {_tag : "Main"; _recipient : _sender; _amount : Uint128 0; msg : r};
-    msgs = one_msg msg;
-    send msgs
-end
-`
-    // //
-    // // the immutable initialisation variables
-    let initParams = [
-      {
-        vname: "dummy",
-        type: "String",
-        value: `ASDF`
+      let txnDetails = {
+        version: 0,
+        nonce: 2,
+        toAddr: '0000000000000000000000000000000000000000',
+        amount: laksa.util.toBN(0),
+        gasPrice: laksa.util.toBN(1),
+        gasLimit: laksa.util.toBN(50),
+        code: code,
+        data: JSON.stringify(initParams).replace(/\\"/g, '"')
       }
-    ];
+      //
+      const toAddrLol = 'bc117a052b73e7941d361221644cae222d6d5532'
+      let txnDetails2 = {
+        version: 1,
+        // nonce: 1,
+        toAddr: toAddrLol,
+        amount: laksa.util.toBN(101),
+        gasPrice: laksa.util.toBN(1),
+        gasLimit: laksa.util.toBN(10)
+        // code: '',
+        // data: ''
+      }
+      // sign the transaction using util methods
+      // let txn = laksa.util.createTransactionJson(
+      //   'e19d05c5452598e24caad4a0d85a49146f7be089515c905ae6a19e8a578a6930',
+      //   txnDetails2
+      // )
+      // let encoded=laksa.util.encodeTransaction(txnDetails2)
+      // console.log(encoded)
+      //  console.log({ txn });
 
-    let txnDetails = {
-      version: 0,
-      nonce: 2,
-      to: "0000000000000000000000000000000000000000",
-      amount: laksa.util.toBN(0),
-      gasPrice: 1,
-      gasLimit: 50,
-      code: code,
-      data: JSON.stringify(initParams).replace(/\\"/g, '"')
-    };
-    //
-    let txnDetails2 = {
-      version: 0,
-      nonce: 0,
-      to: '0000000000000000000000000000000000000000',
-      // amount should be 0.  we don't accept implicitly anymore.
-      amount: laksa.util.toBN(0),
-      gasPrice: laksa.util.toBN(1).toNumber(),
-      gasLimit: laksa.util.toBN(50).toNumber(),
-      code: code,
-      data: JSON.stringify(initParams).replace(/\\"/g, '"')
-    }
-    // sign the transaction using util methods
-    let txn = laksa.util.createTransactionJson(
-      "e19d05c5452598e24caad4a0d85a49146f7be089515c905ae6a19e8a578a6930",
-      txnDetails2
-    );
+      const myAddress = { address: '9bfec715a6bd658fcb62b0f8cc9bfa2ade71434a' }
+      laksa.zil.getBalance(myAddress).then(console.log)
+      // laksa.zil.createTransaction(txn).then(data => console.log({ data }))
+      // with callback
+      // laksa.zil.getNetworkId((err,data)=>{console.log({err,data})})
 
+      // laksa.contract.decodeABI({ code: code })
+      //   .then(decoded =>
+      //     decoded.setInitParamsValues(
+      //       decoded.abi.getInitParams(), [laksa.util.toHex(myAddress.address)]
+      //     ))
+      //   .then(inited => inited.setBlockNumber())
+      //   .then(setted => setted.generateNewContractJson())
+      //   .then(ready => ready.testCall({ gasLimit: 2000 }))
+      //   .then(state => console.log(state.contractJson))
 
+      // laksa.contracts.new(code, [laksa.util.toHex(myAddress.address)]).then(c => { console.log(c) })
 
+      //laksa.isConnected().then(console.log);
 
-    //  console.log({ txn });
+      // laksa.zil.getSmartContracts(myAddress,(err,data)=>{
+      //   if(data.length>0){
+      //     data.map(d=>{
+      //       laksa.zil.getSmartContractState({address:d.address},(err,data)=>{
+      //         console.log({smartContractState:data});
+      //       })
+      //       laksa.zil.getSmartContractCode({address:d.address},(err,data)=>{
+      //         console.log({smartContractCode:data});
+      //       })
+      //       laksa.zil.getSmartContractInit({address:d.address},(err,data)=>{
+      //         console.log({smartContractInit:data})
+      //       })
+      //     })
+      //   }
+      // });
 
+      // laksa.zil.createMessage({
+      //   to:'2E3C9B415B19AE4035503A06192A0FAD76E04243',
+      //   from:'9bfec715a6bd658fcb62b0f8cc9bfa2ade71434a',
+      //   gas:10,
+      //   gasPrice:10
+      // }).then(console.log)
 
-    const myAddress = { address: "9bfec715a6bd658fcb62b0f8cc9bfa2ade71434a" };
-    // laksa.zil.createTransaction(txn).then(data => console.log({ data }))
-    // with callback
-    // laksa.zil.getNetworkId((err,data)=>{console.log({err,data})})
+      // send the transaction to the node
+      // Laksa.zil.createTransaction(txn, callback);
 
-    // laksa.contract.decodeABI({ code: code })
-    //   .then(decoded =>
-    //     decoded.setInitParamsValues(
-    //       decoded.abi.getInitParams(), [laksa.util.toHex(myAddress.address)]
-    //     ))
-    //   .then(inited => inited.setBlockNumber())
-    //   .then(setted => setted.generateNewContractJson())
-    //   .then(ready => ready.testCall({ gasLimit: 2000 }))
-    //   .then(state => console.log(state.contractJson))
+      function callback(err, data) {
+        console.log({ err, data })
+      }
 
-
-
-    // laksa.contracts.new(code, [laksa.util.toHex(myAddress.address)]).then(c => { console.log(c) })
-
-
-    //laksa.isConnected().then(console.log);
-
-    // laksa.zil.getSmartContracts(myAddress,(err,data)=>{
-    //   if(data.length>0){
-    //     data.map(d=>{
-    //       laksa.zil.getSmartContractState({address:d.address},(err,data)=>{
-    //         console.log({smartContractState:data});
-    //       })
-    //       laksa.zil.getSmartContractCode({address:d.address},(err,data)=>{
-    //         console.log({smartContractCode:data});
-    //       })
-    //       laksa.zil.getSmartContractInit({address:d.address},(err,data)=>{
-    //         console.log({smartContractInit:data})
-    //       })
-    //     })
-    //   }
-    // });
-
-    // laksa.zil.createMessage({
-    //   to:'2E3C9B415B19AE4035503A06192A0FAD76E04243',
-    //   from:'9bfec715a6bd658fcb62b0f8cc9bfa2ade71434a',
-    //   gas:10,
-    //   gasPrice:10
-    // }).then(console.log)
-
-    // send the transaction to the node
-    // Laksa.zil.createTransaction(txn, callback);
-
-    function callback(err, data) {
-      console.log({ err, data });
-    }
-
-
-
-    const accountA = laksa.wallet.importAccountFromPrivateKey('e19d05c5452598e24caad4a0d85a49146f7be089515c905ae6a19e8a578a6930')
-    laksa.wallet.setSigner(accountA)
-    // console.log(laksa.contracts);
-    // laksa.zil.getBalance({ address: accountA.address }).then(console.log)
-    laksa.contracts
-      .new(code, [laksa.util.toHex(accountA.address)])
-      .then((newContract) => {
-        // console.log(newContract)
-        // laksa.contracts.deploy({ contract: newContract, gasLimit: 50, gasPrice: 1 }, { signer: accountA })
-        // newContract.deployTxn({ gasLimit: 50, gasPrice: 1 })
-      })
-
-  </script>
-</body>
-
+      const accountA = laksa.wallet.importAccountFromPrivateKey(
+        'e19d05c5452598e24caad4a0d85a49146f7be089515c905ae6a19e8a578a6930'
+      )
+      const transaction= new laksa.Modules.Transaction(txnDetails2)
+      // console.log(transaction)
+      const ttt = accountA.signTransaction(transaction)
+      console.log(ttt)
+      // laksa.zil.createTransaction(ttt).then(console.log)
+      // laksa.wallet.setSigner(accountA)
+      // console.log(laksa.contracts);
+      // laksa.zil.getBalance({ address: accountA.address }).then(console.log)
+      // laksa.contracts
+      //   .new(code, [laksa.util.toHex(accountA.address)])
+      //   .then((newContract) => {
+      //     // console.log(newContract)
+      //     laksa.contracts.deploy({ contract: newContract, gasLimit: 50, gasPrice: 1 }, { signer: accountA })
+      //     // newContract.deployTxn({ gasLimit: 50, gasPrice: 1 })
+      //   })
+    </script>
+  </body>
 </html>

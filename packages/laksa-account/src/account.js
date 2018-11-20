@@ -12,6 +12,8 @@ import {
 export class Account {
   constructor(messenger) {
     this.messenger = messenger
+    this.balance = '0'
+    this.nonce = 0
   }
 
   /**
@@ -20,8 +22,12 @@ export class Account {
    */
   createAccount() {
     const accountObject = createAccount()
-    const newObject = new Account()
+    const newObject = new Account(this.messenger)
     return Object.assign({}, accountObject, {
+      balance: newObject.balance,
+      nonce: newObject.nonce,
+      messenger: newObject.messenger,
+      getBalance: newObject.getBalance,
       encrypt: newObject.encrypt,
       decrypt: newObject.decrypt,
       toFile: newObject.toFile,
@@ -39,8 +45,12 @@ export class Account {
    */
   importAccount(privateKey) {
     const accountObject = importAccount(privateKey)
-    const newObject = new Account()
+    const newObject = new Account(this.messenger)
     return Object.assign({}, accountObject, {
+      balance: newObject.balance,
+      nonce: newObject.nonce,
+      messenger: newObject.messenger,
+      getBalance: newObject.getBalance,
       encrypt: newObject.encrypt,
       decrypt: newObject.decrypt,
       toFile: newObject.toFile,
@@ -136,13 +146,18 @@ export class Account {
    * @param  {object} transactionObject {transaction object that prepared for sign}
    * @return {object} {signed transaction object}
    */
-  signTransaction(transactionObject) {
+  async signTransaction(transactionObject) {
     if (this.privateKey === ENCRYPTED || this.privateKey === undefined) {
       throw new Error(
         'This account is encrypted, please decrypt it first or use "signTransactionWithPassword"'
       )
     }
-    return signTransaction(this.privateKey, transactionObject)
+    try {
+      const { nonce } = await this.getBalance()
+      return signTransaction(this.privateKey, { ...transactionObject, nonce: nonce + 1 })
+    } catch (error) {
+      throw new Error(error)
+    }
   }
 
   /**
@@ -154,14 +169,38 @@ export class Account {
   async signTransactionWithPassword(transactionObject, password) {
     if (this.privateKey === ENCRYPTED || this.privateKey === undefined) {
       const decrypted = await this.decrypt(password)
-      const signed = signTransaction(decrypted.privateKey, transactionObject)
+      const { nonce } = await this.getBalance()
+      const signed = signTransaction(decrypted.privateKey, {
+        ...transactionObject,
+        nonce: nonce + 1
+      })
       const encryptAfterSign = await this.encrypt(password)
       Object.assign(this, encryptAfterSign)
       return signed
     } else {
-      const nonEncryptSigned = signTransaction(this.privateKey, transactionObject)
+      const { nonce } = await this.getBalance()
+      const nonEncryptSigned = signTransaction(this.privateKey, {
+        ...transactionObject,
+        nonce: nonce + 1
+      })
       Object.assign(this, nonEncryptSigned)
       return nonEncryptSigned
+    }
+  }
+
+  async getBalance() {
+    try {
+      const balanceObject = await this.messenger.send({
+        method: 'GetBalance',
+        params: [this.address]
+      })
+      const { balance, nonce } = balanceObject
+      if (nonce !== undefined) {
+        Object.assign(this, { balance, nonce })
+        return { balance, nonce }
+      }
+    } catch (error) {
+      throw new Error(error)
     }
   }
 }

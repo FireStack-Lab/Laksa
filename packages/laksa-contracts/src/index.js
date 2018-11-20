@@ -66,25 +66,20 @@ class Contracts {
    */
   async deploy({ contract, gasLimit, gasPrice }, { signer, password }) {
     // we need singer address to get the nonce
-    const { nonce } = await this.messenger.send({
-      method: 'GetBalance',
-      params: [signer.address]
-    })
 
     // to create a txn Json
     const txnJson = {
       // version number for deployment
       version: 0,
       // increase the nonce
-      nonce: nonce + 1,
       // set to 40 bit length zeros
-      to: '0000000000000000000000000000000000000000',
+      toAddr: '0000000000000000000000000000000000000000',
       // deploying a new contract, amount will be zero according to zilliqa
       amount: toBN(0),
       // gasPrice will be forced to transform to BN first in the future
-      gasPrice: toBN(gasPrice).toNumber(),
+      gasPrice: toBN(gasPrice),
       // gasLimit will be forced to transform to BN first in the future
-      gasLimit: toBN(gasLimit).toNumber()
+      gasLimit: toBN(gasLimit)
     }
 
     // generate a new txn json with contract json
@@ -92,8 +87,8 @@ class Contracts {
 
     // check if the signer is encrypted
     const signedContract =
-      typeof signer.privateKey !== 'symbol'
-        ? signer.signTransaction(txnDetail)
+      signer.privateKey !== 'ENCRYPTED'
+        ? await signer.signTransaction(txnDetail)
         : await signer.signTransactionWithPassword(txnDetail, password)
 
     // if only the contract  have a signature with signer

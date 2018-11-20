@@ -90,7 +90,7 @@ class Wallet {
    * @return {Account} {account object}
    */
   createAccount = () => {
-    const accountInstance = new account.Account()
+    const accountInstance = new account.Account(this.messenger)
     const accountObject = accountInstance.createAccount()
     return this.addAccount(accountObject)
   }
@@ -132,7 +132,7 @@ class Wallet {
    * @return {Account} {account object}
    */
   importAccountFromPrivateKey = privateKey => {
-    const accountInstance = new account.Account()
+    const accountInstance = new account.Account(this.messenger)
     const accountObject = accountInstance.importAccount(privateKey)
     return this.addAccount(accountObject)
   }
@@ -144,7 +144,7 @@ class Wallet {
    * @return {Account} {description}
    */
   importAccountFromKeyStore = async (keyStore, password) => {
-    const accountInstance = new account.Account()
+    const accountInstance = new account.Account(this.messenger)
     const accountObject = await accountInstance.fromFile(keyStore, password)
     return this.addAccount(accountObject)
   }
@@ -364,7 +364,7 @@ class Wallet {
         if (typeof accountObject.encrypt === 'function') {
           encryptedObject = await accountObject.encrypt(password, options)
         } else {
-          const newAccount = new account.Account()
+          const newAccount = new account.Account(this.messenger)
           const tempAccount = newAccount.importAccount(accountObject.privateKey)
           encryptedObject = await tempAccount.encrypt(password, options)
         }
@@ -397,7 +397,7 @@ class Wallet {
           decryptedObject = await accountObject.decrypt(password)
         } else {
           const decryptedTempObject = await account.decryptAccount(accountObject, password)
-          const newAccount = new account.Account()
+          const newAccount = new account.Account(this.messenger)
           decryptedObject = newAccount.importAccount(decryptedTempObject.privateKey)
         }
 

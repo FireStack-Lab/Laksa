@@ -1,18 +1,18 @@
-import { encodeTransaction } from './util'
+import { encodeTransactionProto } from 'laksa-core-crypto'
 
 export const TxStatus = {
-  Pending: Symbol('Pending'),
-  Initialised: Symbol('Initialised'),
-  Confirmed: Symbol('Confirmed'),
-  Rejected: Symbol('Rejected')
+  Pending: 'Pending',
+  Initialised: 'Initialised',
+  Confirmed: 'Confirmed',
+  Rejected: 'Rejected'
 }
 
 export class Transaction {
   constructor(params, status = TxStatus.Initialised) {
     // params
     this.version = params.version
-    this.id = params.id
-    this.to = params.to
+    this.TranID = params.TranID
+    this.toAddr = params.toAddr
     this.nonce = params.nonce
     this.pubKey = params.pubKey
     this.amount = params.amount
@@ -57,43 +57,15 @@ export class Transaction {
     return this
   }
 
-  // parameters
-  version
-
-  to
-
-  amount
-
-  gasPrice
-
-  gasLimit
-
-  id
-
-  code
-
-  data
-
-  receipt
-
-  nonce
-
-  pubKey
-
-  signature
-
-  // internal state
-  status
-
   get bytes() {
-    return encodeTransaction(this.txParams)
+    return encodeTransactionProto(this.txParams)
   }
 
   get txParams() {
     return {
       version: 0,
-      id: this.id,
-      to: this.to,
+      TranID: this.TranID,
+      toAddr: this.toAddr,
       nonce: this.nonce,
       pubKey: this.pubKey,
       amount: this.amount,
@@ -197,8 +169,8 @@ export class Transaction {
 
   setParams(params) {
     this.version = params.version
-    this.id = params.id
-    this.to = params.to
+    this.TranID = params.TranID
+    this.toAddr = params.toAddr
     this.nonce = params.nonce
     this.pubKey = params.pubKey
     this.amount = params.amount
@@ -238,7 +210,7 @@ export class Transaction {
           }
 
           if (res && !res.error) {
-            this.id = res.ID
+            this.TranID = res.TranID
             this.receipt = res.receipt
             const isRecipt = this.receipt && this.receipt.success
             this.status = isRecipt ? TxStatus.Confirmed : TxStatus.Rejected

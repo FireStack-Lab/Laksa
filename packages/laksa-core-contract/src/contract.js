@@ -4,10 +4,10 @@ import { validate, toBN, isInt } from './validate'
 import { ABI } from './abi'
 
 export const ContractStatus = {
-  initialised: Symbol('initialised'),
-  waitForSign: Symbol('waitForSign'),
-  rejected: Symbol('rejected'),
-  deployed: Symbol('deployed')
+  initialised: 'initialised',
+  waitForSign: 'waitForSign',
+  rejected: 'rejected',
+  deployed: 'deployed'
 }
 
 /**
@@ -125,12 +125,12 @@ export class Contract {
       const tx = await this.prepareTx(
         new Transaction({
           version: 0,
-          to: defaultContractJson.to,
+          toAddr: defaultContractJson.toAddr,
           // pubKey: this.signer.publicKey,
           // amount should be 0.  we don't accept implicitly anymore.
           amount: toBN(0),
-          gasPrice: toBN(gasPrice).toNumber(),
-          gasLimit: toBN(gasLimit).toNumber(),
+          gasPrice: toBN(gasPrice),
+          gasLimit: toBN(gasLimit),
           code: this.code,
           data: JSON.stringify(this.initParams).replace(/\\"/g, '"')
         })
