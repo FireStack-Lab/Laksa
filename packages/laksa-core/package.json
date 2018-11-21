@@ -1,20 +1,20 @@
 {
   "name": "laksa-core",
-  "version": "0.0.73",
+  "version": "0.0.74",
   "description": "",
   "main": "index.js",
   "browser": "lib/index.js",
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "laksa-account": "^0.0.73",
-    "laksa-contracts": "^0.0.73",
-    "laksa-core-crypto": "^0.0.73",
-    "laksa-core-messenger": "^0.0.73",
-    "laksa-core-transaction": "^0.0.73",
-    "laksa-providers-http": "^0.0.73",
-    "laksa-utils": "^0.0.73",
-    "laksa-wallet": "^0.0.73",
-    "laksa-zil": "^0.0.73"
+    "laksa-account": "^0.0.74",
+    "laksa-contracts": "^0.0.74",
+    "laksa-core-crypto": "^0.0.74",
+    "laksa-core-messenger": "^0.0.74",
+    "laksa-core-transaction": "^0.0.74",
+    "laksa-providers-http": "^0.0.74",
+    "laksa-utils": "^0.0.74",
+    "laksa-wallet": "^0.0.74",
+    "laksa-zil": "^0.0.74"
   }
 }
