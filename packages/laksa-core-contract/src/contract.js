@@ -48,14 +48,14 @@ export class Contract {
 
   initTestParams = []
 
-  constructor(factory, abi, address, code, initParams, state) {
+  constructor(factory, abi, ContractAddress, code, initParams, state) {
     this.messenger = factory.messenger
     this.signer = factory.signer
 
-    this.address = address || undefined
-    if (address) {
+    this.ContractAddress = ContractAddress || undefined
+    if (ContractAddress) {
       this.abi = abi
-      this.address = address
+      this.ContractAddress = ContractAddress
       this.initParams = initParams
 
       this.state = state
@@ -90,6 +90,7 @@ export class Contract {
     }
     // the endpoint for sendServer has been set to scillaProvider
     const result = await this.messenger.sendServer('/contract/call', callContractJson)
+
     if (result.result) {
       this.setContractStatus(ContractStatus.waitForSign)
     }
@@ -172,7 +173,7 @@ export class Contract {
     const result = await this.messenger.send({ method: 'CreateTransaction', params: [deployedTxn] })
 
     if (result.TranID) {
-      this.address = result.ContractAddress
+      this.ContractAddress = result.ContractAddress
       this.setContractStatus(ContractStatus.deployed)
       return { ...this, TranID: result.TranID }
     } else {
