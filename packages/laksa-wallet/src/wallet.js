@@ -1,5 +1,5 @@
 import {
-  isAddress, isNumber, isObject, isArray, isString
+  isAddress, isNumber, isObject, isArray
 } from 'laksa-utils'
 import { Map, List } from 'immutable'
 
@@ -68,10 +68,9 @@ class Wallet {
   addAccount(accountObject) {
     if (!isObject(accountObject)) throw new Error('account Object is not correct')
     if (this.getAccountByAddress(accountObject.address)) return false
-    const newAccountObject = Object.assign({}, accountObject, {
-      createTime: new Date(),
-      index: this.getCurrentMaxIndex() + 1
-    })
+    const newAccountObject = accountObject
+    newAccountObject.createTime = new Date()
+    newAccountObject.index = this.getCurrentMaxIndex() + 1
     const objectKey = newAccountObject.address
     const newIndex = newAccountObject.index
     let newArrays = this.#_accounts.get('accounts')
@@ -80,9 +79,7 @@ class Wallet {
     this.#_accounts = this.#_accounts.set('accounts', List(newArrays))
     // this.#_accounts = this.#_accounts.concat(newArrays)
     this.updateLength()
-    return {
-      ...newAccountObject
-    }
+    return newAccountObject
   }
 
   /**
@@ -147,19 +144,6 @@ class Wallet {
     const accountInstance = new account.Account(this.messenger)
     const accountObject = await accountInstance.fromFile(keyStore, password)
     return this.addAccount(accountObject)
-  }
-
-  /**
-   * @function {importAccountFromObject}
-   * @param  {object} object {description}
-   * @return {Account} {description}
-   */
-  importAccountFromObject = object => {
-    if (!isObject(object) && !isString(object)) throw new Error('object imported should be plain Object or String')
-    const newObject = isString(object) ? JSON.parse(object) : object
-    const accountInstance = new account.Account(this.messenger)
-    const accountObject = accountInstance.createAccount()
-    return this.addAccount(Object.assign({}, accountObject, newObject))
   }
 
   /**
@@ -303,7 +287,8 @@ class Wallet {
   updateAccountByAddress(address, newObject) {
     if (!isAddress(address)) throw new Error('address is not correct')
     if (!isObject(newObject)) throw new Error('new account Object is not correct')
-    const newAccountObject = Object.assign({}, newObject, { updatedTime: new Date() })
+    const newAccountObject = newObject
+    newAccountObject.updateTime = new Date()
     this.#_accounts = this.#_accounts.update(address, () => newAccountObject)
     return true
   }
@@ -381,12 +366,11 @@ class Wallet {
           const tempAccount = newAccount.importAccount(accountObject.privateKey)
           encryptedObject = await tempAccount.encrypt(password, options)
         }
-        const encryptedAccount = Object.assign({}, encryptedObject, {
-          LastEncryptedBy: by || encryptedBy.ACCOUNT
-        })
-        const updateStatus = this.updateAccountByAddress(address, encryptedAccount)
+
+        encryptedObject.LastEncryptedBy = by || encryptedBy.ACCOUNT
+        const updateStatus = this.updateAccountByAddress(address, encryptedObject)
         if (updateStatus === true) {
-          return encryptedAccount
+          return encryptedObject
         } else return false
       }
     }
@@ -414,12 +398,11 @@ class Wallet {
           decryptedObject = newAccount.importAccount(decryptedTempObject.privateKey)
         }
 
-        const decryptedAccount = Object.assign({}, decryptedObject, {
-          LastEncryptedBy: by || encryptedBy.ACCOUNT
-        })
-        const updateStatus = this.updateAccountByAddress(address, decryptedAccount)
+        decryptedObject.LastEncryptedBy = by || encryptedBy.ACCOUNT
+
+        const updateStatus = this.updateAccountByAddress(address, decryptedObject)
         if (updateStatus === true) {
-          return decryptedAccount
+          return decryptedObject
         } else return false
       }
     }
@@ -448,34 +431,27 @@ class Wallet {
    * @param  {Transaction} tx {transaction bytes}
    * @return {Transaction} {signed transaction object}
    */
-  async sign(tx) {
-    if (!this.signer) {
-      throw new Error('This signer is not found')
+  async sign(tx, { address, password }) {
+    if (!this.signer && address === undefined) {
+      throw new Error('This signer is not found or address is not defined')
     }
     try {
-      const signerAccount = this.getAccountByAddress(this.signer)
-      const balance = await this.messenger.send({
-        method: 'GetBalance',
-        params: [signerAccount.address]
-      })
+      const signerAccount = this.getAccountByAddress(address === undefined ? this.signer : address)
 
-      if (typeof balance.nonce !== 'number') {
-        throw new Error('Could not get nonce')
-      }
-
+      await signerAccount.updateBalance()
       const withNonce = tx.map(txObj => {
         return {
           ...txObj,
-          nonce: balance.nonce + 1,
+          nonce: signerAccount.nonce + 1,
           pubKey: signerAccount.publicKey
         }
       })
-
+      const signature = await signerAccount.sign(withNonce.bytes, password)
       return withNonce.map(txObj => {
         // @ts-ignore
         return {
           ...txObj,
-          signature: signerAccount.sign(withNonce.bytes)
+          signature
         }
       })
     } catch (err) {

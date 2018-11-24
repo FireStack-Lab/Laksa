@@ -1,10 +1,10 @@
 import { encodeTransactionProto } from 'laksa-core-crypto'
 
 export const TxStatus = {
-  Pending: 'Pending',
-  Initialised: 'Initialised',
-  Confirmed: 'Confirmed',
-  Rejected: 'Rejected'
+  Pending: Symbol('Pending'),
+  Initialised: Symbol('Initialised'),
+  Confirmed: Symbol('Confirmed'),
+  Rejected: Symbol('Rejected')
 }
 
 export class Transaction {

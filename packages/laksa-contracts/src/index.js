@@ -1,11 +1,11 @@
 import {
   Contract, ContractStatus, toBN, Transaction
 } from 'laksa-core-contract'
+import { Core } from 'laksa-shared'
 
-class Contracts {
+class Contracts extends Core {
   constructor(messenger, signer) {
-    this.messenger = messenger
-    this.signer = signer
+    super(messenger, signer)
   }
 
   storage = {
@@ -23,7 +23,7 @@ class Contracts {
    * @return {Contract} {description}
    */
   at(address, abi, code, initParams, state) {
-    return new Contract(this, abi, address, code, initParams, state)
+    return new Contract(this.messenger, this.signer, abi, address, code, initParams, state)
   }
 
   /**
@@ -34,7 +34,7 @@ class Contracts {
    * @return {Contract} {contract that created}
    */
   async new(code, initParams, options) {
-    const contract = new Contract(this)
+    const contract = new Contract(this.messenger, this.signer)
     const result = await contract
       // decode ABI from code first
       .decodeABI({ code })
@@ -90,10 +90,7 @@ class Contracts {
     const transaction = new Transaction(txnDetail)
 
     // check if the signer is encrypted
-    const signedContract =
-      signer.privateKey !== 'ENCRYPTED'
-        ? await signer.signTransaction(transaction)
-        : await signer.signTransactionWithPassword(transaction, password)
+    const signedContract = await signer.signTransaction(transaction, password)
 
     // if only the contract  have a signature with signer
     if (signedContract.signature) {
@@ -106,4 +103,4 @@ class Contracts {
   }
 }
 
-export default Contracts
+export { Contracts }

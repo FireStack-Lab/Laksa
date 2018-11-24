@@ -1,5 +1,6 @@
 import { sign } from 'laksa-core-crypto'
-
+import { Core } from 'laksa-shared'
+import { isInt } from 'laksa-utils'
 import { ENCRYPTED } from './symbols'
 import {
   createAccount,
@@ -9,9 +10,13 @@ import {
   signTransaction
 } from './utils'
 
-export class Account {
+export class Account extends Core {
   constructor(messenger) {
-    this.messenger = messenger
+    super(messenger)
+    delete this.signer
+    this.privateKey = ''
+    this.publicKey = ''
+    this.address = ''
     this.balance = '0'
     this.nonce = 0
   }
@@ -22,20 +27,11 @@ export class Account {
    */
   createAccount() {
     const accountObject = createAccount()
-    const newObject = new Account(this.messenger)
-    return Object.assign({}, accountObject, {
-      balance: newObject.balance,
-      nonce: newObject.nonce,
-      messenger: newObject.messenger,
-      getBalance: newObject.getBalance,
-      encrypt: newObject.encrypt,
-      decrypt: newObject.decrypt,
-      toFile: newObject.toFile,
-      fromFile: newObject.fromFile,
-      sign: newObject.sign,
-      signTransaction: newObject.signTransaction,
-      signTransactionWithPassword: newObject.signTransactionWithPassword
-    })
+    const { privateKey, publicKey, address } = accountObject
+    this.privateKey = privateKey
+    this.publicKey = publicKey
+    this.address = address
+    return this
   }
 
   /**
@@ -45,20 +41,12 @@ export class Account {
    */
   importAccount(privateKey) {
     const accountObject = importAccount(privateKey)
-    const newObject = new Account(this.messenger)
-    return Object.assign({}, accountObject, {
-      balance: newObject.balance,
-      nonce: newObject.nonce,
-      messenger: newObject.messenger,
-      getBalance: newObject.getBalance,
-      encrypt: newObject.encrypt,
-      decrypt: newObject.decrypt,
-      toFile: newObject.toFile,
-      fromFile: newObject.fromFile,
-      sign: newObject.sign,
-      signTransaction: newObject.signTransaction,
-      signTransactionWithPassword: newObject.signTransactionWithPassword
-    })
+    const { publicKey, address } = accountObject
+    this.privateKey = privateKey
+    this.publicKey = publicKey
+    this.address = address
+    if (this.crypto) delete this.crypto
+    return this
   }
 
   // sub object
@@ -138,27 +126,16 @@ export class Account {
    * @param  {Buffer} bytes {Buffer that waited for sign}
    * @return {object} {signed transaction object}
    */
-  sign(bytes) {
-    if (this.privateKey === ENCRYPTED || this.privateKey === undefined) {
-      throw new Error('This account is encrypted or not found, please decrypt it first')
-    }
-    return sign(bytes, this.privateKey, this.publicKey)
-  }
-
-  /**
-   * @function {signTransaction} {sign plain object}
-   * @param  {object} transactionObject {transaction object that prepared for sign}
-   * @return {object} {signed transaction object}
-   */
-  async signTransaction(transactionObject) {
-    if (this.privateKey === ENCRYPTED || this.privateKey === undefined) {
-      throw new Error(
-        'This account is encrypted, please decrypt it first or use "signTransactionWithPassword"'
-      )
-    }
+  async sign(bytes, password) {
     try {
-      const { nonce } = await this.getBalance()
-      return signTransaction(this.privateKey, { ...transactionObject, nonce: nonce + 1 })
+      if (this.privateKey === ENCRYPTED) {
+        await this.decrypt(password)
+        const result = sign(bytes, this.privateKey, this.publicKey)
+        await this.encrypt(password)
+        return result
+      } else {
+        return sign(bytes, this.privateKey, this.publicKey)
+      }
     } catch (error) {
       throw new Error(error)
     }
@@ -166,29 +143,33 @@ export class Account {
 
   /**
    * @function {signTransactionWithPassword} {sign plain object with password}
-   * @param  {object} transactionObject {transaction object}
+   * @param  {object} txnObj {transaction object}
    * @param  {string} password          {password string}
    * @return {object} {signed transaction object}
    */
-  async signTransactionWithPassword(transactionObject, password) {
-    if (this.privateKey === ENCRYPTED || this.privateKey === undefined) {
-      const decrypted = await this.decrypt(password)
-      const { nonce } = await this.getBalance()
-      const signed = signTransaction(decrypted.privateKey, {
-        ...transactionObject,
-        nonce: nonce + 1
+  async signTransaction(txnObj, password) {
+    if (this.privateKey === ENCRYPTED) {
+      await this.decrypt(password)
+      await this.updateBalance()
+      const signed = signTransaction(this.privateKey, {
+        ...txnObj.txParams,
+        nonce: this.nonce + 1
       })
-      const encryptAfterSign = await this.encrypt(password)
-      Object.assign(this, encryptAfterSign)
-      return signed
+      await this.encrypt(password)
+      return txnObj.map(obj => {
+        return { ...obj, ...signed }
+      })
     } else {
-      const { nonce } = await this.getBalance()
+      await this.updateBalance()
+      // console.log(this.nonce)
       const nonEncryptSigned = signTransaction(this.privateKey, {
-        ...transactionObject,
-        nonce: nonce + 1
+        ...txnObj.txParams,
+        nonce: this.nonce + 1
       })
-      Object.assign(this, nonEncryptSigned)
-      return nonEncryptSigned
+      // console.log(nonEncryptSigned.nonce)
+      return txnObj.map(obj => {
+        return { ...obj, ...nonEncryptSigned }
+      })
     }
   }
 
@@ -199,10 +180,22 @@ export class Account {
         params: [this.address]
       })
       const { balance, nonce } = balanceObject
-      if (nonce !== undefined) {
-        Object.assign(this, { balance, nonce })
+      if (isInt(nonce)) {
         return { balance, nonce }
+      } else {
+        throw new Error('can not get nonce')
       }
+    } catch (error) {
+      throw new Error(error)
+    }
+  }
+
+  async updateBalance() {
+    try {
+      const { balance, nonce } = await this.getBalance()
+      this.balance = balance
+      this.nonce = nonce
+      return this
     } catch (error) {
       throw new Error(error)
     }

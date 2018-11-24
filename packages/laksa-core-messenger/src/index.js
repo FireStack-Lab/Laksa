@@ -1,4 +1,2 @@
-import Messenger from './messenger'
-
-export { JsonRpc } from './rpcbuilder'
-export { Messenger }
+export * from './messenger'
+export * from './rpcbuilder'

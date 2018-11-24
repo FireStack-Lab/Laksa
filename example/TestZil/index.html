@@ -47,6 +47,7 @@
         <span>balance:</span><span id="balance"></span> <span>nonce:</span
         ><span id="nonce"></span>
       </div>
+      <div id="code"></div>
     </div>
     <script src="../../dist/Laksa.browser.js"></script>
     <script>
@@ -76,54 +77,56 @@
         '3375F915F3F9AE35E6B301B7670F53AD1A5BE15D8221EC7FD5E503F21D3450C8'
       )
 
-      const code = `(* HelloWorld contract *)
-                        
-                        import ListUtils
-                        
-                        (***************************************************)
-                        (*               Associated library                *)
-                        (***************************************************)
-                        library HelloWorld
-                        
-                        let one_msg = 
-                          fun (msg : Message) => 
-                          let nil_msg = Nil {Message} in
-                          Cons {Message} msg nil_msg
-                        
-                        let not_owner_code = Int32 1
-                        let set_hello_code = Int32 2
-                        
-                        (***************************************************)
-                        (*             The contract definition             *)
-                        (***************************************************)
-                        
-                        contract HelloWorld
-                        (owner: ByStr20)
-                        
-                        field welcome_msg : String = ""
-                        
-                        transition setHello (msg : String)
-                          is_owner = builtin eq owner _sender;
-                          match is_owner with
-                          | False =>
-                            msg = {_tag : "Main"; _recipient : _sender; _amount : Uint128 0; code : not_owner_code};
-                            msgs = one_msg msg;
-                            send msgs
-                          | True =>
-                            welcome_msg := msg;
-                            msg = {_tag : "Main"; _recipient : _sender; _amount : Uint128 0; code : set_hello_code};
-                            msgs = one_msg msg;
-                            send msgs
-                          end
-                        end
-                        
-                        
-                        transition getHello ()
-                            r <- welcome_msg;
-                            msg = {_tag : "Main"; _recipient : _sender; _amount : Uint128 0; msg : r};
-                            msgs = one_msg msg;
-                            send msgs
-                        end`
+      const code = `
+                  (* HelloWorld contract *)
+            
+            import ListUtils
+            
+            (***************************************************)
+            (*               Associated library                *)
+            (***************************************************)
+            library HelloWorld
+            
+            let one_msg = 
+              fun (msg : Message) => 
+              let nil_msg = Nil {Message} in
+              Cons {Message} msg nil_msg
+            
+            let not_owner_code = Int32 1
+            let set_hello_code = Int32 2
+            
+            (***************************************************)
+            (*             The contract definition             *)
+            (***************************************************)
+            
+            contract HelloWorld
+            (owner: ByStr20)
+            
+            field welcome_msg : String = ""
+            
+            transition setHello (msg : String)
+              is_owner = builtin eq owner _sender;
+              match is_owner with
+              | False =>
+                msg = {_tag : "Main"; _recipient : _sender; _amount : Uint128 0; code : not_owner_code};
+                msgs = one_msg msg;
+                send msgs
+              | True =>
+                welcome_msg := msg;
+                msg = {_tag : "Main"; _recipient : _sender; _amount : Uint128 0; code : set_hello_code};
+                msgs = one_msg msg;
+                send msgs
+              end
+            end
+            
+            
+            transition getHello ()
+                r <- welcome_msg;
+                msg = {_tag : "Main"; _recipient : _sender; _amount : Uint128 0; msg : r};
+                msgs = one_msg msg;
+                send msgs
+            end
+                  `
 
       const init = [
         {
@@ -143,253 +146,31 @@
         data: JSON.stringify(init).replace(/\\"/g, '"')
       })
 
-      const contract = laksa.contracts.new(code, [
-        '0x8254b2c9acdf181d5d6796d63320fbb20d4edd12'
-      ])
-      //   .then(d =>
-      //     laksa.contracts.deploy(
-      //       { contract: d, gasLimit: 2500, gasPrice: 1 },
-      //       { signer: accountA }
-      //     )
-      //   )
-      //   .then(console.log)
+      laksa.wallet.setSigner(accountA)
+      const contract = laksa.contracts
+        .new(code, ['0x8254b2c9acdf181d5d6796d63320fbb20d4edd12'])
+        .then(d =>
+          laksa.contracts.deploy(
+            { contract: d, gasLimit: 2500, gasPrice: 1 },
+            { signer: accountA }
+          )
+        )
+
+        .then(m => 
+         m.track()
+        ).then(console.log)
+
       // console.log(transaction2)
+      // const contract = laksa.contracts
+      //   .new(code, ['0x8254b2c9acdf181d5d6796d63320fbb20d4edd12'])
+      //   .then(d => d.deployTxn({ gasLimit: 2500, gasPrice: 1 }))
+      //   .then(console.log)
 
-      // accountA.signTransaction(transaction2)
-      // .then(d=>laksa.zil.createTransaction(d))
-      // .then(console.log)
+      // accountA
+      //   .signTransaction(transaction2)
+      //   .then(d => laksa.zil.createTransaction(d))
+      //   .then(console.log)
 
-      const bookStoreCode=`(* Bookstore Contract *)
-
-
-
-(* In production deployments, you will want to implement proper access *)
-(* control logic in your smart contract *)
-
-(***************************************************)
-(*               Associated library                *)
-(***************************************************)
-library BookStore
-
-let one_msg =
-  fun (msg: Message) =>
-  let nil_msg = Nil {Message} in
-  Cons {Message} msg nil_msg
-
-(* error codes library *)
-let code_success = Uint32 0
-let code_book_not_found = Uint32 1
-let code_not_authorized = Uint32 2
-let code_invalid_params = Uint32 3
-let code_bookid_exist = Uint32 4
-
-(***************************************************)
-(*             The contract definition             *)
-(***************************************************)
-contract BookStore
-(owner: ByStr20,
-storeName: String)
-
-(* storeName can be immutable if it won't ever be changed             *)
-
-
-(* Membership data consists of three attributes: ByStr20, Name and typeOfMember*)
-(* Equivalent member data in C++ struct *)
-(* struct Member {                                                    *)
-(*     ByStr20 address;                                               *)
-(*     String name;                                                   *)
-(*     Uint32 membershipType; // 0: Regular, 1: Premium, 2: Corporate *)
-(* }                                                                  *)
-
-field members: Map ByStr20 (Pair (String) (Uint32))
-                = Emp ByStr20 (Pair (String) (Uint32))
-
-(* lastBookID: last book ID issued *)
-field lastBookID: Option Uint32 = None {Uint32}
-
-(* Bookinventory will store a Map of Books                          *)
-field bookInventory: Map Uint32 (Pair (String) (String))
-                    = Emp Uint32 (Pair (String) (String))
-
-
-(* Book data consists of three attributes: BookID, Title and Author*)
-(* Equivalent member data in C++ struct *)
-(* struct Book {                                                    *)
-(*     Uint32 BookID;                                               *)
-(*     String Book_title;                                           *)
-(*     String Author;                                               *)
-(* }                                                                *)
-
-(* ======== transitions ===============*)
-
-
-(* @notice: add member is an example. It is not used in other functions. *)
-(* @dev: in real contracts, a developer can use a members mapping to manage *)
-(* access controls to grant a user permission to perform certain actions *)
-(* (e.g. add/remove books) *)
-
-transition addMember(name: String, addr: ByStr20, memberType: Uint32)
-
-    (* Access control: Checking if sender is the owner of the Contract *)
-    is_authorized = builtin eq _sender owner;
-    match is_authorized with
-    | True => 
-        (* Only the owner can add member *)
-        (* Check if membership type is valid. *)
-        valid_type = let three = Uint32 3 in
-                        builtin lt memberType three;
-        match valid_type with
-        | True =>
-            (* Adds new members with the memberType *)
-            mems <- members;
-            (* First build the pair ADT *)
-            p = Pair {(String) (Uint32)} name memberType;
-            (* Add the pair created to the map, with addr as the key *)
-            add_mem = builtin put mems addr p;
-            members:= add_mem;
-
-            msg = {_tag: "Main"; 
-                    _recipient: _sender; 
-                    _amount: Uint128 0; 
-                    code: code_success};
-            msgs = one_msg msg;
-            send msgs 
-        | False =>
-            (* Code for the membership type is invalid *)
-            msg = {_tag: "Main";
-                    _recipient: _sender;
-                    _amount: Uint128 0;
-                    code: code_invalid_params};
-            msgs = one_msg msg;
-            send msgs
-        end
-    | False =>
-        (* Unauthorized transaction *)
-        msg = {_tag: "Main";
-                _recipient: _sender;
-                _amount: Uint128 0;
-                code: code_not_authorized};
-        msgs = one_msg msg;
-        send msgs
-    end
-end
-
-
-
-transition addBook(book_title: String, author: String, bookID: Uint32)
-
-    (* @dev: Preconditions can be set to allow only members to add a book *)
-    (* @dev: Access controls logic omitted for brevity *)
-
-    books <- bookInventory;
-    (* new_book_id = let one = Uint32 1 in builtin add last_book_id one;*)
-
-    bookExist = builtin contains books bookID;
-    match bookExist with
-    | True =>
-        msg = {_tag: "Main";
-                    _recipient: _sender;
-                    _amount: Uint128 0;
-                    code: code_bookid_exist};
-        msgs = one_msg msg;
-        send msgs
-    | False =>
-        (* Creating a new Book Model *)
-        (* A new book model is a Pair of book_title and author *)
-        new_book = Pair {(String) (String)} book_title author;
-
-        (* Add the new book to the book_inventory Map, with BookID as the key*)
-        add_to_inventory = builtin put books bookID new_book;
-
-        (* Change mutable fields once everything has been completed. *)
-        bookInventory := add_to_inventory; 
-
-        tmp = Some {Uint32} bookID;
-        lastBookID := tmp;
-
-        msg = {_tag: "Main"; 
-                _recipient: _sender; 
-                _amount: Uint128 0; 
-                code: code_success};
-
-        msgs = one_msg msg;
-        send msgs 
-    end
-end
-
-
-transition removeBook(book_id: Uint32)
-    (* @dev: Preconditions can be set to allow only members to remove a book *)
-    (* @dev: Access controls logic omitted for brevity *)
-
-    (* preconditions  *)
-    books <- bookInventory;
-    exist = builtin contains books book_id;
-    match exist with
-    | False =>
-        msg = {_tag: "Main"; 
-                _recipient: _sender; 
-                _amount: Uint128 0; 
-                code: code_book_not_found};
-        msgs = one_msg msg;
-        send msgs
-    | True =>
-        removed = builtin remove books book_id;
-        bookInventory := removed;
-
-        msg = {_tag: "Main"; 
-            _recipient: _sender; 
-            _amount: Uint128 0; 
-            code: code_success};
-        msgs = one_msg msg;
-        send msgs
-    end
-end
-
-
-
-transition updateBook(book_id: Uint32, book_title: String, author: String)
-    (* @dev: Preconditions can be set to allow only members to update a book *)
-    (* @dev: Access controls omitted for brevity *)
-   
-    (* preconditions  *)
-    books <- bookInventory;
-    exist = builtin contains books book_id;
-    match exist with
-    | False =>
-        (* Book ID is not found in the records. *)
-        msg = {_tag: "Main"; 
-                _recipient: _sender; 
-                _amount: Uint128 0; 
-                code: code_book_not_found};
-        msgs = one_msg msg;
-        send msgs
-    | True =>
-        (* constructs book model  *)
-        (* Creating a new Book Model *)
-        (* A new book model is a Pair of book_title and author *)
-        new_book = Pair {(String) (String)} book_title author;
-        (* Add the new book to the book_inventory Map, with BookID as the key*)
-        
-        add_to_inventory = builtin put books book_id new_book;
-
-        (* Update the state of book inventory *)
-        bookInventory := add_to_inventory; 
-
-        msg = {_tag: "Main"; 
-                _recipient: _sender; 
-                _amount: Uint128 0; 
-                code: code_success};
-        msgs = one_msg msg;
-        send msgs
-    end
-
-
-end
-`
-
-const bookStoreInit= ['0x8254b2c9acdf181d5d6796d63320fbb20d4edd12','MyBookStore']
-        
       // const transactionBookStore = new laksa.Modules.Transaction({
       //   version: 0,
       //   toAddr: '0000000000000000000000000000000000000000',
@@ -400,7 +181,7 @@ const bookStoreInit= ['0x8254b2c9acdf181d5d6796d63320fbb20d4edd12','MyBookStore'
       //   data: JSON.stringify(init).replace(/\\"/g, '"')
       // })
 
-      const bookStoreContract = laksa.contracts.new(bookStoreCode, bookStoreInit,{gasLimit:10000})
+      // const bookStoreContract = laksa.contracts.new(bookStoreCode, bookStoreInit,{gasLimit:10000})
     </script>
   </body>
 </html>

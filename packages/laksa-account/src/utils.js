@@ -1,5 +1,5 @@
 import {
-  isPrivateKey, isAddress, isObject, isString, validateArgs
+  isPrivateKey, isObject, isString, validateArgs
 } from 'laksa-utils'
 import {
   generatePrivateKey,
@@ -57,7 +57,6 @@ export const importAccount = privateKey => {
  */
 export const encryptAccount = async (accountObject, password, options = { level: 1024 }) => {
   validateArgs(accountObject, {
-    address: [isAddress],
     privateKey: [isPrivateKey]
   })
   if (!isString(password)) {
@@ -80,7 +79,6 @@ export const encryptAccount = async (accountObject, password, options = { level:
  */
 export const decryptAccount = async (accountObject, password) => {
   validateArgs(accountObject, {
-    address: [isAddress],
     crypto: [isObject]
   })
   if (!isString(password)) {

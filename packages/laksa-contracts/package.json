@@ -9,6 +9,7 @@
   "author": "neeboo",
   "license": "ISC",
   "dependencies": {
-    "laksa-core-contract": "^0.0.74"
+    "laksa-core-contract": "^0.0.74",
+    "laksa-shared": "^0.0.74"
   }
 }

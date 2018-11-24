@@ -1,8 +1,8 @@
 import fetch from 'cross-fetch'
 
-const DEFAULT_TIMEOUT = 120000
+export const DEFAULT_TIMEOUT = 120000
 
-const DEFAULT_HEADERS = { 'Content-Type': 'application/json' }
+export const DEFAULT_HEADERS = { 'Content-Type': 'application/json' }
 
 function _fetch(fetchPromise, timeout) {
   let abortFn = null

@@ -13,7 +13,7 @@ function getResultForData(data) {
   return data
 }
 
-export default class Messanger {
+export class Messenger {
   constructor(provider) {
     this.provider = provider
     this.scillaProvider = provider

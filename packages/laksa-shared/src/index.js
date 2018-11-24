@@ -8,3 +8,4 @@ export {
 
 export { format } from './decorators/format'
 export { sign } from './decorators/sign'
+export * from './core.js'

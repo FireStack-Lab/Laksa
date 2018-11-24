@@ -1,9 +1,9 @@
-const MiddlewareType = {
-  REQ: Symbol('REQ'),
-  RES: Symbol('RES')
+export const MiddlewareType = {
+  REQ: 'REQ',
+  RES: 'RES'
 }
 
-export default class BaseProvider {
+export class BaseProvider {
   middleware = {
     request: {
       use: (fn, match = '*') => this.pushMiddleware(fn, MiddlewareType.REQ, match)

@@ -1,11 +1,14 @@
 import { Transaction } from 'laksa-core-transaction'
 import { sign } from 'laksa-shared'
-import { validate, toBN, isInt } from './validate'
+import {
+  validate, toBN, isInt, isHash
+} from './validate'
 import { ABI } from './abi'
 
 export const ContractStatus = {
   initialised: 'initialised',
   waitForSign: 'waitForSign',
+  sent: 'sent',
   rejected: 'rejected',
   deployed: 'deployed'
 }
@@ -48,16 +51,15 @@ export class Contract {
 
   initTestParams = []
 
-  constructor(factory, abi, ContractAddress, code, initParams, state) {
-    this.messenger = factory.messenger
-    this.signer = factory.signer
+  constructor(messenger, signer, abi, ContractAddress, code, initParams, state) {
+    this.messenger = messenger
+    this.signer = signer
 
     this.ContractAddress = ContractAddress || undefined
     if (ContractAddress) {
       this.abi = abi
       this.ContractAddress = ContractAddress
       this.initParams = initParams
-
       this.state = state
       this.contractStatus = ContractStatus.deployed
     } else {
@@ -65,7 +67,6 @@ export class Contract {
       this.abi = abi
       this.code = code
       this.initParams = initParams
-
       this.contractStatus = ContractStatus.initialised
     }
   }
@@ -82,38 +83,53 @@ export class Contract {
    * @return {Contract} {raw Contract object}
    */
   async testCall(gasLimit) {
-    const callContractJson = {
-      code: this.code,
-      init: JSON.stringify(this.initTestParams),
-      blockchain: JSON.stringify(this.blockchain),
-      gaslimit: JSON.stringify(gasLimit)
-    }
-    // the endpoint for sendServer has been set to scillaProvider
-    const result = await this.messenger.sendServer('/contract/call', callContractJson)
+    try {
+      const callContractJson = {
+        code: this.code,
+        init: JSON.stringify(this.initTestParams),
+        blockchain: JSON.stringify(this.blockchain),
+        gaslimit: JSON.stringify(gasLimit)
+      }
+      // the endpoint for sendServer has been set to scillaProvider
+      const result = await this.messenger.sendServer('/contract/call', callContractJson)
 
-    if (result.result) {
-      this.setContractStatus(ContractStatus.waitForSign)
+      if (result.result) {
+        this.setContractStatus(ContractStatus.waitForSign)
+      }
+      return this
+    } catch (error) {
+      throw error
     }
-    return this
   }
 
   @sign
   async prepareTx(tx) {
-    const raw = tx.txParams
-    /**
-     * @function response
-     * @returns {Object}
-     * @param {Address} ContractAddress {contract address that deployed}
-     * @param {string} Info  {Infomation that server returns}
-     * @param {TranID} TranID  {transaction ID that server returns},
-     */
+    try {
+      const raw = tx.txParams
+      /**
+       * @function response
+       * @returns {Object}
+       * @param {Address} ContractAddress {contract address that deployed}
+       * @param {string} Info  {Infomation that server returns}
+       * @param {TranID} TranID  {transaction ID that server returns},
+       */
 
-    const response = await this.messenger.send({
-      method: 'CreateTransaction',
-      params: [{ ...raw, amount: raw.amount.toNumber() }]
-    })
+      const response = await this.messenger.send({
+        method: 'CreateTransaction',
+        params: [
+          {
+            ...raw,
+            amount: raw.amount.toString(),
+            gasLimit: raw.gasLimit.toString(),
+            gasPrice: raw.gasPrice.toString()
+          }
+        ]
+      })
 
-    return tx.confirm(response.TranID)
+      return tx.confirm(response.TranID)
+    } catch (error) {
+      throw error
+    }
   }
 
   /**
@@ -161,24 +177,54 @@ export class Contract {
    */
   async deploy(signedTxn) {
     if (!signedTxn.signature) throw new Error('transaction has not been signed')
-    const deployedTxn = Object.assign(
-      {},
-      {
-        ...signedTxn,
-        amount: signedTxn.amount.toString(),
-        gasLimit: signedTxn.gasLimit.toString(),
-        gasPrice: signedTxn.gasPrice.toString()
-      }
-    )
-    const result = await this.messenger.send({ method: 'CreateTransaction', params: [deployedTxn] })
+    try {
+      const deployedTxn = Object.assign(
+        {},
+        {
+          ...signedTxn.txParams,
+          amount: signedTxn.amount.toString(),
+          gasLimit: signedTxn.gasLimit.toString(),
+          gasPrice: signedTxn.gasPrice.toString()
+        }
+      )
+      const result = await this.messenger.send({
+        method: 'CreateTransaction',
+        params: [deployedTxn]
+      })
 
-    if (result.TranID) {
-      this.ContractAddress = result.ContractAddress
-      this.setContractStatus(ContractStatus.deployed)
-      return { ...this, TranID: result.TranID }
-    } else {
-      this.setContractStatus(ContractStatus.rejected)
+      if (result.TranID) {
+        this.ContractAddress = result.ContractAddress
+        this.setContractStatus(ContractStatus.sent)
+        this.transaction = signedTxn.map(obj => {
+          return { ...obj, TranID: result.TranID }
+        })
+        return this
+      } else {
+        this.setContractStatus(ContractStatus.rejected)
+        return this
+      }
+    } catch (error) {
+      throw error
+    }
+  }
+
+  async track() {
+    try {
+      if (!isHash(this.transaction.TranID)) {
+        throw new Error('the contract has not been sent')
+      }
+      Transaction.setMessenger(this.messenger)
+      const result = await this.transaction.confirm(this.transaction.TranID)
+      if (result && (!result.receipt || !result.receipt.success)) {
+        this.setContractStatus(ContractStatus.rejected)
+        return this
+      } else if (result && result.receipt && result.receipt.success) {
+        this.setContractStatus(ContractStatus.deployed)
+      }
+
       return this
+    } catch (error) {
+      throw error
     }
   }
 
@@ -190,13 +236,12 @@ export class Contract {
    * @returns {Promise<Transaction>}
    */
   async call(transition, params, amount = toBN(0)) {
-    const msg = {
-      _tag: transition,
-      // TODO: this should be string, but is not yet supported by lookup.
-      params
-    }
-
     try {
+      const msg = {
+        _tag: transition,
+        // TODO: this should be string, but is not yet supported by lookup.
+        params
+      }
       return await this.prepareTx(
         new Transaction({
           version: 0,
@@ -207,8 +252,8 @@ export class Contract {
           data: JSON.stringify(msg)
         })
       )
-    } catch (err) {
-      throw err
+    } catch (error) {
+      throw error
     }
   }
 
@@ -220,9 +265,13 @@ export class Contract {
    */
   async getABI({ code }) {
     // the endpoint for sendServer has been set to scillaProvider
-    const result = await this.messenger.sendServer('/contract/check', { code })
-    if (result.result && result.message !== undefined) {
-      return JSON.parse(result.message)
+    try {
+      const result = await this.messenger.sendServer('/contract/check', { code })
+      if (result.result && result.message !== undefined) {
+        return JSON.parse(result.message)
+      }
+    } catch (error) {
+      throw error
     }
   }
 
@@ -232,10 +281,14 @@ export class Contract {
    * @return {Contract} {raw contract}
    */
   async decodeABI({ code }) {
-    this.setCode(code)
-    const abiObj = await this.getABI({ code })
-    this.setABI(abiObj)
-    return this
+    try {
+      this.setCode(code)
+      const abiObj = await this.getABI({ code })
+      this.setABI(abiObj)
+      return this
+    } catch (error) {
+      throw error
+    }
   }
 
   /**
@@ -244,17 +297,21 @@ export class Contract {
    * @return {Contract|false} {raw contract}
    */
   async setBlockNumber(number) {
-    if (number && isInt(Number(number))) {
-      this.setBlockchain(String(number))
-      this.setCreationBlock(String(number))
-      return this
-    } else if (number === undefined) {
-      const result = await this.messenger.send({ method: 'GetLatestTxBlock', param: [] })
-      if (result) {
-        this.setBlockchain(result.header.BlockNum)
-        this.setCreationBlock(result.header.BlockNum)
+    try {
+      if (number && isInt(Number(number))) {
+        this.setBlockchain(String(number))
+        this.setCreationBlock(String(number))
         return this
+      } else if (number === undefined) {
+        const result = await this.messenger.send({ method: 'GetLatestTxBlock', param: [] })
+        if (result) {
+          this.setBlockchain(result.header.BlockNum)
+          this.setCreationBlock(result.header.BlockNum)
+          return this
+        }
       }
+    } catch (error) {
+      throw error
     }
   }
 

@@ -1,14 +1,20 @@
-import { BaseProvider, composeMiddleware, performRPC } from 'laksa-core-provider'
+import {
+  BaseProvider,
+  composeMiddleware,
+  performRPC,
+  DEFAULT_TIMEOUT,
+  DEFAULT_HEADERS
+} from 'laksa-core-provider'
 
 const defaultOptions = {
   method: 'POST',
-  timeout: 120000,
+  timeout: DEFAULT_TIMEOUT,
+  headers: DEFAULT_HEADERS,
   user: null,
-  password: null,
-  headers: { 'Content-Type': 'application/json' }
+  password: null
 }
 
-export default class ProtobufProvider extends BaseProvider {
+export class HttpProvider extends BaseProvider {
   constructor(url, options) {
     super()
     this.url = url || 'http://localhost:4200'
@@ -116,5 +122,13 @@ export default class ProtobufProvider extends BaseProvider {
       cb(null, data)
     }
     return data
+  }
+
+  subscribe() {
+    throw new Error('HTTPProvider does not support subscriptions.')
+  }
+
+  unsubscribe() {
+    throw new Error('HTTPProvider does not support subscriptions.')
   }
 }
