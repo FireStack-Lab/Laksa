@@ -161,12 +161,10 @@ export class Account extends Core {
       })
     } else {
       await this.updateBalance()
-      // console.log(this.nonce)
       const nonEncryptSigned = signTransaction(this.privateKey, {
         ...txnObj.txParams,
         nonce: this.nonce + 1
       })
-      // console.log(nonEncryptSigned.nonce)
       return txnObj.map(obj => {
         return { ...obj, ...nonEncryptSigned }
       })
