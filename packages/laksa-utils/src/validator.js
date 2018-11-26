@@ -171,7 +171,7 @@ const isUndefined = obj => {
  * @param  {type}  obj [description]
  * @return {Boolean}     [description]
  */
-const isUnit = obj => {
+const isUint = obj => {
   return isInt(obj) && obj >= 0
 }
 
@@ -192,7 +192,7 @@ export {
   isArray,
   isJsonString,
   isObject,
-  isUnit,
+  isUint,
   isFunction,
   isHash,
   isUrl,
