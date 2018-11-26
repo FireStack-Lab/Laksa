@@ -1,6 +1,6 @@
 {
   "name": "laksa-core-crypto",
-  "version": "0.0.76",
+  "version": "0.0.77",
   "description": "",
   "main": "index.js",
   "browser": "lib/index.js",
