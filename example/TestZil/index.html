@@ -67,15 +67,29 @@
 
       const transaction = new laksa.Modules.Transaction({
         version: 0,
-        toAddr: '8254b2c9acdf181d5d6796d63320fbb20d4edd12',
-        amount: laksa.util.toBN(16),
+        toAddr: '9bfec715a6bd658fcb62b0f8cc9bfa2ade71434a',
+        amount: laksa.util.toBN(10000),
         gasPrice: laksa.util.toBN(1),
         gasLimit: laksa.util.toBN(10)
-      })
+      },laksa.messenger)
 
       const accountA = laksa.wallet.importAccountFromPrivateKey(
-        'e19d05c5452598e24caad4a0d85a49146f7be089515c905ae6a19e8a578a6930'
-      )
+        '0FC87CC5ACF5A1433DE7301972B9649EE31688F291F781396B0F67AD98A88246'
+      )     
+      // laksa.wallet.setSigner(accountA)
+      laksa.contracts.setSigner(accountA) 
+      console.log(laksa.contracts.signer)
+      // async function Txn(){
+      //   const signed = await accountA.signTransaction(transaction)
+      //   const {TranID}= await laksa.zil.createTransaction(signed)
+      //   if(TranID){
+      //     return signed.confirm(created.TranID,laksa.messenger)
+      //   }
+      //   else {console.log('error')}
+      // }
+    
+      // Txn()
+
       // accountA
       //   .signTransaction(transaction)
       //   .then(d => laksa.zil.createTransaction(d))

@@ -32,7 +32,7 @@ class Laksa {
     this.messenger = new Messenger(this.currentProvider.node)
     this.zil = new Zil(this.messenger)
     this.wallet = new Wallet(this.messenger)
-    this.contracts = new Contracts(this.messenger, this.wallet)
+    this.contracts = new Contracts(this.messenger, this.wallet.signer)
   }
 
   Modules = {

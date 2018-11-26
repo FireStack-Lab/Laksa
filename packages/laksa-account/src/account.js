@@ -143,7 +143,7 @@ export class Account extends Core {
 
   /**
    * @function {signTransactionWithPassword} {sign plain object with password}
-   * @param  {object} txnObj {transaction object}
+   * @param  {Transaction} txnObj {transaction object}
    * @param  {string} password          {password string}
    * @return {object} {signed transaction object}
    */

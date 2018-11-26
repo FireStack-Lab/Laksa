@@ -51,7 +51,7 @@ export class Contract {
 
   initTestParams = []
 
-  constructor(messenger, signer, abi, ContractAddress, code, initParams, state) {
+  constructor(messenger, signer, abi, ContractAddress, code, initParams, contractStatus) {
     this.messenger = messenger
     this.signer = signer
 
@@ -60,14 +60,13 @@ export class Contract {
       this.abi = abi
       this.ContractAddress = ContractAddress
       this.initParams = initParams
-      this.state = state
-      this.contractStatus = ContractStatus.deployed
+      this.contractStatus = contractStatus || ContractStatus.deployed
     } else {
       // assume we're deploying
       this.abi = abi
       this.code = code
       this.initParams = initParams
-      this.contractStatus = ContractStatus.initialised
+      this.contractStatus = contractStatus || ContractStatus.initialised
     }
   }
 
@@ -105,27 +104,11 @@ export class Contract {
   @sign
   async prepareTx(tx) {
     try {
-      const raw = tx.txParams
-      /**
-       * @function response
-       * @returns {Object}
-       * @param {Address} ContractAddress {contract address that deployed}
-       * @param {string} Info  {Infomation that server returns}
-       * @param {TranID} TranID  {transaction ID that server returns},
-       */
-
-      const response = await this.messenger.send({
-        method: 'CreateTransaction',
-        params: [
-          {
-            ...raw,
-            amount: raw.amount.toString(),
-            gasLimit: raw.gasLimit.toString(),
-            gasPrice: raw.gasPrice.toString()
-          }
-        ]
+      const { transaction, response } = await tx.sendTxn()
+      this.ContractAddress = response.ContractAddress
+      this.transaction = transaction.map(obj => {
+        return { ...obj, TranID: response.TranID }
       })
-
       return tx.confirm(response.TranID)
     } catch (error) {
       throw error
@@ -144,19 +127,19 @@ export class Contract {
     }
     // console.log(this.signer)
     try {
-      Transaction.setMessenger(this.messenger)
       const tx = await this.prepareTx(
-        new Transaction({
-          version: 0,
-          toAddr: defaultContractJson.toAddr,
-          // pubKey: this.signer.publicKey,
-          // amount should be 0.  we don't accept implicitly anymore.
-          amount: toBN(0),
-          gasPrice: toBN(gasPrice),
-          gasLimit: toBN(gasLimit),
-          code: this.code,
-          data: JSON.stringify(this.initParams).replace(/\\"/g, '"')
-        })
+        new Transaction(
+          {
+            version: 0,
+            toAddr: defaultContractJson.toAddr,
+            amount: toBN(0),
+            gasPrice: toBN(gasPrice),
+            gasLimit: toBN(gasLimit),
+            code: this.code,
+            data: JSON.stringify(this.initParams).replace(/\\"/g, '"')
+          },
+          this.messenger
+        )
       )
       if (!tx.receipt || !tx.receipt.success) {
         this.setContractStatus(ContractStatus.rejected)
@@ -170,33 +153,58 @@ export class Contract {
     }
   }
 
+  // /**
+  //  * @function {deploy}
+  //  * @param  {Transaction} signedTxn {description}
+  //  * @return {Contract} {Contract that deployed successfully}
+  //  */
+  // async deploy(signedTxn) {
+  //   if (!signedTxn.signature) throw new Error('transaction has not been signed')
+  //   try {
+  //     const deployedTxn = Object.assign(
+  //       {},
+  //       {
+  //         ...signedTxn.txParams,
+  //         amount: signedTxn.amount.toString(),
+  //         gasLimit: signedTxn.gasLimit.toString(),
+  //         gasPrice: signedTxn.gasPrice.toString()
+  //       }
+  //     )
+  //     const result = await this.messenger.send({
+  //       method: 'CreateTransaction',
+  //       params: [deployedTxn]
+  //     })
+
+  //     if (result.TranID) {
+  //       this.ContractAddress = result.ContractAddress
+  //       this.setContractStatus(ContractStatus.sent)
+  //       this.transaction = signedTxn.map(obj => {
+  //         return { ...obj, TranID: result.TranID }
+  //       })
+  //       return this
+  //     } else {
+  //       this.setContractStatus(ContractStatus.rejected)
+  //       return this
+  //     }
+  //   } catch (error) {
+  //     throw error
+  //   }
+  // }
+
   /**
    * @function {deploy}
    * @param  {Transaction} signedTxn {description}
    * @return {Contract} {Contract that deployed successfully}
    */
   async deploy(signedTxn) {
-    if (!signedTxn.signature) throw new Error('transaction has not been signed')
     try {
-      const deployedTxn = Object.assign(
-        {},
-        {
-          ...signedTxn.txParams,
-          amount: signedTxn.amount.toString(),
-          gasLimit: signedTxn.gasLimit.toString(),
-          gasPrice: signedTxn.gasPrice.toString()
-        }
-      )
-      const result = await this.messenger.send({
-        method: 'CreateTransaction',
-        params: [deployedTxn]
-      })
-
-      if (result.TranID) {
-        this.ContractAddress = result.ContractAddress
+      const { response } = await signedTxn.sendTxn()
+      this.ContractAddress = response.ContractAddress
+      if (response.TranID) {
+        this.ContractAddress = response.ContractAddress
         this.setContractStatus(ContractStatus.sent)
         this.transaction = signedTxn.map(obj => {
-          return { ...obj, TranID: result.TranID }
+          return { ...obj, TranID: response.TranID }
         })
         return this
       } else {
@@ -213,7 +221,6 @@ export class Contract {
       if (!isHash(this.transaction.TranID)) {
         throw new Error('the contract has not been sent')
       }
-      Transaction.setMessenger(this.messenger)
       const result = await this.transaction.confirm(this.transaction.TranID)
       if (result && (!result.receipt || !result.receipt.success)) {
         this.setContractStatus(ContractStatus.rejected)
@@ -235,23 +242,49 @@ export class Contract {
    * @param {any} params
    * @returns {Promise<Transaction>}
    */
-  async call(transition, params, amount = toBN(0)) {
+  async call(transition, params, amount = toBN(0), gasLimit = toBN(1000), gasPrice = toBN(10)) {
     try {
       const msg = {
         _tag: transition,
         // TODO: this should be string, but is not yet supported by lookup.
         params
       }
+      if (!this.ContractAddress) {
+        return Promise.reject(new Error('Contract has not been deployed!'))
+      }
       return await this.prepareTx(
-        new Transaction({
-          version: 0,
-          toAddr: defaultContractJson.toAddr,
-          amount: toBN(amount),
-          gasPrice: toBN(1000),
-          gasLimit: toBN(1000),
-          data: JSON.stringify(msg)
-        })
+        new Transaction(
+          {
+            version: 0,
+            toAddr: defaultContractJson.toAddr,
+            amount: toBN(amount),
+            gasPrice: toBN(gasPrice),
+            gasLimit: toBN(gasLimit),
+            data: JSON.stringify(msg)
+          },
+          this.messenger
+        )
       )
+    } catch (error) {
+      throw error
+    }
+  }
+
+  /**
+   * @function {getState}
+   * @return {Promise<State>} {description}
+   */
+  async getState() {
+    if (this.ContratStatus !== ContractStatus.Deployed) {
+      return Promise.resolve([])
+    }
+    try {
+      const response = await this.messenger.send({
+        method: 'GetSmartContractState',
+        params: [this.ContractAddress]
+      })
+
+      return response.result
     } catch (error) {
       throw error
     }

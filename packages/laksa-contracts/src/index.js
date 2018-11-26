@@ -87,7 +87,7 @@ class Contracts extends Core {
     // generate a new txn json with contract json
     const txnDetail = Object.assign({}, contract.contractJson, txnJson)
 
-    const transaction = new Transaction(txnDetail)
+    const transaction = new Transaction(txnDetail, this.messenger)
 
     // check if the signer is encrypted
     const signedContract = await signer.signTransaction(transaction, password)
