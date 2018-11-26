@@ -67,98 +67,104 @@
 
       const transaction = new laksa.Modules.Transaction({
         version: 0,
-        toAddr: '2105d34aa4cbc67b40e649d4aad7d237d717668c',
-        amount: laksa.util.toBN(5),
+        toAddr: '8254b2c9acdf181d5d6796d63320fbb20d4edd12',
+        amount: laksa.util.toBN(16),
         gasPrice: laksa.util.toBN(1),
         gasLimit: laksa.util.toBN(10)
       })
 
       const accountA = laksa.wallet.importAccountFromPrivateKey(
-        '3375F915F3F9AE35E6B301B7670F53AD1A5BE15D8221EC7FD5E503F21D3450C8'
+        'e19d05c5452598e24caad4a0d85a49146f7be089515c905ae6a19e8a578a6930'
       )
+      accountA
+        .signTransaction(transaction)
+        .then(d => laksa.zil.createTransaction(d))
+        .then(console.log)
 
-      const code = `
-                  (* HelloWorld contract *)
-            
-            import ListUtils
-            
-            (***************************************************)
-            (*               Associated library                *)
-            (***************************************************)
-            library HelloWorld
-            
-            let one_msg = 
-              fun (msg : Message) => 
-              let nil_msg = Nil {Message} in
-              Cons {Message} msg nil_msg
-            
-            let not_owner_code = Int32 1
-            let set_hello_code = Int32 2
-            
-            (***************************************************)
-            (*             The contract definition             *)
-            (***************************************************)
-            
-            contract HelloWorld
-            (owner: ByStr20)
-            
-            field welcome_msg : String = ""
-            
-            transition setHello (msg : String)
-              is_owner = builtin eq owner _sender;
-              match is_owner with
-              | False =>
-                msg = {_tag : "Main"; _recipient : _sender; _amount : Uint128 0; code : not_owner_code};
-                msgs = one_msg msg;
-                send msgs
-              | True =>
-                welcome_msg := msg;
-                msg = {_tag : "Main"; _recipient : _sender; _amount : Uint128 0; code : set_hello_code};
-                msgs = one_msg msg;
-                send msgs
-              end
-            end
-            
-            
-            transition getHello ()
-                r <- welcome_msg;
-                msg = {_tag : "Main"; _recipient : _sender; _amount : Uint128 0; msg : r};
-                msgs = one_msg msg;
-                send msgs
-            end
-                  `
+      // prv:3375F915F3F9AE35E6B301B7670F53AD1A5BE15D8221EC7FD5E503F21D3450C8
+      // add:8254b2c9acdf181d5d6796d63320fbb20d4edd12
 
-      const init = [
-        {
-          vname: 'owner',
-          type: 'ByStr20',
-          value: '0x8254b2c9acdf181d5d6796d63320fbb20d4edd12'
-        }
-      ]
+      // const code = `
+      //             (* HelloWorld contract *)
 
-      const transaction2 = new laksa.Modules.Transaction({
-        version: 0,
-        toAddr: '0000000000000000000000000000000000000000',
-        amount: laksa.util.toBN(0),
-        gasPrice: laksa.util.toBN(1),
-        gasLimit: laksa.util.toBN(2500),
-        code: code,
-        data: JSON.stringify(init).replace(/\\"/g, '"')
-      })
+      //       import ListUtils
 
-      laksa.wallet.setSigner(accountA)
-      const contract = laksa.contracts
-        .new(code, ['0x8254b2c9acdf181d5d6796d63320fbb20d4edd12'])
-        .then(d =>
-          laksa.contracts.deploy(
-            { contract: d, gasLimit: 2500, gasPrice: 1 },
-            { signer: accountA }
-          )
-        )
+      //       (***************************************************)
+      //       (*               Associated library                *)
+      //       (***************************************************)
+      //       library HelloWorld
 
-        .then(m => 
-         m.track()
-        ).then(console.log)
+      //       let one_msg =
+      //         fun (msg : Message) =>
+      //         let nil_msg = Nil {Message} in
+      //         Cons {Message} msg nil_msg
+
+      //       let not_owner_code = Int32 1
+      //       let set_hello_code = Int32 2
+
+      //       (***************************************************)
+      //       (*             The contract definition             *)
+      //       (***************************************************)
+
+      //       contract HelloWorld
+      //       (owner: ByStr20)
+
+      //       field welcome_msg : String = ""
+
+      //       transition setHello (msg : String)
+      //         is_owner = builtin eq owner _sender;
+      //         match is_owner with
+      //         | False =>
+      //           msg = {_tag : "Main"; _recipient : _sender; _amount : Uint128 0; code : not_owner_code};
+      //           msgs = one_msg msg;
+      //           send msgs
+      //         | True =>
+      //           welcome_msg := msg;
+      //           msg = {_tag : "Main"; _recipient : _sender; _amount : Uint128 0; code : set_hello_code};
+      //           msgs = one_msg msg;
+      //           send msgs
+      //         end
+      //       end
+
+      //       transition getHello ()
+      //           r <- welcome_msg;
+      //           msg = {_tag : "Main"; _recipient : _sender; _amount : Uint128 0; msg : r};
+      //           msgs = one_msg msg;
+      //           send msgs
+      //       end
+      //             `
+
+      // const init = [
+      //   {
+      //     vname: 'owner',
+      //     type: 'ByStr20',
+      //     value: '0x8254b2c9acdf181d5d6796d63320fbb20d4edd12'
+      //   }
+      // ]
+
+      // const transaction2 = new laksa.Modules.Transaction({
+      //   version: 0,
+      //   toAddr: '0000000000000000000000000000000000000000',
+      //   amount: laksa.util.toBN(0),
+      //   gasPrice: laksa.util.toBN(1),
+      //   gasLimit: laksa.util.toBN(2500),
+      //   code: code,
+      //   data: JSON.stringify(init).replace(/\\"/g, '"')
+      // })
+
+      // laksa.wallet.setSigner(accountA)
+      // const contract = laksa.contracts
+      //   .new(code, ['0x8254b2c9acdf181d5d6796d63320fbb20d4edd12'])
+      //   .then(d =>
+      //     laksa.contracts.deploy(
+      //       { contract: d, gasLimit: 2500, gasPrice: 1 },
+      //       { signer: accountA }
+      //     )
+      //   )
+
+      //   .then(m =>
+      //    m.track()
+      //   ).then(console.log)
 
       // console.log(transaction2)
       // const contract = laksa.contracts
