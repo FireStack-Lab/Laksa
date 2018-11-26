@@ -65,34 +65,56 @@
         console.log({ err, data })
       }
 
-      const transaction = new laksa.Modules.Transaction({
-        version: 0,
-        toAddr: '9bfec715a6bd658fcb62b0f8cc9bfa2ade71434a',
-        amount: laksa.util.toBN(10000),
-        gasPrice: laksa.util.toBN(1),
-        gasLimit: laksa.util.toBN(10)
-      },laksa.messenger)
+      const transaction = new laksa.Modules.Transaction(
+        {
+          version: 0,
+          toAddr: 'affc3236b726660ed9b99dff11451e4e8c107dea',
+          amount: laksa.util.toBN(10),
+          gasPrice: laksa.util.toBN(1),
+          gasLimit: laksa.util.toBN(10)
+        },
+        laksa.messenger
+      )
 
       const accountA = laksa.wallet.importAccountFromPrivateKey(
-        '0FC87CC5ACF5A1433DE7301972B9649EE31688F291F781396B0F67AD98A88246'
-      )     
-      // laksa.wallet.setSigner(accountA)
-      laksa.contracts.setSigner(accountA) 
-      console.log(laksa.contracts.signer)
-      // async function Txn(){
-      //   const signed = await accountA.signTransaction(transaction)
-      //   const {TranID}= await laksa.zil.createTransaction(signed)
-      //   if(TranID){
-      //     return signed.confirm(created.TranID,laksa.messenger)
+        'e19d05c5452598e24caad4a0d85a49146f7be089515c905ae6a19e8a578a6930'
+      )
+
+      // async function Txn() {
+      //   const signedTransaction = await accountA.signTransaction(transaction)
+
+      //   const result = await signedTransaction.sendTransaction()
+
+      //   if (result.response.TranID) {
+      //     if(signedTransaction.isPending()){
+      //       console.log(`Transaction ID:${signedTransaction.TranID} is still pending`)
+      //     }
+      //     const confirmdResult= await signedTransaction.confirm(result.response.TranID)
+          
+      //     if(confirmdResult&& signedTransaction.isConfirmed()){
+      //       console.log(signedTransaction)
+      //       console.log(`Transaction ID:${signedTransaction.TranID} is confirmed`)
+      //     }
+      //   } else {
+      //     console.log('error')
       //   }
-      //   else {console.log('error')}
       // }
-    
+
       // Txn()
+      
+      // accountA.
+      // signTransaction(transaction)
+      // .then(signed=>signed.sendTransaction())
+      // .then(result=>result.transaction.confirm(result.response.TranID))
+      // .then(console.log)
+
+
+       
+        
 
       // accountA
       //   .signTransaction(transaction)
-      //   .then(d => laksa.zil.createTransaction(d))
+      //   .then(d => laksa.zil.createTransaction(d.txParams))
       //   .then(console.log)
 
       // prv:3375F915F3F9AE35E6B301B7670F53AD1A5BE15D8221EC7FD5E503F21D3450C8

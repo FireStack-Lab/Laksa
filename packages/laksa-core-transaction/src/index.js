@@ -141,7 +141,7 @@ export class Transaction {
    * @function {sendTxn}
    * @return {transaction:Promise<Transaction|Error>,response:Promise<Response>} {Transaction}
    */
-  async sendTxn() {
+  async sendTransaction() {
     if (!this.signature) {
       throw new Error('The Transaction has not been signed')
     }
@@ -158,12 +158,13 @@ export class Transaction {
           }
         ]
       })
-      const { TranID, ...response } = result
+      const { TranID } = result
       if (!TranID) {
         throw new Error('Transaction fail')
       } else {
         this.TranID = TranID
-        return { transaction: this, response }
+        this.status = TxStatus.Pending
+        return { transaction: this, response: result }
       }
     } catch (error) {
       throw error
@@ -191,7 +192,7 @@ export class Transaction {
       const token = setTimeout(() => {
         this.status = TxStatus.Rejected
         reject(
-          new Error('The transaction is taking unusually long to be confirmed. It may be lost.')
+          new Error(`The transaction confirm failure after ${maxTry} tries.`)
         )
       }, maxTry * poll * 2)
 
@@ -266,7 +267,7 @@ export class Transaction {
           }
 
           if (res && !res.error) {
-            this.TranID = res.TranID
+            this.TranID = res.ID
             this.receipt = res.receipt
             const isRecipt = this.receipt && this.receipt.success
             this.status = isRecipt ? TxStatus.Confirmed : TxStatus.Rejected
