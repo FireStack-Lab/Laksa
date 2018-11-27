@@ -5,12 +5,14 @@ import {
   generatePrivateKey,
   getAddressFromPrivateKey,
   getPubKeyFromPrivateKey,
-  // createTransactionJson,
-  encrypt, 
-  decrypt
+  encodeTransactionProto,
+  sign,
+  schnorr,
+  Signature,
+  BN
 } from 'laksa-core-crypto'
 
-//import { encrypt, decrypt } from 'laksa-extend-keystore'
+import { encrypt, decrypt } from 'laksa-extend-keystore'
 import { ENCRYPTED } from './symbols'
 
 /**
@@ -102,6 +104,37 @@ export const decryptAccount = async (accountObject, password) => {
  * @param  {Transaction} transactionObject {transaction object}
  * @return {Transaction} {signed transaction}
  */
-export const signTransaction = (privateKey, transactionObject) => {
-  return //createTransactionJson(privateKey, transactionObject)
+export const signTransaction = (privateKey, txnDetails) => {
+  const pubKey = getPubKeyFromPrivateKey(privateKey)
+
+  const txn = {
+    version: txnDetails.version,
+    nonce: txnDetails.nonce,
+    toAddr: txnDetails.toAddr,
+    amount: txnDetails.amount,
+    pubKey,
+    gasPrice: txnDetails.gasPrice,
+    gasLimit: txnDetails.gasLimit,
+    code: txnDetails.code || '',
+    data: txnDetails.data || ''
+  }
+
+  const encodedTx = encodeTransactionProto(txn)
+
+  txn.signature = sign(encodedTx, privateKey, pubKey)
+
+  if (
+    schnorr.verify(
+      encodedTx,
+      new Signature({
+        r: new BN(txn.signature.slice(0, 64), 16),
+        s: new BN(txn.signature.slice(64), 16)
+      }),
+      Buffer.from(pubKey, 'hex')
+    )
+  ) {
+    return txn
+  } else {
+    throw new Error('Signature verify failure')
+  }
 }

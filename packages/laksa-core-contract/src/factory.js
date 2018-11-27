@@ -1,5 +1,5 @@
 import { Core } from 'laksa-shared'
-import { Contract } from './c'
+import { Contract } from './contract'
 import { TestScilla } from './testScilla'
 import { ContractStatus } from './util'
 
@@ -10,10 +10,10 @@ class Contracts extends Core {
     this.signer = signer
   }
 
-  new(code, init, { messenger, signer }) {
+  new(code, init) {
     const newContract = new Contract(
       { code, init },
-      { messenger: messenger || this.messenger, signer: signer || this.signer }
+      { messenger: this.messenger, signer: this.signer }
     )
     return newContract
   }

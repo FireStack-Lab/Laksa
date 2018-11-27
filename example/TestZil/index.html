@@ -65,22 +65,25 @@
         console.log({ err, data })
       }
 
-      // const transaction = new laksa.Modules.Transaction({
-      //   version: 0,
-      //   toAddr: '2105d34aa4cbc67b40e649d4aad7d237d717668c',
-      //   amount: laksa.util.toBN(5),
-      //   gasPrice: laksa.util.toBN(1),
-      //   gasLimit: laksa.util.toBN(10)
-      // })
+      const transaction = new laksa.Modules.Transaction(
+        {
+          version: 0,
+          toAddr: '9bfec715a6bd658fcb62b0f8cc9bfa2ade71434a',
+          amount: laksa.util.toBN(20000),
+          gasPrice: laksa.util.toBN(1),
+          gasLimit: laksa.util.toBN(10)
+        },
+        laksa.messenger
+      )
 
       // const accountA = laksa.wallet.importAccountFromPrivateKey(
-      //   '3375F915F3F9AE35E6B301B7670F53AD1A5BE15D8221EC7FD5E503F21D3450C8'
+      //   'CECC4BDF05C75513A5A629B1533DD564BCB5B0211678BC5871DD349BE713912E'
       // )
-      
-      const code = `(* HelloWorld contract *)
-                  
+
+      // accountA.signTransaction(transaction).then(d=>d.sendTransaction()).then(console.log)
+      const code = `
+                  (* HelloWorld contract *)
                   import ListUtils
-                  
                   (***************************************************)
                   (*               Associated library                *)
                   (***************************************************)
@@ -125,28 +128,43 @@
                       msgs = one_msg msg;
                       send msgs
                   end
-                                                      `
+                                                                              `
 
       const init = [
         {
-          value: '0x8254b2c9acdf181d5d6796d63320fbb20d4edd12',
+          value: '0x40E00C0CFF45BE750448CF61270C8251A6DAE521',
           vname: 'owner',
           type: 'ByStr20'
         }
       ]
-      
-      const Account=new laksa.Modules.Account()
-      const accountA=Account.importAccount('3375F915F3F9AE35E6B301B7670F53AD1A5BE15D8221EC7FD5E503F21D3450C8')
+
+      const accountA = laksa.wallet.importAccountFromPrivateKey(
+        'CECC4BDF05C75513A5A629B1533DD564BCB5B0211678BC5871DD349BE713912E'
+      )
+      const accountB = laksa.wallet.importAccountFromPrivateKey(
+        'e19d05c5452598e24caad4a0d85a49146f7be089515c905ae6a19e8a578a6930'
+      )
+      laksa.wallet.setSigner(accountA)
+      async function encrypteWallet(password) {
+        await laksa.wallet.encryptAllAccounts(password)
+        return true
+      }
       async function deployContract() {
         const test = await laksa.contracts.testContract(code, init)
         if (test) {
-          const myContract = laksa.contracts.new(code, init,{signer:accountA})
+          const myContract = laksa.contracts.new(code, init)
           // console.log(myContract)
-          await myContract.deploy({gasLimit:2500,gasPrice:1},{signer:accountA})
+          await myContract.deploy(
+            {
+              gasLimit: new laksa.util.BN(2500),
+              gasPrice: new laksa.util.BN(1)
+            },
+            { account: accountB, password: '111' }
+          )
         }
       }
-
-      deployContract()
+      // encrypteWallet('111')
+      // deployContract()
 
       // const transaction2 = new laksa.Modules.Transaction({
       //   version: 0,

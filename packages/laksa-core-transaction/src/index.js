@@ -3,12 +3,13 @@ import { encodeTransactionProto } from 'laksa-core-crypto'
 export const TxStatus = {
   Pending: Symbol('Pending'),
   Initialised: Symbol('Initialised'),
+  Signed: Symbol('Signed'),
   Confirmed: Symbol('Confirmed'),
   Rejected: Symbol('Rejected')
 }
 
 export class Transaction {
-  constructor(params, status = TxStatus.Initialised) {
+  constructor(params, messenger, status = TxStatus.Initialised) {
     // params
     this.version = params.version
     this.TranID = params.TranID
@@ -24,6 +25,7 @@ export class Transaction {
     this.receipt = params.receipt
     // status
     this.status = status
+    this.messenger = messenger
   }
 
   /**
@@ -34,14 +36,24 @@ export class Transaction {
    * @static
    * @param {BaseTx} params
    */
-  static confirm(params) {
-    return new Transaction(params, TxStatus.Confirmed)
+  static confirm(params, messenger) {
+    return new Transaction(params, messenger, TxStatus.Confirmed)
   }
 
-  static messenger
+  /**
+   * reject
+   *
+   * constructs an already-rejected transaction.
+   *
+   * @static
+   * @param {BaseTx} params
+   */
+  static reject(params, messenger) {
+    return new Transaction(params, messenger, TxStatus.Rejected)
+  }
 
-  static setMessenger(messenger) {
-    Transaction.messenger = messenger
+  setMessenger(messenger) {
+    this.messenger = messenger
   }
 
   /**
@@ -97,6 +109,15 @@ export class Transaction {
   }
 
   /**
+   * isRejected
+   *
+   * @returns {boolean}
+   */
+  isSigned() {
+    return this.status === TxStatus.Signed
+  }
+
+  /**
    * isConfirmed
    *
    * @returns {boolean}
@@ -112,6 +133,37 @@ export class Transaction {
    */
   isRejected() {
     return this.status === TxStatus.Rejected
+  }
+
+  /**
+   * If a transaction is sigend , can be sent and get TranID,
+   * We set the This.TranID = TranID and return Transaction Object and response
+   * @function {sendTxn}
+   * @return {transaction:Promise<Transaction|Error>,response:Promise<Response>} {Transaction}
+   */
+  async sendTransaction() {
+    if (!this.signature) {
+      throw new Error('The Transaction has not been signed')
+    }
+    try {
+      const raw = this.txParams
+      const result = await this.messenger.send('CreateTransaction', {
+        ...raw,
+        amount: raw.amount.toString(),
+        gasLimit: raw.gasLimit.toString(),
+        gasPrice: raw.gasPrice.toString()
+      })
+      const { TranID } = result
+      if (!TranID) {
+        throw new Error('Transaction fail')
+      } else {
+        this.TranID = TranID
+        this.status = TxStatus.Pending
+        return { transaction: this, response: result }
+      }
+    } catch (error) {
+      throw error
+    }
   }
 
   /**
@@ -134,9 +186,7 @@ export class Transaction {
     return new Promise((resolve, reject) => {
       const token = setTimeout(() => {
         this.status = TxStatus.Rejected
-        reject(
-          new Error('The transaction is taking unusually long to be confirmed. It may be lost.')
-        )
+        reject(new Error(`The transaction confirm failure after ${maxTry} tries.`))
       }, maxTry * poll * 2)
 
       const cancelTimeout = () => {
@@ -193,7 +243,7 @@ export class Transaction {
       return new Promise(res => setTimeout(res, time))
     }
     // TODO: regex validation for txHash so we don't get garbage
-    const result = Transaction.messenger.send({ method: 'GetTransaction', params: [txHash] })
+    const result = this.messenger.send('GetTransaction', txHash)
 
     const attemped = tried + 1
 
@@ -210,7 +260,7 @@ export class Transaction {
           }
 
           if (res && !res.error) {
-            this.TranID = res.TranID
+            this.TranID = res.ID
             this.receipt = res.receipt
             const isRecipt = this.receipt && this.receipt.success
             this.status = isRecipt ? TxStatus.Confirmed : TxStatus.Rejected

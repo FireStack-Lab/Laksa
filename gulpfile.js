@@ -2,6 +2,7 @@ const gulp = require('gulp')
 const del = require('del')
 
 const packages = [
+  'laksa-extend-keystore',
   'laksa-core-crypto',
   'laksa-core-messenger',
   'laksa-core-contract',
@@ -12,6 +13,7 @@ const packages = [
   'laksa-utils',
   'laksa-account',
   'laksa-wallet',
+  'laksa-blockchain',
   'laksa-core',
   'laksa'
 ]

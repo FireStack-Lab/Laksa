@@ -1,5 +1,5 @@
-// export * from './contract'
 export * from './validate'
 export * from './abi'
 export * from './factory'
-export * from './c'
+export * from './contract'
+export * from './testScilla'

@@ -1,4 +1,4 @@
-import { Contract } from './c'
+import { Contract } from './contract'
 import { ContractStatus } from './util'
 import { validate, toBN, isInt } from './validate'
 import { ABI } from './abi'

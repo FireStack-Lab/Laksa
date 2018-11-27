@@ -1,4 +1,5 @@
 export default [
+  'laksa-extend-keystore',
   'laksa-core-crypto',
   'laksa-core-messenger',
   'laksa-core-contract',
@@ -9,6 +10,7 @@ export default [
   'laksa-shared',
   'laksa-utils',
   'laksa-wallet',
+  'laksa-blockchain',
   'laksa-core',
   'laksa'
 ]
