@@ -5,10 +5,12 @@ import {
   generatePrivateKey,
   getAddressFromPrivateKey,
   getPubKeyFromPrivateKey,
-  createTransactionJson
+  // createTransactionJson,
+  encrypt, 
+  decrypt
 } from 'laksa-core-crypto'
 
-import { encrypt, decrypt } from 'laksa-extend-keystore'
+//import { encrypt, decrypt } from 'laksa-extend-keystore'
 import { ENCRYPTED } from './symbols'
 
 /**
@@ -101,5 +103,5 @@ export const decryptAccount = async (accountObject, password) => {
  * @return {Transaction} {signed transaction}
  */
 export const signTransaction = (privateKey, transactionObject) => {
-  return createTransactionJson(privateKey, transactionObject)
+  return //createTransactionJson(privateKey, transactionObject)
 }

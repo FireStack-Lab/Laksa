@@ -25,10 +25,10 @@ export class Messenger {
    * @param  {object} data {data object with method and params}
    * @return {object|Error} {result from provider}
    */
-  send = async data => {
+  send = async (method, params) => {
     this.providerCheck()
     try {
-      const payload = this.JsonRpc.toPayload(data.method, data.params)
+      const payload = this.JsonRpc.toPayload(method, params)
       this.provider.middleware.response.use(getResultForData)
       const result = await this.provider.send(payload)
       return result // getResultForData(result)
