@@ -1,3 +1,5 @@
+import { RPCMethod } from './rpc'
+
 export default [
   /**
    * getHashrate
@@ -5,7 +7,7 @@ export default [
    */
   {
     name: 'hashrate',
-    getter: 'GetHashrate'
+    getter: RPCMethod.GetHashrate
   },
   /**
    * networkId
@@ -13,7 +15,7 @@ export default [
    */
   {
     name: 'networkId',
-    getter: 'GetNetworkId'
+    getter: RPCMethod.GetNetworkId
   },
   /**
    * getClientVersion
@@ -21,7 +23,7 @@ export default [
    */
   {
     name: 'clientVersion',
-    getter: 'GetClientVersion'
+    getter: RPCMethod.GetClientVersion
   },
 
   /**
@@ -30,7 +32,7 @@ export default [
    */
   {
     name: 'protocolVersion',
-    getter: 'GetProtocolVersion'
+    getter: RPCMethod.GetProtocolVersion
   },
   /**
    * getNodeMining
@@ -38,6 +40,6 @@ export default [
    */
   {
     name: 'nodeMining',
-    getter: 'isNodeMining'
+    getter: RPCMethod.isNodeMining
   }
 ]

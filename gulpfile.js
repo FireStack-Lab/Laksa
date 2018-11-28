@@ -2,22 +2,18 @@ const gulp = require('gulp')
 const del = require('del')
 
 const packages = [
-  'laksa-core-crypto',
   'laksa-extend-keystore',
+  'laksa-core-crypto',
   'laksa-core-messenger',
   'laksa-core-contract',
   'laksa-core-provider',
   'laksa-core-transaction',
-  'laksa-contracts',
   'laksa-providers-http',
   'laksa-shared',
   'laksa-utils',
   'laksa-account',
-  'laksa-core-methods',
-  'laksa-core-properties',
   'laksa-wallet',
-  'laksa-hd-wallet',
-  'laksa-zil',
+  'laksa-blockchain',
   'laksa-core',
   'laksa'
 ]

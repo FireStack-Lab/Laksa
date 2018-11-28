@@ -1,6 +1,10 @@
 {
   "name": "laksa-providers-http",
+<<<<<<< HEAD
   "version": "0.0.78",
+=======
+  "version": "0.0.80",
+>>>>>>> next
   "description": "",
   "main": "index.js",
   "browser": "lib/index.js",
@@ -8,8 +12,13 @@
   "license": "ISC",
   "dependencies": {
     "axios": "^0.18.0",
+<<<<<<< HEAD
     "laksa-core-provider": "^0.0.78",
     "laksa-shared": "^0.0.78",
+=======
+    "laksa-core-provider": "^0.0.80",
+    "laksa-shared": "^0.0.80",
+>>>>>>> next
     "mitt": "^1.1.3"
   }
 }

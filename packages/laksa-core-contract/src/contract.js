@@ -1,48 +1,10 @@
 import { Transaction } from 'laksa-core-transaction'
-import { sign } from 'laksa-shared'
-import {
-  validate, toBN, isInt, isHash
-} from './validate'
-import { ABI } from './abi'
-
-export const ContractStatus = {
-  initialised: 'initialised',
-  waitForSign: 'waitForSign',
-  sent: 'sent',
-  rejected: 'rejected',
-  deployed: 'deployed'
-}
-
-/**
- * @function setParamValues
- * @param  {Array<object>} rawParams {init params get from ABI}
- * @param  {Array<object>} newValues {init params set for ABI}
- * @return {Array<object>} {new array of params objects}
- */
-const setParamValues = (rawParams, newValues) => {
-  const newParams = []
-  rawParams.forEach((v, i) => {
-    if (!validate(v.type, newValues[i])) {
-      throw new TypeError(`Type validator failed,with <${v.vname}:${v.type}>`)
-    }
-    // FIXME:it may change cause local scilla runner return the `name` not `vname`
-    // But when call or make transaction, remote node only accpet `vname`
-    const newObj = Object.assign({}, v, { value: newValues[i], vname: v.name ? v.name : v.vname })
-    if (newObj.name) {
-      delete newObj.name
-    }
-    newParams.push(newObj)
-  })
-  return newParams
-}
-
-const defaultContractJson = {
-  toAddr: '0000000000000000000000000000000000000000',
-  code: '',
-  data: ''
-}
+import { Long } from 'laksa-utils'
+import { toBN } from './validate'
+import { ContractStatus } from './util'
 
 export class Contract {
+<<<<<<< HEAD
   contractJson = {}
 
   contractTestJson = {}
@@ -67,44 +29,39 @@ export class Contract {
       this.code = code
       this.initParams = initParams
       this.contractStatus = contractStatus || ContractStatus.initialised
+=======
+  constructor(params, factory, status = ContractStatus.INITIALISED) {
+    this.code = params.code || ''
+    this.init = params.init || []
+    this.ContractAddress = params.ContractAddress || undefined
+    this.messenger = factory.messenger
+    this.signer = factory.signer
+    this.status = status
+  }
+
+  get payload() {
+    return {
+      version: 0,
+      amount: toBN(0),
+      toAddr: String(0).repeat(40),
+      code: this.code,
+      data: JSON.stringify(this.init).replace(/\\"/g, '"')
+>>>>>>> next
     }
   }
 
-  /**
-   * @function {on}
-   * @return {Event} {description}
-   */
-  on = () => {}
-
-  /**
-   * @function {testCall}
-   * @param  {Int} gasLimit {gasLimit for test call to scilla-runner}
-   * @return {Contract} {raw Contract object}
-   */
-  async testCall(gasLimit) {
-    try {
-      const callContractJson = {
-        code: this.code,
-        init: JSON.stringify(this.initTestParams),
-        blockchain: JSON.stringify(this.blockchain),
-        gaslimit: JSON.stringify(gasLimit)
-      }
-      // the endpoint for sendServer has been set to scillaProvider
-      const result = await this.messenger.sendServer('/contract/call', callContractJson)
-
-      if (result.result) {
-        this.setContractStatus(ContractStatus.waitForSign)
-      }
-      return this
-    } catch (error) {
-      throw error
-    }
+  setStatus(status) {
+    this.status = status
   }
 
-  @sign
-  async prepareTx(tx) {
+  async prepareTx(tx, { account, password }) {
     try {
+<<<<<<< HEAD
       const { transaction, response } = await tx.sendTxn()
+=======
+      await this.signTxn(tx, { account, password })
+      const { transaction, response } = await tx.sendTransaction()
+>>>>>>> next
       this.ContractAddress = response.ContractAddress
       this.transaction = transaction.map(obj => {
         return { ...obj, TranID: response.TranID }
@@ -115,14 +72,11 @@ export class Contract {
     }
   }
 
-  /**
-   * @function {deployTxn}
-   * @param  {Int} gasPrice {gasPrice}
-   * @param  {Int} gasLimit {gasLimit}
-   * @return {Contract} {description}
-   */
-  async deployTxn({ gasPrice, gasLimit }) {
-    if (!this.code || !this.initParams) {
+  async deploy(
+    { gasLimit = Long.fromNumber(2500), gasPrice = toBN(10) },
+    { account = this.signer.signer, password }
+  ) {
+    if (!this.code || !this.init) {
       throw new Error('Cannot deploy without code or ABI.')
     }
     // console.log(this.signer)
@@ -130,6 +84,7 @@ export class Contract {
       const tx = await this.prepareTx(
         new Transaction(
           {
+<<<<<<< HEAD
             version: 0,
             toAddr: defaultContractJson.toAddr,
             amount: toBN(0),
@@ -140,19 +95,30 @@ export class Contract {
           },
           this.messenger
         )
+=======
+            ...this.payload,
+            gasPrice,
+            gasLimit
+          },
+          this.messenger
+        ),
+        { account, password }
+>>>>>>> next
       )
+
       if (!tx.receipt || !tx.receipt.success) {
-        this.setContractStatus(ContractStatus.rejected)
+        this.setStatus(ContractStatus.REJECTED)
         return this
       }
 
-      this.setContractStatus(ContractStatus.deployed)
+      this.setStatus(ContractStatus.DEPLOYED)
       return this
     } catch (err) {
       throw err
     }
   }
 
+<<<<<<< HEAD
   // /**
   //  * @function {deploy}
   //  * @param  {Transaction} signedTxn {description}
@@ -265,10 +231,18 @@ export class Contract {
           this.messenger
         )
       )
+=======
+  async signTxn(txn, { account, password }) {
+    try {
+      const result = await account.signTransaction(txn, password)
+      this.setStatus(ContractStatus.SIGNED)
+      return result
+>>>>>>> next
     } catch (error) {
       throw error
     }
   }
+<<<<<<< HEAD
 
   /**
    * @function {getState}
@@ -452,4 +426,6 @@ export class Contract {
   setContractStatus(status) {
     this.contractStatus = status
   }
+=======
+>>>>>>> next
 }

@@ -1,51 +1,15 @@
 import {
-  isNumber,
-  isString,
-  isBoolean,
-  isArray,
-  isJson,
-  isObject,
-  isFunction,
-  isHash,
-  isUrl,
-  isPubkey,
-  isPrivateKey,
-  isAddress,
-  isBN,
-  validateArgs,
-  toBN
-} from 'laksa-utils'
+  validateArgs, transformerArray, isObject, generateValidateObjects
+} from './util'
 
-const validatorArray = {
-  isNumber: [isNumber],
-  isString: [isString],
-  isBoolean: [isBoolean],
-  isArray: [isArray],
-  isJson: [isJson],
-  isObject: [isObject],
-  isFunction: [isFunction],
-  isHash: [isHash],
-  isUrl: [isUrl],
-  isPubkey: [isPubkey],
-  isPrivateKey: [isPrivateKey],
-  isBN: [isBN],
-  isAddress: [isAddress]
-}
-
-const transformerArray = {
-  toBn: toBN,
-  toNumber: string => Number(string),
-  toString: string => String(string)
-}
-
-class Method {
-  constructor(options) {
+export class Method {
+  constructor(options, messenger) {
     const {
       name, call, params, endpoint, transformer, isSendJson
     } = options
     this.name = name
     this.call = call
-    this.messenger = null
+    this.messenger = messenger
     this.params = params
     this.transformer = transformer || {}
     this.endpoint = endpoint || 'client'
@@ -59,30 +23,6 @@ class Method {
    */
   setMessenger(msg) {
     this.messenger = msg
-  }
-
-  /**
-   * @function {generateValidateObjects}
-   * @return {object} {validate object}
-   */
-  generateValidateObjects() {
-    const validatorObject = this.params
-
-    const requiredArgs = {}
-    const optionalArgs = {}
-    for (const index in validatorObject) {
-      if (index !== undefined) {
-        const newObjectKey = index
-        const newObjectValid = validatorObject[index][0]
-        const isRequired = validatorObject[index][1]
-        if (isRequired === 'required') {
-          requiredArgs[newObjectKey] = validatorArray[newObjectValid]
-        } else {
-          optionalArgs[newObjectKey] = validatorArray[newObjectValid]
-        }
-      }
-    }
-    return { requiredArgs, optionalArgs }
   }
 
   /**
@@ -114,14 +54,14 @@ class Method {
     if (keyArrayLength === 0) result = []
     if (keyArrayLength === 1 && !this.isSendJson) {
       const resultKey = Object.keys(paramsObject)[0]
-      result = [this.transformedBeforeSend(paramsObject[resultKey], resultKey)]
+      result = this.transformedBeforeSend(paramsObject[resultKey], resultKey)
     } else if (keyArrayLength > 0 && this.isSendJson) {
       const newObject = {}
       Object.keys(paramsObject).map(k => {
         newObject[k] = this.transformedBeforeSend(paramsObject[k], k)
         return false
       })
-      result = [newObject]
+      result = newObject
     }
     return result
   }
@@ -156,29 +96,19 @@ class Method {
    */
   methodBuilder() {
     if (this.messenger !== null && this.endpoint === 'client') {
-      return (args, callback) => {
-        const { requiredArgs, optionalArgs } = this.generateValidateObjects()
+      return args => {
+        const { requiredArgs, optionalArgs } = generateValidateObjects(this.params)
         this.validateArgs(args, requiredArgs, optionalArgs)
         const params = this.extractParams(args)
-        const newCallback = isFunction(args) ? args : callback
-        if (newCallback) {
-          return this.messenger.sendAsync({ method: this.call, params }, newCallback)
-        }
-        return this.messenger.send({ method: this.call, params })
+        return this.messenger.send(this.call, params)
       }
     }
     if (this.messenger !== null && this.endpoint !== 'client') {
-      return (args, callback) => {
-        const { requiredArgs, optionalArgs } = this.generateValidateObjects()
+      return args => {
+        const { requiredArgs, optionalArgs } = generateValidateObjects(this.params)
         this.validateArgs(args, requiredArgs, optionalArgs)
-        const newCallback = isFunction(args) ? args : callback
-        if (newCallback) {
-          return this.messenger.sendAsyncServer(this.endpoint, args, newCallback)
-        }
         return this.messenger.sendServer(this.endpoint, args)
       }
     }
   }
 }
-
-export default Method

@@ -1,4 +1,3 @@
-import { sign } from 'laksa-core-crypto'
 import { Core } from 'laksa-shared'
 import { isInt } from 'laksa-utils'
 import { ENCRYPTED } from './symbols'
@@ -122,26 +121,6 @@ export class Account extends Core {
   }
 
   /**
-   * @function {sign} {sign method for Transaction bytes}
-   * @param  {Buffer} bytes {Buffer that waited for sign}
-   * @return {object} {signed transaction object}
-   */
-  async sign(bytes, password) {
-    try {
-      if (this.privateKey === ENCRYPTED) {
-        await this.decrypt(password)
-        const result = sign(bytes, this.privateKey, this.publicKey)
-        await this.encrypt(password)
-        return result
-      } else {
-        return sign(bytes, this.privateKey, this.publicKey)
-      }
-    } catch (error) {
-      throw new Error(error)
-    }
-  }
-
-  /**
    * @function {signTransactionWithPassword} {sign plain object with password}
    * @param  {Transaction} txnObj {transaction object}
    * @param  {string} password          {password string}
@@ -173,10 +152,7 @@ export class Account extends Core {
 
   async getBalance() {
     try {
-      const balanceObject = await this.messenger.send({
-        method: 'GetBalance',
-        params: [this.address]
-      })
+      const balanceObject = await this.messenger.send('GetBalance', this.address)
       const { balance, nonce } = balanceObject
       if (isInt(nonce)) {
         return { balance, nonce }

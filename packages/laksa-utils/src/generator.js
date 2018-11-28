@@ -17,7 +17,8 @@ function injectValidator(func) {
     const valFunc = Object.values(func)[0]
     return Object.assign(valFunc, {
       validator: valName,
-      test: obj => valFunc(obj)
+      test: obj => valFunc(obj),
+      required: obj => [valFunc(obj), 'required']
     })
   } else return false
 }
@@ -51,6 +52,7 @@ const {
   isPrivateKey,
   isAddress,
   isBN,
+  isLong,
   isHex,
   isByStrX,
   isNull,
@@ -202,6 +204,7 @@ export {
   isPrivateKey,
   isAddress,
   isBN,
+  isLong,
   isHex,
   isByStrX,
   isNull,

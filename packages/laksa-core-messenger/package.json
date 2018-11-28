@@ -1,6 +1,10 @@
 {
   "name": "laksa-core-messenger",
+<<<<<<< HEAD
   "version": "0.0.78",
+=======
+  "version": "0.0.80",
+>>>>>>> next
   "description": "messenger for laksa core",
   "main": "index.js",
   "scripts": {
@@ -9,6 +13,10 @@
   "author": "neeboo",
   "license": "ISC",
   "dependencies": {
+<<<<<<< HEAD
     "laksa-shared": "^0.0.78"
+=======
+    "laksa-shared": "^0.0.80"
+>>>>>>> next
   }
 }

@@ -1,7 +1,6 @@
-<<<<<<< HEAD
-import { encodeTransactionProto } from 'laksa-core-crypto'
+import { encodeTransactionProto, getAddressFromPublicKey } from 'laksa-core-crypto'
 
-export const TxStatus = {
+const TxStatus = {
   Pending: Symbol('Pending'),
   Initialised: Symbol('Initialised'),
   Signed: Symbol('Signed'),
@@ -9,7 +8,7 @@ export const TxStatus = {
   Rejected: Symbol('Rejected')
 }
 
-export class Transaction {
+class Transaction {
   constructor(params, messenger, status = TxStatus.Initialised) {
     // params
     this.version = params.version
@@ -91,6 +90,13 @@ export class Transaction {
     }
   }
 
+  get senderAddress() {
+    if (!this.pubKey) {
+      return String(0).repeat(40)
+    }
+    return getAddressFromPublicKey(this.pubKey)
+  }
+
   /**
    * isPending
    *
@@ -148,16 +154,11 @@ export class Transaction {
     }
     try {
       const raw = this.txParams
-      const result = await this.messenger.send({
-        method: 'CreateTransaction',
-        params: [
-          {
-            ...raw,
-            amount: raw.amount.toString(),
-            gasLimit: raw.gasLimit.toString(),
-            gasPrice: raw.gasPrice.toString()
-          }
-        ]
+      const result = await this.messenger.send('CreateTransaction', {
+        ...raw,
+        amount: raw.amount.toString(),
+        gasLimit: raw.gasLimit.toString(),
+        gasPrice: raw.gasPrice.toString()
       })
       const { TranID } = result
       if (!TranID) {
@@ -192,9 +193,7 @@ export class Transaction {
     return new Promise((resolve, reject) => {
       const token = setTimeout(() => {
         this.status = TxStatus.Rejected
-        reject(
-          new Error(`The transaction confirm failure after ${maxTry} tries.`)
-        )
+        reject(new Error(`The transaction confirm failure after ${maxTry} tries.`))
       }, maxTry * poll * 2)
 
       const cancelTimeout = () => {
@@ -251,7 +250,7 @@ export class Transaction {
       return new Promise(res => setTimeout(res, time))
     }
     // TODO: regex validation for txHash so we don't get garbage
-    const result = this.messenger.send({ method: 'GetTransaction', params: [txHash] })
+    const result = this.messenger.send('GetTransaction', txHash)
 
     const attemped = tried + 1
 
@@ -286,7 +285,5 @@ export class Transaction {
     }
   }
 }
-=======
-export * from './transaction'
-export * from './factory'
->>>>>>> next
+
+export { TxStatus, Transaction }

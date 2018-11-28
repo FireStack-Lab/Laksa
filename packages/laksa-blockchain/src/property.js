@@ -1,10 +1,10 @@
-class Property {
-  constructor(options) {
+export class Property {
+  constructor(options, messenger) {
     const { name, getter, setter } = options
     this.name = name
     this.getter = getter
     this.setter = setter
-    this.messenger = null
+    this.messenger = messenger
   }
 
   /**
@@ -41,15 +41,8 @@ class Property {
    * @return {any} {property built}
    */
   propertyBuilder() {
-    if (this.messenger !== null) {
-      return callback => {
-        if (callback) {
-          return this.messenger.sendAsync({ method: this.getter }, callback)
-        }
-        return this.messenger.send({ method: this.getter })
-      }
+    if (this.messenger !== undefined) {
+      return () => this.messenger.send(this.getter)
     }
   }
 }
-
-export default Property

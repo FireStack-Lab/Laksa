@@ -1,6 +1,10 @@
 {
   "name": "laksa-core-provider",
+<<<<<<< HEAD
   "version": "0.0.78",
+=======
+  "version": "0.0.80",
+>>>>>>> next
   "description": "",
   "main": "index.js",
   "scripts": {

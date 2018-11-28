@@ -1,7 +1,5 @@
 import BN from 'bn.js'
 import { randomBytes } from './random'
-import { getPubKeyFromPrivateKey, encodeTransactionProto } from './util'
-import { Signature } from './signature'
 import * as schnorr from './schnorr'
 
 const NUM_BYTES = 32
@@ -36,51 +34,6 @@ export const sign = (msg, privateKey, pubKey) => {
 
   return r + s
 }
-
-/**
- * createTransactionJson
- *
- * @param {string} privateKey
- * @param {TxDetails} txnDetails
- * @param {TxDetails}
- *
- * @returns {TxDetails}
- */
-export const createTransactionJson = (privateKey, txnDetails) => {
-  const pubKey = getPubKeyFromPrivateKey(privateKey)
-
-  const txn = {
-    version: txnDetails.version,
-    nonce: txnDetails.nonce,
-    toAddr: txnDetails.toAddr,
-    amount: txnDetails.amount,
-    pubKey,
-    gasPrice: txnDetails.gasPrice,
-    gasLimit: txnDetails.gasLimit,
-    code: txnDetails.code || '',
-    data: txnDetails.data || ''
-  }
-
-  const encodedTx = encodeTransactionProto(txn)
-
-  txn.signature = sign(encodedTx, privateKey, pubKey)
-
-  if (
-    schnorr.verify(
-      encodedTx,
-      new Signature({
-        r: new BN(txn.signature.slice(0, 64), 16),
-        s: new BN(txn.signature.slice(64), 16)
-      }),
-      Buffer.from(pubKey, 'hex')
-    )
-  ) {
-    return txn
-  } else {
-    throw new Error('Signature verify failure')
-  }
-}
-
 export { schnorr, randomBytes, BN }
 export * from './util'
 export * from './bytes'

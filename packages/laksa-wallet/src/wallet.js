@@ -172,6 +172,10 @@ class Wallet {
     if (addressRef !== undefined) {
       const currentArray = this.#_accounts.get('accounts').toArray()
       delete currentArray[addressRef.index]
+      if (addressRef.address === this.signer.address) {
+        this.signer = undefined
+        this.defaultAccount = undefined
+      }
       this.#_accounts = this.#_accounts.set('accounts', List(currentArray))
       this.#_accounts = this.#_accounts.delete(address)
       this.updateLength()
@@ -437,23 +441,8 @@ class Wallet {
     }
     try {
       const signerAccount = this.getAccountByAddress(address === undefined ? this.signer : address)
-
-      await signerAccount.updateBalance()
-      const withNonce = tx.map(txObj => {
-        return {
-          ...txObj,
-          nonce: signerAccount.nonce + 1,
-          pubKey: signerAccount.publicKey
-        }
-      })
-      const signature = await signerAccount.sign(withNonce.bytes, password)
-      return withNonce.map(txObj => {
-        // @ts-ignore
-        return {
-          ...txObj,
-          signature
-        }
-      })
+      const result = await signerAccount.signTransaction(tx, password)
+      return result
     } catch (err) {
       throw err
     }

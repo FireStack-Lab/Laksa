@@ -1,3 +1,5 @@
+import { RPCMethod } from './rpc'
+
 export default [
   /**
    * isConnected
@@ -5,7 +7,7 @@ export default [
    */
   {
     name: 'isConnected',
-    call: 'GetNetworkId',
+    call: RPCMethod.GetNetworkId,
     params: {},
     isSendJson: false
   },
@@ -16,7 +18,7 @@ export default [
    */
   {
     name: 'getTransaction',
-    call: 'GetTransaction',
+    call: RPCMethod.GetTransaction,
     params: {
       txHash: ['isHash', 'required']
     },
@@ -28,13 +30,14 @@ export default [
    */
   {
     name: 'createTransaction',
-    call: 'CreateTransaction',
+    call: RPCMethod.CreateTransaction,
     params: {
       toAddr: ['isAddress', 'required'],
       pubKey: ['isPubkey', 'required'],
       amount: ['isBN', 'required'],
       gasPrice: ['isBN', 'required'],
-      gasLimit: ['isBN', 'required']
+      gasLimit: ['isLong', 'required'],
+      signature: ['isString', 'required']
     },
     transformer: {
       amount: 'toString',
@@ -49,7 +52,7 @@ export default [
    */
   {
     name: 'getDsBlock',
-    call: 'GetDsBlock',
+    call: RPCMethod.GetDsBlock,
     params: {
       blockNumber: ['isString', 'required']
     },
@@ -61,7 +64,7 @@ export default [
    */
   {
     name: 'getTxBlock',
-    call: 'GetTxBlock',
+    call: RPCMethod.GetTxBlock,
     params: {
       blockNumber: ['isString', 'required']
     },
@@ -73,7 +76,7 @@ export default [
    */
   {
     name: 'getLatestDsBlock',
-    call: 'GetLatestDsBlock',
+    call: RPCMethod.GetLatestDsBlock,
     params: {},
     isSendJson: false
   },
@@ -83,7 +86,7 @@ export default [
    */
   {
     name: 'getLatestTxBlock',
-    call: 'GetLatestTxBlock',
+    call: RPCMethod.GetLatestTxBlock,
     params: {},
     isSendJson: false
   },
@@ -93,7 +96,7 @@ export default [
    */
   {
     name: 'getBalance',
-    call: 'GetBalance',
+    call: RPCMethod.GetBalance,
     params: {
       address: ['isAddress', 'required']
     },
@@ -105,7 +108,7 @@ export default [
    */
   {
     name: 'getGasPrice',
-    call: 'GetGasPrice',
+    call: RPCMethod.GetGasPrice,
     params: {},
     isSendJson: false
   },
@@ -115,7 +118,7 @@ export default [
    */
   {
     name: 'getSmartContractState',
-    call: 'GetSmartContractState',
+    call: RPCMethod.GetSmartContractState,
     params: { address: ['isAddress', 'required'] },
     isSendJson: false
   },
@@ -125,7 +128,7 @@ export default [
    */
   {
     name: 'getSmartContractCode',
-    call: 'GetSmartContractCode',
+    call: RPCMethod.GetSmartContractCode,
     params: { address: ['isAddress', 'required'] },
     isSendJson: false
   },
@@ -135,7 +138,7 @@ export default [
    */
   {
     name: 'getSmartContractInit',
-    call: 'GetSmartContractInit',
+    call: RPCMethod.GetSmartContractInit,
     params: { address: ['isAddress', 'required'] },
     isSendJson: false
   },
@@ -145,7 +148,7 @@ export default [
    */
   {
     name: 'getSmartContracts',
-    call: 'GetSmartContracts',
+    call: RPCMethod.GetSmartContracts,
     params: { address: ['isAddress', 'required'] },
     isSendJson: false
   },
@@ -155,7 +158,7 @@ export default [
    */
   {
     name: 'getTransactionHistory',
-    call: 'GetTransactionHistory',
+    call: RPCMethod.GetTransactionHistory,
     params: { address: ['isAddress', 'required'] },
     isSendJson: false
   },
@@ -166,7 +169,7 @@ export default [
    */
   {
     name: 'getRecentTransactions',
-    call: 'GetRecentTransactions',
+    call: RPCMethod.GetRecentTransactions,
     params: {},
     isSendJson: false
   },
@@ -176,7 +179,7 @@ export default [
    */
   {
     name: 'getBlockTransactionCount',
-    call: 'GetBlockTransactionCount',
+    call: RPCMethod.GetBlockTransactionCount,
     params: { blockNumber: ['isNumber', 'required'] },
     isSendJson: false
   },
@@ -186,7 +189,7 @@ export default [
    */
   {
     name: 'getCode',
-    call: 'GetCode',
+    call: RPCMethod.GetCode,
     params: { address: ['isAddress', 'required'] },
     isSendJson: false
   },
@@ -196,7 +199,7 @@ export default [
    */
   {
     name: 'createMessage',
-    call: 'CreateMessage',
+    call: RPCMethod.CreateMessage,
     params: {
       to: ['isAddress', 'required'],
       from: ['isAddress', 'optional'],
@@ -206,18 +209,18 @@ export default [
     isSendJson: true
   },
   /**
-   * getGasEstimate
-   * @params {
-     to: Address,
-     from: Address,
-     gas: Number,
-     gasPrice: Number,
-     gasLimit: Number
-   }
-   */
+     * getGasEstimate
+     * @params {
+       to: Address,
+       from: Address,
+       gas: Number,
+       gasPrice: Number,
+       gasLimit: Number
+     }
+     */
   {
     name: 'getGasEstimate',
-    call: 'GetGasEstimate',
+    call: RPCMethod.GetGasEstimate,
     params: {
       to: ['isAddress', 'optional'],
       from: ['isAddress', 'optional'],
@@ -233,7 +236,7 @@ export default [
    */
   {
     name: 'getTransactionReceipt',
-    call: 'GetTransactionReceipt',
+    call: RPCMethod.GetTransactionReceipt,
     params: {
       txHash: ['isHash', 'optional']
     },
@@ -245,7 +248,7 @@ export default [
    */
   {
     name: 'compileCode',
-    call: 'CompileCode',
+    call: RPCMethod.CompileCode,
     params: {
       code: ['isString', 'required']
     },
@@ -259,7 +262,7 @@ export default [
     call: '',
     params: { code: ['isString', 'required'] },
     isSendJson: true,
-    endpoint: '/v1/checker'
+    endpoint: '/contract/check'
   },
   /**
    * checkCodeTest
@@ -269,7 +272,7 @@ export default [
     call: '',
     params: { code: ['isString', 'required'] },
     isSendJson: true,
-    endpoint: '/v1/runner'
+    endpoint: '/contract/call'
   },
   /**
    * getBlockchainInfo
@@ -277,7 +280,7 @@ export default [
    */
   {
     name: 'getBlockchainInfo',
-    call: 'GetBlockchainInfo',
+    call: RPCMethod.GetBlockchainInfo,
     params: {},
     isSendJson: false
   },
@@ -287,7 +290,7 @@ export default [
    */
   {
     name: 'getDSBlockListing',
-    call: 'DSBlockListing',
+    call: RPCMethod.DSBlockListing,
     params: {
       page: ['isNumber', 'required']
     },
@@ -299,7 +302,7 @@ export default [
    */
   {
     name: 'getTxBlockListing',
-    call: 'TxBlockListing',
+    call: RPCMethod.TxBlockListing,
     params: {
       page: ['isNumber', 'required']
     },
@@ -311,7 +314,7 @@ export default [
    */
   {
     name: 'getNumTxnsTxEpoch',
-    call: 'GetNumTxnsTxEpoch',
+    call: RPCMethod.GetNumTxnsTxEpoch,
     params: {},
     isSendJson: false
   },
@@ -321,7 +324,7 @@ export default [
    */
   {
     name: 'getNumTxnsDSEpoch',
-    call: 'GetNumTxnsDSEpoch',
+    call: RPCMethod.GetNumTxnsDSEpoch,
     params: {},
     isSendJson: false
   },
@@ -331,7 +334,7 @@ export default [
    */
   {
     name: 'getTransactionListing',
-    call: 'GetTransactionListing',
+    call: RPCMethod.GetTransactionListing,
     params: {},
     isSendJson: false
   }

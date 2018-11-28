@@ -20,18 +20,7 @@ export class JsonRpc {
       jsonrpc: '2.0',
       id: this.messageId,
       method,
-      params: params || []
+      params: params !== undefined ? [params] : []
     }
-  }
-
-  /**
-   * @function {toBatchPayload}
-   * @param  {Array<object>} messages {array of messages}
-   * @return {Array<object>} {array of payload objects}
-   */
-  toBatchPayload = messages => {
-    return messages.map(message => {
-      return this.toPayload(message.method, message.params)
-    })
   }
 }

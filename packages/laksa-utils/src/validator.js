@@ -1,5 +1,8 @@
 import { isWebUri } from 'valid-url'
 import { isBN } from 'bn.js'
+import Long from 'long'
+
+const { isLong } = Long
 
 /**
  * [isNumber verify param is a Number]
@@ -200,6 +203,7 @@ export {
   isPrivateKey,
   isAddress,
   isBN,
+  isLong,
   isHex,
   isByStrX,
   isNull,

@@ -157,4 +157,17 @@ export const encodeTransactionProto = tx => {
   return Buffer.from(ZilliqaMessage.ProtoTransactionCoreInfo.encode(msg).finish())
 }
 
+export const getAddressForContract = ({ currentNonce, address }) => {
+  // always subtract 1 from the tx nonce, as contract addresses are computed
+  // based on the nonce in the global state.
+  const nonce = currentNonce ? currentNonce - 1 : 0
+
+  return hashjs
+    .sha256()
+    .update(address, 'hex')
+    .update(intToHexArray(nonce, 64).join(''), 'hex')
+    .digest('hex')
+    .slice(24)
+}
+
 export { hashjs }
