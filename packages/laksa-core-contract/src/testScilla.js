@@ -1,32 +1,7 @@
 import { Contract } from './contract'
-import { ContractStatus } from './util'
-import { validate, toBN, isInt } from './validate'
+import { ContractStatus, setParamValues } from './util'
+import { toBN, isInt } from './validate'
 import { ABI } from './abi'
-/**
- * @function setParamValues
- * @param  {Array<object>} rawParams {init params get from ABI}
- * @param  {Array<object>} newValues {init params set for ABI}
- * @return {Array<object>} {new array of params objects}
- */
-const setParamValues = (rawParams, newValues) => {
-  const newParams = []
-  rawParams.forEach((v, i) => {
-    if (!validate(v.type, newValues[i].value)) {
-      throw new TypeError(`Type validator failed,with <${v.vname}:${v.type}>`)
-    }
-    // FIXME:it may change cause local scilla runner return the `name` not `vname`
-    // But when call or make transaction, remote node only accpet `vname`
-    const newObj = Object.assign({}, v, {
-      value: newValues[i].value,
-      vname: v.name ? v.name : v.vname
-    })
-    if (newObj.name) {
-      delete newObj.name
-    }
-    newParams.push(newObj)
-  })
-  return newParams
-}
 
 export class TestScilla extends Contract {
   blockchain = []

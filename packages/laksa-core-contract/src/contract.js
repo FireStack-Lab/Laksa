@@ -1,7 +1,7 @@
 import { Transaction } from 'laksa-core-transaction'
 import { Long } from 'laksa-utils'
 import { toBN } from './validate'
-import { ContractStatus } from './util'
+import { ContractStatus, setParamValues } from './util'
 
 export class Contract {
   constructor(params, factory, status = ContractStatus.INITIALISED) {
@@ -25,6 +25,18 @@ export class Contract {
 
   setStatus(status) {
     this.status = status
+  }
+
+  /**
+   * @function {setInitParamsValues}
+   * @param  {Array<Object>} initParams    {init params get from ABI}
+   * @param  {Array<Object>} arrayOfValues {init params set for ABI}
+   * @return {Contract} {raw contract object}
+   */
+  setInitParamsValues(initParams, arrayOfValues) {
+    const result = setParamValues(initParams, arrayOfValues)
+    this.init = result
+    return this
   }
 
   async prepareTx(tx, { account, password }) {
