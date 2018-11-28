@@ -1,6 +1,6 @@
 {
   "name": "laksa-extend-keystore",
-  "version": "0.0.77",
+  "version": "0.0.80",
   "description": "extend keystore for laksa-core-crypto",
   "main": "index.js",
   "scripts": {
