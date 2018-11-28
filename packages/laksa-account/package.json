@@ -10,7 +10,7 @@
   "license": "ISC",
   "dependencies": {
     "laksa-core-crypto": "^0.0.80",
-    "laksa-extend-keystore": "^0.0.74",
+    "laksa-extend-keystore": "^0.0.80",
     "laksa-shared": "^0.0.80",
     "laksa-utils": "^0.0.80"
   }

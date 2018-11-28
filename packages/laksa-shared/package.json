@@ -2,9 +2,5 @@
   "name": "laksa-shared",
   "main": "index.js",
   "browser": "lib/index.js",
-<<<<<<< HEAD
-  "version": "0.0.78"
-=======
   "version": "0.0.80"
->>>>>>> next
 }

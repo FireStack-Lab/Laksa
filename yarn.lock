@@ -1762,13 +1762,6 @@
   dependencies:
     protobufjs "^6.8.8"
 
-"@zilliqa-js/proto@^0.2.5":
-  version "0.2.5"
-  resolved "https://registry.npmjs.org/@zilliqa-js/proto/-/proto-0.2.5.tgz#cdb2ff17982a72f69f6a785f5481a7ab6dfd2736"
-  integrity sha512-Gdxk71yly1BWNLMcYufZodbK7cWsiqxn02DbUSgpia8yGhVdwYd0kKl7FMlG6vH6WGqH1BAss2PwoxTbIKVXfQ==
-  dependencies:
-    protobufjs "^6.8.8"
-
 JSONStream@^1.0.4, JSONStream@^1.3.4:
   version "1.3.4"
   resolved "https://registry.npmjs.org/JSONStream/-/JSONStream-1.3.4.tgz#615bb2adb0cd34c8f4c447b5f6512fa1d8f16a2e"
@@ -6509,30 +6502,6 @@ kleur@^2.0.1:
   version "2.0.2"
   resolved "https://registry.npmjs.org/kleur/-/kleur-2.0.2.tgz#b704f4944d95e255d038f0cb05fb8a602c55a300"
   integrity sha512-77XF9iTllATmG9lSlIv0qdQ2BQ/h9t0bJllHlbvsQ0zUWfU7Yi0S8L5JXzPZgkefIiajLmBJJ4BsMJmqcf7oxQ==
-
-laksa-core-crypto@^0.0.77:
-  version "0.0.77"
-  resolved "https://registry.npmjs.org/laksa-core-crypto/-/laksa-core-crypto-0.0.77.tgz#202d52c07daec58d48367c3b72cec0b9f3cb495e"
-  integrity sha512-Xxp4dZE3Cbr3tUU5pwHYCgh1zm118YG+Xsem/JvWnwTEi1myURrNSPfbp9x6bCZkNsa7nOEp9ihLsXw6oFA6bA==
-  dependencies:
-    "@zilliqa-js/proto" "^0.2.3"
-    bn.js "^4.11.8"
-    bsert "^0.0.4"
-    elliptic "^6.4.1"
-    hash.js "^1.1.5"
-    hmac-drbg "^1.0.1"
-    randombytes "^2.0.6"
-
-laksa-extend-keystore@^0.0.74:
-  version "0.0.74"
-  resolved "https://registry.npmjs.org/laksa-extend-keystore/-/laksa-extend-keystore-0.0.74.tgz#ba1e6090f5ae1720e6219b91807aa06a3e2cc41c"
-  integrity sha512-F7vGY8z6JC/j3Ndp8bHuq/D5IK0WzdANLP573hyb+3VPvGu0AhjYAuXITyG8/qHHNr8H4mIv4NxNJkHJBE7Rqg==
-  dependencies:
-    aes-js "^3.1.1"
-    laksa-core-crypto "^0.0.74"
-    pbkdf2 "^3.0.17"
-    scrypt.js "^0.2.0"
-    uuid "^3.3.2"
 
 latest-version@^3.0.0:
   version "3.1.0"

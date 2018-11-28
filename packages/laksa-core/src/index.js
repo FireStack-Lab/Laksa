@@ -30,13 +30,9 @@ class Laksa {
     }
     this.messenger = new Messenger(this.currentProvider.node)
     this.wallet = new Wallet(this.messenger)
-<<<<<<< HEAD
-    this.contracts = new Contracts(this.messenger, this.wallet.signer)
-=======
     this.Transactions = new Transactions(this.messenger, this.wallet)
     this.contracts = new Contracts(this.messenger, this.wallet)
     this.zil = new BlockChain(this.messenger, this.wallet)
->>>>>>> next
   }
 
   Modules = {
