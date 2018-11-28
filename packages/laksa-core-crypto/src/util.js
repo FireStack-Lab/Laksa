@@ -1,7 +1,7 @@
 import elliptic from 'elliptic'
 import hashjs from 'hash.js'
 import { ZilliqaMessage } from '@zilliqa-js/proto'
-import { intToHexArray, intToByteArray, hexToByteArray } from './bytes'
+import { intToHexArray, hexToByteArray } from './bytes'
 
 // const HEX_PREFIX = '0x';
 const secp256k1 = elliptic.ec('secp256k1')
@@ -137,25 +137,19 @@ export const encodeTransaction = tx => {
 
 export const encodeTransactionProto = tx => {
   const msg = ZilliqaMessage.ProtoTransactionCoreInfo.create({
-    version: ZilliqaMessage.ByteArray.create({
-      data: intToByteArray(tx.version, 32)
-    }),
-    nonce: ZilliqaMessage.ByteArray.create({
-      data: intToByteArray(tx.nonce || 0, 32)
-    }),
+    version: tx.version,
+    nonce: tx.nonce || 0,
     toaddr: hexToByteArray(tx.toAddr),
     senderpubkey: ZilliqaMessage.ByteArray.create({
       data: hexToByteArray(tx.pubKey || '00')
     }),
     amount: ZilliqaMessage.ByteArray.create({
-      data: Uint8Array.from(tx.amount.toArrayLike(Buffer, undefined, 32))
+      data: Uint8Array.from(tx.amount.toArrayLike(Buffer, undefined, 16))
     }),
     gasprice: ZilliqaMessage.ByteArray.create({
-      data: Uint8Array.from(tx.gasPrice.toArrayLike(Buffer, undefined, 32))
+      data: Uint8Array.from(tx.gasPrice.toArrayLike(Buffer, undefined, 16))
     }),
-    gaslimit: ZilliqaMessage.ByteArray.create({
-      data: Uint8Array.from(tx.gasLimit.toArrayLike(Buffer, undefined, 32))
-    }),
+    gaslimit: tx.gasLimit,
     code: Uint8Array.from([...(tx.code || '')].map(c => c.charCodeAt(0))),
     data: Uint8Array.from([...(tx.data || '')].map(c => c.charCodeAt(0)))
   })
