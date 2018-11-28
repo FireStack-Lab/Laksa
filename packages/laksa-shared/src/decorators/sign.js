@@ -16,7 +16,6 @@ export const sign = (target, key, descriptor) => {
   const original = descriptor.value
   async function interceptor(arg, { signer, password }) {
     if (original && arg.bytes) {
-      console.log(arg.bytes)
       const signed = await signer.sign(arg, password)
       return original.call(this, signed)
     }

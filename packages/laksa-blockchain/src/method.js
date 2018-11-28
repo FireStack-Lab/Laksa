@@ -1,42 +1,6 @@
 import {
-  isNumber,
-  isString,
-  isBoolean,
-  isArray,
-  isJson,
-  isObject,
-  isFunction,
-  isHash,
-  isUrl,
-  isPubkey,
-  isPrivateKey,
-  isAddress,
-  isBN,
-  validateArgs,
-  toBN
-} from 'laksa-utils'
-
-const validatorArray = {
-  isNumber: [isNumber],
-  isString: [isString],
-  isBoolean: [isBoolean],
-  isArray: [isArray],
-  isJson: [isJson],
-  isObject: [isObject],
-  isFunction: [isFunction],
-  isHash: [isHash],
-  isUrl: [isUrl],
-  isPubkey: [isPubkey],
-  isPrivateKey: [isPrivateKey],
-  isBN: [isBN],
-  isAddress: [isAddress]
-}
-
-const transformerArray = {
-  toBn: toBN,
-  toNumber: string => Number(string),
-  toString: string => String(string)
-}
+  validateArgs, transformerArray, isObject, generateValidateObjects
+} from './util'
 
 export class Method {
   constructor(options, messenger) {
@@ -59,30 +23,6 @@ export class Method {
    */
   setMessenger(msg) {
     this.messenger = msg
-  }
-
-  /**
-   * @function {generateValidateObjects}
-   * @return {object} {validate object}
-   */
-  generateValidateObjects() {
-    const validatorObject = this.params
-
-    const requiredArgs = {}
-    const optionalArgs = {}
-    for (const index in validatorObject) {
-      if (index !== undefined) {
-        const newObjectKey = index
-        const newObjectValid = validatorObject[index][0]
-        const isRequired = validatorObject[index][1]
-        if (isRequired === 'required') {
-          requiredArgs[newObjectKey] = validatorArray[newObjectValid]
-        } else {
-          optionalArgs[newObjectKey] = validatorArray[newObjectValid]
-        }
-      }
-    }
-    return { requiredArgs, optionalArgs }
   }
 
   /**
@@ -157,7 +97,7 @@ export class Method {
   methodBuilder() {
     if (this.messenger !== null && this.endpoint === 'client') {
       return args => {
-        const { requiredArgs, optionalArgs } = this.generateValidateObjects()
+        const { requiredArgs, optionalArgs } = generateValidateObjects(this.params)
         this.validateArgs(args, requiredArgs, optionalArgs)
         const params = this.extractParams(args)
         return this.messenger.send(this.call, params)
@@ -165,7 +105,7 @@ export class Method {
     }
     if (this.messenger !== null && this.endpoint !== 'client') {
       return args => {
-        const { requiredArgs, optionalArgs } = this.generateValidateObjects()
+        const { requiredArgs, optionalArgs } = generateValidateObjects(this.params)
         this.validateArgs(args, requiredArgs, optionalArgs)
         return this.messenger.sendServer(this.endpoint, args)
       }

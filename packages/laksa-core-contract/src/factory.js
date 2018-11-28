@@ -1,4 +1,5 @@
 import { Core } from 'laksa-shared'
+import { hashjs, intToHexArray } from 'laksa-core-crypto'
 import { Contract } from './contract'
 import { TestScilla } from './testScilla'
 import { ContractStatus } from './util'
@@ -8,6 +9,19 @@ class Contracts extends Core {
     super()
     this.messenger = messenger
     this.signer = signer
+  }
+
+  getAddressForContract(tx) {
+    // always subtract 1 from the tx nonce, as contract addresses are computed
+    // based on the nonce in the global state.
+    const nonce = tx.txParams.nonce ? tx.txParams.nonce - 1 : 0
+
+    return hashjs
+      .sha256()
+      .update(tx.senderAddress, 'hex')
+      .update(intToHexArray(nonce, 64).join(''), 'hex')
+      .digest('hex')
+      .slice(24)
   }
 
   new(code, init) {

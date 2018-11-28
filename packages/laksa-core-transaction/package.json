@@ -9,6 +9,7 @@
   "author": "neeboo",
   "license": "ISC",
   "dependencies": {
+    "laksa-shared": "^0.0.74",
     "laksa-utils": "^0.0.74"
   }
 }

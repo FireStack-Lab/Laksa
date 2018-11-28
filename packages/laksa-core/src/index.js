@@ -8,7 +8,7 @@
 import * as util from 'laksa-utils'
 import * as core from 'laksa-core-crypto'
 import { Messenger } from 'laksa-core-messenger'
-import { Transaction } from 'laksa-core-transaction'
+import { Transactions, Transaction } from 'laksa-core-transaction'
 import { HttpProvider } from 'laksa-providers-http'
 import { Account } from 'laksa-account'
 import { Contracts, Contract } from 'laksa-core-contract'
@@ -30,19 +30,21 @@ class Laksa {
     }
     this.messenger = new Messenger(this.currentProvider.node)
     this.wallet = new Wallet(this.messenger)
+    this.Transactions = new Transactions(this.messenger, this.wallet)
     this.contracts = new Contracts(this.messenger, this.wallet)
     this.zil = new BlockChain(this.messenger, this.wallet)
   }
 
   Modules = {
     Account,
+    BlockChain,
     Contracts,
     Contract,
     HttpProvider,
     Messenger,
     Transaction,
-    Wallet,
-    BlockChain
+    Transactions,
+    Wallet
   }
 
   get version() {

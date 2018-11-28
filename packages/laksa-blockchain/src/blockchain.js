@@ -1,8 +1,11 @@
 import { Core } from 'laksa-shared'
+import { Transaction } from 'laksa-core-transaction'
+import { RPCMethod } from './rpc'
 import { Method } from './method'
 import { Property } from './property'
 import methodObjects from './methodObjects'
 import propertyObjects from './propertyObjects'
+import { toTxParams, assert } from './util'
 /**
  * @function mapObjectToMethods
  * @param  {Zil} main  {assign to Zil class}
@@ -63,5 +66,49 @@ export class BlockChain extends Core {
     const zilProperty = new Property(object)
     zilProperty.setMessenger(this.messenger)
     zilProperty.assignToObject(this)
+  }
+
+  @assert({
+    toAddr: ['isAddress', 'required'],
+    pubKey: ['isPubkey', 'required'],
+    amount: ['isBN', 'required'],
+    gasPrice: ['isBN', 'required'],
+    gasLimit: ['isBN', 'required'],
+    signature: ['isString', 'optional']
+  })
+  async completeTransaction(tx, account, password) {
+    try {
+      const accountSigning = account || this.signer.signer
+      const passwordSigning = password
+
+      const signedTxn = await accountSigning.signTransaction(tx, passwordSigning)
+
+      const response = await this.messenger.send(RPCMethod.CreateTransaction, {
+        ...signedTxn.txParams,
+        amount: signedTxn.txParams.amount.toString(),
+        gasLimit: signedTxn.txParams.gasLimit.toString(),
+        gasPrice: signedTxn.txParams.gasPrice.toString()
+      })
+      return signedTxn.confirm(response.TranID)
+    } catch (err) {
+      throw err
+    }
+  }
+
+  @assert({ txHash: ['isHash', 'required'] })
+  async confirmTransaction({ txHash }) {
+    try {
+      const response = await this.messenger.send(RPCMethod.GetTransaction, txHash)
+
+      if (response.Error) {
+        return Promise.reject(response.Error)
+      } else {
+        return response.receipt.success
+          ? Transaction.confirm(toTxParams(response), this.messenger)
+          : Transaction.reject(toTxParams(response), this.messenger)
+      }
+    } catch (err) {
+      throw err
+    }
   }
 }

@@ -36,7 +36,8 @@ export default [
       pubKey: ['isPubkey', 'required'],
       amount: ['isBN', 'required'],
       gasPrice: ['isBN', 'required'],
-      gasLimit: ['isBN', 'required']
+      gasLimit: ['isBN', 'required'],
+      signature: ['isString', 'required']
     },
     transformer: {
       amount: 'toString',
