@@ -1,6 +1,6 @@
 import { Transaction } from 'laksa-core-transaction'
+import { Long } from 'laksa-utils'
 import { toBN } from './validate'
-
 import { ContractStatus } from './util'
 
 export class Contract {
@@ -42,7 +42,7 @@ export class Contract {
   }
 
   async deploy(
-    { gasLimit = toBN(2500), gasPrice = toBN(10) },
+    { gasLimit = Long.fromNumber(2500), gasPrice = toBN(10) },
     { account = this.signer.signer, password }
   ) {
     if (!this.code || !this.init) {

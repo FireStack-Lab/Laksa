@@ -73,7 +73,7 @@ export class BlockChain extends Core {
     pubKey: ['isPubkey', 'required'],
     amount: ['isBN', 'required'],
     gasPrice: ['isBN', 'required'],
-    gasLimit: ['isBN', 'required'],
+    gasLimit: ['isLong', 'required'],
     signature: ['isString', 'optional']
   })
   async completeTransaction(tx, account, password) {

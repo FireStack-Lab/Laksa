@@ -1762,6 +1762,13 @@
   dependencies:
     protobufjs "^6.8.8"
 
+"@zilliqa-js/proto@^0.2.5":
+  version "0.2.5"
+  resolved "https://registry.npmjs.org/@zilliqa-js/proto/-/proto-0.2.5.tgz#cdb2ff17982a72f69f6a785f5481a7ab6dfd2736"
+  integrity sha512-Gdxk71yly1BWNLMcYufZodbK7cWsiqxn02DbUSgpia8yGhVdwYd0kKl7FMlG6vH6WGqH1BAss2PwoxTbIKVXfQ==
+  dependencies:
+    protobufjs "^6.8.8"
+
 JSONStream@^1.0.4, JSONStream@^1.3.4:
   version "1.3.4"
   resolved "https://registry.npmjs.org/JSONStream/-/JSONStream-1.3.4.tgz#615bb2adb0cd34c8f4c447b5f6512fa1d8f16a2e"
@@ -6503,13 +6510,6 @@ kleur@^2.0.1:
   resolved "https://registry.npmjs.org/kleur/-/kleur-2.0.2.tgz#b704f4944d95e255d038f0cb05fb8a602c55a300"
   integrity sha512-77XF9iTllATmG9lSlIv0qdQ2BQ/h9t0bJllHlbvsQ0zUWfU7Yi0S8L5JXzPZgkefIiajLmBJJ4BsMJmqcf7oxQ==
 
-laksa-contracts@^0.0.74:
-  version "0.0.74"
-  resolved "https://registry.npmjs.org/laksa-contracts/-/laksa-contracts-0.0.74.tgz#0d85934927cd3f192bf564d45c9d0394ace27a14"
-  integrity sha512-00nXT5hURqtU33wF68InESvHedMmSibKLDYsjw4sSS7b5PvrAQ7JoWVhn6p7ZWwMpOUySOJsV2i8ZKwg1UtiAA==
-  dependencies:
-    laksa-core-contract "^0.0.74"
-
 laksa-core-crypto@^0.0.77:
   version "0.0.77"
   resolved "https://registry.npmjs.org/laksa-core-crypto/-/laksa-core-crypto-0.0.77.tgz#202d52c07daec58d48367c3b72cec0b9f3cb495e"
@@ -6523,18 +6523,6 @@ laksa-core-crypto@^0.0.77:
     hmac-drbg "^1.0.1"
     randombytes "^2.0.6"
 
-laksa-core-methods@^0.0.74:
-  version "0.0.74"
-  resolved "https://registry.npmjs.org/laksa-core-methods/-/laksa-core-methods-0.0.74.tgz#200f7db4c857308ec1b92449da045f0dfb0526f5"
-  integrity sha512-DuZ22JLRa1dJqtx41WwYZSt2B/hSOAiBkVGDkyKHPE/IPbds5dIflgnV5v/FkCGELS3HgyAQPcEmNfBbQHx5GQ==
-  dependencies:
-    laksa-utils "^0.0.74"
-
-laksa-core-properties@^0.0.74:
-  version "0.0.74"
-  resolved "https://registry.npmjs.org/laksa-core-properties/-/laksa-core-properties-0.0.74.tgz#9aa0eaae27f94b29364d1f5f6108d40601cf993b"
-  integrity sha512-bmikZ/b2wRIp1jvSy1RPioRvaex/mJPdzPftNS7KR2QRQ6zTsuj/x7EcRu/Sh1Qmqqk/ft/booW1kXeocVxn/A==
-
 laksa-extend-keystore@^0.0.74:
   version "0.0.74"
   resolved "https://registry.npmjs.org/laksa-extend-keystore/-/laksa-extend-keystore-0.0.74.tgz#ba1e6090f5ae1720e6219b91807aa06a3e2cc41c"
@@ -6545,14 +6533,6 @@ laksa-extend-keystore@^0.0.74:
     pbkdf2 "^3.0.17"
     scrypt.js "^0.2.0"
     uuid "^3.3.2"
-
-laksa-zil@^0.0.74:
-  version "0.0.74"
-  resolved "https://registry.npmjs.org/laksa-zil/-/laksa-zil-0.0.74.tgz#da4c5c9fee526c97fe4bb5f8d5de2307d6d78b4a"
-  integrity sha512-0BZ8i/MT7SiLksS6eqwHVjK6r47Vc2HJvADl0nWTXU7oPXKEojE6FBFM6a3Hmub2GJJZ2ELEKOVIf2UtnfC7mA==
-  dependencies:
-    laksa-core-methods "^0.0.74"
-    laksa-core-properties "^0.0.74"
 
 latest-version@^3.0.0:
   version "3.1.0"

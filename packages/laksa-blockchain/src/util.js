@@ -12,9 +12,11 @@ import {
   isPrivateKey,
   isAddress,
   isBN,
+  isLong,
   strip0x,
   validateArgs,
-  toBN
+  toBN,
+  Long
 } from 'laksa-utils'
 
 export const validatorArray = {
@@ -30,11 +32,12 @@ export const validatorArray = {
   isPubkey: [isPubkey],
   isPrivateKey: [isPrivateKey],
   isBN: [isBN],
+  isLong: [isLong],
   isAddress: [isAddress]
 }
 
 export const transformerArray = {
-  toBn: toBN,
+  toBN,
   toNumber: string => Number(string),
   toString: string => String(string)
 }
@@ -60,7 +63,7 @@ export function toTxParams(response) {
     version: parseInt(version, 10),
     toAddr,
     gasPrice: toBN(gasPrice),
-    gasLimit: toBN(gasLimit),
+    gasLimit: Long.fromString(gasLimit, 10),
     amount: toBN(amount),
     receipt: {
       ...receipt,
