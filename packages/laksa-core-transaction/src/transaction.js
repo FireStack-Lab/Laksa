@@ -1,4 +1,5 @@
 import { encodeTransactionProto, getAddressFromPublicKey } from 'laksa-core-crypto'
+import { sleep } from './util'
 
 const TxStatus = {
   Pending: Symbol('Pending'),
@@ -180,33 +181,35 @@ class Transaction {
    * of pending. Calling this function kicks off a passive loop that polls the
    * lookup node for confirmation on the txHash.
    *
+   * The polls are performed with a linear backoff:
+   *
+   * `const delay = interval * attempt`
+   *
    * This is a low-level method that you should generally not have to use
    * directly.
    *
    * @param {string} txHash
-   * @param {number} timeout
+   * @param {number} maxAttempts
+   * @param {number} initial interval in milliseconds
    * @returns {Promise<Transaction>}
    */
-  confirm(txHash, maxTry = 10, poll = 3000) {
+  async confirm(txHash, maxAttempts = 20, interval = 1000) {
     this.status = TxStatus.Pending
-
-    return new Promise((resolve, reject) => {
-      const token = setTimeout(() => {
+    for (let attempt = 0; attempt < maxAttempts; attempt += 1) {
+      try {
+        if (await this.trackTx(txHash)) {
+          return this
+        }
+      } catch (err) {
         this.status = TxStatus.Rejected
-        reject(new Error(`The transaction confirm failure after ${maxTry} tries.`))
-      }, maxTry * poll * 2)
-
-      const cancelTimeout = () => {
-        clearTimeout(token)
+        throw err
       }
-
-      this.trackTx(txHash, resolve, reject, {
-        cancelTimeout,
-        tried: 0,
-        maxTry,
-        poll
-      })
-    })
+      if (attempt + 1 < maxAttempts) {
+        await sleep(interval * attempt)
+      }
+    }
+    this.status = TxStatus.Rejected
+    throw new Error(`The transaction is still not confirmed after ${maxAttempts} attemps.`)
   }
 
   /**
@@ -239,50 +242,18 @@ class Transaction {
     this.receipt = params.receipt
   }
 
-  trackTx(txHash, resolve, reject, options) {
-    const {
-      cancelTimeout, tried, maxTry, poll
-    } = options
-    if (this.isRejected()) {
-      return
-    }
-    function sleep(time) {
-      return new Promise(res => setTimeout(res, time))
-    }
+  async trackTx(txHash) {
     // TODO: regex validation for txHash so we don't get garbage
-    const result = this.messenger.send('GetTransaction', txHash)
+    const res = await this.messenger.send('GetTransaction', txHash)
 
-    const attemped = tried + 1
-
-    if (attemped < (maxTry || 10)) {
-      result
-        .then(res => {
-          if (res && res.error) {
-            sleep(poll).then(() =>
-              this.trackTx(txHash, resolve, reject, {
-                ...options,
-                tried: attemped
-              }))
-            return
-          }
-
-          if (res && !res.error) {
-            this.TranID = res.ID
-            this.receipt = res.receipt
-            const isRecipt = this.receipt && this.receipt.success
-            this.status = isRecipt ? TxStatus.Confirmed : TxStatus.Rejected
-            cancelTimeout()
-            resolve(this)
-          }
-        })
-        .catch(err => {
-          cancelTimeout()
-          this.status = TxStatus.Rejected
-          reject(err)
-        })
-    } else {
-      cancelTimeout()
+    if (res.error) {
+      return false
     }
+
+    this.TranID = res.TranID
+    this.receipt = res.receipt
+    this.status = this.receipt && this.receipt.success ? TxStatus.Confirmed : TxStatus.Rejected
+    return true
   }
 }
 

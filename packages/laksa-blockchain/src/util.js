@@ -98,9 +98,9 @@ export function generateValidateObjects(validatorObject) {
 export const assert = input => (target, key, descriptor) => {
   const { requiredArgs, optionalArgs } = generateValidateObjects(input)
   const original = descriptor.value
-  function interceptor(args) {
-    validateArgs(args, requiredArgs, optionalArgs)
-    return original.call(this, args)
+  function interceptor(...args) {
+    validateArgs(args[0], requiredArgs, optionalArgs)
+    return original.apply(this, args)
   }
   descriptor.value = interceptor
   return descriptor

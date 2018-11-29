@@ -33,6 +33,7 @@
     "import/extensions": [0],
     "no-bitwise": [0],
     "no-cond-assign": [0],
+    "no-await-in-loop": [0],
     "import/no-unresolved": [0],
     "require-yield": [1],
     "class-methods-use-this": "off",
