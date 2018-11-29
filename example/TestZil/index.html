@@ -79,14 +79,15 @@
       const accountA = laksa.wallet.importAccountFromPrivateKey(
         'CECC4BDF05C75513A5A629B1533DD564BCB5B0211678BC5871DD349BE713912E'
       )
+      
       // laksa.wallet.setSigner(accountA)
       // laksa.zil.completeTransaction(transaction, accountA).then(console.log)
-      laksa.zil
-        .confirmTransaction({
-          txHash:
-            '676FD0018520D5963D3CD2C772D08E2560400870102E51545CA5A61091723C5E'
-        })
-        .then(console.log)
+      // laksa.zil
+      //   .confirmTransaction({
+      //     txHash:
+      //       '676FD0018520D5963D3CD2C772D08E2560400870102E51545CA5A61091723C5E'
+      //   })
+      //   .then(console.log)
       // .then(data => console.log(laksa.contracts.getAddressForContract(data)))
       // accountA
       //   .signTransaction(transaction)

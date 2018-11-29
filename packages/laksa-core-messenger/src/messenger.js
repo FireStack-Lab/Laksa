@@ -29,8 +29,7 @@ export class Messenger {
     this.providerCheck()
     try {
       const payload = this.JsonRpc.toPayload(method, params)
-      this.setReqMiddleware(getResultForData)
-      // this.provider.middleware.response.use(getResultForData)
+      this.setResMiddleware(getResultForData)
       const result = await this.provider.send(payload)
       return result // getResultForData(result)
     } catch (e) {
@@ -84,10 +83,10 @@ export class Messenger {
   }
 
   setReqMiddleware(middleware, method = '*') {
-    this.provider.middleware.request.use(middleware, method)
+    return this.provider.middleware.request.use(middleware, method)
   }
 
   setResMiddleware(middleware, method = '*') {
-    this.provider.middleware.response.use(middleware, method)
+    return this.provider.middleware.response.use(middleware, method)
   }
 }

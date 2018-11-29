@@ -100,8 +100,8 @@ export class BlockChain extends Core {
     try {
       const response = await this.messenger.send(RPCMethod.GetTransaction, txHash)
 
-      if (response.Error) {
-        return Promise.reject(response.Error)
+      if (response.error) {
+        return Promise.reject(response.error)
       } else {
         return response.receipt.success
           ? Transaction.confirm(toTxParams(response), this.messenger)
