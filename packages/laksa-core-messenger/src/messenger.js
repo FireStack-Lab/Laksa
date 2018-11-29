@@ -18,7 +18,6 @@ export class Messenger {
     this.provider = provider
     this.scillaProvider = provider
     this.JsonRpc = new JsonRpc()
-    this.setReqMiddleware(getResultForData)
   }
 
   /**
@@ -30,6 +29,7 @@ export class Messenger {
     this.providerCheck()
     try {
       const payload = this.JsonRpc.toPayload(method, params)
+      this.setReqMiddleware(getResultForData)
       // this.provider.middleware.response.use(getResultForData)
       const result = await this.provider.send(payload)
       return result // getResultForData(result)
