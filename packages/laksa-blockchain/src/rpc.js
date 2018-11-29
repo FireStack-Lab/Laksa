@@ -38,6 +38,7 @@ export const RPCMethod = Object.freeze({
   // GetGasEstimate : 'GetGasEstimate',
 
   // Contract-related methods
+  GetSmartContracts: 'GetSmartContracts',
   GetSmartContractCode: 'GetSmartContractCode',
   GetSmartContractInit: 'GetSmartContractInit',
   GetSmartContractState: 'GetSmartContractState',
