@@ -1,6 +1,6 @@
 {
   "name": "laksa-blockchain",
-  "version": "0.0.82",
+  "version": "0.0.83",
   "description": "library access to zilliqa blockchain",
   "main": "index.js",
   "scripts": {
@@ -9,8 +9,8 @@
   "author": "neeboo",
   "license": "ISC",
   "dependencies": {
-    "laksa-core-transaction": "^0.0.82",
-    "laksa-shared": "^0.0.82",
-    "laksa-utils": "^0.0.82"
+    "laksa-core-transaction": "^0.0.83",
+    "laksa-shared": "^0.0.83",
+    "laksa-utils": "^0.0.83"
   }
 }
