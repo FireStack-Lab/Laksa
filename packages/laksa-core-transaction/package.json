@@ -1,6 +1,6 @@
 {
   "name": "laksa-core-transaction",
-  "version": "0.0.81",
+  "version": "0.0.82",
   "description": "",
   "main": "index.js",
   "scripts": {
@@ -9,7 +9,7 @@
   "author": "neeboo",
   "license": "ISC",
   "dependencies": {
-    "laksa-shared": "^0.0.81",
-    "laksa-utils": "^0.0.81"
+    "laksa-shared": "^0.0.82",
+    "laksa-utils": "^0.0.82"
   }
 }

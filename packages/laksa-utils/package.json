@@ -1,6 +1,6 @@
 {
   "name": "laksa-utils",
-  "version": "0.0.81",
+  "version": "0.0.82",
   "description": "laksa-utils for webz.js",
   "main": "index.js",
   "browser": "lib/index.js",
