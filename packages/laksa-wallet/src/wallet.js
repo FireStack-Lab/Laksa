@@ -8,7 +8,7 @@ import { encryptedBy } from './symbols'
 
 // let this.#_accounts = Map({ accounts: List([]) })
 
-class Wallet {
+export class Wallet {
   defaultAccount
 
   #_accounts = Map({ accounts: List([]) })
@@ -448,5 +448,3 @@ class Wallet {
     }
   }
 }
-
-export default Wallet
