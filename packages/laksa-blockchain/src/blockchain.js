@@ -70,7 +70,7 @@ export class BlockChain extends Core {
 
   @assert({
     toAddr: ['isAddress', 'required'],
-    pubKey: ['isPubkey', 'required'],
+    pubKey: ['isPubkey', 'optional'],
     amount: ['isBN', 'required'],
     gasPrice: ['isBN', 'required'],
     gasLimit: ['isLong', 'required'],
@@ -80,7 +80,6 @@ export class BlockChain extends Core {
     try {
       const accountSigning = account || this.signer.signer
       const passwordSigning = password
-
       const signedTxn = await accountSigning.signTransaction(tx, passwordSigning)
 
       const response = await this.messenger.send(RPCMethod.CreateTransaction, {

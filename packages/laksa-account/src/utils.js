@@ -1,5 +1,5 @@
 import {
-  isPrivateKey, isObject, isString, validateArgs
+  isPrivateKey, isObject, isString, validateArgs, BN
 } from 'laksa-utils'
 import {
   generatePrivateKey,
@@ -8,8 +8,7 @@ import {
   encodeTransactionProto,
   sign,
   schnorr,
-  Signature,
-  BN
+  Signature
 } from 'laksa-core-crypto'
 
 import { encrypt, decrypt } from 'laksa-extend-keystore'

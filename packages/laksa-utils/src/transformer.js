@@ -1,4 +1,4 @@
-import numToBN from 'number-to-bn'
+import BN from 'bn.js'
 import utf8 from 'utf8'
 
 import {
@@ -39,7 +39,7 @@ const numberToHex = value => {
 
 const toBN = data => {
   try {
-    return numToBN(data)
+    return new BN(data)
   } catch (e) {
     throw new Error(`${e} of "${data}"`)
   }

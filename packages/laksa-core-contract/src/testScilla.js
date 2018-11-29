@@ -1,6 +1,7 @@
+import { BN } from 'laksa-utils'
 import { Contract } from './contract'
 import { ContractStatus, setParamValues } from './util'
-import { toBN, isInt } from './validate'
+import { isInt } from './validate'
 import { ABI } from './abi'
 
 export class TestScilla extends Contract {
@@ -150,7 +151,7 @@ export class TestScilla extends Contract {
   setCreationBlock(blockNumber) {
     const result = setParamValues(
       [{ vname: '_creation_block', type: 'BNum' }],
-      [{ vname: '_creation_block', type: 'BNum', value: toBN(blockNumber).toString() }]
+      [{ vname: '_creation_block', type: 'BNum', value: new BN(blockNumber).toString() }]
     )
 
     const [...arr] = this.init
@@ -167,7 +168,7 @@ export class TestScilla extends Contract {
   setBlockchain(blockNumber) {
     const result = setParamValues(
       [{ vname: 'BLOCKNUMBER', type: 'BNum' }],
-      [{ vname: 'BLOCKNUMBER', type: 'BNum', value: toBN(blockNumber).toString() }]
+      [{ vname: 'BLOCKNUMBER', type: 'BNum', value: new BN(blockNumber).toString() }]
     )
     const [...arr] = this.blockchain
     arr.push(result[0])

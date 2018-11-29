@@ -52,6 +52,7 @@
     <script src="../../dist/Laksa.browser.js"></script>
     <script>
       const laksa = new Laksa()
+
       const nodeProvider = new laksa.Modules.HttpProvider(
         'https://api-scilla.zilliqa.com'
       )
@@ -65,23 +66,23 @@
         console.log({ err, data })
       }
 
-      const transaction = new laksa.Modules.Transaction(
-        {
-          version: 0,
-          toAddr: '9bfec715a6bd658fcb62b0f8cc9bfa2ade71434a',
-          amount: laksa.util.toBN(100),
-          gasPrice: laksa.util.toBN(1),
-          gasLimit: laksa.util.Long.fromNumber(10)
-        },
-        laksa.messenger
-      )
+      const transaction = laksa.Transactions.new({
+        version: 1,
+        toAddr: '2e3c9b415b19ae4035503a06192a0fad76e04243',
+        amount: new laksa.util.BN(100),
+        gasPrice: new laksa.util.BN(100),
+        gasLimit: laksa.util.Long.fromNumber(10)
+      })
 
       const accountA = laksa.wallet.importAccountFromPrivateKey(
-        'CECC4BDF05C75513A5A629B1533DD564BCB5B0211678BC5871DD349BE713912E'
+        'e19d05c5452598e24caad4a0d85a49146f7be089515c905ae6a19e8a578a6930'
       )
-      
-      // laksa.wallet.setSigner(accountA)
-      // laksa.zil.completeTransaction(transaction, accountA).then(console.log)
+      // accountA.getBalance().then(console.log)
+      // laksa.zil.getBalance({address:'9bfec715a6bd658fcb62b0f8cc9bfa2ade71434a'}).then(console.log)
+
+      laksa.wallet.setSigner(accountA)
+
+      // laksa.zil.completeTransaction(transaction).then(console.log)
       // laksa.zil
       //   .confirmTransaction({
       //     txHash:
@@ -91,8 +92,10 @@
       // .then(data => console.log(laksa.contracts.getAddressForContract(data)))
       // accountA
       //   .signTransaction(transaction)
-      //   .then(d=>d.sendTransaction())
-      //   .then(({response,transaction})=>transaction.confirm(response.TranID))
+      //   .then(d => d.sendTransaction())
+      //   .then(({ response, transaction }) =>
+      //     transaction.confirm(response.TranID, 100)
+      //   )
       // laksa.zil.createTransaction
 
       // accountA.signTransaction(transaction).then(d=>d.sendTransaction()).then(console.log)

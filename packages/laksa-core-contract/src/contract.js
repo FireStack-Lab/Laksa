@@ -1,6 +1,6 @@
 import { Transaction } from 'laksa-core-transaction'
-import { Long } from 'laksa-utils'
-import { toBN } from './validate'
+import { Long, BN } from 'laksa-utils'
+
 import { ContractStatus, setParamValues } from './util'
 
 export class Contract {
@@ -16,7 +16,7 @@ export class Contract {
   get payload() {
     return {
       version: 0,
-      amount: toBN(0),
+      amount: new BN(0),
       toAddr: String(0).repeat(40),
       code: this.code,
       data: JSON.stringify(this.init).replace(/\\"/g, '"')
@@ -54,7 +54,7 @@ export class Contract {
   }
 
   async deploy(
-    { gasLimit = Long.fromNumber(2500), gasPrice = toBN(10) },
+    { gasLimit = Long.fromNumber(2500), gasPrice = new BN(100) },
     { account = this.signer.signer, password }
   ) {
     if (!this.code || !this.init) {

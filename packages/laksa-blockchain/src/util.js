@@ -15,7 +15,7 @@ import {
   isLong,
   strip0x,
   validateArgs,
-  toBN,
+  BN,
   Long
 } from 'laksa-utils'
 
@@ -37,7 +37,7 @@ export const validatorArray = {
 }
 
 export const transformerArray = {
-  toBN,
+  toBN: number => new BN(number),
   toNumber: string => Number(string),
   toString: string => String(string)
 }
@@ -62,9 +62,9 @@ export function toTxParams(response) {
     pubKey: strip0x(senderPubKey),
     version: parseInt(version, 10),
     toAddr,
-    gasPrice: toBN(gasPrice),
+    gasPrice: new BN(gasPrice),
     gasLimit: Long.fromString(gasLimit, 10),
-    amount: toBN(amount),
+    amount: new BN(amount),
     receipt: {
       ...receipt,
       cumulative_gas: parseInt(receipt.cumulative_gas, 10)

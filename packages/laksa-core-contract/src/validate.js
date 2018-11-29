@@ -1,5 +1,5 @@
 import {
-  isByStrX, isUint, isInt, isString, isBN, toBN, isHash
+  isByStrX, isUint, isInt, isString, isBN, BN, isHash
 } from 'laksa-utils'
 
 export const Matchers = {
@@ -28,7 +28,7 @@ export const validators = [
   {
     type: 'BNum',
     match: type => Matchers.BNum.test(type),
-    validatorFn: value => isBN.test(toBN(value))
+    validatorFn: value => isBN.test(new BN(value))
   },
   {
     type: 'String',
@@ -41,4 +41,4 @@ export const validate = (type, value) => {
   return validators.some(val => val.match(type) && val.validatorFn(value))
 }
 
-export { isInt, toBN, isHash }
+export { isInt, isHash }
