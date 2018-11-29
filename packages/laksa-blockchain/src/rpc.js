@@ -11,7 +11,7 @@ export const RPCMethod = Object.freeze({
   // Blockchain-related methods
   GetBlockchainInfo: 'GetBlockchainInfo',
   GetShardingStructure: 'GetShardingStructure',
-  GetDsBlock: 'GetDsBlock',
+  GetDSBlock: 'GetDsBlock',
   GetLatestDSBlock: 'GetLatestDsBlock',
   GetNumDSBlocks: 'GetNumDSBlocks',
   GetDSBlockRate: 'GetDSBlockRate',

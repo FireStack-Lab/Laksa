@@ -52,7 +52,7 @@ export default [
    */
   {
     name: 'getDsBlock',
-    call: RPCMethod.GetDsBlock,
+    call: RPCMethod.GetDSBlock,
     params: {
       blockNumber: ['isString', 'required']
     },
