@@ -75,7 +75,8 @@
     "packages:bundleServer": "yarn packages:cleanServer && rollup --c scripts/rollup/bundleServer.js",
     "packages:bundle": "yarn packages:bundleBrowser && yarn packages:bundleServer",
     "commit": "yarn packages:bundle && git add .&&git commit",
-    "dist": "yarn packages:bundle && rm -rf dist && cross-env NODE_ENV=production webpack --config webpack.config.js"
+    "dist": "yarn packages:bundle && rm -rf dist && cross-env NODE_ENV=production webpack --config webpack.config.js",
+    "publishNext": "yarn dist && yarn commit && git push && lerna publish --npm-tag=next"
   },
   "keywords": [
     "laksa",
