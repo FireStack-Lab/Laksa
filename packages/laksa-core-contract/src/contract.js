@@ -11,8 +11,13 @@ export class Contract {
     this.messenger = factory.messenger
     this.signer = factory.signer
     this.status = status
+    this.transaction = {}
   }
 
+  /**
+   * @function {payload}
+   * @return {object} {default deployment payload}
+   */
   get payload() {
     return {
       version: 0,
@@ -23,6 +28,11 @@ export class Contract {
     }
   }
 
+  /**
+   * @function {setStatus}
+   * @param  {string} status {contract status during all life-time}
+   * @return {type} {set this.status}
+   */
   setStatus(status) {
     this.status = status
   }
@@ -39,20 +49,12 @@ export class Contract {
     return this
   }
 
-  async prepareTx(tx, { account, password }) {
-    try {
-      await this.signTxn(tx, { account, password })
-      const { transaction, response } = await tx.sendTransaction()
-      this.ContractAddress = response.ContractAddress
-      this.transaction = transaction.map(obj => {
-        return { ...obj, TranID: response.TranID }
-      })
-      return tx.confirm(response.TranID)
-    } catch (error) {
-      throw error
-    }
-  }
-
+  /**
+   * @function {deploy}
+   * @param  {Object<{gasLimit:Long,gasPrice:BN}>} transactionParams { gasLimit and gasPrice}
+   * @param  {Object<{account:Account,password?:String}>} accountParams {account and password}
+   * @return {Contract} {Contract with finalty}
+   */
   async deploy(
     { gasLimit = Long.fromNumber(2500), gasPrice = new BN(100) },
     { account = this.signer.signer, password }
@@ -62,35 +64,80 @@ export class Contract {
     }
     // console.log(this.signer)
     try {
-      const tx = await this.prepareTx(
-        new Transaction(
-          {
-            ...this.payload,
-            gasPrice,
-            gasLimit
-          },
-          this.messenger
-        ),
-        { account, password }
-      )
-
-      if (!tx.receipt || !tx.receipt.success) {
-        this.setStatus(ContractStatus.REJECTED)
-        return this
-      }
-
-      this.setStatus(ContractStatus.DEPLOYED)
+      this.createContractTransaction({ gasLimit, gasPrice })
+      await this.sendContract({ account, password })
+      await this.confirmTx()
       return this
     } catch (err) {
       throw err
     }
   }
 
-  async signTxn(txn, { account, password }) {
+  /**
+   * @function {createContractTransaction}
+   * @param  {Object<{gasLimit:Long,gasPrice:BN}>} transactionParams { gasLimit and gasPrice}
+   * @return {Contract} {Contract with Transaction}
+   */
+  createContractTransaction({ gasLimit = Long.fromNumber(2500), gasPrice = new BN(100) }) {
+    this.transaction = new Transaction(
+      {
+        ...this.payload,
+        gasPrice,
+        gasLimit
+      },
+      this.messenger
+    )
+    return this
+  }
+
+  /**
+   * @function {sendContract}
+   * @param  {Object<{account:Account,password?:String}>} accountParams {account and password}
+   * @return {Contract} {Contract Sent}
+   */
+  async sendContract({ account = this.signer.signer, password }) {
     try {
-      const result = await account.signTransaction(txn, password)
+      await this.signTxn({ account, password })
+      const { transaction, response } = await this.transaction.sendTransaction()
+      this.ContractAddress = response.ContractAddress
+      this.transaction = transaction.map(obj => {
+        return { ...obj, TranID: response.TranID }
+      })
+      this.setStatus(ContractStatus.SENT)
+      return this
+    } catch (error) {
+      throw error
+    }
+  }
+
+  /**
+   * @function {signTxn}
+   * @param  {Object<{account:Account,password?:String}>} accountParams {account and password}
+   * @return {Contract} {Contract Signed}
+   */
+  async signTxn({ account = this.signer.signer, password }) {
+    try {
+      this.transaction = await account.signTransaction(this.transaction, password)
       this.setStatus(ContractStatus.SIGNED)
-      return result
+      return this
+    } catch (error) {
+      throw error
+    }
+  }
+
+  /**
+   * @function {confirmTx}
+   * @return {Contract} {Contract confirm with finalty}
+   */
+  async confirmTx() {
+    try {
+      await this.transaction.confirm(this.transaction.TranID)
+      if (!this.transaction.receipt || !this.transaction.receipt.success) {
+        this.setStatus(ContractStatus.REJECTED)
+        return this
+      }
+      this.setStatus(ContractStatus.DEPLOYED)
+      return this
     } catch (error) {
       throw error
     }
