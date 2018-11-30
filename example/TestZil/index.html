@@ -62,172 +62,149 @@
       laksa.setNodeProvider(nodeProvider)
       laksa.setScillaProvider(scillaProvider)
 
-      function callback(err, data) {
-        console.log({ err, data })
-      }
 
-      const transaction = laksa.Transactions.new({
+
+      /*
+        Import private key
+      */
+
+      const accountA = laksa.wallet.importAccountFromPrivateKey(
+        '3375F915F3F9AE35E6B301B7670F53AD1A5BE15D8221EC7FD5E503F21D3450C8'
+      )
+
+       /*
+        Deploy a contract 
+      */
+      const code = `
+      (* HelloWorld contract *)
+      import ListUtils
+      (***************************************************)
+      (*               Associated library                *)
+      (***************************************************)
+      library HelloWorld
+      
+      let one_msg =
+        fun (msg : Message) =>
+        let nil_msg = Nil {Message} in
+        Cons {Message} msg nil_msg
+      
+      let not_owner_code = Int32 1
+      let set_hello_code = Int32 2
+      
+      (***************************************************)
+      (*             The contract definition             *)
+      (***************************************************)
+      
+      contract HelloWorld
+      (owner: ByStr20)
+      
+      field welcome_msg : String = ""
+      
+      transition setHello (msg : String)
+        is_owner = builtin eq owner _sender;
+        match is_owner with
+        | False =>
+          msg = {_tag : "Main"; _recipient : _sender; _amount : Uint128 0; code : not_owner_code};
+          msgs = one_msg msg;
+          send msgs
+        | True =>
+          welcome_msg := msg;
+          msg = {_tag : "Main"; _recipient : _sender; _amount : Uint128 0; code : set_hello_code};
+          msgs = one_msg msg;
+          send msgs
+        end
+      end
+      
+      transition getHello ()
+          r <- welcome_msg;
+          msg = {_tag : "Main"; _recipient : _sender; _amount : Uint128 0; msg : r};
+          msgs = one_msg msg;
+          send msgs
+      end `
+
+      const init = [
+        {
+          value: '0x8254b2c9acdf181d5d6796d63320fbb20d4edd12',
+          vname: 'owner',
+          type: 'ByStr20'
+        }
+      ]
+      
+      // we create a acontract with code and init params.
+      const newContract = laksa.contracts.new(code, init)
+
+      // construct a contract to Transaction, then input gasLimit and gasPrice
+      const contractTransaction = laksa.Transactions.new({
+        // we get the payload for deploying, which is static after contract is created
+        //  {
+        //   version: 0,
+        //   amount: new BN(0),
+        //   toAddr: String(0).repeat(40),
+        //   code: this.code,
+        //   data: JSON.stringify(this.init).replace(/\\"/g, '"')
+        //  }
+        ...newContract.payload,
+        gasLimit: laksa.util.Long.fromNumber(2500),
+        gasPrice: new laksa.util.BN(100)
+      })
+
+      accountA
+        // sign contract with account
+        .signTransaction(contractTransaction)
+        // Transaction is signed then send to blockchain
+        .then(d => d.sendTransaction())
+        // however we don't know whether transaction is accepted by lookup node, so we do the confirm process.
+        // after `Transaction.sendTransaction()` is called, returns an object
+        // { response, transaction }
+        // response is result for RPC called
+        // transaction is the same Transaction class that previously sent
+        // which will provide a `Transaction.confirm` method we can do it further
+        .then(res => res.transaction.confirm(res.response.TranID))
+        // log the result
+        .then(console.log)
+
+
+
+      
+
+      /*
+        Address to Address transaction 
+      */
+      const normalTransaction = laksa.Transactions.new({
         version: 1,
         toAddr: '2e3c9b415b19ae4035503a06192a0fad76e04243',
         amount: new laksa.util.BN(100),
         gasPrice: new laksa.util.BN(100),
         gasLimit: laksa.util.Long.fromNumber(10)
       })
+      
+      accountA
+        .signTransaction(normalTransaction)
+        .then(d => d.sendTransaction())
+        .then(res => res.transaction.confirm(res.response.TranID))
+        .then(console.log)
+      
 
-      const accountA = laksa.wallet.importAccountFromPrivateKey(
-        'e19d05c5452598e24caad4a0d85a49146f7be089515c905ae6a19e8a578a6930'
-      )
-      // console.log(accountA)
-      // accountA.getBalance().then(console.log)
-      // laksa.zil.getBalance({address:'9bfec715a6bd658fcb62b0f8cc9bfa2ade71434a'}).then(console.log)
-      // laksa.zil.completeTransaction(transaction,accountA).then(console.log)
-      // laksa.zil
-      //   .confirmTransaction({
-      //     txHash:
-      //       '676FD0018520D5963D3CD2C772D08E2560400870102E51545CA5A61091723C5E'
-      //   })
-      //   .then(console.log)
-      // .then(data => console.log(laksa.contracts.getAddressForContract(data)))
-      // accountA
-      //   .signTransaction(transaction)
-      //   .then(d => d.sendTransaction())
-      //   .then(({ response, transaction }) =>
-      //     transaction.confirm(response.TranID, 100)
-      //   )
-      // laksa.zil.createTransaction
 
-      // accountA.signTransaction(transaction).then(d=>d.sendTransaction()).then(console.log)
-      const code = `
-(* HelloWorld contract *)
-import ListUtils
-(***************************************************)
-(*               Associated library                *)
-(***************************************************)
-library HelloWorld
+    /*
+        For normal transaction, the whole process is as follows:
+        1. Transaction Creation: create a transaction with gasLimit and gasPrice setted
+        2. Account Signing:use a account to sign the transaction, will update the nonce before signing
+        3. Transaction Encodation: inner function that will package the transaction for protobuf standard.
+        4. Transaction Sent: use messenger/provider/RPC_Method to send to blockchain
+        5. Transaction Confirmation: we get the TranID, but we still need to confirm that tranaction, manually or use `Transaction.confirm()`
+      */ 
 
-let one_msg =
-  fun (msg : Message) =>
-  let nil_msg = Nil {Message} in
-  Cons {Message} msg nil_msg
 
-let not_owner_code = Int32 1
-let set_hello_code = Int32 2
-
-(***************************************************)
-(*             The contract definition             *)
-(***************************************************)
-
-contract HelloWorld
-(owner: ByStr20)
-
-field welcome_msg : String = ""
-
-transition setHello (msg : String)
-  is_owner = builtin eq owner _sender;
-  match is_owner with
-  | False =>
-    msg = {_tag : "Main"; _recipient : _sender; _amount : Uint128 0; code : not_owner_code};
-    msgs = one_msg msg;
-    send msgs
-  | True =>
-    welcome_msg := msg;
-    msg = {_tag : "Main"; _recipient : _sender; _amount : Uint128 0; code : set_hello_code};
-    msgs = one_msg msg;
-    send msgs
-  end
-end
-
-transition getHello ()
-    r <- welcome_msg;
-    msg = {_tag : "Main"; _recipient : _sender; _amount : Uint128 0; msg : r};
-    msgs = one_msg msg;
-    send msgs
-end `
-
-      const init = [
-        {
-          value: '0x9bfec715a6bd658fcb62b0f8cc9bfa2ade71434a',
-          vname: 'owner',
-          type: 'ByStr20'
-        }
-      ]
-
-      const newContract=laksa.contracts.new(code,init)
-      // newContract.deploy({gasLimit:laksa.util.Long.fromNumber(2500),gasPrice:new laksa.util.BN(100)},{account:accountA}).then(console.log)
-      // const accountA = laksa.wallet.importAccountFromPrivateKey(
-      //   'CECC4BDF05C75513A5A629B1533DD564BCB5B0211678BC5871DD349BE713912E'
-      // )
-      // const accountB = laksa.wallet.importAccountFromPrivateKey(
-      //   'e19d05c5452598e24caad4a0d85a49146f7be089515c905ae6a19e8a578a6930'
-      // )
-      // laksa.wallet.setSigner(accountA)
-      // async function encrypteWallet(password) {
-      //   await laksa.wallet.encryptAllAccounts(password)
-      //   return true
-      // }
-      // async function deployContract() {
-      //   const test = await laksa.contracts.testContract(code, init)
-      //   if (test) {
-      //     const myContract = laksa.contracts.new(code, init)
-      //     // console.log(myContract)
-      //     await myContract.deploy(
-      //       {
-      //         gasLimit: new laksa.util.BN(2500),
-      //         gasPrice: new laksa.util.BN(1)
-      //       },
-      //       { account: accountB, password: '111' }
-      //     )
-      //   }
-      // }
-      // encrypteWallet('111')
-      // deployContract()
-
-      // const transaction2 = new laksa.Modules.Transaction({
-      //   version: 0,
-      //   toAddr: '0000000000000000000000000000000000000000',
-      //   amount: laksa.util.toBN(0),
-      //   gasPrice: laksa.util.toBN(1),
-      //   gasLimit: laksa.util.toBN(2500),
-      //   code: code,
-      //   data: JSON.stringify(init).replace(/\\"/g, '"')
-      // },laksa.messenger)
-
-      // laksa.wallet.setSigner(accountA)
-      // const contract = laksa.contracts
-      //   .new(code, ['0x8254b2c9acdf181d5d6796d63320fbb20d4edd12'])
-      //   .then(d =>
-      //     laksa.contracts.deploy(
-      //       { contract: d, gasLimit: 2500, gasPrice: 1 },
-      //       { signer: accountA }
-      //     )
-      //   )
-
-      //   .then(m =>
-      //    m.track()
-      //   ).then(console.log)
-
-      // console.log(transaction2)
-      // const contract = laksa.contracts
-      //   .new(code, ['0x8254b2c9acdf181d5d6796d63320fbb20d4edd12'])
-      //   .then(d => d.deployTxn({ gasLimit: 2500, gasPrice: 1 }))
-      //   .then(console.log)
-
-      // accountA
-      //   .signTransaction(transaction2)
-      //   .then(d => laksa.zil.createTransaction(d))
-      //   .then(console.log)
-
-      // const transactionBookStore = new laksa.Modules.Transaction({
-      //   version: 0,
-      //   toAddr: '0000000000000000000000000000000000000000',
-      //   amount: laksa.util.toBN(0),
-      //   gasPrice: laksa.util.toBN(1),
-      //   gasLimit: laksa.util.toBN(2500),
-      //   code: code,
-      //   data: JSON.stringify(init).replace(/\\"/g, '"')
-      // })
-
-      // const bookStoreContract = laksa.contracts.new(bookStoreCode, bookStoreInit,{gasLimit:10000})
+    /*
+        For contract deployment, we just add one more step before Transaction Creation,the whole process is as follows:
+        1. Contract Creation: create a contract, with scilla code and init params.
+        2. Transaction Creation: create a transaction with gasLimit and gasPrice setted
+        3. Account Signing:use a account to sign the transaction
+        4. Transaction Encodation: inner function that will package the transaction for protobuf standard.
+        5. Transaction Send: use messenger/provider/RPC_Method to send to blockchain
+        6. Transaction Confirmation: we get the TranID, but we still need to confirm that tranaction, manually or use `Transaction.confirm()`
+      */      
     </script>
   </body>
 </html>
