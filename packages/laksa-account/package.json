@@ -1,6 +1,6 @@
 {
   "name": "laksa-account",
-  "version": "0.0.88",
+  "version": "0.0.89",
   "description": "account for laksa-core",
   "main": "index.js",
   "scripts": {
@@ -9,9 +9,9 @@
   "author": "neeboo",
   "license": "ISC",
   "dependencies": {
-    "laksa-core-crypto": "^0.0.88",
-    "laksa-extend-keystore": "^0.0.88",
-    "laksa-shared": "^0.0.88",
-    "laksa-utils": "^0.0.88"
+    "laksa-core-crypto": "^0.0.89",
+    "laksa-extend-keystore": "^0.0.89",
+    "laksa-shared": "^0.0.89",
+    "laksa-utils": "^0.0.89"
   }
 }
