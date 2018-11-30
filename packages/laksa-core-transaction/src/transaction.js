@@ -250,7 +250,7 @@ class Transaction {
       return false
     }
 
-    this.TranID = res.TranID
+    this.TranID = res.ID
     this.receipt = res.receipt
     this.status = this.receipt && this.receipt.success ? TxStatus.Confirmed : TxStatus.Rejected
     return true
