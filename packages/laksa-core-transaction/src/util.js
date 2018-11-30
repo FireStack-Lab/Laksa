@@ -3,3 +3,11 @@ export async function sleep(ms) {
     setTimeout(() => resolve(), ms)
   })
 }
+
+export const TxStatus = Object.freeze({
+  Pending: 'Pending',
+  Initialised: 'Initialised',
+  Signed: 'Signed',
+  Confirmed: 'Confirmed',
+  Rejected: 'Rejected'
+})

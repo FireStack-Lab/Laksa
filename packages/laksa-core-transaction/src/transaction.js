@@ -1,13 +1,5 @@
 import { encodeTransactionProto, getAddressFromPublicKey } from 'laksa-core-crypto'
-import { sleep } from './util'
-
-const TxStatus = {
-  Pending: Symbol('Pending'),
-  Initialised: Symbol('Initialised'),
-  Signed: Symbol('Signed'),
-  Confirmed: Symbol('Confirmed'),
-  Rejected: Symbol('Rejected')
-}
+import { sleep, TxStatus } from './util'
 
 class Transaction {
   constructor(params, messenger, status = TxStatus.Initialised) {
@@ -257,4 +249,4 @@ class Transaction {
   }
 }
 
-export { TxStatus, Transaction }
+export { Transaction }
