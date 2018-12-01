@@ -1,4 +1,5 @@
 import { BN } from 'laksa-utils'
+import { assertObject } from 'laksa-shared'
 import { Contract } from './contract'
 import { ContractStatus, setParamValues } from './util'
 import { isInt } from './validate'
@@ -44,6 +45,9 @@ export class TestScilla extends Contract {
    * @param  {string} { code {scilla code string}
    * @return {ABI} {ABI object}
    */
+  @assertObject({
+    code: ['isString', 'required']
+  })
   async getABI({ code }) {
     // the endpoint for sendServer has been set to scillaProvider
     try {
@@ -61,6 +65,9 @@ export class TestScilla extends Contract {
    * @param  {string} { code {scilla code string}
    * @return {Contract} {raw contract}
    */
+  @assertObject({
+    code: ['isString', 'required']
+  })
   async decodeABI({ code }) {
     try {
       this.setCode(code)

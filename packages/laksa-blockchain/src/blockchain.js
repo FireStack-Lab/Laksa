@@ -1,11 +1,11 @@
-import { Core } from 'laksa-shared'
+import { Core, assertObject } from 'laksa-shared'
 import { Transaction } from 'laksa-core-transaction'
 import { RPCMethod } from './rpc'
 import { Method } from './method'
 import { Property } from './property'
 import methodObjects from './methodObjects'
 import propertyObjects from './propertyObjects'
-import { toTxParams, assert } from './util'
+import { toTxParams } from './util'
 /**
  * @function mapObjectToMethods
  * @param  {Zil} main  {assign to Zil class}
@@ -68,7 +68,7 @@ export class BlockChain extends Core {
     zilProperty.assignToObject(this)
   }
 
-  @assert({
+  @assertObject({
     toAddr: ['isAddress', 'required'],
     pubKey: ['isPubkey', 'optional'],
     amount: ['isBN', 'required'],
@@ -94,7 +94,7 @@ export class BlockChain extends Core {
     }
   }
 
-  @assert({ txHash: ['isHash', 'required'] })
+  @assertObject({ txHash: ['isHash', 'required'] })
   async confirmTransaction({ txHash }) {
     try {
       const response = await this.messenger.send(RPCMethod.GetTransaction, txHash)

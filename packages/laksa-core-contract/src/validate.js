@@ -13,32 +13,49 @@ export const validators = [
   {
     type: 'ByStrX',
     match: type => Matchers.ByStrX.test(type),
-    validatorFn: value => isByStrX.test(value)
+    validatorFn: value => isByStrX.test(value),
+    transformer: value => String(value)
   },
   {
     type: 'UInt',
     match: type => Matchers.Uint.test(type),
-    validatorFn: value => isUint.test(value)
+    validatorFn: value => isUint.test(value),
+    transformer: value => Number(value, 10)
   },
   {
     type: 'Int',
     match: type => Matchers.Int.test(type),
-    validatorFn: value => isInt.test(value)
+    validatorFn: value => isInt.test(value),
+    transformer: value => Number(value, 10)
   },
   {
     type: 'BNum',
     match: type => Matchers.BNum.test(type),
-    validatorFn: value => isBN.test(new BN(value))
+    validatorFn: value => isBN.test(new BN(value)),
+    transformer: value => Number(value, 10)
   },
   {
     type: 'String',
     match: type => Matchers.String.test(type),
-    validatorFn: value => isString.test(value)
+    validatorFn: value => isString.test(value),
+    transformer: value => String(value)
   }
 ]
 
 export const validate = (type, value) => {
   return validators.some(val => val.match(type) && val.validatorFn(value))
+}
+
+export const transform = (type, value) => {
+  try {
+    if (validate(type, value)) {
+      return validators.some(val => val.transformer(value))
+    } else {
+      throw new Error('Cannot transform')
+    }
+  } catch (error) {
+    throw new Error('Cannot transform')
+  }
 }
 
 export { isInt, isHash }

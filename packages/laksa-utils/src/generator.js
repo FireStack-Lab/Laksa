@@ -18,7 +18,7 @@ function injectValidator(func) {
     return Object.assign(valFunc, {
       validator: valName,
       test: obj => valFunc(obj),
-      required: obj => [valFunc(obj), 'required']
+      required: obj => [valFunc(obj), 'required', valName]
     })
   } else return false
 }

@@ -1,5 +1,6 @@
 import { Transaction } from 'laksa-core-transaction'
 import { Long, BN } from 'laksa-utils'
+import { assertObject } from 'laksa-shared'
 
 import { ContractStatus, setParamValues } from './util'
 
@@ -55,6 +56,10 @@ export class Contract {
    * @param  {Object<{account:Account,password?:String}>} accountParams {account and password}
    * @return {Contract} {Contract with finalty}
    */
+  @assertObject({
+    gasLimit: ['isLong', 'required'],
+    gasPrice: ['isBN', 'required']
+  })
   async deploy(
     { gasLimit = Long.fromNumber(2500), gasPrice = new BN(100) },
     { account = this.signer.signer, password }
@@ -78,6 +83,10 @@ export class Contract {
    * @param  {Object<{gasLimit:Long,gasPrice:BN}>} transactionParams { gasLimit and gasPrice}
    * @return {Contract} {Contract with Transaction}
    */
+  @assertObject({
+    gasLimit: ['isLong', 'required'],
+    gasPrice: ['isBN', 'required']
+  })
   createContractTransaction({ gasLimit = Long.fromNumber(2500), gasPrice = new BN(100) }) {
     this.transaction = new Transaction(
       {

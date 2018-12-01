@@ -1,6 +1,5 @@
-import {
-  validateArgs, transformerArray, isObject, generateValidateObjects
-} from './util'
+import { validateArgs, transformerArray, generateValidateObjects } from 'laksa-shared'
+import { isObject } from './util'
 
 export class Method {
   constructor(options, messenger) {

@@ -74,51 +74,51 @@
         Deploy a contract 
       */
       const code = `
-            (* HelloWorld contract *)
-            import ListUtils
-            (***************************************************)
-            (*               Associated library                *)
-            (***************************************************)
-            library HelloWorld
-            
-            let one_msg =
-              fun (msg : Message) =>
-              let nil_msg = Nil {Message} in
-              Cons {Message} msg nil_msg
-            
-            let not_owner_code = Int32 1
-            let set_hello_code = Int32 2
-            
-            (***************************************************)
-            (*             The contract definition             *)
-            (***************************************************)
-            
-            contract HelloWorld
-            (owner: ByStr20)
-            
-            field welcome_msg : String = ""
-            
-            transition setHello (msg : String)
-              is_owner = builtin eq owner _sender;
-              match is_owner with
-              | False =>
-                msg = {_tag : "Main"; _recipient : _sender; _amount : Uint128 0; code : not_owner_code};
-                msgs = one_msg msg;
-                send msgs
-              | True =>
-                welcome_msg := msg;
-                msg = {_tag : "Main"; _recipient : _sender; _amount : Uint128 0; code : set_hello_code};
-                msgs = one_msg msg;
-                send msgs
-              end
-            end
-            
-            transition getHello ()
-                r <- welcome_msg;
-                msg = {_tag : "Main"; _recipient : _sender; _amount : Uint128 0; msg : r};
-                msgs = one_msg msg;
-                send msgs
-            end `
+                                          (* HelloWorld contract *)
+                                          import ListUtils
+                                          (***************************************************)
+                                          (*               Associated library                *)
+                                          (***************************************************)
+                                          library HelloWorld
+                                          
+                                          let one_msg =
+                                            fun (msg : Message) =>
+                                            let nil_msg = Nil {Message} in
+                                            Cons {Message} msg nil_msg
+                                          
+                                          let not_owner_code = Int32 1
+                                          let set_hello_code = Int32 2
+                                          
+                                          (***************************************************)
+                                          (*             The contract definition             *)
+                                          (***************************************************)
+                                          
+                                          contract HelloWorld
+                                          (owner: ByStr20)
+                                          
+                                          field welcome_msg : String = ""
+                                          
+                                          transition setHello (msg : String)
+                                            is_owner = builtin eq owner _sender;
+                                            match is_owner with
+                                            | False =>
+                                              msg = {_tag : "Main"; _recipient : _sender; _amount : Uint128 0; code : not_owner_code};
+                                              msgs = one_msg msg;
+                                              send msgs
+                                            | True =>
+                                              welcome_msg := msg;
+                                              msg = {_tag : "Main"; _recipient : _sender; _amount : Uint128 0; code : set_hello_code};
+                                              msgs = one_msg msg;
+                                              send msgs
+                                            end
+                                          end
+                                          
+                                          transition getHello ()
+                                              r <- welcome_msg;
+                                              msg = {_tag : "Main"; _recipient : _sender; _amount : Uint128 0; msg : r};
+                                              msgs = one_msg msg;
+                                              send msgs
+                                          end `
 
       const init = [
         {
@@ -130,7 +130,7 @@
 
       // we create a acontract with code and init params.
       // const newContract = laksa.contracts.new(code, init)
-      
+
       // newContract
       //   .createContractTransaction({
       //     gasLimit: laksa.util.Long.fromNumber(2500),
@@ -140,17 +140,19 @@
       //   .then(d => d.confirmTx())
       //   .then(console.log)
 
-      const newContract2= laksa.contracts.new(code,init)
+      // const newContract2 = laksa.contracts.new(code, init)
 
-      newContract2
-        .deploy({
-          gasLimit: laksa.util.Long.fromNumber(2500),
-          gasPrice: new laksa.util.BN(100)
-        },
-        {
-          account:accountA
-        })
-        .then(console.log)
+      // newContract2
+      //   .deploy(
+      //     {
+      //       gasLimit: laksa.util.Long.fromNumber(2500),
+      //       gasPrice: new laksa.util.BN(100)
+      //     },
+      //     {
+      //       account: accountA
+      //     }
+      //   )
+      //   .then(console.log)
 
       // construct a contract to Transaction, then input gasLimit and gasPrice
       // const contractTransaction = laksa.Transactions.new({
@@ -185,12 +187,12 @@
       /*
         Address to Address transaction 
       */
-      // const normalTransaction = laksa.Transactions.new({
+      // const normalTransaction = laksa.transactions.new({
       //   version: 1,
-      //   toAddr: '2e3c9b415b19ae4035503a06192a0fad76e04243',
-      //   amount: new laksa.util.BN(100),
+      //   toAddr: '9bfec715a6bd658fcb62b0f8cc9bfa2ade71434a',
+      //   amount: new laksa.util.BN(1000000),
       //   gasPrice: new laksa.util.BN(100),
-      //   gasLimit: laksa.util.Long.fromNumber(10)
+      //   gasLimit: laksa.util.Long.fromNumber(2500)
       // })
 
       // accountA
