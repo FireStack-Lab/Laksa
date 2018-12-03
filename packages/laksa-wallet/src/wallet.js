@@ -29,6 +29,12 @@ export class Wallet {
     }
   }
 
+  defaultSetSigner() {
+    if (this.getWalletAccounts().length === 1 && this.signer === undefined) {
+      this.setSigner(this.getWalletAccounts()[0])
+    }
+  }
+
   /**
    * @function {updateLength}
    * @return {number} {wallet account counts}
@@ -79,6 +85,7 @@ export class Wallet {
     this.#_accounts = this.#_accounts.set('accounts', List(newArrays))
     // this.#_accounts = this.#_accounts.concat(newArrays)
     this.updateLength()
+    this.defaultSetSigner()
     return newAccountObject
   }
 

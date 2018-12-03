@@ -142,34 +142,26 @@
 
       const newContract2 = laksa.contracts.new(code, init)
 
-      newContract2
-        .deploy(
-          {
-            gasLimit: laksa.util.Long.fromNumber(2500),
-            gasPrice: new laksa.util.BN(100)
-          },
-          {
-            account: accountA
-          }
-        )
-        .then(d => {
-          if (d.isDeployed) {
-            d.call(
-              {
-                transition: 'setHello',
-                params: [
-                  {
-                    vname: 'msg',
-                    type: 'String',
-                    value: 'Yo Man!'
-                  }
-                ]
-              },
-              { account: accountA }
-            )
-          }
-        })
-        .then(console.log)
+      // newContract2
+      //   .deploy({
+      //     gasLimit: laksa.util.Long.fromNumber(2500),
+      //     gasPrice: new laksa.util.BN(100)
+      //   })
+      //   .then(d => {
+      //     if (d.isDeployed) {
+      //       d.call({
+      //         transition: 'setHello',
+      //         params: [
+      //           {
+      //             vname: 'msg',
+      //             type: 'String',
+      //             value: 'Yo Man!'
+      //           }
+      //         ]
+      //       })
+      //     }
+      //   })
+      //   .then(console.log)
 
       // if(newContract2.isDeployed){
       //   newContract2

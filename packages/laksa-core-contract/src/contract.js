@@ -123,14 +123,16 @@ export class Contract {
     gasLimit: ['isLong', 'required'],
     gasPrice: ['isBN', 'required']
   })
-  async deploy(
-    { gasLimit = Long.fromNumber(2500), gasPrice = new BN(100) },
-    { account = this.signer.signer, password }
-  ) {
+  async deploy({
+    gasLimit = Long.fromNumber(2500),
+    gasPrice = new BN(100),
+    account = this.signer.signer,
+    password
+  }) {
     if (!this.code || !this.init) {
       throw new Error('Cannot deploy without code or ABI.')
     }
-    // console.log(this.signer)
+
     try {
       this.transaction = new Transaction(
         {
@@ -162,16 +164,15 @@ export class Contract {
     gasLimit: ['isLong', 'optional'],
     gasPrice: ['isBN', 'optional']
   })
-  async call(
-    {
-      transition,
-      params,
-      amount = new BN(0),
-      gasLimit = Long.fromNumber(1000),
-      gasPrice = new BN(100)
-    },
-    { account = this.signer.signer, password }
-  ) {
+  async call({
+    transition,
+    params,
+    amount = new BN(0),
+    gasLimit = Long.fromNumber(1000),
+    gasPrice = new BN(100),
+    account = this.signer.signer,
+    password
+  }) {
     const msg = {
       _tag: transition,
       // TODO: this should be string, but is not yet supported by lookup.
