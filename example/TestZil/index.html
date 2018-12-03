@@ -142,6 +142,10 @@
 
       const newContract2 = laksa.contracts.new(code, init)
 
+      const newContract3=laksa.contracts.at(newContract2)
+
+      console.log(newContract3)
+
       // newContract2
       //   .deploy({
       //     gasLimit: laksa.util.Long.fromNumber(2500),

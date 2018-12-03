@@ -56,6 +56,9 @@ export default [
     params: {
       blockNumber: ['isString', 'required']
     },
+    transformer: {
+      blockNumber: 'toString'
+    },
     isSendJson: false
   },
   /**
@@ -67,6 +70,9 @@ export default [
     call: RPCMethod.GetTxBlock,
     params: {
       blockNumber: ['isString', 'required']
+    },
+    transformer: {
+      blockNumber: 'toString'
     },
     isSendJson: false
   },
@@ -181,6 +187,9 @@ export default [
     name: 'getBlockTransactionCount',
     call: RPCMethod.GetBlockTransactionCount,
     params: { blockNumber: ['isNumber', 'required'] },
+    transformer: {
+      blockNumber: 'toString'
+    },
     isSendJson: false
   },
   /**
@@ -335,6 +344,36 @@ export default [
   {
     name: 'getTransactionListing',
     call: RPCMethod.GetTransactionListing,
+    params: {},
+    isSendJson: false
+  },
+  /**
+   * getMinimumGasPrice
+   * @params {}
+   */
+  {
+    name: 'getMinimumGasPrice',
+    call: RPCMethod.GetMinimumGasPrice,
+    params: {},
+    isSendJson: false
+  },
+  /**
+   * getPrevDifficulty
+   * @params {}
+   */
+  {
+    name: 'getPrevDifficulty',
+    call: RPCMethod.GetPrevDifficulty,
+    params: {},
+    isSendJson: false
+  },
+  /**
+   * getPrevDSDifficulty
+   * @params {}
+   */
+  {
+    name: 'getPrevDSDifficulty',
+    call: RPCMethod.GetPrevDSDifficulty,
     params: {},
     isSendJson: false
   }

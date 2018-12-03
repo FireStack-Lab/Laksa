@@ -1,4 +1,4 @@
-import { Core } from 'laksa-shared'
+import { Core, assertObject } from 'laksa-shared'
 import { hashjs, intToHexArray } from 'laksa-core-crypto'
 import { Contract } from './contract'
 import { TestScilla } from './testScilla'
@@ -30,6 +30,20 @@ class Contracts extends Core {
       { messenger: this.messenger, signer: this.signer }
     )
     return newContract
+  }
+
+  @assertObject({
+    ContractAddress: ['isAddress', 'optional'],
+    code: ['isString', 'optional'],
+    init: ['isArray', 'optional'],
+    status: ['isString', 'optional']
+  })
+  at(contract) {
+    return new Contract(
+      { ...contract },
+      { messenger: this.messenger, signer: this.signer },
+      contract.status
+    )
   }
 
   async testContract(code, init) {
