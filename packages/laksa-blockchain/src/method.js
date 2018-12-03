@@ -1,4 +1,5 @@
-import { validateArgs, transformerArray, generateValidateObjects } from 'laksa-shared'
+import { transformerArray, generateValidateObjects } from 'laksa-shared'
+import { validateArgs } from 'laksa-utils'
 import { isObject } from './util'
 
 export class Method {

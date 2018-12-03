@@ -16,16 +16,79 @@ export class Contract {
   }
 
   /**
+   * isInitialised
+   *
+   * Returns true if the contract has not been deployed
+   *
+   * @returns {boolean}
+   */
+  isInitialised() {
+    return this.status === ContractStatus.INITIALISED
+  }
+
+  /**
+   * isSigned
+   *
+   * Returns true if the contract is signed
+   *
+   * @returns {boolean}
+   */
+  isSigned() {
+    return this.status === ContractStatus.SIGNED
+  }
+
+  /**
+   * isSent
+   *
+   * Returns true if the contract is sent
+   *
+   * @returns {boolean}
+   */
+  isSent() {
+    return this.status === ContractStatus.SENT
+  }
+
+  /**
+   * isDeployed
+   *
+   * Returns true if the contract is deployed
+   *
+   * @returns {boolean}
+   */
+  isDeployed() {
+    return this.status === ContractStatus.DEPLOYED
+  }
+
+  /**
+   * isRejected
+   *
+   * Returns true if an attempt to deploy the contract was made, but the
+   * underlying transaction was unsuccessful.
+   *
+   * @returns {boolean}
+   */
+  isRejected() {
+    return this.status === ContractStatus.REJECTED
+  }
+
+  /**
    * @function {payload}
    * @return {object} {default deployment payload}
    */
-  get payload() {
+  get deployDayload() {
     return {
       version: 0,
       amount: new BN(0),
       toAddr: String(0).repeat(40),
       code: this.code,
       data: JSON.stringify(this.init).replace(/\\"/g, '"')
+    }
+  }
+
+  get callPayload() {
+    return {
+      version: 0,
+      toAddr: this.ContractAddress
     }
   }
 
@@ -69,7 +132,14 @@ export class Contract {
     }
     // console.log(this.signer)
     try {
-      this.createContractTransaction({ gasLimit, gasPrice })
+      this.transaction = new Transaction(
+        {
+          ...this.deployDayload,
+          gasPrice,
+          gasLimit
+        },
+        this.messenger
+      )
       await this.sendContract({ account, password })
       await this.confirmTx()
       return this
@@ -79,24 +149,55 @@ export class Contract {
   }
 
   /**
-   * @function {createContractTransaction}
-   * @param  {Object<{gasLimit:Long,gasPrice:BN}>} transactionParams { gasLimit and gasPrice}
-   * @return {Contract} {Contract with Transaction}
+   * call
+   *
+   * @param {string} transition
+   * @param {any} params
+   * @returns {Promise<Transaction>}
    */
   @assertObject({
-    gasLimit: ['isLong', 'required'],
-    gasPrice: ['isBN', 'required']
+    transition: ['isString', 'required'],
+    params: ['isArray', 'required'],
+    amount: ['isBN', 'optional'],
+    gasLimit: ['isLong', 'optional'],
+    gasPrice: ['isBN', 'optional']
   })
-  createContractTransaction({ gasLimit = Long.fromNumber(2500), gasPrice = new BN(100) }) {
-    this.transaction = new Transaction(
-      {
-        ...this.payload,
-        gasPrice,
-        gasLimit
-      },
-      this.messenger
-    )
-    return this
+  async call(
+    {
+      transition,
+      params,
+      amount = new BN(0),
+      gasLimit = Long.fromNumber(1000),
+      gasPrice = new BN(100)
+    },
+    { account = this.signer.signer, password }
+  ) {
+    const msg = {
+      _tag: transition,
+      // TODO: this should be string, but is not yet supported by lookup.
+      params
+    }
+
+    if (!this.ContractAddress) {
+      return Promise.reject(Error('Contract has not been deployed!'))
+    }
+
+    try {
+      this.transaction = new Transaction(
+        {
+          ...this.callPayload,
+          amount,
+          gasPrice,
+          gasLimit,
+          data: JSON.stringify(msg)
+        },
+        this.messenger
+      )
+      await this.sendContract({ account, password })
+      await this.confirmTx()
+    } catch (err) {
+      throw err
+    }
   }
 
   /**
@@ -150,5 +251,19 @@ export class Contract {
     } catch (error) {
       throw error
     }
+  }
+
+  /**
+   * @function {getState}
+   * @return {type} {description}
+   */
+  async getState() {
+    if (this.status !== ContractStatus.DEPLOYED) {
+      return Promise.resolve([])
+    }
+
+    const response = await this.messenger.send('GetSmartContractState', this.ContractAddress)
+
+    return response
   }
 }
