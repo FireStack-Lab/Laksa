@@ -134,14 +134,7 @@ export class Contract {
     }
 
     try {
-      this.transaction = new Transaction(
-        {
-          ...this.deployDayload,
-          gasPrice,
-          gasLimit
-        },
-        this.messenger
-      )
+      this.setDeployPayload({ gasLimit, gasPrice })
       await this.sendContract({ account, password })
       await this.confirmTx()
       return this
@@ -173,27 +166,18 @@ export class Contract {
     account = this.signer.signer,
     password
   }) {
-    const msg = {
-      _tag: transition,
-      // TODO: this should be string, but is not yet supported by lookup.
-      params
-    }
-
     if (!this.ContractAddress) {
       return Promise.reject(Error('Contract has not been deployed!'))
     }
 
     try {
-      this.transaction = new Transaction(
-        {
-          ...this.callPayload,
-          amount,
-          gasPrice,
-          gasLimit,
-          data: JSON.stringify(msg)
-        },
-        this.messenger
-      )
+      this.setDeployPayload({
+        transition,
+        params,
+        amount,
+        gasLimit,
+        gasPrice
+      })
       await this.sendContract({ account, password })
       await this.confirmTx()
       return this
@@ -267,5 +251,49 @@ export class Contract {
     const response = await this.messenger.send('GetSmartContractState', this.ContractAddress)
 
     return response
+  }
+
+  @assertObject({
+    gasLimit: ['isLong', 'required'],
+    gasPrice: ['isBN', 'required']
+  })
+  setDeployPayload({ gasPrice, gasLimit }) {
+    this.transaction = new Transaction(
+      {
+        ...this.deployDayload,
+        gasPrice,
+        gasLimit
+      },
+      this.messenger
+    )
+    return this
+  }
+
+  @assertObject({
+    transition: ['isString', 'required'],
+    params: ['isArray', 'required'],
+    amount: ['isBN', 'required'],
+    gasLimit: ['isLong', 'required'],
+    gasPrice: ['isBN', 'required']
+  })
+  setCallPayload({
+    transition, params, amount, gasLimit, gasPrice
+  }) {
+    const msg = {
+      _tag: transition,
+      // TODO: this should be string, but is not yet supported by lookup.
+      params
+    }
+    this.transaction = new Transaction(
+      {
+        ...this.callPayload,
+        amount,
+        gasPrice,
+        gasLimit,
+        data: JSON.stringify(msg)
+      },
+      this.messenger
+    )
+    return this
   }
 }
