@@ -154,18 +154,22 @@
         )
         .then(d => {
           if (d.isDeployed) {
-            d.call({
-              transition: 'SetHello',
-              params: [
-                {
-                  vname: 'msg',
-                  type: 'String',
-                  value: 'Yo Man!'
-                }
-              ]
-            },{account:accountA})
+            d.call(
+              {
+                transition: 'setHello',
+                params: [
+                  {
+                    vname: 'msg',
+                    type: 'String',
+                    value: 'Yo Man!'
+                  }
+                ]
+              },
+              { account: accountA }
+            )
           }
         })
+        .then(console.log)
 
       // if(newContract2.isDeployed){
       //   newContract2

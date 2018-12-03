@@ -195,6 +195,7 @@ export class Contract {
       )
       await this.sendContract({ account, password })
       await this.confirmTx()
+      return this
     } catch (err) {
       throw err
     }
