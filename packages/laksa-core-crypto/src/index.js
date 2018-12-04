@@ -1,4 +1,5 @@
 import BN from 'bn.js'
+import elliptic from 'elliptic'
 import { randomBytes } from './random'
 import * as schnorr from './schnorr'
 
@@ -10,7 +11,13 @@ const NUM_BYTES = 32
  * @returns {string} - the hex-encoded private key
  */
 export const generatePrivateKey = () => {
-  return randomBytes(NUM_BYTES)
+  let privateKey = new BN(randomBytes(NUM_BYTES), 'hex')
+
+  while (privateKey.isZero() || privateKey.gte(elliptic.ec('secp256k1').curve.n)) {
+    privateKey = new BN(randomBytes(NUM_BYTES), 'hex')
+  }
+
+  return privateKey.toString('hex')
 }
 
 /**
