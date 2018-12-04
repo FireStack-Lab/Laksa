@@ -171,7 +171,7 @@ export class Contract {
     }
 
     try {
-      this.setDeployPayload({
+      this.setCallPayload({
         transition,
         params,
         amount,

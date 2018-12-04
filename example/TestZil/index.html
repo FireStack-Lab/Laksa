@@ -73,8 +73,7 @@
       /*
         Deploy a contract 
       */
-      const code = `
-            (* HelloWorld contract *)
+      const code = `(* HelloWorld contract *)
             import ListUtils
             (***************************************************)
             (*               Associated library                *)
@@ -129,22 +128,81 @@
       ]
 
       // we create a acontract with code and init params.
-      // const newContract = laksa.contracts.new(code, init)
+      const newContract = laksa.contracts.new(code, init)
 
+      async function testBlockChain(){
+        try{const deployed=await newContract.deploy(
+          {
+            gasLimit:laksa.util.Long.fromNumber(2500),
+            gasPrice:new laksa.util.BN(100),
+            account:accountA,
+          }
+        )
+        console.log(deployed)
+
+        const called=await deployed.call(
+          {
+             transition: 'setHello',
+             params: [
+               {
+                vname: 'msg',
+                type: 'String',
+                value: 'Yo Man!'
+              }
+            ],
+            amount: new laksa.util.BN(0),
+            gasLimit: laksa.util.Long.fromNumber(2500),
+            gasPrice: new laksa.util.BN(100),
+            account:accountA
+          }
+        )
+        console.log(called)}catch(e){
+          console.log(e)
+        }
+      }
+      
+      testBlockChain()
       // newContract
-      //   .createContractTransaction({
+      //   .setDeployPayload({
       //     gasLimit: laksa.util.Long.fromNumber(2500),
       //     gasPrice: new laksa.util.BN(100)
       //   })
       //   .sendContract({ account: accountA })
       //   .then(d => d.confirmTx())
-      //   .then(console.log)
+      //   .then(e =>
+      //     e.setCallPayload({
+      //       transition: 'setHello',
+      //       params: [
+      //         {
+      //           vname: 'msg',
+      //           type: 'String',
+      //           value: 'Yo Man!'
+      //         }
+      //       ],
+      //       amount: new laksa.util.BN(0),
+      //       gasLimit: laksa.util.Long.fromNumber(2500),
+      //       gasPrice: new laksa.util.BN(100)
+      //     })
+      //   )
+      //   .then(f=>f.sendContract({ account:accountA}))
+      //   .then(g=>g.confirmTx())
+      
 
-      const newContract2 = laksa.contracts.new(code, init)
+      // const callObject={
 
-      const newContract3=laksa.contracts.at(newContract2)
+      // } 
+      // .then(e=> e.call({
+      //       transition: 'setHello',
+      //       params: [
+      //         {
+      //           vname: 'msg',
+      //           type: 'String',
+      //           value: 'Yo Man!'
+      //         }
+      //       ]
+      // }))
 
-      console.log(newContract3)
+      // const newContract2 = laksa.contracts.new(code, init)
 
       // newContract2
       //   .deploy({
