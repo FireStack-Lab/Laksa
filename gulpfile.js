@@ -1,4 +1,4 @@
-const gulp = require('gulp')
+const { task } = require('gulp')
 const del = require('del')
 
 const packages = [
@@ -18,16 +18,16 @@ const packages = [
   'laksa'
 ]
 
-gulp.task('cleanBrowser', () => {
-  packages.map(p => {
+task('cleanBrowser', async () => {
+  await packages.map(p => {
     const pathToLib = `packages/${p}/lib`
-    return del([pathToLib])
+    return del.sync([pathToLib])
   })
 })
 
-gulp.task('cleanServer', () => {
-  packages.map(p => {
+task('cleanServer', async () => {
+  await packages.map(p => {
     const pathToLib = `packages/${p}/node`
-    return del([pathToLib])
+    return del.sync([pathToLib])
   })
 })

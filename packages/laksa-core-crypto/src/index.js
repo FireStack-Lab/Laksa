@@ -3,7 +3,7 @@ import elliptic from 'elliptic'
 import { randomBytes } from './random'
 import * as schnorr from './schnorr'
 
-const NUM_BYTES = 32
+const HEX_ENC = 'hex'
 
 /**
  * generatePrivateKey
@@ -11,13 +11,10 @@ const NUM_BYTES = 32
  * @returns {string} - the hex-encoded private key
  */
 export const generatePrivateKey = () => {
-  let privateKey = new BN(randomBytes(NUM_BYTES), 'hex')
-
-  while (privateKey.isZero() || privateKey.gte(elliptic.ec('secp256k1').curve.n)) {
-    privateKey = new BN(randomBytes(NUM_BYTES), 'hex')
-  }
-
-  return privateKey.toString('hex')
+  return elliptic
+    .ec('secp256k1')
+    .genKeyPair()
+    .getPrivate(HEX_ENC)
 }
 
 /**
@@ -41,7 +38,9 @@ export const sign = (msg, privateKey, pubKey) => {
 
   return r + s
 }
-export { schnorr, randomBytes, BN }
+export {
+  schnorr, randomBytes, BN, elliptic
+}
 export * from './util'
 export * from './bytes'
 export * from './signature'
