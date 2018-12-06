@@ -1,5 +1,5 @@
 import { Transaction } from 'laksa-core-transaction'
-import { Long, BN, add0x } from 'laksa-utils'
+import { Long, BN } from 'laksa-utils'
 import { assertObject } from 'laksa-shared'
 
 import { ContractStatus, setParamValues } from './util'
@@ -174,7 +174,6 @@ export class Contract {
       this.setCallPayload({
         transition,
         params,
-        address: account.address,
         amount,
         gasLimit,
         gasPrice
@@ -273,18 +272,16 @@ export class Contract {
   @assertObject({
     transition: ['isString', 'required'],
     params: ['isArray', 'required'],
-    address: ['isAddress', 'required'],
     amount: ['isBN', 'required'],
     gasLimit: ['isLong', 'required'],
     gasPrice: ['isBN', 'required']
   })
   setCallPayload({
-    transition, params, address, amount, gasLimit, gasPrice
+    transition, params, amount, gasLimit, gasPrice
   }) {
     const msg = {
       _tag: transition,
-      _sender: add0x(address),
-      _amount: amount.toString(),
+
       // TODO: this should be string, but is not yet supported by lookup.
       params
     }

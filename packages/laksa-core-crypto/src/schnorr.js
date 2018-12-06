@@ -142,6 +142,10 @@ export const verify = (msg, signature, key) => {
     throw new Error('Invalid signature')
   }
 
+  if (sig.s.isNeg() || sig.r.isNeg()) {
+    throw new Error('Invalid signature')
+  }
+
   if (sig.s.gte(curve.n) || sig.r.gte(curve.n)) {
     throw new Error('Invalid signature')
   }
