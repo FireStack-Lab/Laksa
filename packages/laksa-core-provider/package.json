@@ -8,7 +8,5 @@
   },
   "author": "neeboo",
   "license": "ISC",
-  "dependencies": {
-    "cross-fetch": "^2.2.2"
-  }
+  "dependencies": {}
 }

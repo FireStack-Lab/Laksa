@@ -8,6 +8,7 @@
   "license": "ISC",
   "dependencies": {
     "axios": "^0.18.0",
+    "cross-fetch": "^2.2.3",
     "laksa-core-provider": "^0.0.103",
     "laksa-shared": "^0.0.103",
     "mitt": "^1.1.3"

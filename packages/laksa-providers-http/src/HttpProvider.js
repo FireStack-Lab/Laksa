@@ -6,6 +6,8 @@ import {
   DEFAULT_HEADERS
 } from 'laksa-core-provider'
 
+import { fetchRPC } from './defaultFetch'
+
 const defaultOptions = {
   method: 'POST',
   timeout: DEFAULT_TIMEOUT,
@@ -15,9 +17,10 @@ const defaultOptions = {
 }
 
 export class HttpProvider extends BaseProvider {
-  constructor(url, options) {
+  constructor(url, options, fetcher) {
     super()
     this.url = url || 'http://localhost:4200'
+    this.fetcher = fetcher || fetchRPC
     if (options) {
       this.options = {
         method: options.method || defaultOptions.method,
@@ -71,7 +74,7 @@ export class HttpProvider extends BaseProvider {
 
     const req = reqMiddleware(payload)
 
-    return performRPC(req, resMiddleware)
+    return performRPC(req, resMiddleware, this.fetcher)
   }
 
   /**

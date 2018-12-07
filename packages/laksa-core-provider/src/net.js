@@ -1,4 +1,4 @@
-import fetch from 'cross-fetch'
+// import fetch from 'cross-fetch'
 
 export const DEFAULT_TIMEOUT = 120000
 
@@ -19,29 +19,40 @@ function _fetch(fetchPromise, timeout) {
   return abortablePromise
 }
 
-export const performRPC = async (request, handler) => {
+// export const performRPC = async (request, handler) => {
+//   try {
+//     const response = await _fetch(
+//       fetch(request.url, {
+//         method: request.options && request.options.method ? request.options.method : 'POST',
+//         cache: 'no-cache',
+//         mode: 'cors',
+//         redirect: 'follow',
+//         referrer: 'no-referrer',
+//         body: JSON.stringify(request.payload),
+//         headers: {
+//           ...DEFAULT_HEADERS,
+//           ...(request.options && request.options.headers ? request.options.headers : {})
+//         }
+//       }),
+//       request.options && request.options.timeout ? request.options.timeout : DEFAULT_TIMEOUT
+//     )
+//     return response
+//       .json()
+//       .then(body => {
+//         return { ...body, req: request }
+//       })
+//       .then(handler)
+//   } catch (err) {
+//     throw err
+//   }
+// }
+export const performRPC = async (request, handler, fetcher) => {
   try {
     const response = await _fetch(
-      fetch(request.url, {
-        method: request.options && request.options.method ? request.options.method : 'POST',
-        cache: 'no-cache',
-        mode: 'cors',
-        redirect: 'follow',
-        referrer: 'no-referrer',
-        body: JSON.stringify(request.payload),
-        headers: {
-          ...DEFAULT_HEADERS,
-          ...(request.options && request.options.headers ? request.options.headers : {})
-        }
-      }),
+      fetcher.requestHandler(request, DEFAULT_HEADERS),
       request.options && request.options.timeout ? request.options.timeout : DEFAULT_TIMEOUT
     )
-    return response
-      .json()
-      .then(body => {
-        return { ...body, req: request }
-      })
-      .then(handler)
+    return fetcher.responseHandler(response, request, handler)
   } catch (err) {
     throw err
   }
