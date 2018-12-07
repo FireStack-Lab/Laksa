@@ -1,6 +1,6 @@
 {
   "name": "laksa-providers-http",
-  "version": "0.0.103",
+  "version": "0.0.104",
   "description": "",
   "main": "index.js",
   "browser": "lib/index.js",
@@ -9,8 +9,8 @@
   "dependencies": {
     "axios": "^0.18.0",
     "cross-fetch": "^2.2.3",
-    "laksa-core-provider": "^0.0.103",
-    "laksa-shared": "^0.0.103",
+    "laksa-core-provider": "^0.0.104",
+    "laksa-shared": "^0.0.104",
     "mitt": "^1.1.3"
   }
 }

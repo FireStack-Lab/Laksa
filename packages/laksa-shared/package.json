@@ -2,8 +2,8 @@
   "name": "laksa-shared",
   "main": "index.js",
   "browser": "lib/index.js",
-  "version": "0.0.103",
+  "version": "0.0.104",
   "dependencies": {
-    "laksa-utils": "^0.0.103"
+    "laksa-utils": "^0.0.104"
   }
 }
