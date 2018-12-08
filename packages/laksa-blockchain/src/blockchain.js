@@ -94,6 +94,8 @@ export class BlockChain extends Core {
     }
   }
 
+  // FIXME:Transaction as call back should not be implement with this function
+
   @assertObject({ txHash: ['isHash', 'required'] })
   async confirmTransaction({ txHash }) {
     try {

@@ -3,6 +3,7 @@
   "version": "0.0.105",
   "description": "",
   "main": "index.js",
+  "browser": "lib/index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
