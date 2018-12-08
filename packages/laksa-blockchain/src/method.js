@@ -2,7 +2,7 @@ import { transformerArray, generateValidateObjects } from 'laksa-shared'
 import { validateArgs } from 'laksa-utils'
 import { isObject } from './util'
 
-export class Method {
+class Method {
   constructor(options, messenger) {
     const {
       name, call, params, endpoint, transformer, isSendJson
@@ -112,3 +112,5 @@ export class Method {
     }
   }
 }
+
+export { Method }

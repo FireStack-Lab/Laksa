@@ -1,4 +1,4 @@
-export class JsonRpc {
+class JsonRpc {
   constructor() {
     this.messageId = 0
   }
@@ -24,3 +24,5 @@ export class JsonRpc {
     }
   }
 }
+
+export { JsonRpc }

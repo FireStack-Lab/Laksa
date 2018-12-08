@@ -5,7 +5,7 @@ import { ContractStatus, setParamValues } from './util'
 import { isInt } from './validate'
 import { ABI } from './abi'
 
-export class TestScilla extends Contract {
+class TestScilla extends Contract {
   blockchain = []
 
   constructor(...props) {
@@ -183,3 +183,5 @@ export class TestScilla extends Contract {
     return this
   }
 }
+
+export { TestScilla }

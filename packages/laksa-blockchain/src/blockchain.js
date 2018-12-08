@@ -31,7 +31,7 @@ const mapPropertyToObjects = main => {
   })
 }
 
-export class BlockChain extends Core {
+class BlockChain extends Core {
   constructor(messenger, signer) {
     super()
     this.messenger = messenger
@@ -113,3 +113,5 @@ export class BlockChain extends Core {
     }
   }
 }
+
+export { BlockChain }

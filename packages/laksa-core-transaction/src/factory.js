@@ -1,7 +1,7 @@
 import { Core } from 'laksa-shared'
 import { Transaction } from './transaction'
 
-export class Transactions extends Core {
+class Transactions extends Core {
   constructor(messenger, signer) {
     super()
     this.messenger = messenger
@@ -12,3 +12,5 @@ export class Transactions extends Core {
     return new Transaction(txParams, this.messenger)
   }
 }
+
+export { Transactions }

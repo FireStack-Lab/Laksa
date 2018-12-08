@@ -13,7 +13,7 @@ function getResultForData(data) {
   return data
 }
 
-export class Messenger {
+class Messenger {
   constructor(provider) {
     this.provider = provider
     this.scillaProvider = provider
@@ -90,3 +90,4 @@ export class Messenger {
     return this.provider.middleware.response.use(middleware, method)
   }
 }
+export { Messenger }

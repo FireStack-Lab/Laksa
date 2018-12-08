@@ -16,7 +16,7 @@ const defaultOptions = {
   password: null
 }
 
-export class HttpProvider extends BaseProvider {
+class HttpProvider extends BaseProvider {
   constructor(url, options, fetcher) {
     super()
     this.url = url || 'http://localhost:4200'
@@ -135,3 +135,5 @@ export class HttpProvider extends BaseProvider {
     throw new Error('HTTPProvider does not support subscriptions.')
   }
 }
+
+export { HttpProvider }

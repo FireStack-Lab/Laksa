@@ -1,4 +1,4 @@
-export class Core {
+class Core {
   constructor(messenger, signer, status) {
     this.messenger = messenger
     this.signer = signer
@@ -29,3 +29,5 @@ export class Core {
     return this.status
   }
 }
+
+export { Core }

@@ -1,4 +1,4 @@
-export class Property {
+class Property {
   constructor(options, messenger) {
     const { name, getter, setter } = options
     this.name = name
@@ -46,3 +46,5 @@ export class Property {
     }
   }
 }
+
+export { Property }

@@ -9,7 +9,7 @@ import {
   signTransaction
 } from './utils'
 
-export class Account extends Core {
+class Account extends Core {
   constructor(messenger) {
     super(messenger)
     delete this.signer
@@ -175,3 +175,5 @@ export class Account extends Core {
     }
   }
 }
+
+export { Account }

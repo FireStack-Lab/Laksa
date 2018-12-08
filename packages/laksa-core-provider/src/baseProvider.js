@@ -3,7 +3,7 @@ export const MiddlewareType = {
   RES: 'RES'
 }
 
-export class BaseProvider {
+class BaseProvider {
   middleware = {
     request: {
       use: (fn, match = '*') => this.pushMiddleware(fn, MiddlewareType.REQ, match)
@@ -66,3 +66,5 @@ export class BaseProvider {
     return [reqFns, resFns]
   }
 }
+
+export { BaseProvider }

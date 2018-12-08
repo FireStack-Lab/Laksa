@@ -4,7 +4,7 @@ import { assertObject } from 'laksa-shared'
 
 import { ContractStatus, setParamValues } from './util'
 
-export class Contract {
+class Contract {
   constructor(params, factory, status = ContractStatus.INITIALISED) {
     this.code = params.code || ''
     this.init = params.init || []
@@ -298,3 +298,5 @@ export class Contract {
     return this
   }
 }
+
+export { Contract }
