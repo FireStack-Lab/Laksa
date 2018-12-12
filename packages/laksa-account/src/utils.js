@@ -23,7 +23,7 @@ import { ENCRYPTED } from './symbols'
 
 function generateAccountObject(privateKey) {
   if (!isPrivateKey(privateKey)) {
-    throw new Error('private key is not correct')
+    throw new Error(`private key is not correct:${privateKey}`)
   }
   const address = getAddressFromPrivateKey(privateKey)
   const publicKey = getPubKeyFromPrivateKey(privateKey)
@@ -39,7 +39,8 @@ function generateAccountObject(privateKey) {
  * @return {Account} {account object}
  */
 export const createAccount = () => {
-  return generateAccountObject(generatePrivateKey())
+  const privateKey = generatePrivateKey()
+  return generateAccountObject(privateKey)
 }
 
 /**

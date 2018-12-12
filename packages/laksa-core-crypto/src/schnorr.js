@@ -8,6 +8,7 @@ import { Signature } from './signature'
 
 const secp256k1 = elliptic.ec('secp256k1')
 const { curve } = secp256k1
+const PRIVKEY_SIZE_BYTES = 32
 // Public key is a point (x, y) on the curve.
 // Each coordinate requires 32 bytes.
 // In its compressed form it suffices to store the x co-ordinate
@@ -35,7 +36,8 @@ export const generatePrivateKey = () => {
       entropyEnc: HEX_ENC,
       pers: 'zilliqajs+secp256k1+SHA256'
     })
-    .getPrivate(HEX_ENC)
+    .getPrivate()
+    .toString(16, PRIVKEY_SIZE_BYTES * 2)
 }
 
 /**
@@ -177,6 +179,11 @@ export const verify = (msg, signature, key) => {
   const r = curve.g.mul(sig.s)
 
   const Q = l.add(r)
+
+  if (Q.isInfinity()) {
+    throw new Error('Invalid intermediate point.')
+  }
+
   const compressedQ = new BN(Q.encodeCompressed())
 
   const r1 = hash(compressedQ, key, msg).umod(curve.n)

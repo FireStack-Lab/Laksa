@@ -101,22 +101,38 @@ const isAddress = address => {
   return false
 }
 
-/**
- * verify if privateKey is correct
- * @param  {hex|string}  privateKey [description]
- * @return {Boolean}            [description]
- */
+// /**
+//  * verify if privateKey is correct
+//  * @param  {hex|string}  privateKey [description]
+//  * @return {Boolean}            [description]
+//  */
+// const isPrivateKey = privateKey => {
+//   return /^[0-9a-fA-F]{64}$/.test(privateKey)
+// }
+
+// /**
+//  * verify if public key is correct
+//  * @param  {hex|string}  pubkey [description]
+//  * @return {Boolean}        [description]
+//  */
+// const isPubkey = pubkey => {
+//   return /^[0-9a-fA-F]{66}$/.test(pubkey)
+// }
+
 const isPrivateKey = privateKey => {
-  return /^[0-9a-fA-F]{64}$/.test(privateKey)
+  return isByteString(privateKey, 64)
 }
 
-/**
- * verify if public key is correct
- * @param  {hex|string}  pubkey [description]
- * @return {Boolean}        [description]
- */
-const isPubkey = pubkey => {
-  return /^[0-9a-fA-F]{66}$/.test(pubkey)
+const isPubkey = pubKey => {
+  return isByteString(pubKey, 66)
+}
+
+const isSignature = sig => {
+  return isByteString(sig, 128)
+}
+
+const isByteString = (str, len) => {
+  return !!str.replace('0x', '').match(`^[0-9a-fA-F]{${len}}$`)
 }
 
 /**
@@ -201,6 +217,7 @@ export {
   isUrl,
   isPubkey,
   isPrivateKey,
+  isSignature,
   isAddress,
   isBN,
   isLong,
