@@ -37,4 +37,5 @@ So it may change a lot before it's stable version is released.
 
 ## Examples
 
-! Coming Soon !
+- Client Example:[https://github.com/FireStack-Lab/Laksa-Client-Example](https://github.com/FireStack-Lab/Laksa-Client-Example)
+- Server Example:[https://github.com/FireStack-Lab/Laksa-Node-Example](https://github.com/FireStack-Lab/Laksa-Node-Example)
