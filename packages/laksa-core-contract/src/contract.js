@@ -127,7 +127,9 @@ class Contract {
     gasLimit = Long.fromNumber(2500),
     gasPrice = new BN(100),
     account = this.signer.signer,
-    password
+    password,
+    maxAttempts = 20,
+    interval = 1000
   }) {
     if (!this.code || !this.init) {
       throw new Error('Cannot deploy without code or ABI.')
@@ -136,7 +138,7 @@ class Contract {
     try {
       this.setDeployPayload({ gasLimit, gasPrice })
       await this.sendContract({ account, password })
-      await this.confirmTx()
+      await this.confirmTx(maxAttempts, interval)
       return this
     } catch (err) {
       throw err
@@ -164,7 +166,9 @@ class Contract {
     gasLimit = Long.fromNumber(1000),
     gasPrice = new BN(100),
     account = this.signer.signer,
-    password
+    password,
+    maxAttempts = 20,
+    interval = 1000
   }) {
     if (!this.ContractAddress) {
       return Promise.reject(Error('Contract has not been deployed!'))
@@ -179,7 +183,7 @@ class Contract {
         gasPrice
       })
       await this.sendContract({ account, password })
-      await this.confirmTx()
+      await this.confirmTx(maxAttempts, interval)
       return this
     } catch (err) {
       throw err
@@ -225,9 +229,9 @@ class Contract {
    * @function {confirmTx}
    * @return {Contract} {Contract confirm with finalty}
    */
-  async confirmTx() {
+  async confirmTx(maxAttempts = 20, interval = 1000) {
     try {
-      await this.transaction.confirm(this.transaction.TranID)
+      await this.transaction.confirm(this.transaction.TranID, maxAttempts, interval)
       if (!this.transaction.receipt || !this.transaction.receipt.success) {
         this.setStatus(ContractStatus.REJECTED)
         return this

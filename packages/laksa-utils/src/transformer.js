@@ -1,4 +1,5 @@
 import BN from 'bn.js'
+import Long from 'long'
 
 import {
   isHex, isBN, isString, isNumber, validateTypes
@@ -7,6 +8,19 @@ import {
 const toBN = data => {
   try {
     return new BN(data)
+  } catch (e) {
+    throw new Error(`${e} of "${data}"`)
+  }
+  // to be implemented
+}
+
+const toLong = data => {
+  try {
+    if (isString(data)) {
+      return Long.fromString(data)
+    } else if (isNumber(data)) {
+      return Long.fromNumber(data)
+    }
   } catch (e) {
     throw new Error(`${e} of "${data}"`)
   }
@@ -33,4 +47,6 @@ const add0x = value => {
   return newString
 }
 
-export { toBN, strip0x, add0x }
+export {
+  toBN, toLong, strip0x, add0x
+}
