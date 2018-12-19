@@ -2,6 +2,7 @@
  * Adapted from https://github.com/ethjs/ethjs-unit/blob/master/src/index.js
  */
 import BN from 'bn.js'
+import { isBN } from './generator'
 
 export const Units = Object.freeze({
   Zil: 'zil',
@@ -39,8 +40,17 @@ export const numToStr = input => {
 }
 
 export const fromQa = (qa, unit, options = DEFAULT_OPTIONS) => {
+  let qaBN = qa
+  if (!isBN(qa)) {
+    try {
+      qaBN = new BN(qa)
+    } catch (error) {
+      throw Error(error)
+    }
+  }
+
   if (unit === 'qa') {
-    return qa.toString(10)
+    return qaBN.toString(10)
   }
 
   const baseStr = unitMap.get(unit)
@@ -52,7 +62,7 @@ export const fromQa = (qa, unit, options = DEFAULT_OPTIONS) => {
   const base = new BN(baseStr, 10)
   const baseNumDecimals = baseStr.length - 1
 
-  let fraction = qa
+  let fraction = qaBN
     .abs()
     .mod(base)
     .toString(10)
@@ -67,7 +77,7 @@ export const fromQa = (qa, unit, options = DEFAULT_OPTIONS) => {
     fraction = fraction.match(/^([0-9]*[1-9]|0)(0*)/)[1]
   }
 
-  const whole = qa.div(base).toString(10)
+  const whole = qaBN.div(base).toString(10)
 
   return fraction === '0' ? `${whole}` : `${whole}.${fraction}`
 }
