@@ -27,7 +27,8 @@ class Contracts extends Core {
   new(code, init) {
     const newContract = new Contract(
       { code, init },
-      { messenger: this.messenger, signer: this.signer }
+      { messenger: this.messenger, signer: this.signer },
+      ContractStatus.INITIALISED
     )
     return newContract
   }
@@ -49,7 +50,8 @@ class Contracts extends Core {
   async testContract(code, init) {
     const contract = new TestScilla(
       { code, init },
-      { messenger: this.messenger, signer: this.signer }
+      { messenger: this.messenger, signer: this.signer },
+      ContractStatus.INITIALISED
     )
     const result = await contract
       // decode ABI from code first

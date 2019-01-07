@@ -1,5 +1,6 @@
 import elliptic from 'elliptic'
 import hashjs from 'hash.js'
+import BN from 'bn.js'
 import { ZilliqaMessage } from '@zilliqa-js/proto'
 import { intToHexArray, hexToByteArray } from './bytes'
 
@@ -85,12 +86,16 @@ export const toChecksumAddress = address => {
     .sha256()
     .update(newAddress, 'hex')
     .digest('hex')
+  const v = new BN(hash, 'hex', 'be')
   let ret = '0x'
+
   for (let i = 0; i < newAddress.length; i += 1) {
-    if (parseInt(hash[i], 16) >= 8) {
-      ret += newAddress[i].toUpperCase()
-    } else {
+    if ('0123456789'.indexOf(newAddress[i]) !== -1) {
       ret += newAddress[i]
+    } else {
+      ret += v.and(new BN(2).pow(new BN(255 - 6 * i))).gte(new BN(1))
+        ? newAddress[i].toUpperCase()
+        : newAddress[i].toLowerCase()
     }
   }
   return ret

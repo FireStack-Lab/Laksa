@@ -90,6 +90,16 @@ class Transaction {
     return getAddressFromPublicKey(this.pubKey)
   }
 
+  // async getVersion() {
+  //   const networkId = await this.messenger.send('GetNetworkId')
+  //   if (networkId === this.config.TestNet.Network_ID) {
+  //     return this.config.TestNet.CHAIN_ID << (16 + this.version)
+  //   } else if (networkId === this.config.MainNet.Network_ID) {
+  //     return this.config.MainNet.CHAIN_ID << (16 + this.version)
+  //   }
+  //   return this.config.CHAIN_ID << (16 + this.version)
+  // }
+
   /**
    * isPending
    *

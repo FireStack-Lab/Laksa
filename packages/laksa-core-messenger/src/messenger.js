@@ -1,5 +1,6 @@
 import { InvalidProvider } from 'laksa-shared'
 import { JsonRpc } from './rpcbuilder'
+import { ResponseMiddleware } from './responseMiddleware'
 
 /**
  * @function getResultForData
@@ -7,10 +8,12 @@ import { JsonRpc } from './rpcbuilder'
  * @return {object} {data result or data}
  */
 function getResultForData(data) {
-  if (data.result) {
-    return data.result
-  }
-  return data
+  const body = new ResponseMiddleware(data)
+  if (body.result && !body.error) {
+    return body.result
+  } else if (!body.result && body.error) {
+    return body.error
+  } else return body
 }
 
 class Messenger {

@@ -19,7 +19,7 @@ import config from './config'
 
 class Laksa {
   constructor(args) {
-    const url = (args && util.isUrl(args) ? args : undefined) || config.defaultNodeUrl
+    const url = (args && util.isUrl(args) ? args : undefined) || config.Default.nodeProviderUrl
     this.util = {
       ...util,
       ...core
@@ -122,6 +122,11 @@ class Laksa {
       enumerable: true
     }
     Object.defineProperty(this, name, pkgObject)
+  }
+
+  getNetworkSetting() {
+    const { TestNet, MainNet } = this.config
+    return { TestNet, MainNet }
   }
 }
 
