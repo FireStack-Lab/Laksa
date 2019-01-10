@@ -1,4 +1,5 @@
 import { InvalidProvider } from 'laksa-shared'
+import { pack } from 'laksa-utils'
 import { JsonRpc } from './rpcbuilder'
 import { ResponseMiddleware } from './responseMiddleware'
 
@@ -8,18 +9,16 @@ import { ResponseMiddleware } from './responseMiddleware'
  * @return {object} {data result or data}
  */
 function getResultForData(data) {
-  const body = new ResponseMiddleware(data)
-  if (body.result && !body.error) {
-    return body.result
-  } else if (!body.result && body.error) {
-    return body.error
-  } else return body
+  if (data.result) return data.getResult
+  if (data.error) return data.getError
+  return data.getRaw
 }
 
 class Messenger {
-  constructor(provider) {
+  constructor(provider, config) {
     this.provider = provider
     this.scillaProvider = provider
+    this.config = config
     this.JsonRpc = new JsonRpc()
   }
 
@@ -32,9 +31,9 @@ class Messenger {
     this.providerCheck()
     try {
       const payload = this.JsonRpc.toPayload(method, params)
-      this.setResMiddleware(getResultForData)
+      this.setResMiddleware(data => new ResponseMiddleware(data))
       const result = await this.provider.send(payload)
-      return result // getResultForData(result)
+      return getResultForData(result) // getResultForData(result)
     } catch (e) {
       throw new Error(e)
     }
@@ -91,6 +90,31 @@ class Messenger {
 
   setResMiddleware(middleware, method = '*') {
     return this.provider.middleware.response.use(middleware, method)
+  }
+
+  setTransactionVersion(version) {
+    let chainID
+    switch (this.provider.url) {
+    case this.config.Default.nodeProviderUrl: {
+      chainID = this.config.Default.CHAIN_ID
+      break
+    }
+    case this.config.TestNet.nodeProviderUrl: {
+      chainID = this.config.TestNet.CHAIN_ID
+      break
+    }
+    case this.config.MainNet.nodeProviderUrl: {
+      chainID = this.config.MainNet.CHAIN_ID
+      break
+    }
+    case this.config.Staging.nodeProviderUrl: {
+      chainID = this.config.Staging.CHAIN_ID
+      break
+    }
+    default:
+      break
+    }
+    return pack(chainID, version)
   }
 }
 export { Messenger }

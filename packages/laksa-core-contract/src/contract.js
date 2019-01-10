@@ -8,6 +8,7 @@ class Contract {
   constructor(params, factory, status = ContractStatus.INITIALISED) {
     this.code = params.code || ''
     this.init = params.init || []
+    this.version = params.version || 0
     this.ContractAddress = params.ContractAddress || undefined
     this.messenger = factory.messenger
     this.signer = factory.signer
@@ -75,9 +76,10 @@ class Contract {
    * @function {payload}
    * @return {object} {default deployment payload}
    */
-  get deployDayload() {
+  get deployPayload() {
     return {
-      version: 0,
+      version:
+        this.version < 65535 ? this.messenger.setTransactionVersion(this.version) : this.version,
       amount: new BN(0),
       toAddr: String(0).repeat(40),
       code: this.code,
@@ -87,7 +89,8 @@ class Contract {
 
   get callPayload() {
     return {
-      version: 0,
+      version:
+        this.version < 65535 ? this.messenger.setTransactionVersion(this.version) : this.version,
       toAddr: this.ContractAddress
     }
   }
@@ -264,7 +267,7 @@ class Contract {
   setDeployPayload({ gasPrice, gasLimit }) {
     this.transaction = new Transaction(
       {
-        ...this.deployDayload,
+        ...this.deployPayload,
         gasPrice,
         gasLimit
       },

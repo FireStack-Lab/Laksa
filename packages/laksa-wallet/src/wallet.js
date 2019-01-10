@@ -1,5 +1,5 @@
 import {
-  isAddress, isNumber, isObject, isArray
+  isAddress, isNumber, isObject, isArray, isString
 } from 'laksa-utils'
 import { Map, List } from 'immutable'
 
@@ -426,10 +426,10 @@ class Wallet {
    * @return {Wallet} {wallet instance}
    */
   setSigner(obj) {
-    if (isAddress(obj)) {
+    if (isString(obj)) {
       this.signer = this.getAccountByAddress(obj)
       this.defaultAccount = this.getAccountByAddress(obj)
-    } else if (isAddress(obj.address)) {
+    } else if (isObject(obj) && isAddress(obj.address)) {
       this.signer = this.getAccountByAddress(obj.address)
       this.defaultAccount = this.getAccountByAddress(obj.address)
     }

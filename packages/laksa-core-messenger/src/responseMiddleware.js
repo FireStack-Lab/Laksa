@@ -5,16 +5,16 @@ class ResponseMiddleware {
     this.raw = ResponseBody
   }
 
-  get result() {
-    return this.result
+  get getResult() {
+    return { ...this.result, responseType: 'result' }
   }
 
-  get error() {
-    return this.error
+  get getError() {
+    return { ...this.error, responseType: 'error' }
   }
 
-  get raw() {
-    return this.raw
+  get getRaw() {
+    return { ...this.raw, responseType: 'raw' }
   }
 }
 export { ResponseMiddleware }

@@ -110,7 +110,7 @@ export const signTransaction = (privateKey, txnDetails) => {
   const txn = {
     version: txnDetails.version,
     nonce: txnDetails.nonce,
-    toAddr: txnDetails.toAddr,
+    toAddr: txnDetails.toAddr.toLowerCase(),
     amount: txnDetails.amount,
     pubKey,
     gasPrice: txnDetails.gasPrice,

@@ -86,38 +86,10 @@ const isFunction = obj => {
  * @param  {hex|string}  address [description]
  * @return {Boolean}         [description]
  */
-// const isAddress = (address) => {
-//   return !!address.match(/^[0-9a-fA-F]{40}$/)
-// }
 
 const isAddress = address => {
-  if (!/^(0x)?[0-9a-f]{40}$/i.test(address)) {
-    // check if it has the basic requirements of an address
-    return false
-  } else if (/^(0x)?[0-9a-f]{40}$/.test(address) || /^(0x)?[0-9A-F]{40}$/.test(address)) {
-    // If it's all small caps or all all caps, return true
-    return true
-  }
-  return false
+  return isByteString(address, 40)
 }
-
-// /**
-//  * verify if privateKey is correct
-//  * @param  {hex|string}  privateKey [description]
-//  * @return {Boolean}            [description]
-//  */
-// const isPrivateKey = privateKey => {
-//   return /^[0-9a-fA-F]{64}$/.test(privateKey)
-// }
-
-// /**
-//  * verify if public key is correct
-//  * @param  {hex|string}  pubkey [description]
-//  * @return {Boolean}        [description]
-//  */
-// const isPubkey = pubkey => {
-//   return /^[0-9a-fA-F]{66}$/.test(pubkey)
-// }
 
 const isPrivateKey = privateKey => {
   return isByteString(privateKey, 64)

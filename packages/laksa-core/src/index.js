@@ -28,7 +28,8 @@ class Laksa {
       node: new HttpProvider(url),
       scilla: new HttpProvider(url)
     }
-    this.messenger = new Messenger(this.currentProvider.node)
+    this.config = config
+    this.messenger = new Messenger(this.currentProvider.node, this.config)
     this.wallet = new Wallet(this.messenger)
     this.transactions = new Transactions(this.messenger, this.wallet)
     this.contracts = new Contracts(this.messenger, this.wallet)

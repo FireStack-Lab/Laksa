@@ -47,6 +47,27 @@ const add0x = value => {
   return newString
 }
 
+/**
+ * pack
+ *
+ * Takes two 16-bit integers and combines them. Used to compute version.
+ *
+ * @param {number} a
+ * @param {number} b
+ *
+ * @returns {number} - a 32-bit number
+ */
+const pack = (a, b) => {
+  if (!isNumber(a) || !isNumber(b)) {
+    throw new Error('a and b must be number')
+  }
+  if (a >> 16 > 0 || b >> 16 > 0) {
+    throw new Error('Both a and b must be 16 bits or less')
+  }
+
+  return (a << 16) + b
+}
+
 export {
-  toBN, toLong, strip0x, add0x
+  toBN, toLong, strip0x, add0x, pack
 }

@@ -1,4 +1,8 @@
-import { encodeTransactionProto, getAddressFromPublicKey } from 'laksa-core-crypto'
+import {
+  encodeTransactionProto,
+  getAddressFromPublicKey,
+  toChecksumAddress
+} from 'laksa-core-crypto'
 import { sleep, TxStatus } from './util'
 
 class Transaction {
@@ -6,7 +10,7 @@ class Transaction {
     // params
     this.version = params.version
     this.TranID = params.TranID
-    this.toAddr = params.toAddr
+    this.toAddr = params.toAddr.toLowerCase()
     this.nonce = params.nonce
     this.pubKey = params.pubKey
     this.amount = params.amount
@@ -68,9 +72,11 @@ class Transaction {
 
   get txParams() {
     return {
-      version: 0,
+      version: this.version,
+      // this.messenger.setTransactionVersion(this.version),
       TranID: this.TranID,
-      toAddr: this.toAddr,
+      toAddr: toChecksumAddress(this.toAddr).slice(2),
+      // after updated to the core, it will not slice
       nonce: this.nonce,
       pubKey: this.pubKey,
       amount: this.amount,
@@ -164,6 +170,7 @@ class Transaction {
         gasPrice: raw.gasPrice.toString()
       })
       const { TranID } = result
+
       if (!TranID) {
         throw new Error('Transaction fail')
       } else {
@@ -247,8 +254,7 @@ class Transaction {
   async trackTx(txHash) {
     // TODO: regex validation for txHash so we don't get garbage
     const res = await this.messenger.send('GetTransaction', txHash)
-
-    if (res.error) {
+    if (res.responseType === 'error') {
       return false
     }
 

@@ -5,7 +5,12 @@ export default {
   Default: {
     CHAIN_ID: 3,
     Network_ID: 'TestNet',
-    nodeProviderUrl: 'https://api.zilliqa.com'
+    nodeProviderUrl: 'http://localhost:4200'
+  },
+  Staging: {
+    CHAIN_ID: 63,
+    Network_ID: 'TestNet',
+    nodeProviderUrl: 'https://staging-api.aws.z7a.xyz'
   },
   TestNet: {
     CHAIN_ID: 2,

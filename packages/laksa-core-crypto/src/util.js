@@ -120,31 +120,31 @@ export const isValidChecksumAddress = address => {
  * @param {any} txn
  * @returns {Buffer}
  */
-export const encodeTransaction = tx => {
-  const codeHex = Buffer.from(tx.code || '').toString('hex')
-  const dataHex = Buffer.from(tx.data || '').toString('hex')
+// export const encodeTransaction = tx => {
+//   const codeHex = Buffer.from(tx.code || '').toString('hex')
+//   const dataHex = Buffer.from(tx.data || '').toString('hex')
 
-  const encoded =
-    intToHexArray(tx.version, 64).join('') +
-    intToHexArray(tx.nonce || 0, 64).join('') +
-    tx.toAddr +
-    tx.pubKey +
-    tx.amount.toString('hex', 64) +
-    tx.gasPrice.toString('hex', 64) +
-    tx.gasLimit.toString('hex', 64) +
-    intToHexArray((tx.code && tx.code.length) || 0, 8).join('') + // size of code
-    codeHex +
-    intToHexArray((tx.data && tx.data.length) || 0, 8).join('') + // size of data
-    dataHex
+//   const encoded =
+//     intToHexArray(tx.version, 64).join('') +
+//     intToHexArray(tx.nonce || 0, 64).join('') +
+//     tx.toAddr +
+//     tx.pubKey +
+//     tx.amount.toString('hex', 64) +
+//     tx.gasPrice.toString('hex', 64) +
+//     tx.gasLimit.toString('hex', 64) +
+//     intToHexArray((tx.code && tx.code.length) || 0, 8).join('') + // size of code
+//     codeHex +
+//     intToHexArray((tx.data && tx.data.length) || 0, 8).join('') + // size of data
+//     dataHex
 
-  return Buffer.from(encoded, 'hex')
-}
+//   return Buffer.from(encoded, 'hex')
+// }
 
 export const encodeTransactionProto = tx => {
   const msg = ZilliqaMessage.ProtoTransactionCoreInfo.create({
     version: tx.version,
     nonce: tx.nonce || 0,
-    toaddr: hexToByteArray(tx.toAddr),
+    toaddr: hexToByteArray(tx.toAddr.toLowerCase()),
     senderpubkey: ZilliqaMessage.ByteArray.create({
       data: hexToByteArray(tx.pubKey || '00')
     }),
