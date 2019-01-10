@@ -141,6 +141,18 @@ export class Unit {
     return new Unit(str)
   }
 
+  static Zil(str) {
+    return new Unit(str).asZil()
+  }
+
+  static Li(str) {
+    return new Unit(str).asLi()
+  }
+
+  static Qa(str) {
+    return new Unit(str).asQa()
+  }
+
   constructor(str) {
     this.unit = str
   }
