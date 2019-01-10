@@ -135,3 +135,19 @@ export const toQa = (input, unit) => {
 
   return new BN(wei.toString(10), 10)
 }
+
+export class Unit {
+  static from(str) {
+    return new Unit(str)
+  }
+
+  constructor(str) {
+    this.unit = str
+  }
+
+  toQa() {}
+
+  toLi() {}
+
+  toZil() {}
+}
