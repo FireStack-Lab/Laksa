@@ -1,6 +1,6 @@
 {
   "name": "laksa-providers-http",
-  "version": "0.0.110",
+  "version": "0.0.111",
   "description": "",
   "main": "index.js",
   "browser": "lib/index.js",
@@ -8,6 +8,6 @@
   "license": "ISC",
   "dependencies": {
     "cross-fetch": "^2.2.3",
-    "laksa-core-provider": "^0.0.110"
+    "laksa-core-provider": "^0.0.111"
   }
 }
