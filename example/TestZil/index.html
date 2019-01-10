@@ -172,7 +172,7 @@
         try {
           const deployed = await newContract.deploy({
             gasLimit: laksa.util.Long.fromNumber(25000000000),
-            gasPrice: new laksa.util.BN(1000000000),
+            gasPrice: laksa.util.Unit.from(1000000000).asQa().toQa(),
             account: accountA
           })
           console.log(deployed)
@@ -203,8 +203,6 @@
           //   gasPrice: new laksa.util.BN(1000000000),
           //   account: accountA
           // })
-
-          // console.log(calledGet)
         } catch (e) {
           console.log(e)
         }
@@ -325,8 +323,8 @@
       const normalTransaction = laksa.transactions.new({
         version: laksa.messenger.setTransactionVersion(1),
         toAddr: '2E3C9B415B19AE4035503A06192A0FAD76E04243',
-        amount: new laksa.util.BN(2000000000),
-        gasPrice: new laksa.util.BN(1000000000),
+        amount: laksa.util.Unit.from(10000).asZil().toQa(),
+        gasPrice: laksa.util.Unit.from(1000).asLi().toQa(),
         gasLimit: laksa.util.Long.fromNumber(250000000)
       })
 

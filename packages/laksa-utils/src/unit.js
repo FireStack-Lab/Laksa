@@ -100,13 +100,13 @@ export const toQa = (input, unit) => {
   }
 
   if (inputStr === '.') {
-    throw new Error(`Cannot convert ${inputStr} to Qa.`)
+    throw new Error(`Cannot convert ${inputStr} to Qa. aaa`)
   }
 
   // Split it into a whole and fractional part
   const comps = inputStr.split('.') // eslint-disable-line
   if (comps.length > 2) {
-    throw new Error(`Cannot convert ${inputStr} to Qa.`)
+    throw new Error(`Cannot convert ${inputStr} to Qa.bbb`)
   }
 
   let [whole, fraction] = comps
@@ -118,7 +118,7 @@ export const toQa = (input, unit) => {
     fraction = '0'
   }
   if (fraction.length > baseNumDecimals) {
-    throw new Error(`Cannot convert ${inputStr} to Qa.`)
+    throw new Error(`Cannot convert ${inputStr} to Qa.ccc`)
   }
 
   while (fraction.length < baseNumDecimals) {
@@ -145,9 +145,34 @@ export class Unit {
     this.unit = str
   }
 
-  toQa() {}
+  asZil() {
+    this.qa = toQa(this.unit, Units.Zil)
+    return this
+  }
 
-  toLi() {}
+  asLi() {
+    this.qa = toQa(this.unit, Units.Li)
+    return this
+  }
 
-  toZil() {}
+  asQa() {
+    this.qa = new BN(this.unit)
+    return this
+  }
+
+  toQa() {
+    return this.qa
+  }
+
+  toLi() {
+    return fromQa(this.qa, Units.Li)
+  }
+
+  toZil() {
+    return fromQa(this.qa, Units.Zil)
+  }
+
+  toQaString() {
+    return this.qa.toString()
+  }
 }
