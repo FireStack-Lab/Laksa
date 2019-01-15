@@ -1,5 +1,6 @@
 # Laksa
 
+[![codecov](https://codecov.io/gh/FireStack-Lab/Laksa/branch/master/graph/badge.svg)](https://codecov.io/gh/FireStack-Lab/Laksa)
 ![travis](https://travis-ci.com/FireStack-Lab/Laksa.svg?branch=master)
 [![npm version](https://img.shields.io/npm/v/laksa.svg?style=flat-square)](https://www.npmjs.org/package/laksa)
 
