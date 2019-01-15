@@ -35,6 +35,6 @@ describe('test Laksa', () => {
       pkg: laksa.Modules.HttpProvider
     })
     expect(lll.currentProvider.node.url).toEqual('http://localhost:4200')
-    expect(lll.getNetworkSetting().TestNet.CHAIN_ID).toEqual(2)
+    expect(lll.getNetworkSetting().TestNet.CHAIN_ID).toEqual(62)
   })
 })
