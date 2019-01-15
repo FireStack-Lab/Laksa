@@ -20,7 +20,7 @@ var laksaCoreContract = require('laksa-core-contract');
 var laksaBlockchain = require('laksa-blockchain');
 var laksaWallet = require('laksa-wallet');
 
-var version = "0.0.111";
+var version = "0.0.112";
 
 var config = {
   version: version,

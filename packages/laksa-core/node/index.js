@@ -38,7 +38,7 @@
     return target;
   }
 
-  var version = "0.0.111";
+  var version = "0.0.112";
 
   var config = {
     version,
