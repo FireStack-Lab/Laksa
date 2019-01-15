@@ -20,7 +20,7 @@ var laksaCoreContract = require('laksa-core-contract');
 var laksaBlockchain = require('laksa-blockchain');
 var laksaWallet = require('laksa-wallet');
 
-var version = "0.0.112";
+var version = "0.0.113";
 
 var config = {
   version: version,
@@ -35,7 +35,7 @@ var config = {
     nodeProviderUrl: 'https://staging-api.aws.z7a.xyz'
   },
   TestNet: {
-    CHAIN_ID: 2,
+    CHAIN_ID: 62,
     Network_ID: 'TestNet',
     nodeProviderUrl: 'https://api.zilliqa.com' // Mainnet
 
