@@ -209,7 +209,7 @@ export const toSignature = serialised => {
  *
  * @returns {DRBG}
  */
-const getDRBG = msg => {
+export const getDRBG = msg => {
   const entropy = randomBytes(ENT_LEN)
   const pers = Buffer.allocUnsafe(ALG_LEN + ENT_LEN)
 

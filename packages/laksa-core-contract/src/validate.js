@@ -47,13 +47,10 @@ export const validate = (type, value) => {
 }
 
 export const transform = (type, value) => {
-  try {
-    if (validate(type, value)) {
-      return validators.some(val => val.transformer(value))
-    } else {
-      throw new Error('Cannot transform')
-    }
-  } catch (error) {
+  if (validate(type, value)) {
+    const found = validators.find(d => d.match(type))
+    return found.transformer(value)
+  } else {
     throw new Error('Cannot transform')
   }
 }

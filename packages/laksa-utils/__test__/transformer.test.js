@@ -1,47 +1,8 @@
 import {
-  intToByteArray, intToHexArray, toHex, toBN, strip0x, add0x
+  toBN, strip0x, add0x, toLong, Long, pack
 } from '../src'
-import { basicType, advanceType } from './fixtures'
 
 describe('test transformer', () => {
-  it('test intToByteArray', () => {
-    expect(intToByteArray(1, 2)).toEqual(['0', '1'])
-    expect(intToByteArray(1)).toEqual(['1'])
-    expect(intToByteArray('1', 2)).toEqual(['0', '1'])
-  })
-  it('test intToHexArray', () => {
-    expect(intToHexArray(1, 2)).toEqual(['0', '1'])
-    expect(intToHexArray(1)).toEqual(['1'])
-    expect(intToHexArray('1', 2)).toEqual(['0', '1'])
-  })
-  it('test toHex', () => {
-    expect(toHex(1)).toEqual('0x1')
-    expect(toHex(1, true)).toEqual('uint256')
-    expect(toHex(-3)).toEqual('-0x3')
-    expect(toHex(-3, true)).toEqual('int256')
-    expect(toHex('-0x123', true)).toEqual('string')
-    expect(toHex('0x123', true)).toEqual('uint256')
-    expect(toHex(basicType.text)).toEqual(`0x${basicType.text}`)
-    expect(toHex(basicType.text, true)).toEqual('string')
-    expect(toHex(basicType.zero)).toEqual('0x0')
-    expect(toHex(advanceType.address)).toEqual(`0x${advanceType.address}`)
-    expect(toHex(advanceType.address, true)).toEqual('address')
-    expect(toHex(basicType.bool)).toEqual('0x01')
-    expect(toHex(false)).toEqual('0x00')
-    expect(toHex(false, true)).toEqual('bool')
-    expect(toHex(basicType.object)).toEqual('0x7b7d')
-    expect(toHex(basicType.object, true)).toEqual('string')
-    expect(toHex(advanceType.bn)).toEqual('0x7b')
-    expect(toHex(advanceType.bn, true)).toEqual('BN')
-
-    try {
-      toHex(NaN)
-    } catch (error) {
-      expect(error.message).toEqual(
-        'One of [isAddress,isBoolean,isObject,isString,isNumber,isHex,isBN] has to pass, but we have your arg to be []'
-      )
-    }
-  })
   it('test toBN', () => {
     expect(toBN(1)).toEqual(expect.any(Object))
     expect(toBN(-1)).toEqual(expect.any(Object))
@@ -59,16 +20,12 @@ describe('test transformer', () => {
     try {
       toBN(1 / 3)
     } catch (error) {
-      expect(error.message).toEqual(
-        'Error: [number-to-bn] while converting number 0.3333333333333333 to BN.js instance, error: invalid number value. Value must be an integer, hex string, BN or BigNumber instance. Note, decimals are not supported. of "0.3333333333333333"'
-      )
+      expect(error.message).toEqual('Error: Assertion failed of "[object Object]"')
     }
     try {
       toBN({})
     } catch (error) {
-      expect(error.message).toEqual(
-        'Error: [number-to-bn] while converting number {} to BN.js instance, error: invalid number value. Value must be an integer, hex string, BN or BigNumber instance. Note, decimals are not supported. of "[object Object]"'
-      )
+      expect(error.message).toEqual('Error: Assertion failed of "[object Object]"')
     }
   })
   it('test add0x', () => {
@@ -81,18 +38,40 @@ describe('test transformer', () => {
     expect(add0x(toBN(0))).toEqual('0x0')
   })
   it('test strip0x', () => {
-    expect(strip0x(0)).toEqual('0')
-    try {
-      strip0x(0.1)
-    } catch (error) {
-      expect(error.message).toEqual(
-        'Error: [number-to-bn] while converting number 0.1 to BN.js instance, error: invalid number value. Value must be an integer, hex string, BN or BigNumber instance. Note, decimals are not supported. of "0.1"'
-      )
-    }
-    expect(strip0x(0x123)).toEqual('123')
     expect(strip0x('0x0')).toEqual('0')
     expect(strip0x('0x0.1')).toEqual('0.1')
     expect(strip0x('0x123')).toEqual('123')
-    expect(strip0x(toBN(0))).toEqual('0')
+    try {
+      strip0x(0)
+    } catch (error) {
+      expect(error.message).toEqual('value has to be String')
+    }
+  })
+  it('test toLong', () => {
+    const testNumber = 123
+    const testString = '123'
+    const testWrong = {}
+    expect(toLong(testNumber)).toEqual(Long.fromNumber(123))
+    expect(toLong(testString)).toEqual(Long.fromString('123'))
+    expect(toLong(testWrong)).toEqual(undefined)
+  })
+  it('test pack', () => {
+    const testA = 1
+    const testB = 1
+    expect(pack(testA, testB)).toEqual(65537)
+    const testWrongA = '1'
+    const testWrongB = '2'
+    const testExcceedA = 0xfffff
+    const testExcceedB = 0xfffff
+    try {
+      pack(testWrongA, testWrongB)
+    } catch (error) {
+      expect(error.message).toEqual('a and b must be number')
+    }
+    try {
+      pack(testExcceedA, testExcceedB)
+    } catch (error) {
+      expect(error.message).toEqual('Both a and b must be 16 bits or less')
+    }
   })
 })

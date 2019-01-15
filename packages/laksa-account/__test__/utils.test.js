@@ -1,5 +1,5 @@
 import { generatePrivateKey } from '../../laksa-core-crypto/src'
-import { toBN } from '../../laksa-utils/src'
+import { Unit, Long } from '../../laksa-utils/src'
 import {
   createAccount,
   importAccount,
@@ -8,6 +8,15 @@ import {
   signTransaction,
   ENCRYPTED
 } from '../src'
+import { Transactions } from '../../laksa-core-transaction/src'
+import { HttpProvider } from '../../laksa-providers-http/src'
+import { Messenger } from '../../laksa-core-messenger/src'
+import { Wallet } from '../../laksa-wallet/src'
+import config from '../../laksa-core/src/config'
+
+const provider = new HttpProvider('https://api.zilliqa.com')
+const messenger = new Messenger(provider, config)
+const wallet = new Wallet(messenger)
 
 describe('test createAccount', () => {
   const instantMock = createAccount()
@@ -22,11 +31,11 @@ describe('test createAccount', () => {
     },
     {
       testArray: [],
-      message: "Cannot read property 'address' of undefined"
+      message: "Cannot read property 'privateKey' of undefined"
     },
     {
       testArray: [{ address: '123', privateKey: '123', publicKey: '123' }, 'simplePassWord'],
-      message: 'Validation failed for address,should be isAddress'
+      message: 'Validation failed for privateKey,should be isPrivateKey'
     },
     {
       testArray: [
@@ -58,7 +67,7 @@ describe('test createAccount', () => {
     try {
       return importAccount()
     } catch (error) {
-      expect(error.message).toEqual('private key is not correct')
+      expect(error.message).toEqual('private key is not correct:undefined')
     }
     expect(importedMock).toEqual(
       expect.objectContaining({
@@ -114,7 +123,7 @@ describe('test createAccount', () => {
       )
       return decryptedWrongAccount
     } catch (error) {
-      expect(error.message).toEqual('Validation failed for address,should be isAddress')
+      expect(error.message).toEqual('Validation failed for crypto,should be isObject')
     }
     try {
       const decryptedWrongAccount = await decryptAccount(
@@ -144,26 +153,22 @@ describe('test createAccount', () => {
     }
   })
   it('should be able to sign transaction', async () => {
-    const privateKey = '97d2d3a21d829800eeb01aa7f244926f993a1427d9ba79d9dc3bf14fe04d9e37'
-
+    const privateKey = 'e19d05c5452598e24caad4a0d85a49146f7be089515c905ae6a19e8a578a6930'
     const account = importAccount(privateKey)
 
     const rawTx = {
       version: 1,
-      nonce: 1,
-      to: 'another_person',
-      amount: toBN(888),
-      pubKey: account.publicKey,
-      gasPrice: 888,
-      gasLimit: 888888,
-      code: '',
-      data: 'some_data'
+      toAddr: '2E3C9B415B19AE4035503A06192A0FAD76E04243',
+      amount: Unit.Zil(1000).toQa(),
+      gasPrice: Unit.Li(10000).toQa(),
+      gasLimit: Long.fromNumber(250000000)
     }
 
-    const signed = signTransaction(account.privateKey, rawTx)
+    const transactions = new Transactions(messenger, wallet)
+    const tx = transactions.new(rawTx, messenger)
+    tx.nonce += 1
+    const signed = signTransaction(account.privateKey, tx)
 
-    expect(signed.signature).toEqual(
-      '24767c0588e91291a560d158b9e05762feafb9e4b58540528058c65b8e0b3eb1652317594d6cbff5c5a3c00e91698fa667da5b5e1952d47157e137e757e48b32'
-    )
+    expect(signed.signature.length).toEqual(128)
   })
 })

@@ -16,6 +16,10 @@ test('test InvalidResponse', () => {
   )
 })
 
+test('test InvalidResponse with Messeage', () => {
+  expect(InvalidResponse({ error: { message: 'lll' } })).toEqual(new Error('lll'))
+})
+
 test('test InvalidConnection', () => {
   expect(InvalidConnection('host')).toEqual(
     new Error("CONNECTION ERROR: Couldn't connect to node host.")

@@ -6,11 +6,13 @@ class ResponseMiddleware {
   }
 
   get getResult() {
-    return { ...this.result, responseType: 'result' }
+    return typeof this.result === 'string'
+      ? this.result
+      : { ...this.result, responseType: 'result' }
   }
 
   get getError() {
-    return { ...this.error, responseType: 'error' }
+    return typeof this.error === 'string' ? this.error : { ...this.error, responseType: 'error' }
   }
 
   get getRaw() {

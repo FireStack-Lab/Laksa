@@ -28,6 +28,7 @@ const toLong = data => {
 }
 
 const strip0x = value => {
+  if (!isString(value)) throw new Error('value has to be String')
   return `${value.replace(/^0x/i, '')}`
 }
 

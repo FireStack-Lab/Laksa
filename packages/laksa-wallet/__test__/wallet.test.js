@@ -3,7 +3,7 @@ import { Messenger } from '../../laksa-core-messenger/src'
 import { HttpProvider } from '../../laksa-providers-http/src'
 import { Wallet } from '../src'
 
-const provider = new HttpProvider('https://api-scilla.zilliqa.com')
+const provider = new HttpProvider('https://api.zilliqa.com')
 const messenger = new Messenger(provider)
 const wallet = new Wallet(messenger)
 const testPrivateKey = '97d2d3a21d829800eeb01aa7f244926f993a1427d9ba79d9dc3bf14fe04d9e37'
@@ -27,8 +27,8 @@ describe('test Wallet', () => {
     }
     expect(newAccount.privateKey).toEqual(expect.any(String))
     wallet.setSigner(newAccount)
-    expect(wallet.signer).toEqual(newAccount.address)
-    expect(wallet.defaultAccount).toEqual(newAccount.address)
+    expect(wallet.signer.address).toEqual(newAccount.address)
+    expect(wallet.defaultAccount.address).toEqual(newAccount.address)
     expect(wallet.getWalletAccounts().length).toEqual(1)
     const batchAccount = wallet.createBatchAccounts(5)
     expect(wallet.getWalletAccounts().length).toEqual(batchAccount.length + 1)
@@ -99,6 +99,22 @@ describe('test Wallet', () => {
     expect(wallet.getWalletPrivateKeys().length).toEqual(5)
     expect(wallet.getWalletPublicKeys().length).toEqual(5)
     wallet.cleanAllAccounts()
+
+    try {
+      wallet.createBatchAccounts()
+    } catch (error) {
+      expect(error.message).toEqual('number has to be >0 Number')
+    }
+    try {
+      wallet.createBatchAccounts('1')
+    } catch (error) {
+      expect(error.message).toEqual('number has to be >0 Number')
+    }
+    try {
+      wallet.createBatchAccounts(0)
+    } catch (error) {
+      expect(error.message).toEqual('number has to be >0 Number')
+    }
   })
   it('should be able to encrypt and decrypt wallet', async () => {
     wallet.createBatchAccounts(5)
@@ -109,5 +125,63 @@ describe('test Wallet', () => {
     const decryptedAccounts = wallet.getWalletAccounts()
     expect(decryptedAccounts[0].privateKey).toEqual(expect.any(String))
     wallet.cleanAllAccounts()
+  })
+
+  it('should test setSigner', () => {
+    const acc = wallet.createAccount()
+    wallet.setSigner(acc.address)
+    expect(wallet.signer.address).toEqual(acc.address)
+    wallet.cleanAllAccounts()
+    const bcc = wallet.createAccount()
+    wallet.setSigner(bcc)
+    expect(wallet.signer.address).toEqual(bcc.address)
+    expect(wallet.defaultAccount.address).toEqual(bcc.address)
+    wallet.cleanAllAccounts()
+  })
+
+  it('should decrypt a account encrypted by itself', async () => {
+    const acc = wallet.createAccount()
+    await acc.encrypt('111')
+    const decrypted = await wallet.decryptAccountByAddress(acc.address, '111')
+    expect(decrypted.privateKey).toEqual(expect.any(String))
+    wallet.cleanAllAccounts()
+  })
+  it('should decrypt a account imported from file', async () => {
+    const acc = wallet.createAccount()
+    const pky = acc.privateKey
+    wallet.cleanAllAccounts()
+    const file = await acc.toFile('111')
+    const imported = await wallet.importAccountFromKeyStore(file, '111')
+    expect(imported.privateKey).toEqual(pky)
+    expect(imported.address).toEqual(acc.address)
+    const exported = await wallet.exportAccountByAddress(imported.address, '111', { level: 1024 })
+    expect(exported).toEqual(expect.any(String))
+    wallet.cleanAllAccounts()
+  })
+  it('do not added account from previous existed', () => {
+    const acc = wallet.createAccount()
+    expect(wallet.addAccount(acc)).toBeFalsy()
+  })
+  it('do not modify accounts directly', () => {
+    try {
+      wallet.createBatchAccounts(5)
+      wallet.accounts = []
+    } catch (error) {
+      expect(error.message).toEqual(
+        'you should not set "accounts" directly, use internal functions'
+      )
+    }
+  })
+  it('if we decrypt a object from wallet', async () => {
+    const acc = wallet.createAccount()
+    const prv = acc.privateKey
+    const add = acc.address
+    const file = await acc.toFile('111')
+    const accountObject = JSON.parse(file)
+    wallet.cleanAllAccounts()
+    wallet.addAccount(accountObject)
+    await wallet.decryptAccountByAddress(add, '111')
+    const decrypted = wallet.getAccountByAddress(add)
+    expect(decrypted.privateKey).toEqual(prv)
   })
 })

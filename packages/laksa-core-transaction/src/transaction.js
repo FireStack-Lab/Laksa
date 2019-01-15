@@ -218,7 +218,7 @@ class Transaction {
       }
     }
     this.status = TxStatus.Rejected
-    throw new Error(`The transaction is still not confirmed after ${maxAttempts} attemps.`)
+    throw new Error(`The transaction is still not confirmed after ${maxAttempts} attempts.`)
   }
 
   /**

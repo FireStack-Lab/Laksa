@@ -6,7 +6,6 @@ import {
   isArray,
   isJsonString,
   isObject,
-  isUnit,
   isFunction,
   isHash,
   isUrl,
@@ -18,6 +17,7 @@ import {
   isByStrX,
   isNull,
   isUndefined,
+  isLong,
   validator,
   validateArgs,
   validateTypes,
@@ -95,10 +95,11 @@ describe('test validator', () => {
     const beTrue = ['function']
     mapTest(basicType, beTrue, isFunction)
   })
-  it('test isUnit', () => {
-    const beTrue = ['zero', 'unit', 'hexNumber']
-    mapTest({ ...basicType, ...advanceType }, beTrue, isUnit)
+  it('test isLong', () => {
+    const beTrue = ['long']
+    mapTest({ ...basicType, ...advanceType }, beTrue, isLong)
   })
+
   it('test isHash', () => {
     const beTrue = ['privateKey', 'hash']
     mapTest({ ...basicType, ...advanceType }, beTrue, isHash)
@@ -112,7 +113,7 @@ describe('test validator', () => {
     mapTest({ ...basicType, ...advanceType }, beTrue, isPubkey)
   })
   it('test isAddress', () => {
-    const beTrue = ['address', 'hexAddress', 'byStrX']
+    const beTrue = ['address', 'hexAddress', 'checkSumAddress', 'byStrX']
     mapTest({ ...basicType, ...advanceType }, beTrue, isAddress)
   })
   it('test isPrivateKey', () => {
@@ -160,7 +161,7 @@ describe('test validator', () => {
     expect(validator.test(advanceType.hex)).toEqual(expect.arrayContaining(['Hex']))
     expect(validator.test(advanceType.hash)).toEqual(expect.arrayContaining(['Hash']))
     expect(validator.test(advanceType.bn)).toEqual(expect.arrayContaining(['BN']))
-    expect(validator.test(advanceType.unit)).toEqual(expect.arrayContaining(['Unit']))
+    expect(validator.test(advanceType.uint)).toEqual(expect.arrayContaining(['Uint']))
     expect(validator.test(advanceType.byStrX)).toEqual(expect.arrayContaining(['ByStrX']))
     expect(validator.test(advanceType.url)).toEqual(expect.arrayContaining(['Url']))
   })

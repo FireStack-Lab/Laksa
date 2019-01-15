@@ -4,6 +4,7 @@ import scrypt from 'scrypt.js'
 import uuid from 'uuid'
 import { randomBytes, hashjs } from 'laksa-core-crypto'
 
+const ALGO_IDENTIFIER = 'aes-128-ctr'
 /**
  * getDerivedKey
  *
@@ -72,7 +73,7 @@ export const encrypt = async (privateKey, passphrase, options) => {
 
   return {
     crypto: {
-      cipher: 'aes-128-ctr',
+      cipher: ALGO_IDENTIFIER,
       cipherparams: {
         iv: iv.toString('hex')
       },
@@ -80,8 +81,11 @@ export const encrypt = async (privateKey, passphrase, options) => {
       kdf,
       kdfparams,
       mac: hashjs
-        .sha256()
-        .update(Buffer.concat([derivedKey.slice(16, 32), ciphertext]), 'hex')
+        .hmac(hashjs.sha256, derivedKey, 'hex')
+        .update(
+          Buffer.concat([derivedKey.slice(16, 32), ciphertext, iv, Buffer.from(ALGO_IDENTIFIER)]),
+          'hex'
+        )
         .digest('hex')
     },
     id: uuid.v4({ random: randomBytes(16) }),
@@ -106,8 +110,11 @@ export const decrypt = async (keystore, passphrase) => {
   const derivedKey = await getDerivedKey(Buffer.from(passphrase), keystore.crypto.kdf, kdfparams)
 
   const mac = hashjs
-    .sha256()
-    .update(Buffer.concat([derivedKey.slice(16, 32), ciphertext]), 'hex')
+    .hmac(hashjs.sha256, derivedKey, 'hex')
+    .update(
+      Buffer.concat([derivedKey.slice(16, 32), ciphertext, iv, Buffer.from(ALGO_IDENTIFIER)]),
+      'hex'
+    )
     .digest('hex')
 
   if (mac.toUpperCase() !== keystore.crypto.mac.toUpperCase()) {

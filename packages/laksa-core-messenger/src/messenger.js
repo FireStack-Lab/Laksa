@@ -2,17 +2,7 @@ import { InvalidProvider } from 'laksa-shared'
 import { pack } from 'laksa-utils'
 import { JsonRpc } from './rpcbuilder'
 import { ResponseMiddleware } from './responseMiddleware'
-
-/**
- * @function getResultForData
- * @param  {object} data {object get from provider}
- * @return {object} {data result or data}
- */
-function getResultForData(data) {
-  if (data.result) return data.getResult
-  if (data.error) return data.getError
-  return data.getRaw
-}
+import { getResultForData } from './util'
 
 class Messenger {
   constructor(provider, config) {
@@ -93,7 +83,7 @@ class Messenger {
   }
 
   setTransactionVersion(version) {
-    let chainID
+    let chainID = 1
     switch (this.provider.url) {
     case this.config.Default.nodeProviderUrl: {
       chainID = this.config.Default.CHAIN_ID

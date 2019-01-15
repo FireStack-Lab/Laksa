@@ -104,6 +104,7 @@ const isSignature = sig => {
 }
 
 const isByteString = (str, len) => {
+  if (!isString(str)) return false
   return !!str.replace('0x', '').match(`^[0-9a-fA-F]{${len}}$`)
 }
 

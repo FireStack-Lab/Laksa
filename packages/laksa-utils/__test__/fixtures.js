@@ -25,7 +25,8 @@ export const advanceType = {
   hex: '0x8423',
   hash: 'F5A5FD42D16A20302798EF6ED309979B43003D2320D9F0E8EA9831A92759FB4B',
   bn: util.toBN(123),
-  unit: 14,
+  uint: 14,
   byStrX: '0x84fece7d1f5629bc728c956ffd313dd0c3ac8f17',
-  url: 'https://www.zilliqa.com'
+  url: 'https://www.zilliqa.com',
+  long: util.Long.fromNumber(123)
 }

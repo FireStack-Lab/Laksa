@@ -179,7 +179,7 @@ class Wallet {
     if (addressRef !== undefined) {
       const currentArray = this.#_accounts.get('accounts').toArray()
       delete currentArray[addressRef.index]
-      if (addressRef.address === this.signer.address) {
+      if (this.signer !== undefined && addressRef.address === this.signer.address) {
         this.signer = undefined
         this.defaultAccount = undefined
       }

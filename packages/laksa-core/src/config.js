@@ -20,6 +20,6 @@ export default {
   MainNet: {
     CHAIN_ID: 1,
     Network_ID: 'MainNet',
-    nodeProviderUrl: 'https://api.zilliqa.com'
+    nodeProviderUrl: 'https://mainnet.zilliqa.com'
   }
 }

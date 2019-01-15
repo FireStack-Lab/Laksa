@@ -55,7 +55,7 @@
       //// 'https://staging-api.aws.z7a.xyz'
       // https://api.zilliqa.com
       const nodeProvider = new laksa.Modules.HttpProvider(
-        'https://staging-api.aws.z7a.xyz'
+        'https://api.zilliqa.com'
       )
       const scillaProvider = new laksa.Modules.HttpProvider(
         'https://scilla-runner.zilliqa.com'
@@ -103,7 +103,7 @@
       // /*
       //   Deploy a contract
       // */
-      const code = `scilla_version 0
+      const code = `
       (* HelloWorld contract *)
       import ListUtils
       (***************************************************)
@@ -172,7 +172,9 @@
         try {
           const deployed = await newContract.deploy({
             gasLimit: laksa.util.Long.fromNumber(25000000000),
-            gasPrice: laksa.util.Unit.from(1000000000).asQa().toQa(),
+            gasPrice: laksa.util.Unit.from(1000000000)
+              .asQa()
+              .toQa(),
             account: accountA
           })
           console.log(deployed)
@@ -323,16 +325,16 @@
       const normalTransaction = laksa.transactions.new({
         version: laksa.messenger.setTransactionVersion(1),
         toAddr: '2E3C9B415B19AE4035503A06192A0FAD76E04243',
-        amount: laksa.util.Unit.from(10000).asZil().toQa(),
-        gasPrice: laksa.util.Unit.from(1000).asLi().toQa(),
+        amount: laksa.util.Unit.Zil(1000).toQa(),
+        gasPrice: laksa.util.Unit.Li(10000).toQa(),
         gasLimit: laksa.util.Long.fromNumber(250000000)
       })
 
-      accountA
-        .signTransaction(normalTransaction)
-        .then(d => d.sendTransaction())
-        .then(res => res.transaction.confirm(res.response.TranID))
-        .then(console.log)
+      // accountA
+      //   .signTransaction(normalTransaction)
+      //   .then(d => d.sendTransaction())
+      //   .then(res => res.transaction.confirm(res.response.TranID))
+      //   .then(console.log)
 
       /*
         Transaction logic is the core logic to blockchain

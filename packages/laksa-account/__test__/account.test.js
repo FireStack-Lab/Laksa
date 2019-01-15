@@ -1,43 +1,41 @@
-import { toBN } from '../../laksa-utils/src'
-import Transaction from '../../laksa-core-transaction/src'
-import { generatePrivateKey, schnorr } from '../../laksa-core-crypto/src'
+import fetch from 'jest-fetch-mock'
+import {
+  Unit, Long, isAddress, isPrivateKey, isPubkey, BN
+} from '../../laksa-utils/src'
+
+import { Transactions } from '../../laksa-core-transaction/src'
+import { HttpProvider } from '../../laksa-providers-http/src'
+import { Messenger } from '../../laksa-core-messenger/src'
+import { Wallet } from '../../laksa-wallet/src'
+import config from '../../laksa-core/src/config'
+
+import { generatePrivateKey, schnorr, Signature } from '../../laksa-core-crypto/src'
 import { Account, ENCRYPTED } from '../src'
 
+const provider = new HttpProvider('https://api.zilliqa.com')
+const messenger = new Messenger(provider, config)
+const wallet = new Wallet(messenger)
+
 describe('test createAccount', () => {
+  afterEach(() => {
+    fetch.resetMocks()
+  })
   it('should be able to generate an object with keys,address,and 5 functions', async () => {
     const account = new Account()
     const mock = account.createAccount()
 
-    expect(mock).toEqual(
-      expect.objectContaining({
-        address: expect.any(String),
-        privateKey: expect.any(String),
-        publicKey: expect.any(String),
-        decrypt: expect.any(Function),
-        encrypt: expect.any(Function),
-        sign: expect.any(Function),
-        signTransaction: expect.any(Function),
-        signTransactionWithPassword: expect.any(Function)
-      })
-    )
+    expect(isAddress(mock.address)).toBeTruthy()
+    expect(isPrivateKey(mock.privateKey)).toBeTruthy()
+    expect(isPubkey(mock.publicKey)).toBeTruthy()
   })
   it('should be able to import an private keys, then generate publicKey,address,and 5 functions', async () => {
     const account = new Account()
     const prvKey = generatePrivateKey()
     const normalAccount = account.importAccount(prvKey)
 
-    expect(normalAccount).toEqual(
-      expect.objectContaining({
-        address: expect.any(String),
-        privateKey: expect.any(String),
-        publicKey: expect.any(String),
-        decrypt: expect.any(Function),
-        encrypt: expect.any(Function),
-        sign: expect.any(Function),
-        signTransaction: expect.any(Function),
-        signTransactionWithPassword: expect.any(Function)
-      })
-    )
+    expect(isAddress(normalAccount.address)).toBeTruthy()
+    expect(isPrivateKey(normalAccount.privateKey)).toBeTruthy()
+    expect(isPubkey(normalAccount.publicKey)).toBeTruthy()
 
     expect(() => account.importAccount(123)).toThrowError(/private key is not correct/)
     expect(() => account.importAccount()).toThrowError(/private key is not correct/)
@@ -57,7 +55,7 @@ describe('test createAccount', () => {
       const encrypted2x = await encrypted.encrypt('somethingelse')
       return encrypted2x
     } catch (err) {
-      expect(err.message).toEqual('Cannot convert a Symbol value to a string')
+      expect(err.message).toEqual('Validation failed for privateKey,should be isPrivateKey')
     }
   })
 
@@ -88,29 +86,45 @@ describe('test createAccount', () => {
     }
   })
   it('should be able to sign a transaction bytes', async () => {
-    const privateKey = generatePrivateKey()
-    const account = new Account().importAccount(privateKey)
+    const responses = [
+      {
+        id: 1,
+        jsonrpc: '2.0',
+        result: {
+          balance: 888,
+          nonce: 1
+        }
+      },
+      {
+        id: 1,
+        jsonrpc: '2.0',
+        result: {
+          balance: 888,
+          nonce: 1
+        }
+      }
+    ].map(res => [JSON.stringify(res)])
+
+    fetch.mockResponses(...responses)
+    const account = new Account(messenger).createAccount()
 
     const rawTx = {
       version: 1,
-      nonce: 1,
-      to: 'another_person',
-      amount: toBN(888),
-      pubKey: account.publicKey,
-      gasPrice: 888,
-      gasLimit: 888888,
-      code: '',
-      data: 'some_data'
+      toAddr: '0x1111111111111111111111111111111111111111',
+      amount: Unit.Zil(1000).toQa(),
+      gasPrice: Unit.Li(10000).toQa(),
+      gasLimit: Long.fromNumber(250000000)
     }
-    const { Signature } = schnorr
-    const tx = new Transaction(rawTx)
-    const rawSignature = account.sign(tx.bytes)
+
+    const transactions = new Transactions(messenger, wallet)
+    const tx = transactions.new(rawTx, messenger)
+    const signedTxn = await account.signTransaction(tx)
 
     const lgtm = schnorr.verify(
       tx.bytes,
       new Signature({
-        r: toBN(rawSignature.slice(0, 64), 16),
-        s: toBN(rawSignature.slice(64), 16)
+        r: new BN(signedTxn.signature.slice(0, 64), 16),
+        s: new BN(signedTxn.signature.slice(64), 16)
       }),
       Buffer.from(account.publicKey, 'hex')
     )
@@ -119,74 +133,67 @@ describe('test createAccount', () => {
 
     try {
       const encrypted = await account.encrypt('EncrypMyAssest')
-      const nothingSigned = encrypted.sign(rawTx)
-      return nothingSigned
+      await encrypted.signTransaction(tx)
     } catch (err) {
-      expect(err.message).toEqual('This account is encrypted, please decrypt it first')
+      expect(err.message).toEqual('password is not found')
     }
   })
-  it('should be able to sign a transaction object', () => {
-    const privateKey = '97d2d3a21d829800eeb01aa7f244926f993a1427d9ba79d9dc3bf14fe04d9e37'
 
-    const account = new Account().importAccount(privateKey)
-
-    const rawTx = {
-      version: 1,
-      nonce: 1,
-      to: 'another_person',
-      amount: toBN(888),
-      pubKey: account.publicKey,
-      gasPrice: 888,
-      gasLimit: 888888,
-      code: '',
-      data: 'some_data'
-    }
-
-    const signed = account.signTransaction(rawTx)
-
-    expect(signed.signature).toEqual(
-      '24767c0588e91291a560d158b9e05762feafb9e4b58540528058c65b8e0b3eb1652317594d6cbff5c5a3c00e91698fa667da5b5e1952d47157e137e757e48b32'
-    )
-  })
   it('should be able to sign a transaction object with Encrypted privateKey', async () => {
-    const privateKey = '97d2d3a21d829800eeb01aa7f244926f993a1427d9ba79d9dc3bf14fe04d9e37'
+    const responses = [
+      {
+        id: 1,
+        jsonrpc: '2.0',
+        result: {
+          balance: 888,
+          nonce: 1
+        }
+      },
+      {
+        id: 1,
+        jsonrpc: '2.0',
+        result: {
+          balance: 888,
+          nonce: 1
+        }
+      }
+    ].map(res => [JSON.stringify(res)])
 
-    const account = new Account().importAccount(privateKey)
-    const nonEncryptedAccount = new Account().importAccount(privateKey)
+    fetch.mockResponses(...responses)
+
+    const account = new Account(messenger).createAccount()
+
     const rawTx = {
       version: 1,
-      nonce: 1,
-      to: 'another_person',
-      amount: toBN(888),
-      pubKey: account.publicKey,
-      gasPrice: 888,
-      gasLimit: 888888,
-      code: '',
-      data: 'some_data'
+      toAddr: '0x1111111111111111111111111111111111111111',
+      amount: Unit.Zil(1000).toQa(),
+      gasPrice: Unit.Li(10000).toQa(),
+      gasLimit: Long.fromNumber(250000000)
     }
 
-    const encrypted = await account.encrypt('my4wes0me p6ssw04d')
-    try {
-      const nothingSigned = account.signTransaction(rawTx)
-      return nothingSigned
-    } catch (err) {
-      expect(err.message).toEqual(
-        'This account is encrypted, please decrypt it first or use "signTransactionWithPassword"'
-      )
-    }
+    const transactions = new Transactions(messenger, wallet)
+    const tx = transactions.new(rawTx, messenger)
+    await account.encrypt('EncrypMyAssest')
+    const signedTxn = await account.signTransaction(tx, 'EncrypMyAssest')
 
-    const signedWithPsw = await encrypted.signTransactionWithPassword(rawTx, 'my4wes0me p6ssw04d')
-    const signedWithPswButNotEncrypted = await nonEncryptedAccount.signTransactionWithPassword(
-      rawTx,
-      'my4wes0me p6ssw04d'
+    const lgtm = schnorr.verify(
+      tx.bytes,
+      new Signature({
+        r: new BN(signedTxn.signature.slice(0, 64), 16),
+        s: new BN(signedTxn.signature.slice(64), 16)
+      }),
+      Buffer.from(account.publicKey, 'hex')
     )
-    expect(signedWithPsw.signature).toEqual(
-      '24767c0588e91291a560d158b9e05762feafb9e4b58540528058c65b8e0b3eb1652317594d6cbff5c5a3c00e91698fa667da5b5e1952d47157e137e757e48b32'
-    )
-    expect(encrypted.privateKey).toEqual(ENCRYPTED)
 
-    expect(signedWithPswButNotEncrypted.signature).toEqual(
-      '24767c0588e91291a560d158b9e05762feafb9e4b58540528058c65b8e0b3eb1652317594d6cbff5c5a3c00e91698fa667da5b5e1952d47157e137e757e48b32'
-    )
+    expect(lgtm).toBeTruthy()
+  })
+  it('should import account while crypto object is existed', async () => {
+    const acc = new Account()
+
+    const bcc = acc.createAccount()
+    const prv = bcc.privateKey
+    await bcc.encrypt('111')
+    const imported = bcc.importAccount(prv)
+    expect(imported.privateKey).toEqual(prv)
   })
 })

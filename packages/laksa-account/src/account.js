@@ -160,7 +160,7 @@ class Account extends Core {
         throw new Error('can not get nonce')
       }
     } catch (error) {
-      throw new Error(error)
+      throw error
     }
   }
 
@@ -171,7 +171,7 @@ class Account extends Core {
       this.nonce = nonce
       return this
     } catch (error) {
-      throw new Error(error)
+      throw error
     }
   }
 }
