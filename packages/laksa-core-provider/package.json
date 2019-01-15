@@ -1,0 +1,12 @@
+{
+  "name": "laksa-core-provider",
+  "version": "0.0.111",
+  "description": "",
+  "main": "index.js",
+  "browser": "lib/index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "neeboo",
+  "license": "ISC"
+}

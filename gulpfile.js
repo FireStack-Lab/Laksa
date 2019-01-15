@@ -1,36 +1,33 @@
-const gulp = require('gulp')
+const { task } = require('gulp')
 const del = require('del')
 
 const packages = [
-  'laksa-core-crypto',
   'laksa-extend-keystore',
+  'laksa-core-crypto',
   'laksa-core-messenger',
   'laksa-core-contract',
   'laksa-core-transaction',
-  'laksa-contracts',
+  'laksa-core-provider',
+  'laksa-account',
   'laksa-providers-http',
   'laksa-shared',
   'laksa-utils',
-  'laksa-account',
-  'laksa-core-methods',
-  'laksa-core-properties',
   'laksa-wallet',
-  'laksa-hd-wallet',
-  'laksa-zil',
+  'laksa-blockchain',
   'laksa-core',
   'laksa'
 ]
 
-gulp.task('cleanBrowser', () => {
-  packages.map((p) => {
+task('cleanBrowser', async () => {
+  await packages.map(p => {
     const pathToLib = `packages/${p}/lib`
-    return del([pathToLib])
+    return del.sync([pathToLib])
   })
 })
 
-gulp.task('cleanServer', () => {
-  packages.map((p) => {
+task('cleanServer', async () => {
+  await packages.map(p => {
     const pathToLib = `packages/${p}/node`
-    return del([pathToLib])
+    return del.sync([pathToLib])
   })
 })

@@ -1,6 +1,6 @@
 //
 //
-//  Copyright
+//  Copyright await release
 //
 //
 //
@@ -8,18 +8,18 @@
 import * as util from 'laksa-utils'
 import * as core from 'laksa-core-crypto'
 import { Messenger } from 'laksa-core-messenger'
-import Transaction from 'laksa-core-transaction'
-import HttpProvider from 'laksa-providers-http'
+import { Transactions, Transaction } from 'laksa-core-transaction'
+import { HttpProvider } from 'laksa-providers-http'
 import { Account } from 'laksa-account'
-import Contracts from 'laksa-contracts'
+import { Contracts, Contract } from 'laksa-core-contract'
+import { BlockChain } from 'laksa-blockchain'
 import { Wallet } from 'laksa-wallet'
-import Zil from 'laksa-zil'
 
 import config from './config'
 
 class Laksa {
   constructor(args) {
-    const url = args || config.defaultNodeUrl
+    const url = (args && util.isUrl(args) ? args : undefined) || config.Default.nodeProviderUrl
     this.util = {
       ...util,
       ...core
@@ -28,20 +28,24 @@ class Laksa {
       node: new HttpProvider(url),
       scilla: new HttpProvider(url)
     }
-    this.messenger = new Messenger(this.currentProvider.node)
-    this.zil = new Zil(this.messenger)
+    this.config = config
+    this.messenger = new Messenger(this.currentProvider.node, this.config)
     this.wallet = new Wallet(this.messenger)
+    this.transactions = new Transactions(this.messenger, this.wallet)
     this.contracts = new Contracts(this.messenger, this.wallet)
+    this.zil = new BlockChain(this.messenger, this.wallet)
   }
 
   Modules = {
     Account,
+    BlockChain,
     Contracts,
+    Contract,
     HttpProvider,
     Messenger,
     Transaction,
-    Wallet,
-    Zil
+    Transactions,
+    Wallet
   }
 
   get version() {
@@ -63,8 +67,19 @@ class Laksa {
   }
 
   setProvider = provider => {
-    this.setNodeProvider(provider)
-    this.setScillaProvider(provider)
+    let providerSetter = {}
+    if (util.isUrl(provider)) {
+      providerSetter.url = provider
+    } else if (util.isObject(provider) && util.isUrl(provider.url)) {
+      providerSetter = {
+        url: provider.url,
+        options: provider.options
+      }
+    } else {
+      throw new Error('provider should be HttpProvider or url string')
+    }
+    this.setNodeProvider(providerSetter)
+    this.setScillaProvider(providerSetter)
     return true
   }
 
@@ -83,8 +98,9 @@ class Laksa {
     return this.config.defaultAccount
   }
 
-  setNodeProvider(provider) {
-    const newProvider = new HttpProvider(provider)
+  setNodeProvider({ url, options }) {
+    const newProvider = new HttpProvider(url, options)
+
     this.currentProvider = {
       ...this.currentProvider,
       node: newProvider
@@ -92,8 +108,8 @@ class Laksa {
     this.messenger.setProvider(newProvider)
   }
 
-  setScillaProvider(provider) {
-    const newProvider = new HttpProvider(provider)
+  setScillaProvider({ url, options }) {
+    const newProvider = new HttpProvider(url, options)
     this.currentProvider = {
       ...this.currentProvider,
       scilla: newProvider
@@ -107,6 +123,11 @@ class Laksa {
       enumerable: true
     }
     Object.defineProperty(this, name, pkgObject)
+  }
+
+  getNetworkSetting() {
+    const { TestNet, MainNet } = this.config
+    return { TestNet, MainNet }
   }
 }
 

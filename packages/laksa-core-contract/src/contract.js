@@ -1,136 +1,151 @@
-import Transaction from 'laksa-core-transaction'
-import { sign } from 'laksa-shared'
-import { validate, toBN, isInt } from './validate'
-import ABI from './abi'
+import { Transaction } from 'laksa-core-transaction'
+import { Long, BN } from 'laksa-utils'
+import { assertObject } from 'laksa-shared'
 
-export const ContractStatus = {
-  initialised: Symbol('initialised'),
-  waitForSign: Symbol('waitForSign'),
-  rejected: Symbol('rejected'),
-  deployed: Symbol('deployed')
-}
+import { ContractStatus, setParamValues } from './util'
 
-const setParamValues = (rawParams, newValues) => {
-  const newParams = []
-  rawParams.forEach((v, i) => {
-    if (!validate(v.type, newValues[i])) {
-      throw new TypeError(`Type validator failed,with <${v.vname}:${v.type}>`)
-    }
-    // FIXME:it may change cause local scilla runner return the `name` not `vname`
-    // But when call or make transaction, remote node only accpet `vname`
-    const newObj = Object.assign({}, v, { value: newValues[i], vname: v.name ? v.name : v.vname })
-    if (newObj.name) {
-      delete newObj.name
-    }
-    newParams.push(newObj)
-  })
-  return newParams
-}
-
-const defaultContractJson = {
-  to: '0000000000000000000000000000000000000000',
-  code: '',
-  data: ''
-}
-
-export class Contract {
-  contractJson = {}
-
-  blockchain = []
-
-  constructor(factory, abi, address, code, initParams, state) {
+class Contract {
+  constructor(params, factory, status = ContractStatus.INITIALISED) {
+    this.code = params.code || ''
+    this.init = params.init || []
+    this.version = params.version || 0
+    this.ContractAddress = params.ContractAddress || undefined
     this.messenger = factory.messenger
     this.signer = factory.signer
+    this.status = status
+    this.transaction = {}
+  }
 
-    this.address = address || undefined
-    if (address) {
-      this.abi = abi
-      this.address = address
-      this.initParams = initParams
-      this.state = state
-      this.contractStatus = ContractStatus.deployed
-    } else {
-      // assume we're deploying
-      this.abi = abi
-      this.code = code
-      this.initParams = initParams
-      this.contractStatus = ContractStatus.initialised
+  /**
+   * isInitialised
+   *
+   * Returns true if the contract has not been deployed
+   *
+   * @returns {boolean}
+   */
+  isInitialised() {
+    return this.status === ContractStatus.INITIALISED
+  }
+
+  /**
+   * isSigned
+   *
+   * Returns true if the contract is signed
+   *
+   * @returns {boolean}
+   */
+  isSigned() {
+    return this.status === ContractStatus.SIGNED
+  }
+
+  /**
+   * isSent
+   *
+   * Returns true if the contract is sent
+   *
+   * @returns {boolean}
+   */
+  isSent() {
+    return this.status === ContractStatus.SENT
+  }
+
+  /**
+   * isDeployed
+   *
+   * Returns true if the contract is deployed
+   *
+   * @returns {boolean}
+   */
+  isDeployed() {
+    return this.status === ContractStatus.DEPLOYED
+  }
+
+  /**
+   * isRejected
+   *
+   * Returns true if an attempt to deploy the contract was made, but the
+   * underlying transaction was unsuccessful.
+   *
+   * @returns {boolean}
+   */
+  isRejected() {
+    return this.status === ContractStatus.REJECTED
+  }
+
+  /**
+   * @function {payload}
+   * @return {object} {default deployment payload}
+   */
+  get deployPayload() {
+    return {
+      version:
+        this.version < 65535 ? this.messenger.setTransactionVersion(this.version) : this.version,
+      amount: new BN(0),
+      toAddr: String(0).repeat(40),
+      code: this.code,
+      data: JSON.stringify(this.init).replace(/\\"/g, '"')
     }
   }
 
-  // event
-  on = () => {}
+  get callPayload() {
+    return {
+      version:
+        this.version < 65535 ? this.messenger.setTransactionVersion(this.version) : this.version,
+      toAddr: this.ContractAddress
+    }
+  }
 
-  // test call to scilla runner
-  async testCall(gasLimit) {
-    const callContractJson = {
-      code: this.code,
-      init: JSON.stringify(this.initParams),
-      blockchain: JSON.stringify(this.blockchain),
-      gaslimit: JSON.stringify(gasLimit)
-    }
-    // the endpoint for sendServer has been set to scillaProvider
-    const result = await this.messenger.sendServer('/contract/call', callContractJson)
-    if (result.result) {
-      this.setContractStatus(ContractStatus.waitForSign)
-    }
+  /**
+   * @function {setStatus}
+   * @param  {string} status {contract status during all life-time}
+   * @return {type} {set this.status}
+   */
+  setStatus(status) {
+    this.status = status
+  }
+
+  /**
+   * @function {setInitParamsValues}
+   * @param  {Array<Object>} initParams    {init params get from ABI}
+   * @param  {Array<Object>} arrayOfValues {init params set for ABI}
+   * @return {Contract} {raw contract object}
+   */
+  setInitParamsValues(initParams, arrayOfValues) {
+    const result = setParamValues(initParams, arrayOfValues)
+    this.init = result
     return this
   }
 
-  @sign
-  async prepareTx(tx) {
-    const raw = tx.txParams
-
-    // const { code, ...rest } = raw
-    const response = await this.messenger.send({
-      method: 'CreateTransaction',
-      params: [{ ...raw, amount: raw.amount.toNumber() }]
-    })
-
-    return tx.confirm(response.TranID)
-  }
-
-  async deployTxn({ gasPrice, gasLimit }) {
-    if (!this.code || !this.initParams) {
+  /**
+   * @function {deploy}
+   * @param  {Object<{gasLimit:Long,gasPrice:BN}>} transactionParams { gasLimit and gasPrice}
+   * @param  {Object<{account:Account,password?:String}>} accountParams {account and password}
+   * @return {Contract} {Contract with finalty}
+   */
+  @assertObject({
+    gasLimit: ['isLong', 'required'],
+    gasPrice: ['isBN', 'required']
+  })
+  async deploy({
+    gasLimit = Long.fromNumber(2500),
+    gasPrice = new BN(100),
+    account = this.signer.signer,
+    password,
+    maxAttempts = 20,
+    interval = 1000
+  }) {
+    if (!this.code || !this.init) {
       throw new Error('Cannot deploy without code or ABI.')
     }
-    // console.log(this.signer)
+
     try {
-      Transaction.setMessenger(this.messenger)
-      const tx = await this.prepareTx(
-        new Transaction({
-          version: 0,
-          to: defaultContractJson.to,
-          // pubKey: this.signer.publicKey,
-          // amount should be 0.  we don't accept implicitly anymore.
-          amount: toBN(0),
-          gasPrice: toBN(gasPrice).toNumber(),
-          gasLimit: toBN(gasLimit).toNumber(),
-          code: this.code,
-          data: JSON.stringify(this.initParams).replace(/\\"/g, '"')
-        })
-      )
-
-      if (!tx.receipt || !tx.receipt.success) {
-        this.setContractStatus(ContractStatus.rejected)
-        return this
-      }
-      this.setContractStatus(ContractStatus.deployed)
-
+      this.setDeployPayload({ gasLimit, gasPrice })
+      await this.sendContract({ account, password })
+      await this.confirmTx(maxAttempts, interval)
       return this
     } catch (err) {
       throw err
     }
-  }
-
-  async deploy(signedTxn) {
-    if (!signedTxn.signature) throw new Error('transaction has not been signed')
-    const deployedTxn = Object.assign({}, { ...signedTxn, amount: signedTxn.amount.toNumber() })
-    const result = await this.messenger.send({ method: 'CreateTransaction', params: [deployedTxn] })
-    if (result) {
-      this.setContractStatus(ContractStatus.deployed)
-    }
-    return { ...this, txnId: result }
   }
 
   /**
@@ -140,113 +155,155 @@ export class Contract {
    * @param {any} params
    * @returns {Promise<Transaction>}
    */
-  async call(transition, params, amount = toBN(0)) {
-    const msg = {
-      _tag: transition,
-      // TODO: this should be string, but is not yet supported by lookup.
-      params
+  @assertObject({
+    transition: ['isString', 'required'],
+    params: ['isArray', 'required'],
+    amount: ['isBN', 'optional'],
+    gasLimit: ['isLong', 'optional'],
+    gasPrice: ['isBN', 'optional']
+  })
+  async call({
+    transition,
+    params,
+    amount = new BN(0),
+    gasLimit = Long.fromNumber(1000),
+    gasPrice = new BN(100),
+    account = this.signer.signer,
+    password,
+    maxAttempts = 20,
+    interval = 1000
+  }) {
+    if (!this.ContractAddress) {
+      return Promise.reject(Error('Contract has not been deployed!'))
     }
 
     try {
-      return await this.prepareTx(
-        new Transaction({
-          version: 0,
-          to: defaultContractJson.to,
-          amount: toBN(amount),
-          gasPrice: 1000,
-          gasLimit: 1000,
-          data: JSON.stringify(msg)
-        })
-      )
+      this.setCallPayload({
+        transition,
+        params,
+        amount,
+        gasLimit,
+        gasPrice
+      })
+      await this.sendContract({ account, password })
+      await this.confirmTx(maxAttempts, interval)
+      return this
     } catch (err) {
       throw err
     }
   }
 
-  //-------------------------------
-  async getABI({ code }) {
-    // the endpoint for sendServer has been set to scillaProvider
-    const result = await this.messenger.sendServer('/contract/check', { code })
-    if (result.result && result.message !== undefined) {
-      return JSON.parse(result.message)
+  /**
+   * @function {sendContract}
+   * @param  {Object<{account:Account,password?:String}>} accountParams {account and password}
+   * @return {Contract} {Contract Sent}
+   */
+  async sendContract({ account = this.signer.signer, password }) {
+    try {
+      await this.signTxn({ account, password })
+      const { transaction, response } = await this.transaction.sendTransaction()
+      this.ContractAddress = response.ContractAddress
+      this.transaction = transaction.map(obj => {
+        return { ...obj, TranID: response.TranID }
+      })
+      this.setStatus(ContractStatus.SENT)
+      return this
+    } catch (error) {
+      throw error
     }
   }
 
-  async decodeABI({ code }) {
-    this.setCode(code)
-    const abiObj = await this.getABI({ code })
-    this.setABI(abiObj)
-    return this
+  /**
+   * @function {signTxn}
+   * @param  {Object<{account:Account,password?:String}>} accountParams {account and password}
+   * @return {Contract} {Contract Signed}
+   */
+  async signTxn({ account = this.signer.signer, password }) {
+    try {
+      this.transaction = await account.signTransaction(this.transaction, password)
+      this.setStatus(ContractStatus.SIGNED)
+      return this
+    } catch (error) {
+      throw error
+    }
   }
 
-  async setBlockNumber(number) {
-    if (number && isInt(Number(number))) {
-      this.setBlockchain(String(number))
-      this.setCreationBlock(String(number))
-      return this
-    } else if (number === undefined) {
-      const result = await this.messenger.send({ method: 'GetLatestTxBlock', param: [] })
-      if (result) {
-        this.setBlockchain(result.header.BlockNum)
-        this.setCreationBlock(result.header.BlockNum)
+  /**
+   * @function {confirmTx}
+   * @return {Contract} {Contract confirm with finalty}
+   */
+  async confirmTx(maxAttempts = 20, interval = 1000) {
+    try {
+      await this.transaction.confirm(this.transaction.TranID, maxAttempts, interval)
+      if (!this.transaction.receipt || !this.transaction.receipt.success) {
+        this.setStatus(ContractStatus.REJECTED)
         return this
       }
+      this.setStatus(ContractStatus.DEPLOYED)
+      return this
+    } catch (error) {
+      throw error
     }
-    return false
   }
 
-  //-------------------------------
-  // new contract json for deploy
-  generateNewContractJson() {
-    this.contractJson = {
-      ...defaultContractJson,
-      code: JSON.stringify(this.code),
-      data: JSON.stringify(this.initParams.concat(this.blockchain))
+  /**
+   * @function {getState}
+   * @return {type} {description}
+   */
+  async getState() {
+    if (this.status !== ContractStatus.DEPLOYED) {
+      return Promise.resolve([])
     }
-    this.setContractStatus(ContractStatus.initialised)
-    return this
+
+    const response = await this.messenger.send('GetSmartContractState', this.ContractAddress)
+
+    return response
   }
 
-  setABI(abi) {
-    this.abi = new ABI(abi) || {}
-    return this
-  }
-
-  setCode(code) {
-    this.code = code || ''
-    return this
-  }
-
-  setInitParamsValues(initParams, arrayOfValues) {
-    const result = setParamValues(initParams, arrayOfValues)
-    this.initParams = result
-    return this
-  }
-
-  setCreationBlock(blockNumber) {
-    const result = setParamValues(
-      [{ vname: '_creation_block', type: 'BNum' }],
-      [toBN(blockNumber).toString()]
+  @assertObject({
+    gasLimit: ['isLong', 'required'],
+    gasPrice: ['isBN', 'required']
+  })
+  setDeployPayload({ gasPrice, gasLimit }) {
+    this.transaction = new Transaction(
+      {
+        ...this.deployPayload,
+        gasPrice,
+        gasLimit
+      },
+      this.messenger
     )
-    this.initParams.push(result[0])
     return this
   }
 
-  setBlockchain(blockNumber) {
-    const result = setParamValues(
-      [{ vname: 'BLOCKNUMBER', type: 'BNum' }],
-      [toBN(blockNumber).toString()]
+  @assertObject({
+    transition: ['isString', 'required'],
+    params: ['isArray', 'required'],
+    amount: ['isBN', 'required'],
+    gasLimit: ['isLong', 'required'],
+    gasPrice: ['isBN', 'required']
+  })
+  setCallPayload({
+    transition, params, amount, gasLimit, gasPrice
+  }) {
+    const msg = {
+      _tag: transition,
+
+      // TODO: this should be string, but is not yet supported by lookup.
+      params
+    }
+    this.transaction = new Transaction(
+      {
+        ...this.callPayload,
+        amount,
+        gasPrice,
+        gasLimit,
+        data: JSON.stringify(msg)
+      },
+      this.messenger
     )
-    this.blockchain.push(result[0])
     return this
-  }
-
-  // messenger Setter
-  setMessenger(messenger) {
-    this.messenger = messenger || undefined
-  }
-
-  setContractStatus(status) {
-    this.contractStatus = status
   }
 }
+
+export { Contract }

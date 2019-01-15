@@ -1,14 +1,15 @@
 {
   "name": "laksa-core-messenger",
-  "version": "0.0.48",
+  "version": "0.0.111",
   "description": "messenger for laksa core",
   "main": "index.js",
+  "browser": "lib/index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "neeboo",
   "license": "ISC",
   "dependencies": {
-    "laksa-shared": "^0.0.48"
+    "laksa-shared": "^0.0.111"
   }
 }

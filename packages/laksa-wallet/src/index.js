@@ -1,3 +1,2 @@
-import Wallet from './wallet'
-
-export { Wallet }
+export * from './wallet'
+export * from './symbols'

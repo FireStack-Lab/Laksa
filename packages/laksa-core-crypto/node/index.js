@@ -1,16 +1,13 @@
 (function (global, factory) {
-  typeof exports === 'object' && typeof module !== 'undefined' ? factory(exports, require('randombytes'), require('bsert'), require('elliptic'), require('bn.js'), require('hash.js'), require('hmac-drbg'), require('elliptic/lib/elliptic/ec/signature')) :
-  typeof define === 'function' && define.amd ? define(['exports', 'randombytes', 'bsert', 'elliptic', 'bn.js', 'hash.js', 'hmac-drbg', 'elliptic/lib/elliptic/ec/signature'], factory) :
-  (factory((global.Laksa = {}),global.RB,global.assert,global.elliptic,global.BN,global.hashjs,global.DRBG,global.Signature));
-}(this, (function (exports,RB,assert,elliptic,BN,hashjs,DRBG,Signature) { 'use strict';
+  typeof exports === 'object' && typeof module !== 'undefined' ? factory(exports, require('bn.js'), require('elliptic'), require('hash.js'), require('hmac-drbg'), require('@zilliqa-js/proto')) :
+  typeof define === 'function' && define.amd ? define(['exports', 'bn.js', 'elliptic', 'hash.js', 'hmac-drbg', '@zilliqa-js/proto'], factory) :
+  (factory((global.Laksa = {}),global.BN,global.elliptic,global.hashjs,global.DRBG,global.proto));
+}(this, (function (exports,BN,elliptic,hashjs,DRBG,proto) { 'use strict';
 
-  RB = RB && RB.hasOwnProperty('default') ? RB['default'] : RB;
-  assert = assert && assert.hasOwnProperty('default') ? assert['default'] : assert;
-  elliptic = elliptic && elliptic.hasOwnProperty('default') ? elliptic['default'] : elliptic;
   BN = BN && BN.hasOwnProperty('default') ? BN['default'] : BN;
+  elliptic = elliptic && elliptic.hasOwnProperty('default') ? elliptic['default'] : elliptic;
   hashjs = hashjs && hashjs.hasOwnProperty('default') ? hashjs['default'] : hashjs;
   DRBG = DRBG && DRBG.hasOwnProperty('default') ? DRBG['default'] : DRBG;
-  Signature = Signature && Signature.hasOwnProperty('default') ? Signature['default'] : Signature;
 
   /**
    * randomBytes
@@ -22,14 +19,15 @@
    * @returns {string}
    */
   const randomBytes = bytes => {
-    const randBz = RB(bytes); // if (typeof window !== 'undefined' && window.crypto && window.crypto.getRandomValues) {
-    //   randBz = window.crypto.getRandomValues(new Uint8Array(bytes))
-    // } else if (typeof require !== 'undefined') {
-    //   // randBz = require('crypto').randomBytes(bytes)
-    //   randBz = RB(bytes)
-    // } else {
-    //   throw new Error('Unable to generate safe random numbers.')
-    // }
+    let randBz;
+
+    if (typeof window !== 'undefined' && window.crypto && window.crypto.getRandomValues) {
+      randBz = window.crypto.getRandomValues(new Uint8Array(bytes));
+    } else if (typeof require !== 'undefined') {
+      randBz = require('crypto').randomBytes(bytes);
+    } else {
+      throw new Error('Unable to generate safe random numbers.');
+    }
 
     let randStr = '';
 
@@ -38,17 +36,65 @@
     }
 
     return randStr;
-  };
+  }; // import RB from 'randombytes'
+  // export const randomBytes = bytes => {
+  //   const randBz = RB(bytes)
+  //   let randStr = ''
+  //   for (let i = 0; i < bytes; i += 1) {
+  //     randStr += `00${randBz[i].toString(16)}`.slice(-2)
+  //   }
+  //   return randStr
+  // }
 
+  /**
+   * Signature
+   *
+   * This replaces `elliptic/lib/elliptic/ec/signature`. This is to avoid
+   * duplicate code in the final bundle, caused by having to bundle elliptic
+   * twice due to its circular dependencies. This can be removed once
+   * https://github.com/indutny/elliptic/pull/157 is resolved, or we find the
+   * time to fork an optimised version of the library.
+   */
+
+  class Signature {
+    constructor(options) {
+      this.r = typeof options.r === 'string' ? new BN(options.r, 16) : options.r;
+      this.s = typeof options.s === 'string' ? new BN(options.s, 16) : options.s;
+    }
+
+  }
+
+  const secp256k1 = elliptic.ec('secp256k1');
   const {
     curve
-  } = elliptic.ec('secp256k1'); // Public key is a point (x, y) on the curve.
+  } = secp256k1;
+  const PRIVKEY_SIZE_BYTES = 32; // Public key is a point (x, y) on the curve.
   // Each coordinate requires 32 bytes.
   // In its compressed form it suffices to store the x co-ordinate
   // and the sign for y.
   // Hence a total of 33 bytes.
 
-  const PUBKEY_COMPRESSED_SIZE_BYTES = 33;
+  const PUBKEY_COMPRESSED_SIZE_BYTES = 33; // Personalization string used for HMAC-DRBG instantiation.
+
+  const ALG = Buffer.from('Schnorr+SHA256  ', 'ascii'); // The length in bytes of the string above.
+
+  const ALG_LEN = 16; // The length in bytes of entropy inputs to HMAC-DRBG
+
+  const ENT_LEN = 32;
+  const HEX_ENC = 'hex';
+  /**
+   * generatePrivateKey
+   *
+   * @returns {string} - the hex-encoded private key
+   */
+
+  const generatePrivateKey = () => {
+    return secp256k1.genKeyPair({
+      entropy: randomBytes(secp256k1.curve.n.byteLength()),
+      entropyEnc: HEX_ENC,
+      pers: 'zilliqajs+secp256k1+SHA256'
+    }).getPrivate().toString(16, PRIVKEY_SIZE_BYTES * 2);
+  };
   /**
    * Hash (r | M).
    * @param {Buffer} msg
@@ -59,7 +105,8 @@
 
   const hash = (q, pubkey, msg) => {
     const sha256 = hashjs.sha256();
-    const totalLength = PUBKEY_COMPRESSED_SIZE_BYTES * 2 + msg.byteLength; // 33 q + 33 pubkey + variable msgLen
+    const pubSize = PUBKEY_COMPRESSED_SIZE_BYTES * 2;
+    const totalLength = pubSize + msg.byteLength; // 33 q + 33 pubkey + variable msgLen
 
     const Q = q.toArrayLike(Buffer, 'be', 33);
     const B = Buffer.allocUnsafe(totalLength);
@@ -74,20 +121,19 @@
    * @param {Buffer} msg
    * @param {Buffer} key
    * @param {Buffer} pubkey
-   * @param {Buffer} pubNonce?
    *
    * @returns {Signature}
    */
 
-  const sign = (msg, key, pubkey) => {
-    const prv = new BN(key);
-    const drbg = getDRBG(msg, key);
+  const sign = (msg, privKey, pubKey) => {
+    const prv = new BN(privKey);
+    const drbg = getDRBG(msg);
     const len = curve.n.byteLength();
     let sig;
 
     while (!sig) {
       const k = new BN(drbg.generate(len));
-      sig = trySign(msg, prv, k, pubkey);
+      sig = trySign(msg, k, prv, pubKey);
     }
 
     return sig;
@@ -95,38 +141,56 @@
   /**
    * trySign
    *
-   * @param {Buffer} msg
-   * @param {BN} prv - private key
-   * @param {BN} k - DRBG-generated random number
-   * @param {Buffer} pn - optional
-   * @param {Buffer)} pubKey - public key
+   * @param {Buffer} msg - the message to sign over
+   * @param {BN} k - output of the HMAC-DRBG
+   * @param {BN} privateKey - the private key
+   * @param {Buffer} pubKey - the public key
    *
    * @returns {Signature | null =>}
    */
 
-  const trySign = (msg, prv, k, pubKey) => {
-    if (prv.isZero()) throw new Error('Bad private key.');
-    if (prv.gte(curve.n)) throw new Error('Bad private key.'); // 1a. check that k is not 0
+  const trySign = (msg, k, privKey, pubKey) => {
+    if (privKey.isZero()) {
+      throw new Error('Bad private key.');
+    }
 
-    if (k.isZero()) return null; // 1b. check that k is < the order of the group
+    if (privKey.gte(curve.n)) {
+      throw new Error('Bad private key.');
+    } // 1a. check that k is not 0
 
-    if (k.gte(curve.n)) return null; // 2. Compute commitment Q = kG, where g is the base point
+
+    if (k.isZero()) {
+      return null;
+    } // 1b. check that k is < the order of the group
+
+
+    if (k.gte(curve.n)) {
+      return null;
+    } // 2. Compute commitment Q = kG, where g is the base point
+
 
     const Q = curve.g.mul(k); // convert the commitment to octets first
 
     const compressedQ = new BN(Q.encodeCompressed()); // 3. Compute the challenge r = H(Q || pubKey || msg)
+    // mod reduce the r value by the order of secp256k1, n
 
-    const r = hash(compressedQ, pubKey, msg);
+    const r = hash(compressedQ, pubKey, msg).umod(curve.n);
     const h = r.clone();
-    if (h.isZero()) return null;
-    if (h.eq(curve.n)) return null; // 4. Compute s = k - r * prv
+
+    if (h.isZero()) {
+      return null;
+    } // 4. Compute s = k - r * prv
     // 4a. Compute r * prv
 
-    let s = h.imul(prv); // 4b. Compute s = k - r * prv mod n
 
-    s = k.isub(s);
-    s = s.umod(curve.n);
-    if (s.isZero()) return null;
+    let s = h.imul(privKey).umod(curve.n); // 4b. Compute s = k - r * prv mod n
+
+    s = k.isub(s).umod(curve.n);
+
+    if (s.isZero()) {
+      return null;
+    }
+
     return new Signature({
       r,
       s
@@ -150,16 +214,40 @@
 
   const verify = (msg, signature, key) => {
     const sig = new Signature(signature);
-    if (sig.s.gte(curve.n)) throw new Error('Invalid S value.');
-    if (sig.r.gt(curve.n)) throw new Error('Invalid R value.');
+
+    if (sig.s.isZero() || sig.r.isZero()) {
+      throw new Error('Invalid signature');
+    }
+
+    if (sig.s.isNeg() || sig.r.isNeg()) {
+      throw new Error('Invalid signature');
+    }
+
+    if (sig.s.gte(curve.n) || sig.r.gte(curve.n)) {
+      throw new Error('Invalid signature');
+    }
+
     const kpub = curve.decodePoint(key);
+
+    if (!curve.validate(kpub)) {
+      throw new Error('Invalid public key');
+    }
+
     const l = kpub.mul(sig.r);
     const r = curve.g.mul(sig.s);
     const Q = l.add(r);
+
+    if (Q.isInfinity()) {
+      throw new Error('Invalid intermediate point.');
+    }
+
     const compressedQ = new BN(Q.encodeCompressed());
-    const r1 = hash(compressedQ, key, msg);
-    if (r1.gte(curve.n)) throw new Error('Invalid hash.');
-    if (r1.isZero()) throw new Error('Invalid hash.');
+    const r1 = hash(compressedQ, key, msg).umod(curve.n);
+
+    if (r1.isZero()) {
+      throw new Error('Invalid hash.');
+    }
+
     return r1.eq(sig.r);
   };
   const toSignature = serialised => {
@@ -171,112 +259,108 @@
     });
   };
   /**
-   * Schnorr personalization string.
-   * @const {Buffer}
-   */
-
-  const alg = Buffer.from('Schnorr+SHA256  ', 'ascii');
-  /**
    * Instantiate an HMAC-DRBG.
    *
-   * @param {Buffer} msg
-   * @param {Buffer} priv - used as entropy input
-   * @param {Buffer} data - used as nonce
+   * @param {Buffer} entropy
    *
    * @returns {DRBG}
    */
 
-  const getDRBG = (msg, priv, data) => {
-    const pers = Buffer.allocUnsafe(48);
-    pers.fill(0);
-
-    if (data) {
-      assert(data.length === 32);
-      data.copy(pers, 0);
-    }
-
-    alg.copy(pers, 32);
+  const getDRBG = msg => {
+    const entropy = randomBytes(ENT_LEN);
+    const pers = Buffer.allocUnsafe(ALG_LEN + ENT_LEN);
+    Buffer.from(randomBytes(ENT_LEN)).copy(pers, 0);
+    ALG.copy(pers, ENT_LEN);
     return new DRBG({
       hash: hashjs.sha256,
-      entropy: priv,
+      entropy,
       nonce: msg,
       pers
     });
   };
-  /**
-   * Generate pub+priv nonce pair.
-   *
-   * @param {Buffer} msg
-   * @param {Buffer} priv
-   * @param {Buffer} data
-   *
-   * @returns {Buffer}
-   */
-
-  const generateNoncePair = (msg, priv, data) => {
-    const drbg = getDRBG(msg, priv, data);
-    const len = curve.n.byteLength();
-    let k = new BN(drbg.generate(len));
-
-    while (k.isZero() && k.gte(curve.n)) {
-      k = new BN(drbg.generate(len));
-    }
-
-    return Buffer.from(curve.g.mul(k).encode('array', true));
-  };
 
   var schnorr = /*#__PURE__*/Object.freeze({
-    Signature: Signature,
+    generatePrivateKey: generatePrivateKey,
     hash: hash,
     sign: sign,
     trySign: trySign,
     verify: verify,
     toSignature: toSignature,
-    alg: alg,
-    getDRBG: getDRBG,
-    generateNoncePair: generateNoncePair
+    getDRBG: getDRBG
   });
 
-  const NUM_BYTES = 32; // const HEX_PREFIX = '0x';
-
-  const secp256k1 = elliptic.ec('secp256k1');
   /**
-   * convert number to array representing the padded hex form
-   * @param  {[string]} val        [description]
-   * @param  {[number]} paddedSize [description]
-   * @return {[string]}            [description]
+   * intToHexArray
+   *
+   * @param {number} int - the number to be converted to hex
+   * @param {number)} size - the desired width of the hex value. will pad.
+   *
+   * @returns {string[]}
    */
-
-  const intToByteArray = (val, paddedSize) => {
-    const arr = [];
-    const hexVal = val.toString(16);
+  const intToHexArray = (int, size) => {
+    const hex = [];
     const hexRep = [];
-    let i;
+    const hexVal = int.toString(16); // TODO: this really needs to be refactored.
 
-    for (i = 0; i < hexVal.length; i += 1) {
+    for (let i = 0; i < hexVal.length; i += 1) {
       hexRep[i] = hexVal[i].toString();
     }
 
-    for (i = 0; i < paddedSize - hexVal.length; i += 1) {
-      arr.push('0');
+    for (let i = 0; i < size - hexVal.length; i += 1) {
+      hex.push('0');
     }
 
-    for (i = 0; i < hexVal.length; i += 1) {
-      arr.push(hexRep[i]);
+    for (let i = 0; i < hexVal.length; i += 1) {
+      hex.push(hexRep[i]);
     }
 
-    return arr;
+    return hex;
   };
   /**
-   * isHex
+   * intToByteArray
    *
-   * @param {string} str - string to be tested
-   * @returns {boolean}
+   * Converts a number to Uint8Array
+   *
+   * @param {number} num
+   * @param {number} size
+   *
+   * @returns {Uint8Array}
    */
 
-  const isHex = str => {
-    const plain = str.replace('0x', '');
-    return /[0-9a-f]*$/i.test(plain);
+  const intToByteArray = (num, size) => {
+    let x = num;
+    const res = [];
+
+    while (x > 0) {
+      res.push(x & 255);
+      x >>= 8;
+    }
+
+    const pad = size - res.length;
+
+    for (let i = 0; i < pad; i += 1) {
+      res.unshift(0);
+    }
+
+    return Uint8Array.from(res);
+  };
+  /**
+   * hexToByteArray
+   *
+   * Convers a hex string to a Uint8Array
+   *
+   * @param {string} hex
+   * @returns {Uint8Array}
+   */
+
+  const hexToByteArray = hex => {
+    const res = new Uint8Array(hex.length / 2);
+
+    for (let i = 0; i < hex.length; i += 2) {
+      res[i / 2] = parseInt(hex.substring(i, i + 2), 16);
+    }
+
+    return res;
   };
   /**
    * hexToIntArray
@@ -284,7 +368,6 @@
    * @param {string} hex
    * @returns {number[]}
    */
-
 
   const hexToIntArray = hex => {
     if (!hex || !isHex(hex)) {
@@ -300,22 +383,52 @@
 
       if (hi) {
         res.push(hi, lo);
-      } else {
-        res.push(lo);
       }
+
+      res.push(lo);
     }
 
     return res;
   };
   /**
-   * generatePrivateKey
+   * compareBytes
    *
-   * @returns {string} - the hex-encoded private key
+   * A constant time HMAC comparison function.
+   *
+   * @param {string} a
+   * @param {string} b
+   * @returns {boolean}
    */
 
-  const generatePrivateKey = () => {
-    return randomBytes(NUM_BYTES);
+  const isEqual = (a, b) => {
+    const bzA = hexToIntArray(a);
+    const bzB = hexToIntArray(b);
+
+    if (bzA.length !== bzB.length) {
+      return false;
+    }
+
+    let result = 0;
+
+    for (let i = 0; i < bzA.length; i += 1) {
+      result |= bzA[i] ^ bzB[i];
+    }
+
+    return result === 0;
   };
+  /**
+   * isHex
+   *
+   * @param {string} str - string to be tested
+   * @returns {boolean}
+   */
+
+  const isHex = str => {
+    const plain = str.replace('0x', '');
+    return /[0-9a-f]*$/i.test(plain);
+  };
+
+  const secp256k1$1 = elliptic.ec('secp256k1');
   /**
    * getAddressFromPrivateKey
    *
@@ -327,7 +440,7 @@
    */
 
   const getAddressFromPrivateKey = privateKey => {
-    const keyPair = secp256k1.keyFromPrivate(privateKey, 'hex');
+    const keyPair = secp256k1$1.keyFromPrivate(privateKey, 'hex');
     const pub = keyPair.getPublic(true, 'hex');
     return hashjs.sha256().update(pub, 'hex').digest('hex').slice(24);
   };
@@ -342,7 +455,7 @@
    */
 
   const getPubKeyFromPrivateKey = privateKey => {
-    const keyPair = secp256k1.keyFromPrivate(privateKey, 'hex');
+    const keyPair = secp256k1$1.keyFromPrivate(privateKey, 'hex');
     return keyPair.getPublic(true, 'hex');
   };
   /**
@@ -354,7 +467,7 @@
    */
 
   const compressPublicKey = publicKey => {
-    return secp256k1.keyFromPublic(publicKey, 'hex').getPublic(true, 'hex');
+    return secp256k1$1.keyFromPublic(publicKey, 'hex').getPublic(true, 'hex');
   };
   /**
    * getAddressFromPublicKey
@@ -376,11 +489,40 @@
    */
 
   const verifyPrivateKey = privateKey => {
-    const keyPair = secp256k1.keyFromPrivate(privateKey, 'hex');
+    const keyPair = secp256k1$1.keyFromPrivate(privateKey, 'hex');
     const {
       result
     } = keyPair.validate();
     return result;
+  };
+  const toChecksumAddress = address => {
+    const newAddress = address.toLowerCase().replace('0x', '');
+    const hash = hashjs.sha256().update(newAddress, 'hex').digest('hex');
+    const v = new BN(hash, 'hex', 'be');
+    let ret = '0x';
+
+    for (let i = 0; i < newAddress.length; i += 1) {
+      if ('0123456789'.indexOf(newAddress[i]) !== -1) {
+        ret += newAddress[i];
+      } else {
+        ret += v.and(new BN(2).pow(new BN(255 - 6 * i))).gte(new BN(1)) ? newAddress[i].toUpperCase() : newAddress[i].toLowerCase();
+      }
+    }
+
+    return ret;
+  };
+  /**
+   * isValidChecksumAddress
+   *
+   * takes hex-encoded string and returns boolean if address is checksumed
+   *
+   * @param {string} address
+   * @returns {boolean}
+   */
+
+  const isValidChecksumAddress = address => {
+    const replacedAddress = address.replace('0x', '');
+    return !!replacedAddress.match(/^[0-9a-fA-F]{40}$/) && toChecksumAddress(address) === address;
   };
   /**
    * encodeTransaction
@@ -388,42 +530,57 @@
    * @param {any} txn
    * @returns {Buffer}
    */
+  // export const encodeTransaction = tx => {
+  //   const codeHex = Buffer.from(tx.code || '').toString('hex')
+  //   const dataHex = Buffer.from(tx.data || '').toString('hex')
+  //   const encoded =
+  //     intToHexArray(tx.version, 64).join('') +
+  //     intToHexArray(tx.nonce || 0, 64).join('') +
+  //     tx.toAddr +
+  //     tx.pubKey +
+  //     tx.amount.toString('hex', 64) +
+  //     tx.gasPrice.toString('hex', 64) +
+  //     tx.gasLimit.toString('hex', 64) +
+  //     intToHexArray((tx.code && tx.code.length) || 0, 8).join('') + // size of code
+  //     codeHex +
+  //     intToHexArray((tx.data && tx.data.length) || 0, 8).join('') + // size of data
+  //     dataHex
+  //   return Buffer.from(encoded, 'hex')
+  // }
 
-  const encodeTransaction = txn => {
-    const codeHex = Buffer.from(txn.code).toString('hex');
-    const dataHex = Buffer.from(txn.data).toString('hex');
-    const encoded = intToByteArray(txn.version, 64).join('') + intToByteArray(txn.nonce, 64).join('') + txn.to + txn.pubKey + txn.amount.toString('hex', 64) + intToByteArray(txn.gasPrice, 64).join('') + intToByteArray(txn.gasLimit, 64).join('') + intToByteArray(txn.code.length, 8).join('') + // size of code
-    codeHex + intToByteArray(txn.data.length, 8).join('') + // size of data
-    dataHex;
-    return Buffer.from(encoded, 'hex');
+  const encodeTransactionProto = tx => {
+    const msg = proto.ZilliqaMessage.ProtoTransactionCoreInfo.create({
+      version: tx.version,
+      nonce: tx.nonce || 0,
+      toaddr: hexToByteArray(tx.toAddr.toLowerCase()),
+      senderpubkey: proto.ZilliqaMessage.ByteArray.create({
+        data: hexToByteArray(tx.pubKey || '00')
+      }),
+      amount: proto.ZilliqaMessage.ByteArray.create({
+        data: Uint8Array.from(tx.amount.toArrayLike(Buffer, undefined, 16))
+      }),
+      gasprice: proto.ZilliqaMessage.ByteArray.create({
+        data: Uint8Array.from(tx.gasPrice.toArrayLike(Buffer, undefined, 16))
+      }),
+      gaslimit: tx.gasLimit,
+      code: Uint8Array.from([...(tx.code || '')].map(c => c.charCodeAt(0))),
+      data: Uint8Array.from([...(tx.data || '')].map(c => c.charCodeAt(0)))
+    });
+    return Buffer.from(proto.ZilliqaMessage.ProtoTransactionCoreInfo.encode(msg).finish());
   };
-  /**
-   * createTransactionJson
-   *
-   * @param {string} privateKey
-   * @param {TxDetails} txnDetails
-   * @param {TxDetails}
-   *
-   * @returns {TxDetails}
-   */
+  const getAddressForContract = ({
+    currentNonce,
+    address
+  }) => {
+    // always subtract 1 from the tx nonce, as contract addresses are computed
+    // based on the nonce in the global state.
+    const nonce = currentNonce ? currentNonce - 1 : 0;
+    return hashjs.sha256().update(address, 'hex').update(intToHexArray(nonce, 64).join(''), 'hex').digest('hex').slice(24);
+  };
 
-  const createTransactionJson = (privateKey, txnDetails) => {
-    const pubKey = getPubKeyFromPrivateKey(privateKey);
-    const txn = {
-      version: txnDetails.version,
-      nonce: txnDetails.nonce,
-      to: txnDetails.to,
-      amount: txnDetails.amount,
-      pubKey,
-      gasPrice: txnDetails.gasPrice,
-      gasLimit: txnDetails.gasLimit,
-      code: txnDetails.code || '',
-      data: txnDetails.data || ''
-    };
-    const encodedTx = encodeTransaction(txn);
-    txn.signature = sign$1(encodedTx, Buffer.from(privateKey, 'hex'), Buffer.from(pubKey, 'hex'));
-    return txn;
-  };
+  const {
+    generatePrivateKey: generatePrivateKey$1
+  } = schnorr;
   /**
    * sign
    *
@@ -447,51 +604,30 @@
 
     return r + s;
   };
-  const toChecksumAddress = address => {
-    const newAddress = address.toLowerCase().replace('0x', '');
-    const hash$$1 = hashjs.sha256().update(newAddress, 'hex').digest('hex');
-    let ret = '0x';
 
-    for (let i = 0; i < newAddress.length; i += 1) {
-      if (parseInt(hash$$1[i], 16) >= 8) {
-        ret += newAddress[i].toUpperCase();
-      } else {
-        ret += newAddress[i];
-      }
-    }
-
-    return ret;
-  };
-  /**
-   * isValidChecksumAddress
-   *
-   * takes hex-encoded string and returns boolean if address is checksumed
-   *
-   * @param {string} address
-   * @returns {boolean}
-   */
-
-  const isValidChecksumAddress = address => {
-    const replacedAddress = address.replace('0x', '');
-    return !!replacedAddress.match(/^[0-9a-fA-F]{40}$/) && toChecksumAddress(address) === address;
-  };
-
+  exports.BN = BN;
+  exports.elliptic = elliptic;
   exports.hashjs = hashjs;
-  exports.intToByteArray = intToByteArray;
-  exports.hexToIntArray = hexToIntArray;
-  exports.generatePrivateKey = generatePrivateKey;
+  exports.generatePrivateKey = generatePrivateKey$1;
+  exports.sign = sign$1;
+  exports.schnorr = schnorr;
+  exports.randomBytes = randomBytes;
   exports.getAddressFromPrivateKey = getAddressFromPrivateKey;
   exports.getPubKeyFromPrivateKey = getPubKeyFromPrivateKey;
   exports.compressPublicKey = compressPublicKey;
   exports.getAddressFromPublicKey = getAddressFromPublicKey;
   exports.verifyPrivateKey = verifyPrivateKey;
-  exports.encodeTransaction = encodeTransaction;
-  exports.createTransactionJson = createTransactionJson;
-  exports.sign = sign$1;
   exports.toChecksumAddress = toChecksumAddress;
   exports.isValidChecksumAddress = isValidChecksumAddress;
-  exports.randomBytes = randomBytes;
-  exports.schnorr = schnorr;
+  exports.encodeTransactionProto = encodeTransactionProto;
+  exports.getAddressForContract = getAddressForContract;
+  exports.intToHexArray = intToHexArray;
+  exports.intToByteArray = intToByteArray;
+  exports.hexToByteArray = hexToByteArray;
+  exports.hexToIntArray = hexToIntArray;
+  exports.isEqual = isEqual;
+  exports.isHex = isHex;
+  exports.Signature = Signature;
 
   Object.defineProperty(exports, '__esModule', { value: true });
 

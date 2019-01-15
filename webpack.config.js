@@ -14,7 +14,7 @@ const UglifyJs = require('uglifyjs-webpack-plugin')
 const packagesSettings = require('./scripts/packagesList')
 
 function createBatchConfig(list) {
-  return list.map((l) => {
+  return list.map(l => {
     const entryBase = {}
     entryBase[l.name] = [`./packages/${l.dest}/index.js`]
 
@@ -76,58 +76,3 @@ function reduceDimension(arr) {
 const batch = reduceDimension(createBatchConfig(packagesSettings))
 
 module.exports = batch
-
-// const baseConfig = {
-//   entry: {
-//     Laksa: ['./packages/laksa/index.js']
-//   },
-//   mode: 'production',
-//   module: {
-//     rules: [
-//       {
-//         test: /\.js$/,
-//         use: {
-//           loader: 'babel-loader'
-//           // options: {
-//           //   babelrc: true,
-//           //   cacheDirectory: true
-//           // }
-//         }
-//       }
-//     ]
-//   },
-//   devtool: 'source-map',
-//   resolve: {
-//     symlinks: true,
-//     extensions: ['.js']
-//   }
-// }
-//
-// const clientConfig = {
-//   ...baseConfig,
-//   optimization: {
-//     minimizer: [
-//       new UglifyJs({
-//         uglifyOptions: {
-//           compress: true,
-//           mangle: true,
-//           toplevel: false,
-//           output: {
-//             beautify: false,
-//             comments: false
-//           }
-//         },
-//         parallel: true,
-//         sourceMap: true
-//       })
-//     ]
-//   },
-//   output: {
-//     libraryTarget: 'umd',
-//     library: 'laksa.js',
-//     filename: '[name].browser.js',
-//     path: path.join(__dirname, 'dist')
-//   }
-// }
-//
-// module.exports = [baseConfig, clientConfig]

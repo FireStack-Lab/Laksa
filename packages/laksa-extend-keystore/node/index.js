@@ -8,6 +8,7 @@
   scrypt = scrypt && scrypt.hasOwnProperty('default') ? scrypt['default'] : scrypt;
   uuid = uuid && uuid.hasOwnProperty('default') ? uuid['default'] : uuid;
 
+  const ALGO_IDENTIFIER = 'aes-128-ctr';
   /**
    * getDerivedKey
    *
@@ -59,8 +60,8 @@
   const encrypt = async (privateKey, passphrase, options) => {
     const salt = laksaCoreCrypto.randomBytes(32);
     const iv = Buffer.from(laksaCoreCrypto.randomBytes(16), 'hex');
-    const kdf = options.kdf !== undefined ? options.kdf : 'scrypt';
-    const level = options.level !== undefined ? options.level : 8192;
+    const kdf = options !== undefined ? options.kdf ? options.kdf : 'scrypt' : 'scrypt';
+    const level = options !== undefined ? options.level ? options.level : 8192 : 8192;
     const n = kdf === 'pbkdf2' ? 262144 : level;
     const kdfparams = {
       salt,
@@ -75,14 +76,14 @@
     const ciphertext = Buffer.from(cipher.encrypt(Buffer.from(privateKey, 'hex')));
     return {
       crypto: {
-        cipher: 'aes-128-ctr',
+        cipher: ALGO_IDENTIFIER,
         cipherparams: {
           iv: iv.toString('hex')
         },
         ciphertext: ciphertext.toString('hex'),
         kdf,
         kdfparams,
-        mac: laksaCoreCrypto.hashjs.sha256().update(Buffer.concat([derivedKey.slice(16, 32), ciphertext]), 'hex').digest('hex')
+        mac: laksaCoreCrypto.hashjs.hmac(laksaCoreCrypto.hashjs.sha256, derivedKey, 'hex').update(Buffer.concat([derivedKey.slice(16, 32), ciphertext, iv, Buffer.from(ALGO_IDENTIFIER)]), 'hex').digest('hex')
       },
       id: uuid.v4({
         random: laksaCoreCrypto.randomBytes(16)
@@ -107,7 +108,7 @@
       kdfparams
     } = keystore.crypto;
     const derivedKey = await getDerivedKey(Buffer.from(passphrase), keystore.crypto.kdf, kdfparams);
-    const mac = laksaCoreCrypto.hashjs.sha256().update(Buffer.concat([derivedKey.slice(16, 32), ciphertext]), 'hex').digest('hex');
+    const mac = laksaCoreCrypto.hashjs.hmac(laksaCoreCrypto.hashjs.sha256, derivedKey, 'hex').update(Buffer.concat([derivedKey.slice(16, 32), ciphertext, iv, Buffer.from(ALGO_IDENTIFIER)]), 'hex').digest('hex');
 
     if (mac.toUpperCase() !== keystore.crypto.mac.toUpperCase()) {
       return Promise.reject(new Error('Failed to decrypt.'));
@@ -119,6 +120,7 @@
     return decrypted;
   };
 
+  exports.uuid = uuid;
   exports.encrypt = encrypt;
   exports.decrypt = decrypt;
 

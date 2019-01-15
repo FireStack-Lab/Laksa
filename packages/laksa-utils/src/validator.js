@@ -1,9 +1,12 @@
 import { isWebUri } from 'valid-url'
 import { isBN } from 'bn.js'
+import Long from 'long'
+
+const { isLong } = Long
 
 /**
  * [isNumber verify param is a Number]
- * @param  {[type]}  obj [value]
+ * @param  {type}  obj [value]
  * @return {Boolean}     [boolean]
  */
 const isNumber = obj => {
@@ -12,8 +15,8 @@ const isNumber = obj => {
 
 /**
  * [isNumber verify param is a Number]
- * @param  {[type]}  obj [value]
- * @return {Boolean}     [boolean]
+ * @param  {type}  obj [value]
+ * @return {boolean}     [boolean]
  */
 const isInt = obj => {
   return isNumber(obj) && Number.isInteger(obj)
@@ -21,7 +24,7 @@ const isInt = obj => {
 
 /**
  * [isString verify param is a String]
- * @param  {[type]}  obj [value]
+ * @param  {type}  obj [value]
  * @return {Boolean}     [boolean]
  */
 const isString = obj => {
@@ -30,7 +33,7 @@ const isString = obj => {
 
 /**
  * [isBoolean verify param is a Boolean]
- * @param  {[type]}  obj [value]
+ * @param  {type}  obj [value]
  * @return {Boolean}     [boolean]
  */
 const isBoolean = obj => {
@@ -39,7 +42,7 @@ const isBoolean = obj => {
 
 /**
  * [isArray verify param input is an Array]
- * @param  {[type]}  obj [value]
+ * @param  {type}  obj [value]
  * @return {Boolean}     [boolean]
  */
 const isArray = obj => {
@@ -48,10 +51,10 @@ const isArray = obj => {
 
 /**
  * [isJson verify param input is a Json]
- * @param  {[type]}  obj [value]
+ * @param  {type}  obj [value]
  * @return {Boolean}     [boolean]
  */
-const isJson = obj => {
+const isJsonString = obj => {
   try {
     return !!JSON.parse(obj) && isObject(JSON.parse(obj))
   } catch (e) {
@@ -61,7 +64,7 @@ const isJson = obj => {
 
 /**
  * [isObject verify param is an Object]
- * @param  {[type]}  obj [value]
+ * @param  {type}  obj [value]
  * @return {Boolean}     [boolean]
  */
 const isObject = obj => {
@@ -70,7 +73,7 @@ const isObject = obj => {
 
 /**
  * [isFunction verify param is a Function]
- * @param  {[type]}  obj [value]
+ * @param  {type}  obj [value]
  * @return {Boolean}     [description]
  */
 
@@ -80,82 +83,50 @@ const isFunction = obj => {
 
 /**
  * verify if param is correct
- * @param  {[hex|string]}  address [description]
+ * @param  {hex|string}  address [description]
  * @return {Boolean}         [description]
  */
-// const isAddress = (address) => {
-//   return !!address.match(/^[0-9a-fA-F]{40}$/)
-// }
 
 const isAddress = address => {
-  if (!/^(0x)?[0-9a-f]{40}$/i.test(address)) {
-    // check if it has the basic requirements of an address
-    return false
-  } else if (/^(0x)?[0-9a-f]{40}$/.test(address) || /^(0x)?[0-9A-F]{40}$/.test(address)) {
-    // If it's all small caps or all all caps, return true
-    return true
-  }
-  return false
+  return isByteString(address, 40)
 }
 
-/**
- * verify if privateKey is correct
- * @param  {[hex|string]}  privateKey [description]
- * @return {Boolean}            [description]
- */
 const isPrivateKey = privateKey => {
-  if (!/^(0x)?[0-9a-f]{64}$/i.test(privateKey)) {
-    // check if it has the basic requirements of an privatekey
-    return false
-  } else if (/^(0x)?[0-9a-f]{64}$/.test(privateKey) || /^(0x)?[0-9A-F]{64}$/.test(privateKey)) {
-    // If it's all small caps or all all caps, return true
-    return true
-  }
-  // return !!privateKey.match(/^[0-9a-fA-F]{64}$/)
+  return isByteString(privateKey, 64)
 }
 
-/**
- * verify if public key is correct
- * @param  {[hex|string]}  pubkey [description]
- * @return {Boolean}        [description]
- */
-const isPubkey = pubkey => {
-  if (!/^(0x)?[0-9a-f]{66}$/i.test(pubkey)) {
-    // check if it has the basic requirements of an pubkey
-    return false
-  } else if (/^(0x)?[0-9a-f]{66}$/.test(pubkey) || /^(0x)?[0-9A-F]{66}$/.test(pubkey)) {
-    // If it's all small caps or all all caps, return true
-    return true
-  }
-  // return !!pubkey.match(/^[0-9a-fA-F]{66}$/)
+const isPubkey = pubKey => {
+  return isByteString(pubKey, 66)
+}
+
+const isSignature = sig => {
+  return isByteString(sig, 128)
+}
+
+const isByteString = (str, len) => {
+  if (!isString(str)) return false
+  return !!str.replace('0x', '').match(`^[0-9a-fA-F]{${len}}$`)
 }
 
 /**
  * verify if url is correct
- * @param  {[string]}  url [description]
+ * @param  {string}  url [description]
  * @return {Boolean}     [description]
  */
 const isUrl = url => {
-  if (typeof url === 'string') {
-    return isWebUri(url)
+  if (isString(url)) {
+    return !!isWebUri(url)
   }
   return false
 }
 
 /**
  * verify if hash is correct
- * @param  {[string]}  txHash [description]
+ * @param  {string}  txHash [description]
  * @return {Boolean}        [description]
  */
 const isHash = txHash => {
-  if (!/^(0x)?[0-9a-f]{64}$/i.test(txHash)) {
-    // check if it has the basic requirements of an txHash
-    return false
-  } else if (/^(0x)?[0-9a-f]{64}$/.test(txHash) || /^(0x)?[0-9A-F]{64}$/.test(txHash)) {
-    // If it's all small caps or all all caps, return true
-    return true
-  }
-  // return !!txHash.match(/^[0-9a-fA-F]{64}$/)
+  return /^[0-9a-fA-F]{64}$/.test(txHash)
 }
 
 /**
@@ -171,7 +142,7 @@ const isHex = hex => {
 
 /**
  * check Object isNull
- * @param  {[type]}  obj [description]
+ * @param  {type}  obj [description]
  * @return {Boolean}     [description]
  */
 const isNull = obj => {
@@ -180,7 +151,7 @@ const isNull = obj => {
 
 /**
  * check object is undefined
- * @param  {[type]}  obj [description]
+ * @param  {type}  obj [description]
  * @return {Boolean}     [description]
  */
 const isUndefined = obj => {
@@ -189,16 +160,16 @@ const isUndefined = obj => {
 
 /**
  * check object is undefined
- * @param  {[type]}  obj [description]
+ * @param  {type}  obj [description]
  * @return {Boolean}     [description]
  */
-const isUnit = obj => {
+const isUint = obj => {
   return isInt(obj) && obj >= 0
 }
 
 /**
  * [isByStrX description]
- * @param  {[type]}  obj [description]
+ * @param  {type}  obj [description]
  * @return {Boolean}     [description]
  */
 const isByStrX = obj => {
@@ -211,16 +182,18 @@ export {
   isString,
   isBoolean,
   isArray,
-  isJson,
+  isJsonString,
   isObject,
-  isUnit,
+  isUint,
   isFunction,
   isHash,
   isUrl,
   isPubkey,
   isPrivateKey,
+  isSignature,
   isAddress,
   isBN,
+  isLong,
   isHex,
   isByStrX,
   isNull,

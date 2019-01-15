@@ -7,19 +7,16 @@
  * @param {number} bytes
  * @returns {string}
  */
-import RB from 'randombytes'
-
 export const randomBytes = bytes => {
-  const randBz = RB(bytes)
+  let randBz
 
-  // if (typeof window !== 'undefined' && window.crypto && window.crypto.getRandomValues) {
-  //   randBz = window.crypto.getRandomValues(new Uint8Array(bytes))
-  // } else if (typeof require !== 'undefined') {
-  //   // randBz = require('crypto').randomBytes(bytes)
-  //   randBz = RB(bytes)
-  // } else {
-  //   throw new Error('Unable to generate safe random numbers.')
-  // }
+  if (typeof window !== 'undefined' && window.crypto && window.crypto.getRandomValues) {
+    randBz = window.crypto.getRandomValues(new Uint8Array(bytes))
+  } else if (typeof require !== 'undefined') {
+    randBz = require('crypto').randomBytes(bytes)
+  } else {
+    throw new Error('Unable to generate safe random numbers.')
+  }
 
   let randStr = ''
   for (let i = 0; i < bytes; i += 1) {
@@ -28,3 +25,16 @@ export const randomBytes = bytes => {
 
   return randStr
 }
+
+// import RB from 'randombytes'
+
+// export const randomBytes = bytes => {
+//   const randBz = RB(bytes)
+
+//   let randStr = ''
+//   for (let i = 0; i < bytes; i += 1) {
+//     randStr += `00${randBz[i].toString(16)}`.slice(-2)
+//   }
+
+//   return randStr
+// }

@@ -4,7 +4,7 @@ import {
   InvalidConnection,
   InvalidProvider,
   InvalidNumberOfRPCParams
-} from 'laksa-shared'
+} from '../src'
 
 test('test ConnectionTimeout', () => {
   expect(ConnectionTimeout(500)).toEqual(new Error('CONNECTION TIMEOUT: timeout of 500 ms achived'))
@@ -14,6 +14,10 @@ test('test InvalidResponse', () => {
   expect(InvalidResponse({ error: 'lll' })).toEqual(
     new Error('Invalid JSON RPC response: {"error":"lll"}')
   )
+})
+
+test('test InvalidResponse with Messeage', () => {
+  expect(InvalidResponse({ error: { message: 'lll' } })).toEqual(new Error('lll'))
 })
 
 test('test InvalidConnection', () => {

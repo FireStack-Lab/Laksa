@@ -17,7 +17,8 @@ function injectValidator(func) {
     const valFunc = Object.values(func)[0]
     return Object.assign(valFunc, {
       validator: valName,
-      test: obj => valFunc(obj)
+      test: obj => valFunc(obj),
+      required: obj => [valFunc(obj), 'required', valName]
     })
   } else return false
 }
@@ -41,16 +42,18 @@ const {
   isString,
   isBoolean,
   isArray,
-  isJson,
+  isJsonString,
   isObject,
-  isUnit,
+  isUint,
   isFunction,
   isHash,
   isUrl,
   isPubkey,
   isPrivateKey,
   isAddress,
+  isSignature,
   isBN,
+  isLong,
   isHex,
   isByStrX,
   isNull,
@@ -59,8 +62,8 @@ const {
 
 /**
  * [Validator description]
- * @param       {[type]} stringToTest    [description]
- * @param       {[type]} validatorString [description]
+ * @param       {type} stringToTest    [description]
+ * @param       {type} validatorString [description]
  * @constructor
  */
 function Validator(stringToTest, validatorString) {
@@ -92,10 +95,10 @@ const validator = Validator
 
 /**
  * make sure each of the keys in requiredArgs is present in args
- * @param  {[type]} args         [description]
- * @param  {[type]} requiredArgs [description]
- * @param  {[type]} optionalArgs [description]
- * @return {[type]}              [description]
+ * @param  {type} args         [description]
+ * @param  {type} requiredArgs [description]
+ * @param  {type} optionalArgs [description]
+ * @return {type}              [description]
  */
 function validateArgs(args, requiredArgs, optionalArgs) {
   for (const key in requiredArgs) {
@@ -192,16 +195,18 @@ export {
   isString,
   isBoolean,
   isArray,
-  isJson,
+  isJsonString,
   isObject,
-  isUnit,
+  isUint,
   isFunction,
   isHash,
   isUrl,
   isPubkey,
   isPrivateKey,
   isAddress,
+  isSignature,
   isBN,
+  isLong,
   isHex,
   isByStrX,
   isNull,

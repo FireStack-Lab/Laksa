@@ -1,51 +1,40 @@
 import { InvalidProvider } from 'laksa-shared'
-import JsonRpc from './jsonRpc'
+import { pack } from 'laksa-utils'
+import { JsonRpc } from './rpcbuilder'
+import { ResponseMiddleware } from './responseMiddleware'
+import { getResultForData } from './util'
 
-function getResultForData(data) {
-  return data.error ? data.error : data.message ? data : data.result
-}
-
-class Messanger {
-  constructor(provider) {
+class Messenger {
+  constructor(provider, config) {
     this.provider = provider
     this.scillaProvider = provider
+    this.config = config
     this.JsonRpc = new JsonRpc()
   }
 
-  send = async data => {
+  /**
+   * @function {send}
+   * @param  {object} data {data object with method and params}
+   * @return {object|Error} {result from provider}
+   */
+  send = async (method, params) => {
     this.providerCheck()
     try {
-      const payload = this.JsonRpc.toPayload(data.method, data.params)
+      const payload = this.JsonRpc.toPayload(method, params)
+      this.setResMiddleware(data => new ResponseMiddleware(data))
       const result = await this.provider.send(payload)
-      return getResultForData(result)
+      return getResultForData(result) // getResultForData(result)
     } catch (e) {
       throw new Error(e)
     }
   }
 
-  sendAsync(data, callback) {
-    this.providerCheck()
-    const payload = this.JsonRpc.toPayload(data.method, data.params)
-    this.provider.sendAsync(payload, (err, result) => {
-      if (err || result.error) {
-        const errors = err || result.error
-        return callback(errors)
-      }
-      callback(null, getResultForData(result))
-    })
-  }
-
-  sendBatch(data, callback) {
-    this.providerCheck()
-    const payload = this.JsonRpc.toBatchPayload(data)
-    this.provider.sendAsync(payload, (err, results) => {
-      if (err) {
-        return callback(err)
-      }
-      callback(null, results)
-    })
-  }
-
+  /**
+   * @function {sendServer}
+   * @param  {string} endpoint {endpoint that point to server}
+   * @param  {object} data     {data object with method and params}
+   * @return {object|Error} {result from provider}
+   */
   sendServer = async (endpoint, data) => {
     this.providerCheck()
     try {
@@ -56,41 +45,66 @@ class Messanger {
     }
   }
 
-  sendAsyncServer(endpoint, data, callback) {
-    this.providerCheck()
-    this.scillaProvider.sendAsyncServer(endpoint, data, (err, result) => {
-      if (err || result.error) {
-        const errors = err || result.error
-        return callback(errors)
-      }
-      callback(null, result)
-    })
-  }
-
-  sendBatchServer(data, callback) {
-    this.providerCheck()
-    this.scillaProvider.sendAsync(data, (err, results) => {
-      if (err) {
-        return callback(err)
-      }
-      callback(null, results)
-    })
-  }
-
+  /**
+   * @function {setProvider}
+   * @param  {Provider} provider {provider instance}
+   * @return {Provider} {provider setter}
+   */
   setProvider(provider) {
     this.provider = provider
   }
 
+  /**
+   * @function {setScillaProvider}
+   * @param  {Provider} provider {provider instance}
+   * @return {Provider} {provider setter}
+   */
   setScillaProvider(provider) {
     this.scillaProvider = provider
   }
 
+  /**
+   * @function {providerCheck}
+   * @return {Error|null} {provider validator}
+   */
   providerCheck() {
     if (!this.provider) {
       InvalidProvider()
       return null
     }
   }
-}
 
-export default Messanger
+  setReqMiddleware(middleware, method = '*') {
+    return this.provider.middleware.request.use(middleware, method)
+  }
+
+  setResMiddleware(middleware, method = '*') {
+    return this.provider.middleware.response.use(middleware, method)
+  }
+
+  setTransactionVersion(version) {
+    let chainID = 1
+    switch (this.provider.url) {
+    case this.config.Default.nodeProviderUrl: {
+      chainID = this.config.Default.CHAIN_ID
+      break
+    }
+    case this.config.TestNet.nodeProviderUrl: {
+      chainID = this.config.TestNet.CHAIN_ID
+      break
+    }
+    case this.config.MainNet.nodeProviderUrl: {
+      chainID = this.config.MainNet.CHAIN_ID
+      break
+    }
+    case this.config.Staging.nodeProviderUrl: {
+      chainID = this.config.Staging.CHAIN_ID
+      break
+    }
+    default:
+      break
+    }
+    return pack(chainID, version)
+  }
+}
+export { Messenger }

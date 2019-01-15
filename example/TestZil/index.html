@@ -1,209 +1,361 @@
-<!doctype html>
+<!DOCTYPE html>
 <html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black" />
+    <meta name="format-detection" content="telephone=no" />
+    <meta name="format-detection" content="email=no" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1, maximum-scale=1, minimum-scale=1, user-scalable=no"
+    />
+    <title></title>
+  </head>
+  <style>
+    #nodeUrl,
+    #address {
+      width: 250px;
+      height: 50px;
+      font-size: 16px;
+    }
 
-<head>
-  <meta charset="utf-8" />
-  <meta name="apple-mobile-web-app-capable" content="yes" />
-  <meta name="apple-mobile-web-app-status-bar-style" content="black" />
-  <meta name="format-detection" content="telephone=no" />
-  <meta name="format-detection" content="email=no" />
-  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, minimum-scale=1, user-scalable=no" />
-  <title></title>
+    #setProviderButton,
+    #getBlanceButton {
+      width: 100px;
+      height: 50px;
+      margin-left: 16px;
+      background: rgba(0, 0, 0, 1);
+      color: #ffffff;
+    }
+  </style>
 
-</head>
+  <body>
+    <div id="root">
+      <h1>
+        This is Laksa.js simple example, load this html in latest chrome please
+      </h1>
 
-<body>
-  <div id="root">
-    <h1>This is Laksa.js simple example</h1>
+      <h3>Current Provider is:</h3>
+      <h4 id="currentProvider"></h4>
+      <input id="nodeUrl" type="text" value="https://api-scilla.zilliqa.com" />
+      <button id="setProviderButton">Set Provider</button>
+      <h3>Input address, and get balance of it</h3>
+      <input id="address" type="text" />
+      <button id="getBlanceButton">Get Balance</button>
+      <div>
+        <span>balance:</span><span id="balance"></span> <span>nonce:</span
+        ><span id="nonce"></span>
+      </div>
+      <div id="code"></div>
+    </div>
+    <script src="../../dist/Laksa.browser.js"></script>
+    <script>
+      const laksa = new Laksa()
+      //// 'https://staging-api.aws.z7a.xyz'
+      // https://api.zilliqa.com
+      const nodeProvider = new laksa.Modules.HttpProvider(
+        'https://api.zilliqa.com'
+      )
+      const scillaProvider = new laksa.Modules.HttpProvider(
+        'https://scilla-runner.zilliqa.com'
+      )
+      laksa.setNodeProvider(nodeProvider)
+      laksa.setScillaProvider(scillaProvider)
 
-    <h3>Current Provider is:</h3>
-    <h4 id="currenProvider">http://localhost:4200 </h4>
-    <input id="nodeUrl" value="http://localhost:4200" />
-    <button id="setProviderButton">Set Provider</button>
-  </div>
-  <script src="../../dist/Laksa.browser.js"></script>
-  <!-- <script src="../../dist/LaksaZil.browser.js"></script> -->
-  <!-- <script src="../../dist/LaksaWallet.browser.js"></script> -->
-  <!-- <script src="../../dist/LaksaContract.browser.js"></script> -->
-  <script>
+      const accountA = laksa.wallet.importAccountFromPrivateKey(
+        'e19d05c5452598e24caad4a0d85a49146f7be089515c905ae6a19e8a578a6930'
+      )
 
-    var currenProvider = document.getElementById('nodeUrl').value
-    var setButton = document.getElementById('setProviderButton')
-    //For local testing, use URL = 'http://localhost:4200'
-    //To connect to the external network, use URL = 'https://api-scilla.zilliqa.com'
-    var laksa = new Laksa()
-    // var URL = undefined
-    // const {Wallet}=window.LaksaWallet
+      // const safeBatch = 5000
+      // let result = false
+      // let liang = []
+      // while (!result) {
+      //   laksa.wallet.createBatchAccounts(safeBatch)
+      //   for (let i = 0; i < laksa.wallet.getWalletAddresses().length; i += 1) {
+      //     const getter = laksa.wallet.getWalletAddresses()[i]
+      //     if (
+      //       !!getter.match('0000001') ||
+      //       !!getter.match('0000002') ||
+      //       !!getter.match('0000003') ||
+      //       !!getter.match('0000004') ||
+      //       !!getter.match('0000005') ||
+      //       !!getter.match('0000006') ||
+      //       !!getter.match('0000007') ||
+      //       !!getter.match('0000008') ||
+      //       !!getter.match('0000009')
+      //     ) {
+      //       liang.push(laksa.wallet.getAccountByAddress(getter))
+      //     } else laksa.wallet.removeOneAccountByAddress(getter)
+      //   }
+      // }
 
-    // const {Contract}=  LaksaContract
-    // const contract= new Contract()
-    // const Zil=LaksaZil
+      // console.log(liang)
 
+      // /*
+      //   Import private key
+      // */
 
-    setButton.onclick = function (e) {
-      console.log('lll')
-    };
+      // const accountA = laksa.wallet.importAccountFromPrivateKey(
+      //   '3375F915F3F9AE35E6B301B7670F53AD1A5BE15D8221EC7FD5E503F21D3450C8'
+      // )
 
-    var URL = 'https://api-scilla.zilliqa.com'
-    laksa.setProvider(URL)
-    laksa.setScillaProvider('https://scilla-runner.zilliqa.com')
-    // webz.isConnected().then(console.log)
-    let code = `
-(* HelloWorld contract *)
+      // /*
+      //   Deploy a contract
+      // */
+      const code = `
+      (* HelloWorld contract *)
+      import ListUtils
+      (***************************************************)
+      (*               Associated library                *)
+      (***************************************************)
+      library HelloWorld
 
-import ListUtils
+      let one_msg =
+        fun (msg : Message) =>
+        let nil_msg = Nil {Message} in
+        Cons {Message} msg nil_msg
 
-(***************************************************)
-(*               Associated library                *)
-(***************************************************)
-library HelloWorld
+      let not_owner_code = Int32 1
+      let set_hello_code = Int32 2
 
-let one_msg =
-  fun (msg : Message) =>
-  let nil_msg = Nil {Message} in
-  Cons {Message} msg nil_msg
+      (***************************************************)
+      (*             The contract definition             *)
+      (***************************************************)
 
-let not_owner_code = Int32 1
-let set_hello_code = Int32 2
+      contract HelloWorld
+      (owner: ByStr20)
 
-(***************************************************)
-(*             The contract definition             *)
-(***************************************************)
+      field welcome_msg : String = ""
 
-contract HelloWorld
-(owner: ByStr20)
+      transition setHello (msg : String)
+        is_owner = builtin eq owner _sender;
+        match is_owner with
+        | False =>
+          msg = {_tag : "Main"; _recipient : _sender; _amount : Uint128 0; code : not_owner_code};
+          msgs = one_msg msg;
+          send msgs
+        | True =>
+          welcome_msg := msg;
+          msg = {_tag : "Main"; _recipient : _sender; _amount : Uint128 0; code : set_hello_code};
+          msgs = one_msg msg;
+          send msgs
+        end
+      end
 
-field welcome_msg : String = ""
+      transition getHello ()
+          r <- welcome_msg;
+          msg = {_tag : "Main"; _recipient : _sender; _amount : Uint128 0; msg : r};
+          msgs = one_msg msg;
+          send msgs
+      end `
 
-transition setHello (msg : String)
-    welcome_msg := msg;
-    msg = {_tag : "Main"; _recipient : _sender; _amount : Uint128 0; code : set_hello_code};
-    msgs = one_msg msg;
-    send msgs
-end
+      const init = [
+        {
+          value: '0x9bfec715a6bd658fcb62b0f8cc9bfa2ade71434a',
+          vname: 'owner',
+          type: 'ByStr20'
+        }
+      ]
 
-
-transition getHello ()
-    r <- welcome_msg;
-    msg = {_tag : "Main"; _recipient : _sender; _amount : Uint128 0; msg : r};
-    msgs = one_msg msg;
-    send msgs
-end
-`
-    // //
-    // // the immutable initialisation variables
-    let initParams = [
-      {
-        vname: "dummy",
-        type: "String",
-        value: `ASDF`
+      async function testContract() {
+        const result = await laksa.messenger.sendServer('/contract/check', {
+          code
+        })
+        console.log(result)
       }
-    ];
 
-    let txnDetails = {
-      version: 0,
-      nonce: 2,
-      to: "0000000000000000000000000000000000000000",
-      amount: laksa.util.toBN(0),
-      gasPrice: 1,
-      gasLimit: 50,
-      code: code,
-      data: JSON.stringify(initParams).replace(/\\"/g, '"')
-    };
-    //
-    let txnDetails2 = {
-      version: 0,
-      nonce: 0,
-      to: '0000000000000000000000000000000000000000',
-      // amount should be 0.  we don't accept implicitly anymore.
-      amount: laksa.util.toBN(0),
-      gasPrice: laksa.util.toBN(1).toNumber(),
-      gasLimit: laksa.util.toBN(50).toNumber(),
-      code: code,
-      data: JSON.stringify(initParams).replace(/\\"/g, '"')
-    }
-    // sign the transaction using util methods
-    let txn = laksa.util.createTransactionJson(
-      "e19d05c5452598e24caad4a0d85a49146f7be089515c905ae6a19e8a578a6930",
-      txnDetails2
-    );
+      // // we create a acontract with code and init params.
+      const newContract = laksa.contracts.new(code, init)
 
+      async function testBlockChain() {
+        try {
+          const deployed = await newContract.deploy({
+            gasLimit: laksa.util.Long.fromNumber(25000000000),
+            gasPrice: laksa.util.Unit.from(1000000000)
+              .asQa()
+              .toQa(),
+            account: accountA
+          })
+          console.log(deployed)
+          const { ContractAddress } = deployed
+          console.log({ ContractAddress })
 
+          // const calledSet = await deployed.call({
+          //   transition: 'setHello',
+          //   params: [
+          //     {
+          //       vname: 'msg',
+          //       type: 'String',
+          //       value: 'Yo Man!'
+          //     }
+          //   ],
+          //   amount: new laksa.util.BN(0),
+          //   gasLimit: laksa.util.Long.fromNumber(25000000),
+          //   gasPrice: new laksa.util.BN(1000000000),
+          //   account: accountA
+          // })
+          // console.log(calledSet)
 
-    // console.log({txn});
+          // const calledGet= await deployed.call({
+          //   transition:'getHello',
+          //   params:[],
+          //   amount: new laksa.util.BN(0),
+          //   gasLimit: laksa.util.Long.fromNumber(25000000),
+          //   gasPrice: new laksa.util.BN(1000000000),
+          //   account: accountA
+          // })
+        } catch (e) {
+          console.log(e)
+        }
+      }
 
+      // testBlockChain()
+      // newContract
+      //   .setDeployPayload({
+      //     gasLimit: laksa.util.Long.fromNumber(2500),
+      //     gasPrice: new laksa.util.BN(100)
+      //   })
+      //   .sendContract({ account: accountA })
+      //   .then(d => d.confirmTx())
+      //   .then(e =>
+      //     e.setCallPayload({
+      //       transition: 'setHello',
+      //       params: [
+      //         {
+      //           vname: 'msg',
+      //           type: 'String',
+      //           value: 'Yo Man!'
+      //         }
+      //       ],
+      //       amount: new laksa.util.BN(0),
+      //       gasLimit: laksa.util.Long.fromNumber(2500),
+      //       gasPrice: new laksa.util.BN(100)
+      //     })
+      //   )
+      //   .then(f=>f.sendContract({ account:accountA}))
+      //   .then(g=>g.confirmTx())
 
-    const myAddress = { address: "9bfec715a6bd658fcb62b0f8cc9bfa2ade71434a" };
-    laksa.zil.createTransaction(txn).then((err, data) => console.log({ err, data }))
-    // with callback
-    // laksa.zil.getNetworkId((err,data)=>{console.log({err,data})})
+      // const callObject={
 
-    // laksa.contract.decodeABI({code:code})
-    //   .then(decoded=>
-    //       decoded.setInitParamsValues(
-    //        decoded.abi.getInitParams(),[laksa.util.toHex(myAddress.address)]
-    //      ))
-    //   .then(inited=>inited.setBlockNumber())
-    //   .then(setted=>setted.generateNewContractJson())
-    //   .then(ready=>ready.testCall({gasLimit:2000}))
-    //   .then(state=>console.log(state.contractJson))
+      // }
+      // .then(e=> e.call({
+      //       transition: 'setHello',
+      //       params: [
+      //         {
+      //           vname: 'msg',
+      //           type: 'String',
+      //           value: 'Yo Man!'
+      //         }
+      //       ]
+      // }))
 
+      // const newContract2 = laksa.contracts.new(code, init)
 
+      // newContract2
+      //   .deploy({
+      //     gasLimit: laksa.util.Long.fromNumber(2500),
+      //     gasPrice: new laksa.util.BN(100)
+      //   })
+      //   .then(d => {
+      //     if (d.isDeployed) {
+      //       d.call({
+      //         transition: 'setHello',
+      //         params: [
+      //           {
+      //             vname: 'msg',
+      //             type: 'String',
+      //             value: 'Yo Man!'
+      //           }
+      //         ]
+      //       })
+      //     }
+      //   })
+      //   .then(console.log)
 
-    // laksa.contracts.new(code,[laksa.util.toHex(myAddress.address)]).then(console.log)
-    // console.log(laksa.contracts.waitForSign);
+      // if(newContract2.isDeployed){
+      //   newContract2
+      //   .call({
+      //       transition:'SetHello',
+      //       params:[{
+      //             vname: 'msg',
+      //             type: 'String',
+      //             value: 'Yo Man!',
+      //           }]
+      //       })
+      //   .then(console.log)
+      // }
 
-    //laksa.isConnected().then(console.log);
+      // construct a contract to Transaction, then input gasLimit and gasPrice
+      // const contractTransaction = laksa.Transactions.new({
+      //   // we get the payload for deploying, which is static after contract is created
+      //   //  {
+      //   //   version: 0,
+      //   //   amount: new BN(0),
+      //   //   toAddr: String(0).repeat(40),
+      //   //   code: this.code,
+      //   //   data: JSON.stringify(this.init).replace(/\\"/g, '"')
+      //   //  }
+      //   ...newContract.payload,
+      //   gasLimit: laksa.util.Long.fromNumber(2500),
+      //   gasPrice: new laksa.util.BN(100)
+      // })
 
-    // laksa.zil.getSmartContracts(myAddress,(err,data)=>{
-    //   if(data.length>0){
-    //     data.map(d=>{
-    //       laksa.zil.getSmartContractState({address:d.address},(err,data)=>{
-    //         console.log({smartContractState:data});
-    //       })
-    //       laksa.zil.getSmartContractCode({address:d.address},(err,data)=>{
-    //         console.log({smartContractCode:data});
-    //       })
-    //       laksa.zil.getSmartContractInit({address:d.address},(err,data)=>{
-    //         console.log({smartContractInit:data})
-    //       })
-    //     })
-    //   }
-    // });
+      // accountA
+      //   // sign contract with account
+      //   .signTransaction(contractTransaction)
+      //   // Transaction is signed then send to blockchain
+      //   .then(d => d.sendTransaction())
+      //   // however we don't know whether transaction is accepted by lookup node, so we do the confirm process.
+      //   // after `Transaction.sendTransaction()` is called, returns an object
+      //   // { response, transaction }
+      //   // response is result for RPC called
+      //   // transaction is the same Transaction class that previously sent
+      //   // which will provide a `Transaction.confirm` method we can do it further
+      //   .then(res => res.transaction.confirm(res.response.TranID))
+      //   // log the result
+      //   .then(console.log)
 
-    // laksa.zil.createMessage({
-    //   to:'2E3C9B415B19AE4035503A06192A0FAD76E04243',
-    //   from:'9bfec715a6bd658fcb62b0f8cc9bfa2ade71434a',
-    //   gas:10,
-    //   gasPrice:10
-    // }).then(console.log)
+      /*
+        Address to Address transaction 
+      */
+      // const accountA = laksa.wallet.importAccountFromPrivateKey(
+      //   'e19d05c5452598e24caad4a0d85a49146f7be089515c905ae6a19e8a578a6930'
+      // )
+      const normalTransaction = laksa.transactions.new({
+        version: laksa.messenger.setTransactionVersion(1),
+        toAddr: '2E3C9B415B19AE4035503A06192A0FAD76E04243',
+        amount: laksa.util.Unit.Zil(1000).toQa(),
+        gasPrice: laksa.util.Unit.Li(10000).toQa(),
+        gasLimit: laksa.util.Long.fromNumber(250000000)
+      })
 
-    // send the transaction to the node
-    // Laksa.zil.createTransaction(txn, callback);
+      // accountA
+      //   .signTransaction(normalTransaction)
+      //   .then(d => d.sendTransaction())
+      //   .then(res => res.transaction.confirm(res.response.TranID))
+      //   .then(console.log)
 
-    function callback(err, data) {
-      console.log({ err, data });
-    }
+      /*
+        Transaction logic is the core logic to blockchain
+        
+        For normal transaction, the whole process is as follows:
+        1. Transaction Creation: create a transaction with gasLimit and gasPrice setted
+        2. Account Signing:use a account to sign the transaction, will update the nonce before signing
+        3. Transaction Encodation: inner function that will package the transaction for protobuf standard.
+        4. Transaction Sent: use messenger/provider/RPC_Method to send to blockchain
+        5. Transaction Confirmation: we get the TranID, but we still need to confirm that tranaction, manually or use `Transaction.confirm()`
+      */
 
-
-
-    // const accountA = laksa.wallet.importAccountFromPrivateKey('e19d05c5452598e24caad4a0d85a49146f7be089515c905ae6a19e8a578a6930')
-    // laksa.wallet.setDefaultAccount(accountA).setSigner(accountA)
-    // // console.log(laksa.contracts);
-
-    // laksa.contracts
-    //   .new(code, [laksa.util.toHex(accountA.address)])
-    //   .then((newContract) => {
-    //     newContract.deployTxn({ gasLimit: 50, gasPrice: 1 })
-    //   })
-    //   .then(console.log);
-
-
-
-
-
-
-  </script>
-</body>
-
+      /*
+        For contract deployment, we just add one more step before Transaction Creation,the whole process is as follows:
+        1. Contract Creation: create a contract, with scilla code and init params.
+        2. Transaction Creation: create a transaction with gasLimit and gasPrice setted
+        3. Account Signing:use a account to sign the transaction
+        4. Transaction Encodation: inner function that will package the transaction for protobuf standard.
+        5. Transaction Send: use messenger/provider/RPC_Method to send to blockchain
+        6. Transaction Confirmation: we get the TranID, but we still need to confirm that tranaction, manually or use `Transaction.confirm()`
+      */
+    </script>
+  </body>
 </html>

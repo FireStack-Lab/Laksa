@@ -1,8 +1,8 @@
 (function (global, factory) {
-  typeof exports === 'object' && typeof module !== 'undefined' ? factory(exports) :
-  typeof define === 'function' && define.amd ? define(['exports'], factory) :
-  (factory((global.Laksa = {})));
-}(this, (function (exports) { 'use strict';
+  typeof exports === 'object' && typeof module !== 'undefined' ? factory(exports, require('laksa-utils')) :
+  typeof define === 'function' && define.amd ? define(['exports', 'laksa-utils'], factory) :
+  (factory((global.Laksa = {}),global.laksaUtils));
+}(this, (function (exports,laksaUtils) { 'use strict';
 
   const ConnectionTimeout = ms => {
     return new Error(`CONNECTION TIMEOUT: timeout of ${ms} ms achived`);
@@ -51,9 +51,12 @@
   const sign = (target, key, descriptor) => {
     const original = descriptor.value;
 
-    async function interceptor(arg) {
+    async function interceptor(arg, {
+      signer,
+      password
+    }) {
       if (original && arg.bytes) {
-        const signed = await this.signer.sign(arg);
+        const signed = await signer.sign(arg, password);
         return original.call(this, signed);
       }
     }
@@ -62,6 +65,106 @@
     return descriptor;
   };
 
+  const validatorArray = {
+    isNumber: [laksaUtils.isNumber],
+    isString: [laksaUtils.isString],
+    isBoolean: [laksaUtils.isBoolean],
+    isArray: [laksaUtils.isArray],
+    isJson: [laksaUtils.isJson],
+    isObject: [laksaUtils.isObject],
+    isFunction: [laksaUtils.isFunction],
+    isHash: [laksaUtils.isHash],
+    isUrl: [laksaUtils.isUrl],
+    isPubkey: [laksaUtils.isPubkey],
+    isPrivateKey: [laksaUtils.isPrivateKey],
+    isBN: [laksaUtils.isBN],
+    isLong: [laksaUtils.isLong],
+    isAddress: [laksaUtils.isAddress]
+  };
+  const transformerArray = {
+    toBN: number => new laksaUtils.BN(number),
+    toNumber: string => Number(string),
+    toString: string => String(string)
+    /**
+     * @function {generateValidateObjects}
+     * @return {object} {validate object}
+     */
+
+  };
+  function generateValidateObjects(validatorObject) {
+    const requiredArgs = {};
+    const optionalArgs = {};
+
+    for (const index in validatorObject) {
+      if (index !== undefined) {
+        const newObjectKey = index;
+        const newObjectValid = validatorObject[index][0];
+        const isRequired = validatorObject[index][1];
+
+        if (isRequired === 'required') {
+          requiredArgs[newObjectKey] = validatorArray[newObjectValid];
+        } else {
+          optionalArgs[newObjectKey] = validatorArray[newObjectValid];
+        }
+      }
+    }
+
+    return {
+      requiredArgs,
+      optionalArgs
+    };
+  }
+  /* eslint-disable no-param-reassign */
+
+  const assertObject = input => (target, key, descriptor) => {
+    const {
+      requiredArgs,
+      optionalArgs
+    } = generateValidateObjects(input);
+    const original = descriptor.value;
+
+    function interceptor(...args) {
+      laksaUtils.validateArgs(args[0], requiredArgs, optionalArgs);
+      return original.apply(this, args);
+    }
+
+    descriptor.value = interceptor;
+    return descriptor;
+  };
+
+  class Core {
+    constructor(messenger, signer, status) {
+      this.messenger = messenger;
+      this.signer = signer;
+      this.status = status;
+    }
+
+    setMessenger(p) {
+      this.messenger = p;
+    }
+
+    getMessenger() {
+      return this.messenger;
+    }
+
+    setSigner(s) {
+      this.signer = s;
+    }
+
+    getSigner() {
+      return this.signer;
+    }
+
+    setStatus(s) {
+      this.status = s;
+    }
+
+    getStatus() {
+      return this.status;
+    }
+
+  }
+
   exports.ConnectionTimeout = ConnectionTimeout;
   exports.InvalidResponse = InvalidResponse;
   exports.InvalidConnection = InvalidConnection;
@@ -69,6 +172,11 @@
   exports.InvalidNumberOfRPCParams = InvalidNumberOfRPCParams;
   exports.format = format;
   exports.sign = sign;
+  exports.validatorArray = validatorArray;
+  exports.transformerArray = transformerArray;
+  exports.generateValidateObjects = generateValidateObjects;
+  exports.assertObject = assertObject;
+  exports.Core = Core;
 
   Object.defineProperty(exports, '__esModule', { value: true });
 

@@ -1,14 +1,17 @@
 {
   "name": "laksa-core-contract",
-  "version": "0.0.48",
+  "version": "0.0.111",
   "description": "",
   "main": "index.js",
+  "browser": "lib/index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "neeboo",
   "license": "ISC",
   "dependencies": {
-    "laksa-utils": "^0.0.48"
+    "laksa-core-crypto": "^0.0.111",
+    "laksa-shared": "^0.0.111",
+    "laksa-utils": "^0.0.111"
   }
 }

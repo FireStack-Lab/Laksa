@@ -4,11 +4,15 @@ Object.defineProperty(exports, '__esModule', { value: true });
 
 function _interopDefault (ex) { return (ex && (typeof ex === 'object') && 'default' in ex) ? ex['default'] : ex; }
 
+require('core-js/modules/es6.regexp.replace');
+require('core-js/modules/es6.regexp.match');
 var _typeof = _interopDefault(require('@babel/runtime/helpers/typeof'));
 require('core-js/modules/es6.number.constructor');
 require('core-js/modules/es6.number.is-integer');
 var validUrl = require('valid-url');
-var bn_js = require('bn.js');
+var BN = require('bn.js');
+var BN__default = _interopDefault(BN);
+var Long = _interopDefault(require('long'));
 var _toConsumableArray = _interopDefault(require('@babel/runtime/helpers/toConsumableArray'));
 require('core-js/modules/es7.array.includes');
 require('core-js/modules/es6.string.includes');
@@ -17,17 +21,18 @@ require('core-js/modules/es7.object.values');
 require('core-js/modules/web.dom.iterable');
 require('core-js/modules/es6.array.iterator');
 require('core-js/modules/es6.object.keys');
-require('core-js/modules/es6.number.is-nan');
+var _classCallCheck = _interopDefault(require('@babel/runtime/helpers/classCallCheck'));
+var _createClass = _interopDefault(require('@babel/runtime/helpers/createClass'));
+var _slicedToArray = _interopDefault(require('@babel/runtime/helpers/slicedToArray'));
 require('core-js/modules/es6.regexp.split');
-require('core-js/modules/es6.regexp.replace');
-require('core-js/modules/es6.number.is-finite');
 require('core-js/modules/es6.regexp.to-string');
-var numToBN = _interopDefault(require('number-to-bn'));
-var utf8 = _interopDefault(require('utf8'));
+require('core-js/modules/es6.map');
+require('core-js/modules/es6.object.freeze');
 
+var isLong = Long.isLong;
 /**
  * [isNumber verify param is a Number]
- * @param  {[type]}  obj [value]
+ * @param  {type}  obj [value]
  * @return {Boolean}     [boolean]
  */
 
@@ -36,8 +41,8 @@ var isNumber = function isNumber(obj) {
 };
 /**
  * [isNumber verify param is a Number]
- * @param  {[type]}  obj [value]
- * @return {Boolean}     [boolean]
+ * @param  {type}  obj [value]
+ * @return {boolean}     [boolean]
  */
 
 
@@ -46,7 +51,7 @@ var isInt = function isInt(obj) {
 };
 /**
  * [isString verify param is a String]
- * @param  {[type]}  obj [value]
+ * @param  {type}  obj [value]
  * @return {Boolean}     [boolean]
  */
 
@@ -56,7 +61,7 @@ var isString = function isString(obj) {
 };
 /**
  * [isBoolean verify param is a Boolean]
- * @param  {[type]}  obj [value]
+ * @param  {type}  obj [value]
  * @return {Boolean}     [boolean]
  */
 
@@ -66,7 +71,7 @@ var isBoolean = function isBoolean(obj) {
 };
 /**
  * [isArray verify param input is an Array]
- * @param  {[type]}  obj [value]
+ * @param  {type}  obj [value]
  * @return {Boolean}     [boolean]
  */
 
@@ -76,12 +81,12 @@ var isArray = function isArray(obj) {
 };
 /**
  * [isJson verify param input is a Json]
- * @param  {[type]}  obj [value]
+ * @param  {type}  obj [value]
  * @return {Boolean}     [boolean]
  */
 
 
-var isJson = function isJson(obj) {
+var isJsonString = function isJsonString(obj) {
   try {
     return !!JSON.parse(obj) && isObject(JSON.parse(obj));
   } catch (e) {
@@ -90,7 +95,7 @@ var isJson = function isJson(obj) {
 };
 /**
  * [isObject verify param is an Object]
- * @param  {[type]}  obj [value]
+ * @param  {type}  obj [value]
  * @return {Boolean}     [boolean]
  */
 
@@ -100,7 +105,7 @@ var isObject = function isObject(obj) {
 };
 /**
  * [isFunction verify param is a Function]
- * @param  {[type]}  obj [value]
+ * @param  {type}  obj [value]
  * @return {Boolean}     [description]
  */
 
@@ -110,89 +115,54 @@ var isFunction = function isFunction(obj) {
 };
 /**
  * verify if param is correct
- * @param  {[hex|string]}  address [description]
+ * @param  {hex|string}  address [description]
  * @return {Boolean}         [description]
  */
-// const isAddress = (address) => {
-//   return !!address.match(/^[0-9a-fA-F]{40}$/)
-// }
 
 
 var isAddress = function isAddress(address) {
-  if (!/^(0x)?[0-9a-f]{40}$/i.test(address)) {
-    // check if it has the basic requirements of an address
-    return false;
-  } else if (/^(0x)?[0-9a-f]{40}$/.test(address) || /^(0x)?[0-9A-F]{40}$/.test(address)) {
-    // If it's all small caps or all all caps, return true
-    return true;
-  }
-
-  return false;
+  return isByteString(address, 40);
 };
-/**
- * verify if privateKey is correct
- * @param  {[hex|string]}  privateKey [description]
- * @return {Boolean}            [description]
- */
-
 
 var isPrivateKey = function isPrivateKey(privateKey) {
-  if (!/^(0x)?[0-9a-f]{64}$/i.test(privateKey)) {
-    // check if it has the basic requirements of an privatekey
-    return false;
-  } else if (/^(0x)?[0-9a-f]{64}$/.test(privateKey) || /^(0x)?[0-9A-F]{64}$/.test(privateKey)) {
-    // If it's all small caps or all all caps, return true
-    return true;
-  } // return !!privateKey.match(/^[0-9a-fA-F]{64}$/)
-
+  return isByteString(privateKey, 64);
 };
-/**
- * verify if public key is correct
- * @param  {[hex|string]}  pubkey [description]
- * @return {Boolean}        [description]
- */
 
+var isPubkey = function isPubkey(pubKey) {
+  return isByteString(pubKey, 66);
+};
 
-var isPubkey = function isPubkey(pubkey) {
-  if (!/^(0x)?[0-9a-f]{66}$/i.test(pubkey)) {
-    // check if it has the basic requirements of an pubkey
-    return false;
-  } else if (/^(0x)?[0-9a-f]{66}$/.test(pubkey) || /^(0x)?[0-9A-F]{66}$/.test(pubkey)) {
-    // If it's all small caps or all all caps, return true
-    return true;
-  } // return !!pubkey.match(/^[0-9a-fA-F]{66}$/)
+var isSignature = function isSignature(sig) {
+  return isByteString(sig, 128);
+};
 
+var isByteString = function isByteString(str, len) {
+  if (!isString(str)) return false;
+  return !!str.replace('0x', '').match("^[0-9a-fA-F]{".concat(len, "}$"));
 };
 /**
  * verify if url is correct
- * @param  {[string]}  url [description]
+ * @param  {string}  url [description]
  * @return {Boolean}     [description]
  */
 
 
 var isUrl = function isUrl(url) {
-  if (typeof url === 'string') {
-    return validUrl.isWebUri(url);
+  if (isString(url)) {
+    return !!validUrl.isWebUri(url);
   }
 
   return false;
 };
 /**
  * verify if hash is correct
- * @param  {[string]}  txHash [description]
+ * @param  {string}  txHash [description]
  * @return {Boolean}        [description]
  */
 
 
 var isHash = function isHash(txHash) {
-  if (!/^(0x)?[0-9a-f]{64}$/i.test(txHash)) {
-    // check if it has the basic requirements of an txHash
-    return false;
-  } else if (/^(0x)?[0-9a-f]{64}$/.test(txHash) || /^(0x)?[0-9A-F]{64}$/.test(txHash)) {
-    // If it's all small caps or all all caps, return true
-    return true;
-  } // return !!txHash.match(/^[0-9a-fA-F]{64}$/)
-
+  return /^[0-9a-fA-F]{64}$/.test(txHash);
 };
 /**
  * Check if string is HEX
@@ -208,7 +178,7 @@ var isHex = function isHex(hex) {
 };
 /**
  * check Object isNull
- * @param  {[type]}  obj [description]
+ * @param  {type}  obj [description]
  * @return {Boolean}     [description]
  */
 
@@ -218,7 +188,7 @@ var isNull = function isNull(obj) {
 };
 /**
  * check object is undefined
- * @param  {[type]}  obj [description]
+ * @param  {type}  obj [description]
  * @return {Boolean}     [description]
  */
 
@@ -228,17 +198,17 @@ var isUndefined = function isUndefined(obj) {
 };
 /**
  * check object is undefined
- * @param  {[type]}  obj [description]
+ * @param  {type}  obj [description]
  * @return {Boolean}     [description]
  */
 
 
-var isUnit = function isUnit(obj) {
+var isUint = function isUint(obj) {
   return isInt(obj) && obj >= 0;
 };
 /**
  * [isByStrX description]
- * @param  {[type]}  obj [description]
+ * @param  {type}  obj [description]
  * @return {Boolean}     [description]
  */
 
@@ -253,16 +223,18 @@ var validators = /*#__PURE__*/Object.freeze({
   isString: isString,
   isBoolean: isBoolean,
   isArray: isArray,
-  isJson: isJson,
+  isJsonString: isJsonString,
   isObject: isObject,
-  isUnit: isUnit,
+  isUint: isUint,
   isFunction: isFunction,
   isHash: isHash,
   isUrl: isUrl,
   isPubkey: isPubkey,
   isPrivateKey: isPrivateKey,
+  isSignature: isSignature,
   isAddress: isAddress,
-  isBN: bn_js.isBN,
+  isBN: BN.isBN,
+  isLong: isLong,
   isHex: isHex,
   isByStrX: isByStrX,
   isNull: isNull,
@@ -288,6 +260,9 @@ function injectValidator(func) {
       validator: valName,
       test: function test(obj) {
         return valFunc(obj);
+      },
+      required: function required(obj) {
+        return [valFunc(obj), 'required', valName];
       }
     });
   } else return false;
@@ -311,24 +286,26 @@ var isNumber$1 = valArray.isNumber,
     isString$1 = valArray.isString,
     isBoolean$1 = valArray.isBoolean,
     isArray$1 = valArray.isArray,
-    isJson$1 = valArray.isJson,
+    isJsonString$1 = valArray.isJsonString,
     isObject$1 = valArray.isObject,
-    isUnit$1 = valArray.isUnit,
+    isUint$1 = valArray.isUint,
     isFunction$1 = valArray.isFunction,
     isHash$1 = valArray.isHash,
     isUrl$1 = valArray.isUrl,
     isPubkey$1 = valArray.isPubkey,
     isPrivateKey$1 = valArray.isPrivateKey,
     isAddress$1 = valArray.isAddress,
+    isSignature$1 = valArray.isSignature,
     isBN = valArray.isBN,
+    isLong$1 = valArray.isLong,
     isHex$1 = valArray.isHex,
     isByStrX$1 = valArray.isByStrX,
     isNull$1 = valArray.isNull,
     isUndefined$1 = valArray.isUndefined;
 /**
  * [Validator description]
- * @param       {[type]} stringToTest    [description]
- * @param       {[type]} validatorString [description]
+ * @param       {type} stringToTest    [description]
+ * @param       {type} validatorString [description]
  * @constructor
  */
 
@@ -361,10 +338,10 @@ Object.assign(Validator, {
 var validator = Validator;
 /**
  * make sure each of the keys in requiredArgs is present in args
- * @param  {[type]} args         [description]
- * @param  {[type]} requiredArgs [description]
- * @param  {[type]} optionalArgs [description]
- * @return {[type]}              [description]
+ * @param  {type} args         [description]
+ * @param  {type} requiredArgs [description]
+ * @param  {type} optionalArgs [description]
+ * @return {type}              [description]
  */
 
 function validateArgs(args, requiredArgs, optionalArgs) {
@@ -457,234 +434,36 @@ function validateTypesMatch(arg, validatorArray) {
   return true;
 }
 
-/**
- * convert number to array representing the padded hex form
- * @param  {[string]} val        [description]
- * @param  {[number]} paddedSize [description]
- * @return {[string]}            [description]
- */
-
-var intToByteArray = function intToByteArray(val, paddedSize) {
-  var arr = [];
-  var hexVal = val.toString(16);
-  var hexRep = [];
-  var i;
-
-  for (i = 0; i < hexVal.length; i += 1) {
-    hexRep[i] = hexVal[i].toString();
-  }
-
-  for (i = 0; i < paddedSize - hexVal.length; i += 1) {
-    arr.push('0');
-  }
-
-  for (i = 0; i < hexVal.length; i += 1) {
-    arr.push(hexRep[i]);
-  }
-
-  return arr;
-};
-/**
- * intToHexArray
- *
- * @param {number} int - the number to be converted to hex
- * @param {number)} size - the desired width of the hex value. will pad.
- *
- * @returns {string[]}
- */
-
-
-var intToHexArray = function intToHexArray(int, size) {
-  var hex = [];
-  var hexRep = [];
-  var hexVal = int.toString(16); // TODO: this really needs to be refactored.
-
-  for (var i = 0; i < hexVal.length; i += 1) {
-    hexRep[i] = hexVal[i].toString();
-  }
-
-  for (var _i = 0; _i < size - hexVal.length; _i += 1) {
-    hex.push('0');
-  }
-
-  for (var _i2 = 0; _i2 < hexVal.length; _i2 += 1) {
-    hex.push(hexRep[_i2]);
-  }
-
-  return hex;
-};
-/**
- * Converts value to it's hex representation
- *
- * @method numberToHex
- * @param {String|Number|BN} value
- * @return {String}
- */
-
-
-var numberToHex = function numberToHex(value) {
-  validateTypes(value, [isString$1, isNumber$1, isBN, isNull$1, isUndefined$1]);
-
-  if (isNull$1(value) || isUndefined$1(value)) {
-    return value;
-  }
-
-  if (!Number.isFinite(value) && !isHex$1(value) && !isBN(value) && !isString$1(value)) {
-    throw new Error("Given input \"".concat(value, "\" is not a number."));
-  }
-
-  var number = isBN(value) ? value : toBN(value);
-  var result = number.toString(16);
-  return number.lt(toBN(0)) ? "-0x".concat(result.substr(1)) : "0x".concat(result);
-};
-
-var toUtf8 = function toUtf8() {// to utf 8
-};
-
-var toAscii = function toAscii() {// to be implemented
-};
-
-var fromUtf8 = function fromUtf8() {// to be implemented
-};
-
-var fromAscii = function fromAscii() {// to be implemented
-};
-
 var toBN = function toBN(data) {
   try {
-    return numToBN(data);
+    return new BN__default(data);
   } catch (e) {
     throw new Error("".concat(e, " of \"").concat(data, "\""));
   } // to be implemented
 
 };
-/**
- * Converts value to it's number representation
- *
- * @method hexToNumber
- * @param {String|Number|BN} value
- * @return {String}
- */
 
-
-var hexToNumber = function hexToNumber(value) {
-  validateTypes(value, [isNumber$1, isString$1, isHex$1, isBN, isUndefined$1]);
-
-  if (!value) {
-    return value;
-  }
-
-  return toBN(value).toNumber();
-};
-/**
- * hexToIntArray
- *
- * @param {string} hex
- * @returns {number[]}
- */
-
-
-var hexToIntArray = function hexToIntArray(hex) {
-  if (!hex || !isHex$1(hex)) {
-    return [];
-  }
-
-  var res = [];
-
-  for (var i = 0; i < hex.length; i += 1) {
-    var c = hex.charCodeAt(i);
-    var hi = c >> 8;
-    var lo = c & 0xff;
-
-    if (hi) {
-      res.push(hi, lo);
-    } else {
-      res.push(lo);
+var toLong = function toLong(data) {
+  try {
+    if (isString$1(data)) {
+      return Long.fromString(data);
+    } else if (isNumber$1(data)) {
+      return Long.fromNumber(data);
     }
-  }
+  } catch (e) {
+    throw new Error("".concat(e, " of \"").concat(data, "\""));
+  } // to be implemented
 
-  return res;
-};
-/**
- * Should be called to get hex representation (prefixed by 0x) of utf8 string
- *
- * @method utf8ToHex
- * @param {String} str
- * @returns {String} hex representation of input string
- */
-
-
-var utf8ToHex = function utf8ToHex(str) {
-  validateTypes(str, [isAddress$1, isString$1, isHex$1]);
-  var hex = '';
-  var newString = utf8.encode(str);
-  var str1 = newString.replace(/^(?:\u0000)*/, '');
-  var str2 = str1.split('').reverse().join('');
-  var str3 = str2.replace(/^(?:\u0000)*/, '');
-  var str4 = str3.split('').reverse().join('');
-
-  for (var i = 0; i < str4.length; i += 1) {
-    var code = str4.charCodeAt(i); // if (code !== 0) {
-
-    var n = code.toString(16);
-    hex += n.length < 2 ? "0".concat(n) : n; // }
-  }
-
-  return "0x".concat(hex);
-};
-/**
- * Auto converts any given value into it's hex representation.
- *
- * And even stringifys objects before.
- *
- * @method toHex
- * @param {String|Number|BN|Object} value
- * @param {Boolean} returnType
- * @return {String}
- */
-
-
-var toHex = function toHex(value, returnType) {
-  /* jshint maxcomplexity: false */
-  validateTypes(value, [isAddress$1, isBoolean$1, isObject$1, isString$1, isNumber$1, isHex$1, isBN]);
-
-  if (isAddress$1(value)) {
-    // strip 0x from address
-    return returnType ? 'address' : "0x".concat(value.toLowerCase().replace(/^0x/i, ''));
-  }
-
-  if (isBoolean$1(value)) {
-    return returnType ? 'bool' : value ? '0x01' : '0x00';
-  }
-
-  if (isObject$1(value) && !isBN(value)) {
-    return returnType ? 'string' : utf8ToHex(JSON.stringify(value));
-  }
-
-  if (isBN(value)) {
-    return returnType ? 'BN' : numberToHex(value);
-  } // if its a negative number, pass it through numberToHex
-
-
-  if (isString$1(value)) {
-    if (isHex$1(value) || !Number.isNaN(Number(value))) {
-      return returnType ? value < 0 ? 'int256' : 'uint256' : numberToHex(value);
-    } else if (!Number.isFinite(value) && !isUndefined$1(value) && Number.isNaN(Number(value))) {
-      return returnType ? 'string' : add0x(value);
-    }
-  }
-
-  return returnType ? value < 0 ? 'int256' : 'uint256' : numberToHex(value);
 };
 
 var strip0x = function strip0x(value) {
-  var newString = toHex(value);
-  return "".concat(newString.replace(/^0x/i, ''));
+  if (!isString$1(value)) throw new Error('value has to be String');
+  return "".concat(value.replace(/^0x/i, ''));
 };
 /**
  * [add an '0x' prefix to value]
- * @param  {[String|Number|Hex|BN]} value [description]
- * @return {[String]}       [description]
+ * @param  {String|Number|Hex|BN} value [description]
+ * @return {String}       [description]
  */
 
 
@@ -701,49 +480,244 @@ var add0x = function add0x(value) {
   return newString;
 };
 /**
- * Should be called to pad string to expected length
+ * pack
  *
- * @method padLeft
- * @param {String} string to be padded
- * @param {Number} characters that result string should have
- * @param {String} sign, by default 0
- * @returns {String} right aligned string
+ * Takes two 16-bit integers and combines them. Used to compute version.
+ *
+ * @param {number} a
+ * @param {number} b
+ *
+ * @returns {number} - a 32-bit number
  */
 
 
-var padLeft = function padLeft(string, chars, sign) {
-  return new Array(chars - string.length + 1).join(sign || '0') + string;
-};
-/**
- * Should be called to pad string to expected length
- *
- * @method padRight
- * @param {String} string to be padded
- * @param {Number} characters that result string should have
- * @param {String} sign, by default 0
- * @returns {String} right aligned string
- */
+var pack = function pack(a, b) {
+  if (!isNumber$1(a) || !isNumber$1(b)) {
+    throw new Error('a and b must be number');
+  }
 
+  if (a >> 16 > 0 || b >> 16 > 0) {
+    throw new Error('Both a and b must be 16 bits or less');
+  }
 
-var padRight = function padRight(string, chars, sign) {
-  return string + new Array(chars - string.length + 1).join(sign || '0');
+  return (a << 16) + b;
 };
 
+var Units = Object.freeze({
+  Zil: 'zil',
+  Li: 'li',
+  Qa: 'qa'
+});
+var DEFAULT_OPTIONS = {
+  pad: false
+};
+var unitMap = new Map([[Units.Qa, '1'], [Units.Li, '1000000'], // 1e6 qa
+[Units.Zil, '1000000000000'] // 1e12 qa
+]);
+var numToStr = function numToStr(input) {
+  if (typeof input === 'string') {
+    if (!input.match(/^-?[0-9.]+$/)) {
+      throw new Error("while converting number to string, invalid number value '".concat(input, "', should be a number matching (^-?[0-9.]+)."));
+    }
+
+    return input;
+  } else if (typeof input === 'number') {
+    return String(input);
+  } else if (BN__default.isBN(input)) {
+    return input.toString(10);
+  }
+
+  throw new Error("while converting number to string, invalid number value '".concat(input, "' type ").concat(_typeof(input), "."));
+};
+var fromQa = function fromQa(qa, unit) {
+  var options = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : DEFAULT_OPTIONS;
+  var qaBN = qa;
+
+  if (!isBN(qa)) {
+    try {
+      qaBN = new BN__default(qa);
+    } catch (error) {
+      throw Error(error);
+    }
+  }
+
+  if (unit === 'qa') {
+    return qaBN.toString(10);
+  }
+
+  var baseStr = unitMap.get(unit);
+
+  if (!baseStr) {
+    throw new Error("No unit of type ".concat(unit, " exists."));
+  }
+
+  var base = new BN__default(baseStr, 10);
+  var baseNumDecimals = baseStr.length - 1;
+  var fraction = qaBN.abs().mod(base).toString(10); // prepend 0s to the fraction half
+
+  while (fraction.length < baseNumDecimals) {
+    fraction = "0".concat(fraction);
+  }
+
+  if (!options.pad) {
+    /* eslint-disable prefer-destructuring */
+    fraction = fraction.match(/^([0-9]*[1-9]|0)(0*)/)[1];
+  }
+
+  var whole = qaBN.div(base).toString(10);
+  return fraction === '0' ? "".concat(whole) : "".concat(whole, ".").concat(fraction);
+};
+var toQa = function toQa(input, unit) {
+  var inputStr = numToStr(input);
+  var baseStr = unitMap.get(unit);
+
+  if (!baseStr) {
+    throw new Error("No unit of type ".concat(unit, " exists."));
+  }
+
+  var baseNumDecimals = baseStr.length - 1;
+  var base = new BN__default(baseStr, 10); // Is it negative?
+
+  var isNegative = inputStr.substring(0, 1) === '-';
+
+  if (isNegative) {
+    inputStr = inputStr.substring(1);
+  }
+
+  if (inputStr === '.') {
+    throw new Error("Cannot convert ".concat(inputStr, " to Qa."));
+  } // Split it into a whole and fractional part
+
+
+  var comps = inputStr.split('.'); // eslint-disable-line
+
+  if (comps.length > 2) {
+    throw new Error("Cannot convert ".concat(inputStr, " to Qa."));
+  }
+
+  var _comps = _slicedToArray(comps, 2),
+      whole = _comps[0],
+      fraction = _comps[1];
+
+  if (!whole) {
+    whole = '0';
+  }
+
+  if (!fraction) {
+    fraction = '0';
+  }
+
+  if (fraction.length > baseNumDecimals) {
+    throw new Error("Cannot convert ".concat(inputStr, " to Qa."));
+  }
+
+  while (fraction.length < baseNumDecimals) {
+    fraction += '0';
+  }
+
+  var wholeBN = new BN__default(whole);
+  var fractionBN = new BN__default(fraction);
+  var wei = wholeBN.mul(base).add(fractionBN);
+
+  if (isNegative) {
+    wei = wei.neg();
+  }
+
+  return new BN__default(wei.toString(10), 10);
+};
+var Unit =
+/*#__PURE__*/
+function () {
+  _createClass(Unit, null, [{
+    key: "from",
+    value: function from(str) {
+      return new Unit(str);
+    }
+  }, {
+    key: "Zil",
+    value: function Zil(str) {
+      return new Unit(str).asZil();
+    }
+  }, {
+    key: "Li",
+    value: function Li(str) {
+      return new Unit(str).asLi();
+    }
+  }, {
+    key: "Qa",
+    value: function Qa(str) {
+      return new Unit(str).asQa();
+    }
+  }]);
+
+  function Unit(str) {
+    _classCallCheck(this, Unit);
+
+    this.unit = str;
+  }
+
+  _createClass(Unit, [{
+    key: "asZil",
+    value: function asZil() {
+      this.qa = toQa(this.unit, Units.Zil);
+      return this;
+    }
+  }, {
+    key: "asLi",
+    value: function asLi() {
+      this.qa = toQa(this.unit, Units.Li);
+      return this;
+    }
+  }, {
+    key: "asQa",
+    value: function asQa() {
+      this.qa = new BN__default(this.unit);
+      return this;
+    }
+  }, {
+    key: "toQa",
+    value: function toQa() {
+      return this.qa;
+    }
+  }, {
+    key: "toLi",
+    value: function toLi() {
+      return fromQa(this.qa, Units.Li);
+    }
+  }, {
+    key: "toZil",
+    value: function toZil() {
+      return fromQa(this.qa, Units.Zil);
+    }
+  }, {
+    key: "toQaString",
+    value: function toQaString() {
+      return this.qa.toString();
+    }
+  }]);
+
+  return Unit;
+}();
+
+exports.BN = BN__default;
+exports.Long = Long;
 exports.isNumber = isNumber$1;
 exports.isInt = isInt$1;
 exports.isString = isString$1;
 exports.isBoolean = isBoolean$1;
 exports.isArray = isArray$1;
-exports.isJson = isJson$1;
+exports.isJsonString = isJsonString$1;
 exports.isObject = isObject$1;
-exports.isUnit = isUnit$1;
+exports.isUint = isUint$1;
 exports.isFunction = isFunction$1;
 exports.isHash = isHash$1;
 exports.isUrl = isUrl$1;
 exports.isPubkey = isPubkey$1;
 exports.isPrivateKey = isPrivateKey$1;
 exports.isAddress = isAddress$1;
+exports.isSignature = isSignature$1;
 exports.isBN = isBN;
+exports.isLong = isLong$1;
 exports.isHex = isHex$1;
 exports.isByStrX = isByStrX$1;
 exports.isNull = isNull$1;
@@ -754,19 +728,14 @@ exports.validateTypes = validateTypes;
 exports.validateTypesMatch = validateTypesMatch;
 exports.validateFunctionArgs = validateFunctionArgs;
 exports.extractValidator = extractValidator;
-exports.intToByteArray = intToByteArray;
-exports.intToHexArray = intToHexArray;
-exports.toHex = toHex;
-exports.toUtf8 = toUtf8;
-exports.toAscii = toAscii;
 exports.toBN = toBN;
-exports.hexToNumber = hexToNumber;
-exports.hexToIntArray = hexToIntArray;
-exports.utf8ToHex = utf8ToHex;
-exports.numberToHex = numberToHex;
-exports.fromUtf8 = fromUtf8;
-exports.fromAscii = fromAscii;
-exports.padLeft = padLeft;
-exports.padRight = padRight;
+exports.toLong = toLong;
 exports.strip0x = strip0x;
 exports.add0x = add0x;
+exports.pack = pack;
+exports.Units = Units;
+exports.unitMap = unitMap;
+exports.numToStr = numToStr;
+exports.fromQa = fromQa;
+exports.toQa = toQa;
+exports.Unit = Unit;

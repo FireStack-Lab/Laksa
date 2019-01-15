@@ -1,8 +1,8 @@
 (function (global, factory) {
-  typeof exports === 'object' && typeof module !== 'undefined' ? factory(exports, require('laksa-utils'), require('laksa-core-crypto'), require('laksa-extend-keystore')) :
-  typeof define === 'function' && define.amd ? define(['exports', 'laksa-utils', 'laksa-core-crypto', 'laksa-extend-keystore'], factory) :
-  (factory((global.Laksa = {}),global.laksaUtils,global.laksaCoreCrypto,global.laksaExtendKeystore));
-}(this, (function (exports,laksaUtils,laksaCoreCrypto,laksaExtendKeystore) { 'use strict';
+  typeof exports === 'object' && typeof module !== 'undefined' ? factory(exports, require('laksa-utils'), require('laksa-core-crypto'), require('laksa-extend-keystore'), require('laksa-shared')) :
+  typeof define === 'function' && define.amd ? define(['exports', 'laksa-utils', 'laksa-core-crypto', 'laksa-extend-keystore', 'laksa-shared'], factory) :
+  (factory((global.Laksa = {}),global.laksaUtils,global.laksaCoreCrypto,global.laksaExtendKeystore,global.laksaShared));
+}(this, (function (exports,laksaUtils,laksaCoreCrypto,laksaExtendKeystore,laksaShared) { 'use strict';
 
   function _defineProperty(obj, key, value) {
     if (key in obj) {
@@ -38,125 +38,187 @@
     return target;
   }
 
-  const ENCRYPTED = Symbol('ENCRYPTED');
+  const ENCRYPTED = 'ENCRYPTED';
+
+  /**
+   * gernerate account object
+   * @function generateAccountObject
+   * @param  {string} privateKey {description}
+   * @return {Account} {Account object}
+   */
 
   function generateAccountObject(privateKey) {
-    if (!laksaUtils.isPrivateKey(privateKey)) throw new Error('private key is not correct');
-    const address = laksaCoreCrypto.getAddressFromPrivateKey(privateKey);
-    const publicKey = laksaCoreCrypto.getPubKeyFromPrivateKey(privateKey);
-    let accountObject = {}; // set accountObject
-
-    if (laksaUtils.isPubkey(publicKey) && laksaUtils.isPrivateKey(privateKey) && laksaUtils.isAddress(address)) {
-      accountObject = {
-        privateKey,
-        address,
-        publicKey // push account object to accountArray
-
-      };
-      return accountObject;
+    if (!laksaUtils.isPrivateKey(privateKey)) {
+      throw new Error(`private key is not correct:${privateKey}`);
     }
 
-    throw new Error('account generate failure');
+    const address = laksaCoreCrypto.getAddressFromPrivateKey(privateKey);
+    const publicKey = laksaCoreCrypto.getPubKeyFromPrivateKey(privateKey);
+    return {
+      privateKey,
+      address,
+      publicKey
+    };
   }
   /**
-   * create an raw accountObject
-   * @return {[type]} [description]
+   * @function createAccount
+   * @return {Account} {account object}
    */
 
 
   const createAccount = () => {
     const privateKey = laksaCoreCrypto.generatePrivateKey();
+    return generateAccountObject(privateKey);
+  };
+  /**
+   * @function importAccount
+   * @param  {PrivateKey} privateKey {privatekey string}
+   * @return {Account} {account object}
+   */
 
-    try {
-      return generateAccountObject(privateKey);
-    } catch (e) {
-      return e;
-    }
-  };
   const importAccount = privateKey => {
-    try {
-      return generateAccountObject(privateKey);
-    } catch (e) {
-      return e;
-    }
+    return generateAccountObject(privateKey);
   };
+  /**
+   * @function encryptAccount
+   * @param  {Account} accountObject {account object}
+   * @param  {string} password      {password string}
+   * @param  {object} options       {encryption options}
+   * @return {Account} {encrypted account object}
+   */
+
   const encryptAccount = async (accountObject, password, options = {
     level: 1024
   }) => {
-    if (!laksaUtils.isString(password)) throw new Error('password is not found');
     laksaUtils.validateArgs(accountObject, {
-      address: [laksaUtils.isAddress],
-      privateKey: [laksaUtils.isPrivateKey],
-      publicKey: [laksaUtils.isPubkey]
+      privateKey: [laksaUtils.isPrivateKey]
     });
 
-    try {
-      const encrypted = await laksaExtendKeystore.encrypt(accountObject.privateKey, password, options);
-
-      const encryptedObj = _objectSpread({}, accountObject, {
-        privateKey: ENCRYPTED
-      }, encrypted);
-
-      return encryptedObj;
-    } catch (e) {
-      throw new Error(e);
+    if (!laksaUtils.isString(password)) {
+      throw new Error('password is not found');
     }
+
+    const encrypted = await laksaExtendKeystore.encrypt(accountObject.privateKey, password, options);
+
+    const encryptedObj = _objectSpread({}, accountObject, {
+      privateKey: ENCRYPTED
+    }, encrypted);
+
+    return encryptedObj;
   };
+  /**
+   * @function decryptAccount
+   * @param  {Account} accountObject {encrypted account object}
+   * @param  {string} password      {password string}
+   * @return {Account} {decrypted account object}
+   */
+
   const decryptAccount = async (accountObject, password) => {
-    if (!laksaUtils.isString(password)) throw new Error('password is not found');
     laksaUtils.validateArgs(accountObject, {
-      address: [laksaUtils.isAddress],
-      crypto: [laksaUtils.isObject],
-      publicKey: [laksaUtils.isPubkey]
+      crypto: [laksaUtils.isObject]
     });
 
-    try {
-      const newObject = Object.assign({}, accountObject);
-      delete newObject.crypto;
-      const decrypted = await laksaExtendKeystore.decrypt(accountObject, password);
+    if (!laksaUtils.isString(password)) {
+      throw new Error('password is not found');
+    }
 
-      const decryptedObj = _objectSpread({}, newObject, {
-        privateKey: decrypted
-      });
+    const newObject = Object.assign({}, accountObject);
+    delete newObject.crypto;
+    const decrypted = await laksaExtendKeystore.decrypt(accountObject, password);
 
-      return decryptedObj;
-    } catch (e) {
-      throw new Error(e);
+    const decryptedObj = _objectSpread({}, newObject, {
+      privateKey: decrypted
+    });
+
+    return decryptedObj;
+  };
+  /**
+   * @function signTransaction
+   * @param  {PrivateKey} privateKey        {privatekey}
+   * @param  {Transaction} transactionObject {transaction object}
+   * @return {Transaction} {signed transaction}
+   */
+
+  const signTransaction = (privateKey, txnDetails) => {
+    const pubKey = laksaCoreCrypto.getPubKeyFromPrivateKey(privateKey);
+    const txn = {
+      version: txnDetails.version,
+      nonce: txnDetails.nonce,
+      toAddr: txnDetails.toAddr.toLowerCase(),
+      amount: txnDetails.amount,
+      pubKey,
+      gasPrice: txnDetails.gasPrice,
+      gasLimit: txnDetails.gasLimit,
+      code: txnDetails.code || '',
+      data: txnDetails.data || ''
+    };
+    const encodedTx = laksaCoreCrypto.encodeTransactionProto(txn);
+    txn.signature = laksaCoreCrypto.sign(encodedTx, privateKey, pubKey);
+
+    if (laksaCoreCrypto.schnorr.verify(encodedTx, new laksaCoreCrypto.Signature({
+      r: new laksaUtils.BN(txn.signature.slice(0, 64), 16),
+      s: new laksaUtils.BN(txn.signature.slice(64), 16)
+    }), Buffer.from(pubKey, 'hex'))) {
+      return txn;
+    } else {
+      throw new Error('Signature verify failure');
     }
   };
-  const signTransaction = (privateKey, transactionObject) => {
-    return laksaCoreCrypto.createTransactionJson(privateKey, transactionObject);
-  };
-  class Account {
+
+  class Account extends laksaShared.Core {
     constructor(messenger) {
-      this.messenger = messenger;
-    } // prototype.createAccount
+      super(messenger);
+      delete this.signer;
+      this.privateKey = '';
+      this.publicKey = '';
+      this.address = '';
+      this.balance = '0';
+      this.nonce = 0;
+    }
+    /**
+     * @function {createAccount}
+     * @return {Account} {account object}
+     */
 
 
     createAccount() {
       const accountObject = createAccount();
-      const newObject = new Account();
-      return Object.assign({}, accountObject, {
-        encrypt: newObject.encrypt,
-        decrypt: newObject.decrypt,
-        sign: newObject.sign,
-        signTransaction: newObject.signTransaction,
-        signTransactionWithPassword: newObject.signTransactionWithPassword
-      });
-    } // prototype.importAccount
+      const {
+        privateKey,
+        publicKey,
+        address
+      } = accountObject;
+      this.privateKey = privateKey;
+      this.publicKey = publicKey;
+      this.address = address;
+      return this;
+    }
+    /**
+     * @function {importAccount}
+     * @param  {PrivateKey} privateKey {privatekey string}
+     * @return {Account} {account object}
+     */
 
 
     importAccount(privateKey) {
       const accountObject = importAccount(privateKey);
-      const newObject = new Account();
-      return Object.assign({}, accountObject, {
-        encrypt: newObject.encrypt,
-        decrypt: newObject.decrypt,
-        sign: newObject.sign,
-        signTransaction: newObject.signTransaction,
-        signTransactionWithPassword: newObject.signTransactionWithPassword
-      });
+      const {
+        publicKey,
+        address
+      } = accountObject;
+      this.privateKey = privateKey;
+      this.publicKey = publicKey;
+      this.address = address;
+      if (this.crypto) delete this.crypto;
+      return this;
     } // sub object
+
+    /**
+     * @function {encrypt}
+     * @param  {string} password {password string}
+     * @param  {object} options  {options object for encryption}
+     * @return {Account} {account object}
+     */
 
 
     async encrypt(password, options = {
@@ -166,52 +228,153 @@
       return Object.assign(this, encryptedAccount);
     } // sub object
 
+    /**
+     * @function {decrypt}
+     * @param  {string} password {password string}
+     * @return {object} {account object}
+     */
+
 
     async decrypt(password) {
       const that = this;
       const decrypted = await decryptAccount(that, password);
       delete this.crypto;
       return Object.assign(this, decrypted);
-    } // sign method for Transaction bytes
+    }
+    /**
+     * @function {toFile}
+     * @param  {string} password {description}
+     * @param  {object} options  {description}
+     * @return {string} {description}
+     */
 
 
-    sign(bytes) {
-      if (this.privateKey === ENCRYPTED) {
-        throw new Error('This account is encrypted, please decrypt it first');
+    async toFile(password, options = {
+      level: 1024
+    }) {
+      const {
+        privateKey,
+        address,
+        id,
+        index,
+        crypto,
+        version,
+        publicKey
+      } = this;
+
+      if (privateKey === ENCRYPTED) {
+        return JSON.stringify({
+          address,
+          privateKey,
+          publicKey,
+          id,
+          index,
+          crypto,
+          version
+        });
       }
 
-      return laksaCoreCrypto.sign(bytes, this.privateKey, this.publicKey);
-    } // sign plain object
+      const encrypted = await this.encrypt(password, options);
+      return JSON.stringify({
+        address: encrypted.address,
+        privateKey: encrypted.privateKey,
+        publicKey: encrypted.publicKey,
+        id: encrypted.id,
+        index: encrypted.index,
+        crypto: encrypted.crypto,
+        version: encrypted.version
+      });
+    }
+    /**
+     * @function {fromFile}
+     * @param  {object} keyStore {description}
+     * @param  {string} password {description}
+     * @return {Account} {description}
+     */
 
 
-    signTransaction(transactionObject) {
+    async fromFile(keyStore, password) {
+      const keyStoreObject = JSON.parse(keyStore);
+      const decrypted = await decryptAccount(keyStoreObject, password);
+
+      if (decrypted) {
+        return this.importAccount(decrypted.privateKey);
+      } else throw new Error('cannot import file');
+    }
+    /**
+     * @function {signTransactionWithPassword} {sign plain object with password}
+     * @param  {Transaction} txnObj {transaction object}
+     * @param  {string} password          {password string}
+     * @return {object} {signed transaction object}
+     */
+
+
+    async signTransaction(txnObj, password) {
       if (this.privateKey === ENCRYPTED) {
-        throw new Error('This account is encrypted, please decrypt it first or use "signTransactionWithPassword"');
+        await this.decrypt(password);
+        await this.updateBalance();
+        const signed = signTransaction(this.privateKey, _objectSpread({}, txnObj.txParams, {
+          nonce: this.nonce + 1
+        }));
+        await this.encrypt(password);
+        return txnObj.map(obj => {
+          return _objectSpread({}, obj, signed);
+        });
+      } else {
+        await this.updateBalance();
+        const nonEncryptSigned = signTransaction(this.privateKey, _objectSpread({}, txnObj.txParams, {
+          nonce: this.nonce + 1
+        }));
+        return txnObj.map(obj => {
+          return _objectSpread({}, obj, nonEncryptSigned);
+        });
       }
+    }
 
-      return signTransaction(this.privateKey, transactionObject);
-    } // sign plain object with password
+    async getBalance() {
+      try {
+        const balanceObject = await this.messenger.send('GetBalance', this.address);
+        const {
+          balance,
+          nonce
+        } = balanceObject;
 
+        if (laksaUtils.isInt(nonce)) {
+          return {
+            balance,
+            nonce
+          };
+        } else {
+          throw new Error('can not get nonce');
+        }
+      } catch (error) {
+        throw error;
+      }
+    }
 
-    async signTransactionWithPassword(transactionObject, password) {
-      if (this.privateKey === ENCRYPTED) {
-        const decrypted = await this.decrypt(password);
-        const signed = signTransaction(decrypted.privateKey, transactionObject);
-        const encryptAfterSign = await this.encrypt(password);
-        Object.assign(this, encryptAfterSign);
-        return signed;
+    async updateBalance() {
+      try {
+        const {
+          balance,
+          nonce
+        } = await this.getBalance();
+        this.balance = balance;
+        this.nonce = nonce;
+        return this;
+      } catch (error) {
+        throw error;
       }
     }
 
   }
 
+  exports.Account = Account;
   exports.ENCRYPTED = ENCRYPTED;
   exports.createAccount = createAccount;
   exports.importAccount = importAccount;
   exports.encryptAccount = encryptAccount;
   exports.decryptAccount = decryptAccount;
   exports.signTransaction = signTransaction;
-  exports.Account = Account;
 
   Object.defineProperty(exports, '__esModule', { value: true });
 

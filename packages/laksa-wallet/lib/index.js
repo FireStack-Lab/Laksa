@@ -4,18 +4,17 @@ Object.defineProperty(exports, '__esModule', { value: true });
 
 function _interopDefault (ex) { return (ex && (typeof ex === 'object') && 'default' in ex) ? ex['default'] : ex; }
 
+require('core-js/modules/es6.weak-map');
 require('core-js/modules/es7.symbol.async-iterator');
 require('core-js/modules/es6.symbol');
-require('core-js/modules/es6.weak-map');
-var _regeneratorRuntime = _interopDefault(require('@babel/runtime/regenerator'));
-require('regenerator-runtime/runtime');
-var _asyncToGenerator = _interopDefault(require('@babel/runtime/helpers/asyncToGenerator'));
-var _objectSpread = _interopDefault(require('@babel/runtime/helpers/objectSpread'));
-require('core-js/modules/es6.object.assign');
+require('core-js/modules/es6.promise');
 require('core-js/modules/es6.array.sort');
 require('core-js/modules/es6.array.iterator');
 require('core-js/modules/es6.object.keys');
 require('core-js/modules/web.dom.iterable');
+var _regeneratorRuntime = _interopDefault(require('@babel/runtime/regenerator'));
+require('regenerator-runtime/runtime');
+var _asyncToGenerator = _interopDefault(require('@babel/runtime/helpers/asyncToGenerator'));
 var _classCallCheck = _interopDefault(require('@babel/runtime/helpers/classCallCheck'));
 var _createClass = _interopDefault(require('@babel/runtime/helpers/createClass'));
 var _defineProperty = _interopDefault(require('@babel/runtime/helpers/defineProperty'));
@@ -25,10 +24,10 @@ var laksaUtils = require('laksa-utils');
 var immutable = require('immutable');
 var account = require('laksa-account');
 
-var ENCRYPTED = Symbol('ENCRYPTED');
+var ENCRYPTED = 'ENCRYPTED';
 var encryptedBy = {
-  ACCOUNT: Symbol('account'),
-  WALLET: Symbol('wallet')
+  ACCOUNT: 'account',
+  WALLET: 'wallet'
 };
 
 var Wallet =
@@ -49,7 +48,7 @@ function () {
     });
 
     _defineProperty(this, "createAccount", function () {
-      var accountInstance = new account.Account();
+      var accountInstance = new account.Account(_this.messenger);
       var accountObject = accountInstance.createAccount();
       return _this.addAccount(accountObject);
     });
@@ -65,22 +64,105 @@ function () {
       return Batch;
     });
 
+    _defineProperty(this, "exportAccountByAddress",
+    /*#__PURE__*/
+    function () {
+      var _ref = _asyncToGenerator(
+      /*#__PURE__*/
+      _regeneratorRuntime.mark(function _callee(address, password) {
+        var options,
+            accountToExport,
+            result,
+            _args = arguments;
+        return _regeneratorRuntime.wrap(function _callee$(_context) {
+          while (1) {
+            switch (_context.prev = _context.next) {
+              case 0:
+                options = _args.length > 2 && _args[2] !== undefined ? _args[2] : {
+                  level: 1024
+                };
+                accountToExport = _this.getAccountByAddress(address);
+
+                if (!accountToExport) {
+                  _context.next = 9;
+                  break;
+                }
+
+                _context.next = 5;
+                return accountToExport.toFile(password, options);
+
+              case 5:
+                result = _context.sent;
+                return _context.abrupt("return", result);
+
+              case 9:
+                return _context.abrupt("return", false);
+
+              case 10:
+              case "end":
+                return _context.stop();
+            }
+          }
+        }, _callee, this);
+      }));
+
+      return function (_x, _x2) {
+        return _ref.apply(this, arguments);
+      };
+    }());
+
     _defineProperty(this, "importAccountFromPrivateKey", function (privateKey) {
-      var accountInstance = new account.Account();
+      var accountInstance = new account.Account(_this.messenger);
       var accountObject = accountInstance.importAccount(privateKey);
       return _this.addAccount(accountObject);
     });
 
+    _defineProperty(this, "importAccountFromKeyStore",
+    /*#__PURE__*/
+    function () {
+      var _ref2 = _asyncToGenerator(
+      /*#__PURE__*/
+      _regeneratorRuntime.mark(function _callee2(keyStore, password) {
+        var accountInstance, accountObject;
+        return _regeneratorRuntime.wrap(function _callee2$(_context2) {
+          while (1) {
+            switch (_context2.prev = _context2.next) {
+              case 0:
+                accountInstance = new account.Account(_this.messenger);
+                _context2.next = 3;
+                return accountInstance.fromFile(keyStore, password);
+
+              case 3:
+                accountObject = _context2.sent;
+                return _context2.abrupt("return", _this.addAccount(accountObject));
+
+              case 5:
+              case "end":
+                return _context2.stop();
+            }
+          }
+        }, _callee2, this);
+      }));
+
+      return function (_x3, _x4) {
+        return _ref2.apply(this, arguments);
+      };
+    }());
+
     _defineProperty(this, "removeOneAccountByAddress", function (address) {
       if (!laksaUtils.isAddress(address)) throw new Error('address is not correct');
 
-      var _this$getAccountByAdd = _this.getAccountByAddress(address),
-          index = _this$getAccountByAdd.index;
+      var addressRef = _this.getAccountByAddress(address);
 
-      if (index !== undefined) {
+      if (addressRef !== undefined) {
         var currentArray = _classPrivateFieldGet(_this, _accounts2).get('accounts').toArray();
 
-        delete currentArray[index];
+        delete currentArray[addressRef.index];
+
+        if (_this.signer !== undefined && addressRef.address === _this.signer.address) {
+          _this.signer = undefined;
+          _this.defaultAccount = undefined;
+        }
 
         _classPrivateFieldSet(_this, _accounts2, _classPrivateFieldGet(_this, _accounts2).set('accounts', immutable.List(currentArray)));
 
@@ -88,6 +170,8 @@ function () {
 
         _this.updateLength();
       }
+
+      _this.updateLength();
     });
 
     _defineProperty(this, "getAccountByAddress", function (address) {
@@ -129,15 +213,27 @@ function () {
   }
 
   _createClass(Wallet, [{
-    key: "updateLength",
-
+    key: "defaultSetSigner",
+    value: function defaultSetSigner() {
+      if (this.getWalletAccounts().length === 1 && this.signer === undefined) {
+        this.setSigner(this.getWalletAccounts()[0]);
+      }
+    }
     /**
-     * [updateLength description]
-     * @return {[type]} [description]
+     * @function {updateLength}
+     * @return {number} {wallet account counts}
      */
+
+  }, {
+    key: "updateLength",
     value: function updateLength() {
       this.length = this.getIndexKeys().length;
     }
+    /**
+     * @function {getIndexKeys}
+     * @return {Array<string>} {index keys to the wallet}
+     */
+
   }, {
     key: "getIndexKeys",
     value: function getIndexKeys() {
@@ -149,6 +245,11 @@ function () {
 
       return Object.keys(arrays).filter(isCorrectKeys);
     }
+    /**
+     * @function {getCurrentMaxIndex}
+     * @return {number} {max index to the wallet}
+     */
+
   }, {
     key: "getCurrentMaxIndex",
     value: function getCurrentMaxIndex() {
@@ -160,14 +261,20 @@ function () {
       var sorted = this.getIndexKeys().sort(diff);
       return sorted[0] === undefined ? -1 : parseInt(sorted[0], 10);
     }
+    /**
+     * @function {addAccount}
+     * @param  {Account} accountObject {account object}
+     * @return {Account} {account object}
+     */
+
   }, {
     key: "addAccount",
     value: function addAccount(accountObject) {
       if (!laksaUtils.isObject(accountObject)) throw new Error('account Object is not correct');
-      var newAccountObject = Object.assign({}, accountObject, {
-        createTime: new Date(),
-        index: this.getCurrentMaxIndex() + 1
-      });
+      if (this.getAccountByAddress(accountObject.address)) return false;
+      var newAccountObject = accountObject;
+      newAccountObject.createTime = new Date();
+      newAccountObject.index = this.getCurrentMaxIndex() + 1;
       var objectKey = newAccountObject.address;
       var newIndex = newAccountObject.index;
 
@@ -181,10 +288,22 @@ function () {
 
 
       this.updateLength();
-      return _objectSpread({}, newAccountObject);
+      this.defaultSetSigner();
+      return newAccountObject;
     }
+    /**
+     * @function {createAccount}
+     * @return {Account} {account object}
+     */
+
   }, {
     key: "importAccountsFromPrivateKeyList",
+
+    /**
+     * @function {importAccountsFromPrivateKeyList}
+     * @param  {Array<PrivateKey>} privateKeyList {list of private keys}
+     * @return {Array<Account>} {array of accounts}
+     */
     value: function importAccountsFromPrivateKeyList(privateKeyList) {
       if (!laksaUtils.isArray(privateKeyList)) throw new Error('privateKeyList has to be Array<String>');
       var Imported = [];
@@ -196,8 +315,20 @@ function () {
       return Imported;
     } //-------
 
+    /**
+     * @function {removeOneAccountByAddress}
+     * @param  {Address} address {account address}
+     * @return {undefined} {}
+     */
+
   }, {
     key: "removeOneAccountByIndex",
+
+    /**
+     * @function {removeOneAccountByIndex}
+     * @param  {number} index {index of account}
+     * @return {undefined} {}
+     */
     value: function removeOneAccountByIndex(index) {
       if (!laksaUtils.isNumber(index)) throw new Error('index is not correct');
       var addressRef = this.getAccountByIndex(index);
@@ -207,8 +338,19 @@ function () {
       }
     } //---------
 
+    /**
+     * @function {getAccountByAddress}
+     * @param  {Address} address {account address}
+     * @return {Account} {account object}
+     */
+
   }, {
     key: "getWalletAddresses",
+
+    /**
+     * @function {getWalletAddresses}
+     * @return {Array<Address>} {array of address}
+     */
     value: function getWalletAddresses() {
       var _this2 = this;
 
@@ -224,6 +366,11 @@ function () {
         return !!d;
       });
     }
+    /**
+     * @function {getWalletPublicKeys}
+     * @return {Array<PublicKey>} {array of public Key}
+     */
+
   }, {
     key: "getWalletPublicKeys",
     value: function getWalletPublicKeys() {
@@ -241,6 +388,11 @@ function () {
         return !!d;
       });
     }
+    /**
+     * @function {getWalletPrivateKeys}
+     * @return {Array<PrivateKey>} {array of private key}
+     */
+
   }, {
     key: "getWalletPrivateKeys",
     value: function getWalletPrivateKeys() {
@@ -258,15 +410,26 @@ function () {
         return !!d;
       });
     }
+    /**
+     * @function getWalletAccounts
+     * @return {Array<Account>} {array of account}
+     */
+
   }, {
     key: "updateAccountByAddress",
     // -----------
+
+    /**
+     * @function {updateAccountByAddress}
+     * @param  {Address} address   {account address}
+     * @param  {Account} newObject {account object to be updated}
+     * @return {boolean} {is successful}
+     */
     value: function updateAccountByAddress(address, newObject) {
       if (!laksaUtils.isAddress(address)) throw new Error('address is not correct');
       if (!laksaUtils.isObject(newObject)) throw new Error('new account Object is not correct');
-      var newAccountObject = Object.assign({}, newObject, {
-        updatedTime: new Date()
-      });
+      var newAccountObject = newObject;
+      newAccountObject.updateTime = new Date();
 
       _classPrivateFieldSet(this, _accounts2, _classPrivateFieldGet(this, _accounts2).update(address, function () {
         return newAccountObject;
@@ -275,269 +438,429 @@ function () {
       return true;
     } // -----------
 
+    /**
+     * @function {cleanAllAccountsw}
+     * @return {boolean} {is successful}
+     */
+
   }, {
     key: "encryptAllAccounts",
     // -----------
+
+    /**
+     * @function {encryptAllAccounts}
+     * @param  {string} password {password}
+     * @param  {object} options  {encryption options}
+     * @return {type} {description}
+     */
     value: function () {
       var _encryptAllAccounts = _asyncToGenerator(
       /*#__PURE__*/
-      _regeneratorRuntime.mark(function _callee(password, options) {
-        var _this5 = this;
+      _regeneratorRuntime.mark(function _callee3(password, options) {
+        var keys, results, _iteratorNormalCompletion, _didIteratorError, _iteratorError, _iterator, _step, index, accountObject, address, things;
 
-        return _regeneratorRuntime.wrap(function _callee$(_context) {
+        return _regeneratorRuntime.wrap(function _callee3$(_context3) {
           while (1) {
-            switch (_context.prev = _context.next) {
+            switch (_context3.prev = _context3.next) {
               case 0:
-                this.getIndexKeys().forEach(function (index) {
-                  var accountObject = _this5.getAccountByIndex(parseInt(index, 10));
+                keys = this.getIndexKeys();
+                results = [];
+                _iteratorNormalCompletion = true;
+                _didIteratorError = false;
+                _iteratorError = undefined;
+                _context3.prev = 5;
+
+                for (_iterator = keys[Symbol.iterator](); !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
+                  index = _step.value;
+                  accountObject = this.getAccountByIndex(parseInt(index, 10));
 
                   if (accountObject) {
-                    var address = accountObject.address;
-
-                    _this5.encryptAccountByAddress(address, password, options, encryptedBy.WALLET);
+                    address = accountObject.address;
+                    things = this.encryptAccountByAddress(address, password, options, encryptedBy.WALLET);
+                    results.push(things);
                   }
-                });
-                return _context.abrupt("return", true);
+                }
 
-              case 2:
+                _context3.next = 13;
+                break;
+
+              case 9:
+                _context3.prev = 9;
+                _context3.t0 = _context3["catch"](5);
+                _didIteratorError = true;
+                _iteratorError = _context3.t0;
+
+              case 13:
+                _context3.prev = 13;
+                _context3.prev = 14;
+
+                if (!_iteratorNormalCompletion && _iterator.return != null) {
+                  _iterator.return();
+                }
+
+              case 16:
+                _context3.prev = 16;
+
+                if (!_didIteratorError) {
+                  _context3.next = 19;
+                  break;
+                }
+
+                throw _iteratorError;
+
+              case 19:
+                return _context3.finish(16);
+
+              case 20:
+                return _context3.finish(13);
+
+              case 21:
+                _context3.next = 23;
+                return Promise.all(results);
+
+              case 23:
               case "end":
-                return _context.stop();
+                return _context3.stop();
             }
           }
-        }, _callee, this);
+        }, _callee3, this, [[5, 9, 13, 21], [14,, 16, 20]]);
       }));
 
-      return function encryptAllAccounts(_x, _x2) {
+      return function encryptAllAccounts(_x5, _x6) {
         return _encryptAllAccounts.apply(this, arguments);
       };
     }()
+    /**
+     * @function {decryptAllAccounts}
+     * @param  {string} password {decrypt password}
+     * @return {type} {description}
+     */
+
   }, {
     key: "decryptAllAccounts",
     value: function () {
       var _decryptAllAccounts = _asyncToGenerator(
       /*#__PURE__*/
-      _regeneratorRuntime.mark(function _callee2(password) {
-        var _this6 = this;
+      _regeneratorRuntime.mark(function _callee4(password) {
+        var keys, results, _iteratorNormalCompletion2, _didIteratorError2, _iteratorError2, _iterator2, _step2, index, accountObject, address, LastEncryptedBy, things;
 
-        return _regeneratorRuntime.wrap(function _callee2$(_context2) {
+        return _regeneratorRuntime.wrap(function _callee4$(_context4) {
           while (1) {
-            switch (_context2.prev = _context2.next) {
+            switch (_context4.prev = _context4.next) {
               case 0:
-                this.getIndexKeys().forEach(function (index) {
-                  var accountObject = _this6.getAccountByIndex(parseInt(index, 10));
+                keys = this.getIndexKeys();
+                results = [];
+                _iteratorNormalCompletion2 = true;
+                _didIteratorError2 = false;
+                _iteratorError2 = undefined;
+                _context4.prev = 5;
+
+                for (_iterator2 = keys[Symbol.iterator](); !(_iteratorNormalCompletion2 = (_step2 = _iterator2.next()).done); _iteratorNormalCompletion2 = true) {
+                  index = _step2.value;
+                  accountObject = this.getAccountByIndex(parseInt(index, 10));
 
                   if (accountObject) {
-                    var address = accountObject.address,
-                        LastEncryptedBy = accountObject.LastEncryptedBy;
+                    address = accountObject.address, LastEncryptedBy = accountObject.LastEncryptedBy;
 
                     if (LastEncryptedBy === encryptedBy.WALLET) {
-                      _this6.decryptAccountByAddress(address, password, encryptedBy.WALLET);
-                    } else {
-                      console.error("address ".concat(address, " is protected by account psw"));
-                      console.error('use /decryptAccountByAddress/ instead');
+                      things = this.decryptAccountByAddress(address, password, encryptedBy.WALLET);
+                      results.push(things);
                     }
                   }
-                });
-                return _context2.abrupt("return", true);
+                }
 
-              case 2:
+                _context4.next = 13;
+                break;
+
+              case 9:
+                _context4.prev = 9;
+                _context4.t0 = _context4["catch"](5);
+                _didIteratorError2 = true;
+                _iteratorError2 = _context4.t0;
+
+              case 13:
+                _context4.prev = 13;
+                _context4.prev = 14;
+
+                if (!_iteratorNormalCompletion2 && _iterator2.return != null) {
+                  _iterator2.return();
+                }
+
+              case 16:
+                _context4.prev = 16;
+
+                if (!_didIteratorError2) {
+                  _context4.next = 19;
+                  break;
+                }
+
+                throw _iteratorError2;
+
+              case 19:
+                return _context4.finish(16);
+
+              case 20:
+                return _context4.finish(13);
+
+              case 21:
+                _context4.next = 23;
+                return Promise.all(results);
+
+              case 23:
               case "end":
-                return _context2.stop();
+                return _context4.stop();
             }
           }
-        }, _callee2, this);
+        }, _callee4, this, [[5, 9, 13, 21], [14,, 16, 20]]);
       }));
 
-      return function decryptAllAccounts(_x3) {
+      return function decryptAllAccounts(_x7) {
         return _decryptAllAccounts.apply(this, arguments);
       };
     }()
+    /**
+     * @function {encryptAccountByAddress}
+     * @param  {Address} address  {account address}
+     * @param  {string} password {password string for encryption}
+     * @param  {object} options  {encryption options}
+     * @param  {Symbol} by       {Symbol that encrypted by}
+     * @return {boolean} {status}
+     */
+
   }, {
     key: "encryptAccountByAddress",
     value: function () {
       var _encryptAccountByAddress = _asyncToGenerator(
       /*#__PURE__*/
-      _regeneratorRuntime.mark(function _callee3(address, password, options, by) {
-        var accountObject, privateKey, crypto, encryptedObject;
-        return _regeneratorRuntime.wrap(function _callee3$(_context3) {
+      _regeneratorRuntime.mark(function _callee5(address, password, options, by) {
+        var accountObject, crypto, encryptedObject, newAccount, tempAccount, updateStatus;
+        return _regeneratorRuntime.wrap(function _callee5$(_context5) {
           while (1) {
-            switch (_context3.prev = _context3.next) {
+            switch (_context5.prev = _context5.next) {
               case 0:
                 accountObject = this.getAccountByAddress(address);
 
                 if (!(accountObject !== undefined)) {
-                  _context3.next = 8;
+                  _context5.next = 23;
                   break;
                 }
 
-                privateKey = accountObject.privateKey, crypto = accountObject.crypto;
+                crypto = accountObject.crypto;
 
-                if (!(privateKey !== undefined && privateKey !== ENCRYPTED && crypto === undefined)) {
-                  _context3.next = 8;
+                if (!(crypto === undefined)) {
+                  _context5.next = 23;
                   break;
                 }
 
-                _context3.next = 6;
+                encryptedObject = {};
+
+                if (!(typeof accountObject.encrypt === 'function')) {
+                  _context5.next = 11;
+                  break;
+                }
+
+                _context5.next = 8;
                 return accountObject.encrypt(password, options);
 
-              case 6:
-                encryptedObject = _context3.sent;
-                return _context3.abrupt("return", this.updateAccountByAddress(address, Object.assign({}, encryptedObject, {
-                  LastEncryptedBy: by || encryptedBy.ACCOUNT
-                })));
-
               case 8:
-                return _context3.abrupt("return", false);
+                encryptedObject = _context5.sent;
+                _context5.next = 16;
+                break;
 
-              case 9:
+              case 11:
+                newAccount = new account.Account(this.messenger);
+                tempAccount = newAccount.importAccount(accountObject.privateKey);
+                _context5.next = 15;
+                return tempAccount.encrypt(password, options);
+
+              case 15:
+                encryptedObject = _context5.sent;
+
+              case 16:
+                encryptedObject.LastEncryptedBy = by || encryptedBy.ACCOUNT;
+                updateStatus = this.updateAccountByAddress(address, encryptedObject);
+
+                if (!(updateStatus === true)) {
+                  _context5.next = 22;
+                  break;
+                }
+
+                return _context5.abrupt("return", encryptedObject);
+
+              case 22:
+                return _context5.abrupt("return", false);
+
+              case 23:
+                return _context5.abrupt("return", false);
+
+              case 24:
               case "end":
-                return _context3.stop();
+                return _context5.stop();
             }
           }
-        }, _callee3, this);
+        }, _callee5, this);
       }));
 
-      return function encryptAccountByAddress(_x4, _x5, _x6, _x7) {
+      return function encryptAccountByAddress(_x8, _x9, _x10, _x11) {
         return _encryptAccountByAddress.apply(this, arguments);
       };
     }()
+    /**
+     * @function {decryptAccountByAddress}
+     * @param  {Address} address  {account address}
+     * @param  {string} password {password string to decrypt}
+     * @param  {Symbol} by       {Symbol that decrypted by}
+     * @return {boolean} {status}
+     */
+
   }, {
     key: "decryptAccountByAddress",
     value: function () {
       var _decryptAccountByAddress = _asyncToGenerator(
       /*#__PURE__*/
-      _regeneratorRuntime.mark(function _callee4(address, password, by) {
-        var accountObject, privateKey, crypto, decryptedObject;
-        return _regeneratorRuntime.wrap(function _callee4$(_context4) {
+      _regeneratorRuntime.mark(function _callee6(address, password, by) {
+        var accountObject, crypto, decryptedObject, decryptedTempObject, newAccount, updateStatus;
+        return _regeneratorRuntime.wrap(function _callee6$(_context6) {
           while (1) {
-            switch (_context4.prev = _context4.next) {
+            switch (_context6.prev = _context6.next) {
               case 0:
                 accountObject = this.getAccountByAddress(address);
 
                 if (!(accountObject !== undefined)) {
-                  _context4.next = 8;
+                  _context6.next = 23;
                   break;
                 }
 
-                privateKey = accountObject.privateKey, crypto = accountObject.crypto;
+                crypto = accountObject.crypto;
 
-                if (!(privateKey !== undefined && privateKey === ENCRYPTED && laksaUtils.isObject(crypto))) {
-                  _context4.next = 8;
+                if (!laksaUtils.isObject(crypto)) {
+                  _context6.next = 23;
                   break;
                 }
 
-                _context4.next = 6;
+                decryptedObject = {};
+
+                if (!(typeof accountObject.decrypt === 'function')) {
+                  _context6.next = 11;
+                  break;
+                }
+
+                _context6.next = 8;
                 return accountObject.decrypt(password);
 
-              case 6:
-                decryptedObject = _context4.sent;
-                return _context4.abrupt("return", this.updateAccountByAddress(address, Object.assign({}, decryptedObject, {
-                  LastEncryptedBy: by || encryptedBy.ACCOUNT
-                })));
-
               case 8:
-                return _context4.abrupt("return", false);
+                decryptedObject = _context6.sent;
+                _context6.next = 16;
+                break;
 
-              case 9:
+              case 11:
+                _context6.next = 13;
+                return account.decryptAccount(accountObject, password);
+
+              case 13:
+                decryptedTempObject = _context6.sent;
+                newAccount = new account.Account(this.messenger);
+                decryptedObject = newAccount.importAccount(decryptedTempObject.privateKey);
+
+              case 16:
+                decryptedObject.LastEncryptedBy = by || encryptedBy.ACCOUNT;
+                updateStatus = this.updateAccountByAddress(address, decryptedObject);
+
+                if (!(updateStatus === true)) {
+                  _context6.next = 22;
+                  break;
+                }
+
+                return _context6.abrupt("return", decryptedObject);
+
+              case 22:
+                return _context6.abrupt("return", false);
+
+              case 23:
+                return _context6.abrupt("return", false);
+
+              case 24:
               case "end":
-                return _context4.stop();
+                return _context6.stop();
             }
           }
-        }, _callee4, this);
+        }, _callee6, this);
       }));
 
-      return function decryptAccountByAddress(_x8, _x9, _x10) {
+      return function decryptAccountByAddress(_x12, _x13, _x14) {
         return _decryptAccountByAddress.apply(this, arguments);
       };
     }()
-  }, {
-    key: "setDefaultAccount",
-    value: function setDefaultAccount(obj) {
-      if (laksaUtils.isAddress(obj)) {
-        this.defaultAccount = this.getAccountByAddress(obj);
-      } else if (laksaUtils.isAddress(obj.address)) {
-        this.defaultAccount = this.getAccountByAddress(obj.address).address;
-      }
+    /**
+     * @function {setSigner}
+     * @param  {Account} obj {account object}
+     * @return {Wallet} {wallet instance}
+     */
 
-      return this;
-    }
   }, {
     key: "setSigner",
     value: function setSigner(obj) {
-      if (laksaUtils.isAddress(obj)) {
+      if (laksaUtils.isString(obj)) {
         this.signer = this.getAccountByAddress(obj);
-      } else if (laksaUtils.isAddress(obj.address)) {
-        this.signer = this.getAccountByAddress(obj.address).address;
+        this.defaultAccount = this.getAccountByAddress(obj);
+      } else if (laksaUtils.isObject(obj) && laksaUtils.isAddress(obj.address)) {
+        this.signer = this.getAccountByAddress(obj.address);
+        this.defaultAccount = this.getAccountByAddress(obj.address);
       }
 
       return this;
     } // sign method for Transaction bytes
+
+    /**
+     * @function {sign}
+     * @param  {Transaction} tx {transaction bytes}
+     * @return {Transaction} {signed transaction object}
+     */
 
   }, {
     key: "sign",
     value: function () {
       var _sign = _asyncToGenerator(
       /*#__PURE__*/
-      _regeneratorRuntime.mark(function _callee5(tx) {
-        var signerAccount, balance, withNonce;
-        return _regeneratorRuntime.wrap(function _callee5$(_context5) {
+      _regeneratorRuntime.mark(function _callee7(tx, _ref3) {
+        var address, password, signerAccount, result;
+        return _regeneratorRuntime.wrap(function _callee7$(_context7) {
           while (1) {
-            switch (_context5.prev = _context5.next) {
+            switch (_context7.prev = _context7.next) {
               case 0:
-                if (this.signer) {
-                  _context5.next = 2;
+                address = _ref3.address, password = _ref3.password;
+
+                if (!(!this.signer && address === undefined)) {
+                  _context7.next = 3;
                   break;
                 }
 
-                throw new Error('This signer is not found');
+                throw new Error('This signer is not found or address is not defined');
 
-              case 2:
-                _context5.prev = 2;
-                signerAccount = this.getAccountByAddress(this.signer);
-                _context5.next = 6;
-                return this.messenger.send({
-                  method: 'GetBalance',
-                  params: [signerAccount.address]
-                });
+              case 3:
+                _context7.prev = 3;
+                signerAccount = this.getAccountByAddress(address === undefined ? this.signer : address);
+                _context7.next = 7;
+                return signerAccount.signTransaction(tx, password);
 
-              case 6:
-                balance = _context5.sent;
+              case 7:
+                result = _context7.sent;
+                return _context7.abrupt("return", result);
 
-                if (!(typeof balance.nonce !== 'number')) {
-                  _context5.next = 9;
-                  break;
-                }
+              case 11:
+                _context7.prev = 11;
+                _context7.t0 = _context7["catch"](3);
+                throw _context7.t0;
 
-                throw new Error('Could not get nonce');
-
-              case 9:
-                withNonce = tx.map(function (txObj) {
-                  return _objectSpread({}, txObj, {
-                    nonce: balance.nonce + 1,
-                    pubKey: signerAccount.publicKey
-                  });
-                });
-                return _context5.abrupt("return", withNonce.map(function (txObj) {
-                  // @ts-ignore
-                  return _objectSpread({}, txObj, {
-                    signature: signerAccount.sign(withNonce.bytes)
-                  });
-                }));
-
-              case 13:
-                _context5.prev = 13;
-                _context5.t0 = _context5["catch"](2);
-                throw _context5.t0;
-
-              case 16:
+              case 14:
               case "end":
-                return _context5.stop();
+                return _context7.stop();
             }
           }
-        }, _callee5, this, [[2, 13]]);
+        }, _callee7, this, [[3, 11]]);
       }));
 
-      return function sign(_x11) {
+      return function sign(_x15, _x16) {
         return _sign.apply(this, arguments);
       };
     }()
@@ -559,3 +882,5 @@ function () {
 var _accounts2 = new WeakMap();
 
 exports.Wallet = Wallet;
+exports.ENCRYPTED = ENCRYPTED;
+exports.encryptedBy = encryptedBy;

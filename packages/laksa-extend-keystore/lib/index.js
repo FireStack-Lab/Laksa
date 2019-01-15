@@ -15,6 +15,7 @@ var scrypt = _interopDefault(require('scrypt.js'));
 var uuid = _interopDefault(require('uuid'));
 var laksaCoreCrypto = require('laksa-core-crypto');
 
+var ALGO_IDENTIFIER = 'aes-128-ctr';
 /**
  * getDerivedKey
  *
@@ -74,8 +75,8 @@ function () {
           case 0:
             salt = laksaCoreCrypto.randomBytes(32);
             iv = Buffer.from(laksaCoreCrypto.randomBytes(16), 'hex');
-            kdf = options.kdf !== undefined ? options.kdf : 'scrypt';
-            level = options.level !== undefined ? options.level : 8192;
+            kdf = options !== undefined ? options.kdf ? options.kdf : 'scrypt' : 'scrypt';
+            level = options !== undefined ? options.level ? options.level : 8192 : 8192;
             n = kdf === 'pbkdf2' ? 262144 : level;
             kdfparams = {
               salt: salt,
@@ -94,14 +95,14 @@ function () {
             ciphertext = Buffer.from(cipher.encrypt(Buffer.from(privateKey, 'hex')));
             return _context.abrupt("return", {
               crypto: {
-                cipher: 'aes-128-ctr',
+                cipher: ALGO_IDENTIFIER,
                 cipherparams: {
                   iv: iv.toString('hex')
                 },
                 ciphertext: ciphertext.toString('hex'),
                 kdf: kdf,
                 kdfparams: kdfparams,
-                mac: laksaCoreCrypto.hashjs.sha256().update(Buffer.concat([derivedKey.slice(16, 32), ciphertext]), 'hex').digest('hex')
+                mac: laksaCoreCrypto.hashjs.hmac(laksaCoreCrypto.hashjs.sha256, derivedKey, 'hex').update(Buffer.concat([derivedKey.slice(16, 32), ciphertext, iv, Buffer.from(ALGO_IDENTIFIER)]), 'hex').digest('hex')
               },
               id: uuid.v4({
                 random: laksaCoreCrypto.randomBytes(16)
@@ -150,7 +151,7 @@ function () {
 
           case 5:
             derivedKey = _context2.sent;
-            mac = laksaCoreCrypto.hashjs.sha256().update(Buffer.concat([derivedKey.slice(16, 32), ciphertext]), 'hex').digest('hex');
+            mac = laksaCoreCrypto.hashjs.hmac(laksaCoreCrypto.hashjs.sha256, derivedKey, 'hex').update(Buffer.concat([derivedKey.slice(16, 32), ciphertext, iv, Buffer.from(ALGO_IDENTIFIER)]), 'hex').digest('hex');
 
             if (!(mac.toUpperCase() !== keystore.crypto.mac.toUpperCase())) {
               _context2.next = 9;
@@ -178,5 +179,6 @@ function () {
   };
 }();
 
+exports.uuid = uuid;
 exports.encrypt = encrypt;
 exports.decrypt = decrypt;

@@ -1,8 +1,8 @@
 (function (global, factory) {
-  typeof exports === 'object' && typeof module !== 'undefined' ? factory(exports, require('laksa-shared')) :
-  typeof define === 'function' && define.amd ? define(['exports', 'laksa-shared'], factory) :
-  (factory((global.Laksa = {}),global.laksaShared));
-}(this, (function (exports,laksaShared) { 'use strict';
+  typeof exports === 'object' && typeof module !== 'undefined' ? factory(exports, require('laksa-shared'), require('laksa-utils')) :
+  typeof define === 'function' && define.amd ? define(['exports', 'laksa-shared', 'laksa-utils'], factory) :
+  (factory((global.Laksa = {}),global.laksaShared,global.laksaUtils));
+}(this, (function (exports,laksaShared,laksaUtils) { 'use strict';
 
   function _defineProperty(obj, key, value) {
     if (key in obj) {
@@ -19,6 +19,25 @@
     return obj;
   }
 
+  function _objectSpread(target) {
+    for (var i = 1; i < arguments.length; i++) {
+      var source = arguments[i] != null ? arguments[i] : {};
+      var ownKeys = Object.keys(source);
+
+      if (typeof Object.getOwnPropertySymbols === 'function') {
+        ownKeys = ownKeys.concat(Object.getOwnPropertySymbols(source).filter(function (sym) {
+          return Object.getOwnPropertyDescriptor(source, sym).enumerable;
+        }));
+      }
+
+      ownKeys.forEach(function (key) {
+        _defineProperty(target, key, source[key]);
+      });
+    }
+
+    return target;
+  }
+
   class JsonRpc {
     constructor() {
       _defineProperty(this, "toPayload", (method, params) => {
@@ -30,34 +49,70 @@
           jsonrpc: '2.0',
           id: this.messageId,
           method,
-          params: params || []
+          params: params !== undefined ? [params] : []
         };
-      });
-
-      _defineProperty(this, "toBatchPayload", messages => {
-        return messages.map(message => {
-          return this.toPayload(message.method, message.params);
-        });
       });
 
       this.messageId = 0;
     }
+    /**
+     * @function {toPayload}
+     * @param  {string} method {RPC method}
+     * @param  {Array<object>} params {params that send to RPC}
+     * @return {object} {payload object}
+     */
+
 
   }
 
+  class ResponseMiddleware {
+    constructor(ResponseBody) {
+      this.result = ResponseBody.result;
+      this.error = ResponseBody.error;
+      this.raw = ResponseBody;
+    }
+
+    get getResult() {
+      return typeof this.result === 'string' ? this.result : _objectSpread({}, this.result, {
+        responseType: 'result'
+      });
+    }
+
+    get getError() {
+      return typeof this.error === 'string' ? this.error : _objectSpread({}, this.error, {
+        responseType: 'error'
+      });
+    }
+
+    get getRaw() {
+      return _objectSpread({}, this.raw, {
+        responseType: 'raw'
+      });
+    }
+
+  }
+
+  /**
+   * @function getResultForData
+   * @param  {object} data {object get from provider}
+   * @return {object} {data result or data}
+   */
   function getResultForData(data) {
-    return data.error ? data.error : data.message ? data : data.result;
+    if (data.result) return data.getResult;
+    if (data.error) return data.getError;
+    return data.getRaw;
   }
 
-  class Messanger {
-    constructor(provider) {
-      _defineProperty(this, "send", async data => {
+  class Messenger {
+    constructor(provider, config) {
+      _defineProperty(this, "send", async (method, params) => {
         this.providerCheck();
 
         try {
-          const payload = this.JsonRpc.toPayload(data.method, data.params);
+          const payload = this.JsonRpc.toPayload(method, params);
+          this.setResMiddleware(data => new ResponseMiddleware(data));
           const result = await this.provider.send(payload);
-          return getResultForData(result);
+          return getResultForData(result); // getResultForData(result)
         } catch (e) {
           throw new Error(e);
         }
@@ -76,64 +131,39 @@
 
       this.provider = provider;
       this.scillaProvider = provider;
+      this.config = config;
       this.JsonRpc = new JsonRpc();
     }
+    /**
+     * @function {send}
+     * @param  {object} data {data object with method and params}
+     * @return {object|Error} {result from provider}
+     */
 
-    sendAsync(data, callback) {
-      this.providerCheck();
-      const payload = this.JsonRpc.toPayload(data.method, data.params);
-      this.provider.sendAsync(payload, (err, result) => {
-        if (err || result.error) {
-          const errors = err || result.error;
-          return callback(errors);
-        }
 
-        callback(null, getResultForData(result));
-      });
-    }
-
-    sendBatch(data, callback) {
-      this.providerCheck();
-      const payload = this.JsonRpc.toBatchPayload(data);
-      this.provider.sendAsync(payload, (err, results) => {
-        if (err) {
-          return callback(err);
-        }
-
-        callback(null, results);
-      });
-    }
-
-    sendAsyncServer(endpoint, data, callback) {
-      this.providerCheck();
-      this.scillaProvider.sendAsyncServer(endpoint, data, (err, result) => {
-        if (err || result.error) {
-          const errors = err || result.error;
-          return callback(errors);
-        }
-
-        callback(null, result);
-      });
-    }
-
-    sendBatchServer(data, callback) {
-      this.providerCheck();
-      this.scillaProvider.sendAsync(data, (err, results) => {
-        if (err) {
-          return callback(err);
-        }
-
-        callback(null, results);
-      });
-    }
-
+    /**
+     * @function {setProvider}
+     * @param  {Provider} provider {provider instance}
+     * @return {Provider} {provider setter}
+     */
     setProvider(provider) {
       this.provider = provider;
     }
+    /**
+     * @function {setScillaProvider}
+     * @param  {Provider} provider {provider instance}
+     * @return {Provider} {provider setter}
+     */
+
 
     setScillaProvider(provider) {
       this.scillaProvider = provider;
     }
+    /**
+     * @function {providerCheck}
+     * @return {Error|null} {provider validator}
+     */
+
 
     providerCheck() {
       if (!this.provider) {
@@ -142,10 +172,53 @@
       }
     }
 
+    setReqMiddleware(middleware, method = '*') {
+      return this.provider.middleware.request.use(middleware, method);
+    }
+
+    setResMiddleware(middleware, method = '*') {
+      return this.provider.middleware.response.use(middleware, method);
+    }
+
+    setTransactionVersion(version) {
+      let chainID = 1;
+
+      switch (this.provider.url) {
+        case this.config.Default.nodeProviderUrl:
+          {
+            chainID = this.config.Default.CHAIN_ID;
+            break;
+          }
+
+        case this.config.TestNet.nodeProviderUrl:
+          {
+            chainID = this.config.TestNet.CHAIN_ID;
+            break;
+          }
+
+        case this.config.MainNet.nodeProviderUrl:
+          {
+            chainID = this.config.MainNet.CHAIN_ID;
+            break;
+          }
+
+        case this.config.Staging.nodeProviderUrl:
+          {
+            chainID = this.config.Staging.CHAIN_ID;
+            break;
+          }
+
+        default:
+          break;
+      }
+
+      return laksaUtils.pack(chainID, version);
+    }
+
   }
 
+  exports.Messenger = Messenger;
   exports.JsonRpc = JsonRpc;
-  exports.Messenger = Messanger;
 
   Object.defineProperty(exports, '__esModule', { value: true });
 

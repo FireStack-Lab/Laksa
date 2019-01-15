@@ -13,20 +13,38 @@ var _defineProperty = _interopDefault(require('@babel/runtime/helpers/defineProp
 var util = require('laksa-utils');
 var core = require('laksa-core-crypto');
 var laksaCoreMessenger = require('laksa-core-messenger');
-var Transaction = _interopDefault(require('laksa-core-transaction'));
-var HttpProvider = _interopDefault(require('laksa-providers-http'));
+var laksaCoreTransaction = require('laksa-core-transaction');
+var laksaProvidersHttp = require('laksa-providers-http');
 var laksaAccount = require('laksa-account');
-var Contracts = _interopDefault(require('laksa-contracts'));
+var laksaCoreContract = require('laksa-core-contract');
+var laksaBlockchain = require('laksa-blockchain');
 var laksaWallet = require('laksa-wallet');
-var Zil = _interopDefault(require('laksa-zil'));
 
-var version = "0.0.48";
+var version = "0.0.111";
 
 var config = {
   version: version,
-  defaultProviderUrl: 'http://localhost:4200',
-  defaultBlock: 'latest',
-  defaultAccount: undefined
+  Default: {
+    CHAIN_ID: 3,
+    Network_ID: 'TestNet',
+    nodeProviderUrl: 'http://localhost:4200'
+  },
+  Staging: {
+    CHAIN_ID: 63,
+    Network_ID: 'TestNet',
+    nodeProviderUrl: 'https://staging-api.aws.z7a.xyz'
+  },
+  TestNet: {
+    CHAIN_ID: 2,
+    Network_ID: 'TestNet',
+    nodeProviderUrl: 'https://api.zilliqa.com' // Mainnet
+
+  },
+  MainNet: {
+    CHAIN_ID: 1,
+    Network_ID: 'MainNet',
+    nodeProviderUrl: 'https://mainnet.zilliqa.com'
+  }
 };
 
 var Laksa =
@@ -39,32 +57,49 @@ function () {
 
     _defineProperty(this, "Modules", {
       Account: laksaAccount.Account,
-      Contracts: Contracts,
-      HttpProvider: HttpProvider,
+      BlockChain: laksaBlockchain.BlockChain,
+      Contracts: laksaCoreContract.Contracts,
+      Contract: laksaCoreContract.Contract,
+      HttpProvider: laksaProvidersHttp.HttpProvider,
       Messenger: laksaCoreMessenger.Messenger,
-      Transaction: Transaction,
-      Wallet: laksaWallet.Wallet,
-      Zil: Zil
+      Transaction: laksaCoreTransaction.Transaction,
+      Transactions: laksaCoreTransaction.Transactions,
+      Wallet: laksaWallet.Wallet
     });
 
     _defineProperty(this, "setProvider", function (provider) {
-      _this.setNodeProvider(provider);
+      var providerSetter = {};
 
-      _this.setScillaProvider(provider);
+      if (util.isUrl(provider)) {
+        providerSetter.url = provider;
+      } else if (util.isObject(provider) && util.isUrl(provider.url)) {
+        providerSetter = {
+          url: provider.url,
+          options: provider.options
+        };
+      } else {
+        throw new Error('provider should be HttpProvider or url string');
+      }
+
+      _this.setNodeProvider(providerSetter);
+
+      _this.setScillaProvider(providerSetter);
 
       return true;
     });
 
-    var url = args || config.defaultNodeUrl;
+    var url = (args && util.isUrl(args) ? args : undefined) || config.Default.nodeProviderUrl;
     this.util = _objectSpread({}, util, core);
     this.currentProvider = {
-      node: new HttpProvider(url),
-      scilla: new HttpProvider(url)
+      node: new laksaProvidersHttp.HttpProvider(url),
+      scilla: new laksaProvidersHttp.HttpProvider(url)
     };
-    this.messenger = new laksaCoreMessenger.Messenger(this.currentProvider.node);
-    this.zil = new Zil(this.messenger);
+    this.config = config;
+    this.messenger = new laksaCoreMessenger.Messenger(this.currentProvider.node, this.config);
     this.wallet = new laksaWallet.Wallet(this.messenger);
-    this.contracts = new Contracts(this.messenger, this.wallet);
+    this.transactions = new laksaCoreTransaction.Transactions(this.messenger, this.wallet);
+    this.contracts = new laksaCoreContract.Contracts(this.messenger, this.wallet);
+    this.zil = new laksaBlockchain.BlockChain(this.messenger, this.wallet);
   }
 
   _createClass(Laksa, [{
@@ -125,8 +160,10 @@ function () {
     }
   }, {
     key: "setNodeProvider",
-    value: function setNodeProvider(provider) {
-      var newProvider = new HttpProvider(provider);
+    value: function setNodeProvider(_ref) {
+      var url = _ref.url,
+          options = _ref.options;
+      var newProvider = new laksaProvidersHttp.HttpProvider(url, options);
       this.currentProvider = _objectSpread({}, this.currentProvider, {
         node: newProvider
       });
@@ -134,8 +171,10 @@ function () {
     }
   }, {
     key: "setScillaProvider",
-    value: function setScillaProvider(provider) {
-      var newProvider = new HttpProvider(provider);
+    value: function setScillaProvider(_ref2) {
+      var url = _ref2.url,
+          options = _ref2.options;
+      var newProvider = new laksaProvidersHttp.HttpProvider(url, options);
       this.currentProvider = _objectSpread({}, this.currentProvider, {
         scilla: newProvider
       });
@@ -143,14 +182,25 @@ function () {
     }
   }, {
     key: "register",
-    value: function register(_ref) {
-      var name = _ref.name,
-          pkg = _ref.pkg;
+    value: function register(_ref3) {
+      var name = _ref3.name,
+          pkg = _ref3.pkg;
       var pkgObject = {
         get: pkg,
         enumerable: true
       };
       Object.defineProperty(this, name, pkgObject);
+    }
+  }, {
+    key: "getNetworkSetting",
+    value: function getNetworkSetting() {
+      var _this$config = this.config,
+          TestNet = _this$config.TestNet,
+          MainNet = _this$config.MainNet;
+      return {
+        TestNet: TestNet,
+        MainNet: MainNet
+      };
     }
   }, {
     key: "version",

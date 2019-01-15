@@ -6,5 +6,7 @@ export {
   InvalidNumberOfRPCParams
 } from './errors'
 
-export { format } from './decorators/format'
-export { sign } from './decorators/sign'
+export * from './decorators/format'
+export * from './decorators/sign'
+export * from './decorators/assert'
+export * from './core'

@@ -27,7 +27,7 @@ class ABI {
   getInitParamTypes() {
     if (this.params.length > 0) {
       return getParamTypes(this.params)
-    }
+    } else return []
   }
 
   getFields() {
@@ -37,7 +37,7 @@ class ABI {
   getFieldsTypes() {
     if (this.fields.length > 0) {
       return getParamTypes(this.fields)
-    }
+    } else return []
   }
 
   getTransitions() {
@@ -59,4 +59,4 @@ class ABI {
   }
 }
 
-export default ABI
+export { ABI }
