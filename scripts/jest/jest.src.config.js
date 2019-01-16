@@ -9,7 +9,7 @@ const config = {
     // '<rootDir>/packages/laksa-core/__test__/?(*.)+(spec|test).js'
     // '<rootDir>/packages/laksa-core-contract/__test__/?(*.)+(spec|test).js'
     // '<rootDir>/packages/laksa-core-crypto/__test__/?(*.)+(spec|test).js',
-    // '<rootDir>/packages/laksa-core-messenger/__test__/?(*.)+(spec|test).js',
+    // '<rootDir>/packages/laksa-core-messenger/__test__/?(*.)+(spec|test).js'
     // '<rootDir>/packages/laksa-core-provider/__test__/?(*.)+(spec|test).js',
     // '<rootDir>/packages/laksa-core-transaction/__test__/?(*.)+(spec|test).js',
     // '<rootDir>/packages/laksa-extend-keystore/__test__/?(*.)+(spec|test).js',

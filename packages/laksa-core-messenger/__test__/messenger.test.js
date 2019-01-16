@@ -41,7 +41,7 @@ describe('test messenger', () => {
     messenger.setProvider(local)
     expect(messenger.setTransactionVersion(1)).toEqual(196609)
     messenger.setProvider(testnet)
-    expect(messenger.setTransactionVersion(1)).toEqual(4063233)
+    expect(messenger.setTransactionVersion(1)).toEqual(65537)
     messenger.setProvider(staging)
     expect(messenger.setTransactionVersion(1)).toEqual(4128769)
     messenger.setProvider(mainnet)

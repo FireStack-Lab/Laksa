@@ -75,7 +75,7 @@ class Transaction {
       version: this.version,
       // this.messenger.setTransactionVersion(this.version),
       TranID: this.TranID,
-      toAddr: toChecksumAddress(this.toAddr).slice(2),
+      toAddr: toChecksumAddress(this.toAddr),
       // after updated to the core, it will not slice
       nonce: this.nonce,
       pubKey: this.pubKey,

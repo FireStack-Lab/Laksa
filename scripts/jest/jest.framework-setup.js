@@ -1,4 +1,4 @@
 const { matchersWithOptions } = require('jest-json-schema')
 
 expect.extend(matchersWithOptions({ allErrors: true }))
-jest.setTimeout(90000)
+jest.setTimeout(180000)
