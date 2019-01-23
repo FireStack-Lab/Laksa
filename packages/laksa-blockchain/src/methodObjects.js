@@ -376,5 +376,17 @@ export default [
     call: RPCMethod.GetPrevDSDifficulty,
     params: {},
     isSendJson: false
+  },
+  /**
+   * getPrevDSDifficulty
+   * @params {txBlock:number}
+   */
+  {
+    name: 'GetTransactionsForTxBlock',
+    call: RPCMethod.GetTransactionsForTxBlock,
+    params: {
+      txBlock: ['isNumber', 'required']
+    },
+    isSendJson: false
   }
 ]

@@ -14,8 +14,8 @@ class Transaction {
     this.nonce = params.nonce
     this.pubKey = params.pubKey
     this.amount = params.amount
-    this.code = params.code
-    this.data = params.data
+    this.code = params.code || ''
+    this.data = params.data || ''
     this.signature = params.signature
     this.gasPrice = params.gasPrice
     this.gasLimit = params.gasLimit
@@ -75,7 +75,7 @@ class Transaction {
       version: this.version,
       // this.messenger.setTransactionVersion(this.version),
       TranID: this.TranID,
-      toAddr: toChecksumAddress(this.toAddr),
+      toAddr: toChecksumAddress(this.toAddr).slice(2),
       // after updated to the core, it will not slice
       nonce: this.nonce,
       pubKey: this.pubKey,
@@ -95,16 +95,6 @@ class Transaction {
     }
     return getAddressFromPublicKey(this.pubKey)
   }
-
-  // async getVersion() {
-  //   const networkId = await this.messenger.send('GetNetworkId')
-  //   if (networkId === this.config.TestNet.Network_ID) {
-  //     return this.config.TestNet.CHAIN_ID << (16 + this.version)
-  //   } else if (networkId === this.config.MainNet.Network_ID) {
-  //     return this.config.MainNet.CHAIN_ID << (16 + this.version)
-  //   }
-  //   return this.config.CHAIN_ID << (16 + this.version)
-  // }
 
   /**
    * isPending

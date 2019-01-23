@@ -1813,10 +1813,10 @@
     text-table "^0.2.0"
     webpack-log "^1.1.2"
 
-"@zilliqa-js/proto@^0.2.6":
-  version "0.2.6"
-  resolved "https://registry.npmjs.org/@zilliqa-js/proto/-/proto-0.2.6.tgz#ab6bd8adf8bcb604e2ef6d88622ad8a605223776"
-  integrity sha512-GpVTaRyQRSdSXnJMd+3GdeCHrMr0DtLNRNjhw4XkY54k5lQCl4OJF6/+YhRGUofPcP8d3dV4PZfgVsE3XhiCnA==
+"@zilliqa-js/proto@^0.4.1":
+  version "0.4.1"
+  resolved "https://registry.npmjs.org/@zilliqa-js/proto/-/proto-0.4.1.tgz#8232e0e985ed65f138ba24afe5f17cd7eb961276"
+  integrity sha512-ZIglPIDjue07g8aV6rdq38CeXwCRGQaZAfHRd2m8nciQHpmg8BW8agCn27csjUUEjTOsu+Izx/wy6txpREcAPA==
   dependencies:
     protobufjs "^6.8.8"
 

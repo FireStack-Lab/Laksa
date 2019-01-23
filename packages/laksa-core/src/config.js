@@ -13,7 +13,7 @@ export default {
     nodeProviderUrl: 'https://staging-api.aws.z7a.xyz'
   },
   TestNet: {
-    CHAIN_ID: 1,
+    CHAIN_ID: 2,
     Network_ID: 'TestNet',
     nodeProviderUrl: 'https://api.zilliqa.com' // Mainnet
   },
