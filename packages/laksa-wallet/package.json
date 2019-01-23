@@ -1,6 +1,6 @@
 {
   "name": "laksa-wallet",
-  "version": "0.0.113",
+  "version": "0.0.114",
   "description": "laksa-wallet for laksa",
   "main": "index.js",
   "browser": "lib/index.js",
@@ -11,7 +11,7 @@
   "license": "ISC",
   "dependencies": {
     "immutable": "^3.8.2",
-    "laksa-account": "^0.0.113",
-    "laksa-utils": "^0.0.113"
+    "laksa-account": "^0.0.114",
+    "laksa-utils": "^0.0.114"
   }
 }
