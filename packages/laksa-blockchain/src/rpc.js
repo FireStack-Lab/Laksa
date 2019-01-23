@@ -27,7 +27,7 @@ export const RPCMethod = Object.freeze({
   GetCurrentDSEpoch: 'GetCurrentDSEpoch',
   GetPrevDifficulty: 'GetPrevDifficulty',
   GetPrevDSDifficulty: 'GetPrevDSDifficulty',
-  GetMinimumGasPrice: 'GetMinimumGasPrice',
+
   // GetBlockTransactionCount : 'GetBlockTransactionCount',
 
   // Transaction-related methods
@@ -37,6 +37,8 @@ export const RPCMethod = Object.freeze({
   GetRecentTransactions: 'GetRecentTransactions',
   GetNumTxnsTxEpoch: 'GetNumTxnsTxEpoch',
   GetNumTxnsDSEpoch: 'GetNumTxnsDSEpoch',
+  GetTransactionsForTxBlock: 'GetTransactionsForTxBlock',
+  GetMinimumGasPrice: 'GetMinimumGasPrice',
   // GetGasPrice : 'GetGasPrice',
   // GetGasEstimate : 'GetGasEstimate',
 

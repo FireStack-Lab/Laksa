@@ -35,7 +35,7 @@ var config = {
     nodeProviderUrl: 'https://staging-api.aws.z7a.xyz'
   },
   TestNet: {
-    CHAIN_ID: 62,
+    CHAIN_ID: 2,
     Network_ID: 'TestNet',
     nodeProviderUrl: 'https://api.zilliqa.com' // Mainnet
 
@@ -196,10 +196,14 @@ function () {
     value: function getNetworkSetting() {
       var _this$config = this.config,
           TestNet = _this$config.TestNet,
-          MainNet = _this$config.MainNet;
+          MainNet = _this$config.MainNet,
+          Default = _this$config.Default,
+          Staging = _this$config.Staging;
       return {
         TestNet: TestNet,
-        MainNet: MainNet
+        MainNet: MainNet,
+        Default: Default,
+        Staging: Staging
       };
     }
   }, {

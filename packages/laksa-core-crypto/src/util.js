@@ -141,7 +141,7 @@ export const isValidChecksumAddress = address => {
 // }
 
 export const encodeTransactionProto = tx => {
-  const msg = ZilliqaMessage.ProtoTransactionCoreInfo.create({
+  const msg = {
     version: tx.version,
     nonce: tx.nonce || 0,
     toaddr: hexToByteArray(tx.toAddr.toLowerCase()),
@@ -155,11 +155,13 @@ export const encodeTransactionProto = tx => {
       data: Uint8Array.from(tx.gasPrice.toArrayLike(Buffer, undefined, 16))
     }),
     gaslimit: tx.gasLimit,
-    code: Uint8Array.from([...(tx.code || '')].map(c => c.charCodeAt(0))),
-    data: Uint8Array.from([...(tx.data || '')].map(c => c.charCodeAt(0)))
-  })
+    code: tx.code ? Uint8Array.from([...tx.code].map(c => c.charCodeAt(0))) : null,
+    data: tx.data ? Uint8Array.from([...tx.data].map(c => c.charCodeAt(0))) : null
+  }
 
-  return Buffer.from(ZilliqaMessage.ProtoTransactionCoreInfo.encode(msg).finish())
+  const serialised = ZilliqaMessage.ProtoTransactionCoreInfo.create(msg)
+
+  return Buffer.from(ZilliqaMessage.ProtoTransactionCoreInfo.encode(serialised).finish())
 }
 
 export const getAddressForContract = ({ currentNonce, address }) => {

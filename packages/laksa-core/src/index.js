@@ -126,8 +126,12 @@ class Laksa {
   }
 
   getNetworkSetting() {
-    const { TestNet, MainNet } = this.config
-    return { TestNet, MainNet }
+    const {
+      TestNet, MainNet, Default, Staging
+    } = this.config
+    return {
+      TestNet, MainNet, Default, Staging
+    }
   }
 }
 

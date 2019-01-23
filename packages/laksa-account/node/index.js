@@ -144,7 +144,7 @@
     const txn = {
       version: txnDetails.version,
       nonce: txnDetails.nonce,
-      toAddr: txnDetails.toAddr.toLowerCase(),
+      toAddr: txnDetails.toAddr,
       amount: txnDetails.amount,
       pubKey,
       gasPrice: txnDetails.gasPrice,

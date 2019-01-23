@@ -185,7 +185,7 @@ var signTransaction = function signTransaction(privateKey, txnDetails) {
   var txn = {
     version: txnDetails.version,
     nonce: txnDetails.nonce,
-    toAddr: txnDetails.toAddr.toLowerCase(),
+    toAddr: txnDetails.toAddr,
     amount: txnDetails.amount,
     pubKey: pubKey,
     gasPrice: txnDetails.gasPrice,

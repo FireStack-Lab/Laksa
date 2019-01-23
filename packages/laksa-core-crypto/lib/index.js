@@ -554,7 +554,7 @@ var isValidChecksumAddress = function isValidChecksumAddress(address) {
 // }
 
 var encodeTransactionProto = function encodeTransactionProto(tx) {
-  var msg = proto.ZilliqaMessage.ProtoTransactionCoreInfo.create({
+  var msg = {
     version: tx.version,
     nonce: tx.nonce || 0,
     toaddr: hexToByteArray(tx.toAddr.toLowerCase()),
@@ -568,14 +568,15 @@ var encodeTransactionProto = function encodeTransactionProto(tx) {
       data: Uint8Array.from(tx.gasPrice.toArrayLike(Buffer, undefined, 16))
     }),
     gaslimit: tx.gasLimit,
-    code: Uint8Array.from(_toConsumableArray(tx.code || '').map(function (c) {
+    code: tx.code ? Uint8Array.from(_toConsumableArray(tx.code).map(function (c) {
       return c.charCodeAt(0);
-    })),
-    data: Uint8Array.from(_toConsumableArray(tx.data || '').map(function (c) {
+    })) : null,
+    data: tx.data ? Uint8Array.from(_toConsumableArray(tx.data).map(function (c) {
       return c.charCodeAt(0);
-    }))
-  });
-  return Buffer.from(proto.ZilliqaMessage.ProtoTransactionCoreInfo.encode(msg).finish());
+    })) : null
+  };
+  var serialised = proto.ZilliqaMessage.ProtoTransactionCoreInfo.create(msg);
+  return Buffer.from(proto.ZilliqaMessage.ProtoTransactionCoreInfo.encode(serialised).finish());
 };
 var getAddressForContract = function getAddressForContract(_ref) {
   var currentNonce = _ref.currentNonce,

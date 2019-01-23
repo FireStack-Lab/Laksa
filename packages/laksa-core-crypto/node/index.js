@@ -549,7 +549,7 @@
   // }
 
   const encodeTransactionProto = tx => {
-    const msg = proto.ZilliqaMessage.ProtoTransactionCoreInfo.create({
+    const msg = {
       version: tx.version,
       nonce: tx.nonce || 0,
       toaddr: hexToByteArray(tx.toAddr.toLowerCase()),
@@ -563,10 +563,11 @@
         data: Uint8Array.from(tx.gasPrice.toArrayLike(Buffer, undefined, 16))
       }),
       gaslimit: tx.gasLimit,
-      code: Uint8Array.from([...(tx.code || '')].map(c => c.charCodeAt(0))),
-      data: Uint8Array.from([...(tx.data || '')].map(c => c.charCodeAt(0)))
-    });
-    return Buffer.from(proto.ZilliqaMessage.ProtoTransactionCoreInfo.encode(msg).finish());
+      code: tx.code ? Uint8Array.from([...tx.code].map(c => c.charCodeAt(0))) : null,
+      data: tx.data ? Uint8Array.from([...tx.data].map(c => c.charCodeAt(0))) : null
+    };
+    const serialised = proto.ZilliqaMessage.ProtoTransactionCoreInfo.create(msg);
+    return Buffer.from(proto.ZilliqaMessage.ProtoTransactionCoreInfo.encode(serialised).finish());
   };
   const getAddressForContract = ({
     currentNonce,
