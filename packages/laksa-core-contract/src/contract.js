@@ -202,7 +202,7 @@ class Contract {
     try {
       await this.signTxn({ account, password })
       const { transaction, response } = await this.transaction.sendTransaction()
-      this.ContractAddress = response.ContractAddress
+      this.ContractAddress = this.ContractAddress || response.ContractAddress
       this.transaction = transaction.map(obj => {
         return { ...obj, TranID: response.TranID }
       })

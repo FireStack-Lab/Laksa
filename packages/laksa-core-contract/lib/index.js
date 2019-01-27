@@ -533,7 +533,7 @@ function () {
                 _ref4 = _context3.sent;
                 transaction = _ref4.transaction;
                 response = _ref4.response;
-                this.ContractAddress = response.ContractAddress;
+                this.ContractAddress = this.ContractAddress || response.ContractAddress;
                 this.transaction = transaction.map(function (obj) {
                   return _objectSpread({}, obj, {
                     TranID: response.TranID

@@ -452,7 +452,7 @@
           transaction,
           response
         } = await this.transaction.sendTransaction();
-        this.ContractAddress = response.ContractAddress;
+        this.ContractAddress = this.ContractAddress || response.ContractAddress;
         this.transaction = transaction.map(obj => {
           return _objectSpread({}, obj, {
             TranID: response.TranID
