@@ -37,7 +37,8 @@ export default [
       amount: ['isBN', 'required'],
       gasPrice: ['isBN', 'required'],
       gasLimit: ['isLong', 'required'],
-      signature: ['isString', 'required']
+      signature: ['isString', 'required'],
+      priority: ['isBoolean', 'optional']
     },
     transformer: {
       amount: 'toString',
@@ -382,11 +383,21 @@ export default [
    * @params {txBlock:number}
    */
   {
-    name: 'GetTransactionsForTxBlock',
+    name: 'getTransactionsForTxBlock',
     call: RPCMethod.GetTransactionsForTxBlock,
     params: {
       txBlock: ['isNumber', 'required']
     },
+    isSendJson: false
+  },
+  /**
+   * getShardingStructure
+   * @params {txBlock:number}
+   */
+  {
+    name: 'getShardingStructure',
+    call: RPCMethod.GetShardingStructure,
+    params: {},
     isSendJson: false
   }
 ]

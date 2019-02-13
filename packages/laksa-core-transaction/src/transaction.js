@@ -6,7 +6,7 @@ import {
 import { sleep, TxStatus } from './util'
 
 class Transaction {
-  constructor(params, messenger, status = TxStatus.Initialised) {
+  constructor(params, messenger, status = TxStatus.Initialised, toDS = false) {
     // params
     this.version = params.version
     this.TranID = params.TranID
@@ -23,6 +23,7 @@ class Transaction {
     // status
     this.status = status
     this.messenger = messenger
+    this.toDS = toDS
   }
 
   /**
@@ -157,7 +158,8 @@ class Transaction {
         ...raw,
         amount: raw.amount.toString(),
         gasLimit: raw.gasLimit.toString(),
-        gasPrice: raw.gasPrice.toString()
+        gasPrice: raw.gasPrice.toString(),
+        priority: this.toDS
       })
       const { TranID } = result
 
