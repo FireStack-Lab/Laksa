@@ -9,7 +9,7 @@ class Messenger {
     this.provider = provider
     this.scillaProvider = provider
     this.config = config
-    this.Network_ID = this.config.Default.Network_ID
+    this.Network_ID = this.setNetworkID(this.config.Default.Network_ID)
     this.JsonRpc = new JsonRpc()
   }
 
@@ -88,33 +88,37 @@ class Messenger {
     switch (networkId) {
     case this.config.Default.Network_ID: {
       chainID = this.config.Default.CHAIN_ID
-      this.Network_ID = chainID
+      this.setNetworkID(networkId)
       break
     }
     case this.config.TestNet.Network_ID: {
       chainID = this.config.TestNet.CHAIN_ID
-      this.Network_ID = chainID
+      this.setNetworkID(networkId)
       break
     }
     case this.config.MainNet.Network_ID: {
       chainID = this.config.MainNet.CHAIN_ID
-      this.Network_ID = chainID
+      this.setNetworkID(networkId)
       break
     }
     case this.config.Staging.Network_ID: {
       chainID = this.config.Staging.CHAIN_ID
-      this.Network_ID = chainID
+      this.setNetworkID(networkId)
       break
     }
     case this.config.DevNet.Network_ID: {
       chainID = this.config.DevNet.CHAIN_ID
-      this.Network_ID = chainID
+      this.setNetworkID(networkId)
       break
     }
     default:
       break
     }
     return pack(chainID, version)
+  }
+
+  setNetworkID(id) {
+    this.Network_ID = id
   }
 }
 export { Messenger }

@@ -62,6 +62,7 @@
       )
       laksa.setNodeProvider(nodeProvider)
       laksa.setScillaProvider(scillaProvider)
+      laksa.setNetworkID(laksa.config.DevNet.Network_ID)
 
       const accountA = laksa.wallet.importAccountFromPrivateKey(
         'e19d05c5452598e24caad4a0d85a49146f7be089515c905ae6a19e8a578a6930'
@@ -104,8 +105,7 @@
       // /*
       //   Deploy a contract
       // */
-      const code = `
-      scilla_version 0
+      const code = `scilla_version 0
       (* HelloWorld contract *)
       import ListUtils
       (***************************************************)
@@ -179,12 +179,13 @@
       async function testBlockChain() {
         try {
           const deployed = await newContract.deploy({
-            // version:laksa.messenger.setTransactionVersion(1,'DevNet'),
-            gasLimit: laksa.util.Long.fromNumber(25000000000),
+            gasLimit: laksa.util.Long.fromNumber(10000),
             gasPrice: laksa.util.Unit.from(1000000000)
               .asQa()
               .toQa(),
-            account: accountA
+            account: accountA,
+            version: 1,
+            maxAttempts: 33
           })
           console.log(deployed)
           const { ContractAddress } = deployed
@@ -331,19 +332,19 @@
       // const accountA = laksa.wallet.importAccountFromPrivateKey(
       //   'e19d05c5452598e24caad4a0d85a49146f7be089515c905ae6a19e8a578a6930'
       // )
-      // const normalTransaction = laksa.transactions.new({
-      //   version: laksa.messenger.setTransactionVersion(1, 'DevNet'),
-      //   toAddr: '2E3C9B415B19AE4035503A06192A0FAD76E04243',
-      //   amount: laksa.util.Unit.Zil(1).toQa(),
-      //   gasPrice: laksa.util.Unit.Li(1000).toQa(),
-      //   gasLimit: laksa.util.Long.fromNumber(1)
-      // })
+      const normalTransaction = laksa.transactions.new({
+        version: laksa.messenger.setTransactionVersion(1, 'DevNet'),
+        toAddr: '2E3C9B415B19AE4035503A06192A0FAD76E04243',
+        amount: laksa.util.Unit.Zil(1).toQa(),
+        gasPrice: laksa.util.Unit.Li(1000).toQa(),
+        gasLimit: laksa.util.Long.fromNumber(1)
+      })
 
-      // accountA
-      //   .signTransaction(normalTransaction)
-      //   .then(d => d.sendTransaction())
-      //   .then(res => res.transaction.confirm(res.response.TranID, 33, 1000))
-      //   .then(console.log)
+      accountA
+        .signTransaction(normalTransaction)
+        .then(d => d.sendTransaction())
+        .then(res => res.transaction.confirm(res.response.TranID, 33, 1000))
+        .then(console.log)
 
       /*
         Transaction logic is the core logic to blockchain
