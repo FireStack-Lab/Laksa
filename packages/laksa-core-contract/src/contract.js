@@ -79,7 +79,9 @@ class Contract {
   get deployPayload() {
     return {
       version:
-        this.version < 65535 ? this.messenger.setTransactionVersion(this.version) : this.version,
+        this.version < 65535
+          ? this.messenger.setTransactionVersion(this.version, this.messenger.Network_ID)
+          : this.version,
       amount: new BN(0),
       toAddr: String(0).repeat(40),
       code: this.code,
@@ -90,7 +92,9 @@ class Contract {
   get callPayload() {
     return {
       version:
-        this.version < 65535 ? this.messenger.setTransactionVersion(this.version) : this.version,
+        this.version < 65535
+          ? this.messenger.setTransactionVersion(this.version, this.messenger.Network_ID)
+          : this.version,
       toAddr: this.ContractAddress
     }
   }

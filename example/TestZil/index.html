@@ -179,6 +179,7 @@
       async function testBlockChain() {
         try {
           const deployed = await newContract.deploy({
+            // version:laksa.messenger.setTransactionVersion(1,'DevNet'),
             gasLimit: laksa.util.Long.fromNumber(25000000000),
             gasPrice: laksa.util.Unit.from(1000000000)
               .asQa()
@@ -218,7 +219,7 @@
         }
       }
 
-      testBlockChain()
+      // testBlockChain()
       // newContract
       //   .setDeployPayload({
       //     gasLimit: laksa.util.Long.fromNumber(2500),
@@ -331,7 +332,7 @@
       //   'e19d05c5452598e24caad4a0d85a49146f7be089515c905ae6a19e8a578a6930'
       // )
       // const normalTransaction = laksa.transactions.new({
-      //   version: laksa.messenger.setTransactionVersion(1),
+      //   version: laksa.messenger.setTransactionVersion(1, 'DevNet'),
       //   toAddr: '2E3C9B415B19AE4035503A06192A0FAD76E04243',
       //   amount: laksa.util.Unit.Zil(1).toQa(),
       //   gasPrice: laksa.util.Unit.Li(1000).toQa(),
@@ -341,7 +342,7 @@
       // accountA
       //   .signTransaction(normalTransaction)
       //   .then(d => d.sendTransaction())
-      //   .then(res => res.transaction.confirm(res.response.TranID,33,1000))
+      //   .then(res => res.transaction.confirm(res.response.TranID, 33, 1000))
       //   .then(console.log)
 
       /*
