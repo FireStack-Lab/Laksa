@@ -47,7 +47,7 @@ describe('test messenger', () => {
     messenger.setProvider(mainnet)
     expect(messenger.setTransactionVersion(1, 'MainNet')).toEqual(65537)
     messenger.setProvider(devnet)
-    expect(messenger.setTransactionVersion(1, 'DevNet')).toEqual(2162689)
+    expect(messenger.setTransactionVersion(1, 'DevNet')).toEqual(21823489)
   })
   it('should send scilla provider', async () => {
     const responses = [

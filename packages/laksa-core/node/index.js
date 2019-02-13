@@ -53,7 +53,7 @@
       nodeProviderUrl: 'https://staging-api.aws.z7a.xyz'
     },
     DevNet: {
-      CHAIN_ID: 33,
+      CHAIN_ID: 333,
       Network_ID: 'DevNet',
       nodeProviderUrl: 'https://dev-api.zilliqa.com'
     },
