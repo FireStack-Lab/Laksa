@@ -180,31 +180,37 @@
       return this.provider.middleware.response.use(middleware, method);
     }
 
-    setTransactionVersion(version) {
+    setTransactionVersion(version, networkId) {
       let chainID = 1;
 
-      switch (this.provider.url) {
-        case this.config.Default.nodeProviderUrl:
+      switch (networkId) {
+        case this.config.Default.Network_ID:
           {
             chainID = this.config.Default.CHAIN_ID;
             break;
           }
 
-        case this.config.TestNet.nodeProviderUrl:
+        case this.config.TestNet.Network_ID:
           {
             chainID = this.config.TestNet.CHAIN_ID;
             break;
           }
 
-        case this.config.MainNet.nodeProviderUrl:
+        case this.config.MainNet.Network_ID:
           {
             chainID = this.config.MainNet.CHAIN_ID;
             break;
           }
 
-        case this.config.Staging.nodeProviderUrl:
+        case this.config.Staging.Network_ID:
           {
             chainID = this.config.Staging.CHAIN_ID;
+            break;
+          }
+
+        case this.config.DevNet.Network_ID:
+          {
+            chainID = this.config.DevNet.CHAIN_ID;
             break;
           }
 

@@ -237,22 +237,26 @@ var setParamValues = function setParamValues(rawParams, newValues) {
 var _dec, _dec2, _dec3, _dec4, _class;
 var Contract = (_dec = laksaShared.assertObject({
   gasLimit: ['isLong', 'required'],
-  gasPrice: ['isBN', 'required']
+  gasPrice: ['isBN', 'required'],
+  toDS: ['isBoolean', 'optional']
 }), _dec2 = laksaShared.assertObject({
   transition: ['isString', 'required'],
   params: ['isArray', 'required'],
   amount: ['isBN', 'optional'],
   gasLimit: ['isLong', 'optional'],
-  gasPrice: ['isBN', 'optional']
+  gasPrice: ['isBN', 'optional'],
+  toDS: ['isBoolean', 'optional']
 }), _dec3 = laksaShared.assertObject({
   gasLimit: ['isLong', 'required'],
-  gasPrice: ['isBN', 'required']
+  gasPrice: ['isBN', 'required'],
+  toDS: ['isBoolean', 'optional']
 }), _dec4 = laksaShared.assertObject({
   transition: ['isString', 'required'],
   params: ['isArray', 'required'],
   amount: ['isBN', 'required'],
   gasLimit: ['isLong', 'required'],
-  gasPrice: ['isBN', 'required']
+  gasPrice: ['isBN', 'required'],
+  toDS: ['isBoolean', 'optional']
 }), (_class =
 /*#__PURE__*/
 function () {
@@ -380,13 +384,13 @@ function () {
       var _deploy = _asyncToGenerator(
       /*#__PURE__*/
       _regeneratorRuntime.mark(function _callee(_ref) {
-        var _ref$gasLimit, gasLimit, _ref$gasPrice, gasPrice, _ref$account, account, password, _ref$maxAttempts, maxAttempts, _ref$interval, interval;
+        var _ref$gasLimit, gasLimit, _ref$gasPrice, gasPrice, _ref$account, account, password, _ref$maxAttempts, maxAttempts, _ref$interval, interval, _ref$toDS, toDS;
 
         return _regeneratorRuntime.wrap(function _callee$(_context) {
           while (1) {
             switch (_context.prev = _context.next) {
               case 0:
-                _ref$gasLimit = _ref.gasLimit, gasLimit = _ref$gasLimit === void 0 ? laksaUtils.Long.fromNumber(2500) : _ref$gasLimit, _ref$gasPrice = _ref.gasPrice, gasPrice = _ref$gasPrice === void 0 ? new laksaUtils.BN(100) : _ref$gasPrice, _ref$account = _ref.account, account = _ref$account === void 0 ? this.signer.signer : _ref$account, password = _ref.password, _ref$maxAttempts = _ref.maxAttempts, maxAttempts = _ref$maxAttempts === void 0 ? 20 : _ref$maxAttempts, _ref$interval = _ref.interval, interval = _ref$interval === void 0 ? 1000 : _ref$interval;
+                _ref$gasLimit = _ref.gasLimit, gasLimit = _ref$gasLimit === void 0 ? laksaUtils.Long.fromNumber(2500) : _ref$gasLimit, _ref$gasPrice = _ref.gasPrice, gasPrice = _ref$gasPrice === void 0 ? new laksaUtils.BN(100) : _ref$gasPrice, _ref$account = _ref.account, account = _ref$account === void 0 ? this.signer.signer : _ref$account, password = _ref.password, _ref$maxAttempts = _ref.maxAttempts, maxAttempts = _ref$maxAttempts === void 0 ? 20 : _ref$maxAttempts, _ref$interval = _ref.interval, interval = _ref$interval === void 0 ? 1000 : _ref$interval, _ref$toDS = _ref.toDS, toDS = _ref$toDS === void 0 ? false : _ref$toDS;
 
                 if (!(!this.code || !this.init)) {
                   _context.next = 3;
@@ -399,7 +403,8 @@ function () {
                 _context.prev = 3;
                 this.setDeployPayload({
                   gasLimit: gasLimit,
-                  gasPrice: gasPrice
+                  gasPrice: gasPrice,
+                  toDS: toDS
                 });
                 _context.next = 7;
                 return this.sendContract({
@@ -445,13 +450,13 @@ function () {
       var _call = _asyncToGenerator(
       /*#__PURE__*/
       _regeneratorRuntime.mark(function _callee2(_ref2) {
-        var transition, params, _ref2$amount, amount, _ref2$gasLimit, gasLimit, _ref2$gasPrice, gasPrice, _ref2$account, account, password, _ref2$maxAttempts, maxAttempts, _ref2$interval, interval;
+        var transition, params, _ref2$amount, amount, _ref2$gasLimit, gasLimit, _ref2$gasPrice, gasPrice, _ref2$account, account, password, _ref2$maxAttempts, maxAttempts, _ref2$interval, interval, _ref2$toDS, toDS;
 
         return _regeneratorRuntime.wrap(function _callee2$(_context2) {
           while (1) {
             switch (_context2.prev = _context2.next) {
               case 0:
-                transition = _ref2.transition, params = _ref2.params, _ref2$amount = _ref2.amount, amount = _ref2$amount === void 0 ? new laksaUtils.BN(0) : _ref2$amount, _ref2$gasLimit = _ref2.gasLimit, gasLimit = _ref2$gasLimit === void 0 ? laksaUtils.Long.fromNumber(1000) : _ref2$gasLimit, _ref2$gasPrice = _ref2.gasPrice, gasPrice = _ref2$gasPrice === void 0 ? new laksaUtils.BN(100) : _ref2$gasPrice, _ref2$account = _ref2.account, account = _ref2$account === void 0 ? this.signer.signer : _ref2$account, password = _ref2.password, _ref2$maxAttempts = _ref2.maxAttempts, maxAttempts = _ref2$maxAttempts === void 0 ? 20 : _ref2$maxAttempts, _ref2$interval = _ref2.interval, interval = _ref2$interval === void 0 ? 1000 : _ref2$interval;
+                transition = _ref2.transition, params = _ref2.params, _ref2$amount = _ref2.amount, amount = _ref2$amount === void 0 ? new laksaUtils.BN(0) : _ref2$amount, _ref2$gasLimit = _ref2.gasLimit, gasLimit = _ref2$gasLimit === void 0 ? laksaUtils.Long.fromNumber(1000) : _ref2$gasLimit, _ref2$gasPrice = _ref2.gasPrice, gasPrice = _ref2$gasPrice === void 0 ? new laksaUtils.BN(100) : _ref2$gasPrice, _ref2$account = _ref2.account, account = _ref2$account === void 0 ? this.signer.signer : _ref2$account, password = _ref2.password, _ref2$maxAttempts = _ref2.maxAttempts, maxAttempts = _ref2$maxAttempts === void 0 ? 20 : _ref2$maxAttempts, _ref2$interval = _ref2.interval, interval = _ref2$interval === void 0 ? 1000 : _ref2$interval, _ref2$toDS = _ref2.toDS, toDS = _ref2$toDS === void 0 ? false : _ref2$toDS;
 
                 if (this.ContractAddress) {
                   _context2.next = 3;
@@ -467,7 +472,8 @@ function () {
                   params: params,
                   amount: amount,
                   gasLimit: gasLimit,
-                  gasPrice: gasPrice
+                  gasPrice: gasPrice,
+                  toDS: toDS
                 });
                 _context2.next = 7;
                 return this.sendContract({
@@ -705,11 +711,12 @@ function () {
     key: "setDeployPayload",
     value: function setDeployPayload(_ref6) {
       var gasPrice = _ref6.gasPrice,
-          gasLimit = _ref6.gasLimit;
+          gasLimit = _ref6.gasLimit,
+          toDS = _ref6.toDS;
       this.transaction = new laksaCoreTransaction.Transaction(_objectSpread({}, this.deployPayload, {
         gasPrice: gasPrice,
         gasLimit: gasLimit
-      }), this.messenger);
+      }), this.messenger, laksaCoreTransaction.TxStatus.Initialised, toDS);
       return this;
     }
   }, {
@@ -719,7 +726,8 @@ function () {
           params = _ref7.params,
           amount = _ref7.amount,
           gasLimit = _ref7.gasLimit,
-          gasPrice = _ref7.gasPrice;
+          gasPrice = _ref7.gasPrice,
+          toDS = _ref7.toDS;
       var msg = {
         _tag: transition,
         // TODO: this should be string, but is not yet supported by lookup.
@@ -730,7 +738,7 @@ function () {
         gasPrice: gasPrice,
         gasLimit: gasLimit,
         data: JSON.stringify(msg)
-      }), this.messenger);
+      }), this.messenger, laksaCoreTransaction.TxStatus.Initialised, toDS);
       return this;
     }
   }, {

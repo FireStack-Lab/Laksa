@@ -117,28 +117,9 @@ export const isValidChecksumAddress = address => {
 /**
  * encodeTransaction
  *
- * @param {any} txn
+ * @param {any} tx
  * @returns {Buffer}
  */
-// export const encodeTransaction = tx => {
-//   const codeHex = Buffer.from(tx.code || '').toString('hex')
-//   const dataHex = Buffer.from(tx.data || '').toString('hex')
-
-//   const encoded =
-//     intToHexArray(tx.version, 64).join('') +
-//     intToHexArray(tx.nonce || 0, 64).join('') +
-//     tx.toAddr +
-//     tx.pubKey +
-//     tx.amount.toString('hex', 64) +
-//     tx.gasPrice.toString('hex', 64) +
-//     tx.gasLimit.toString('hex', 64) +
-//     intToHexArray((tx.code && tx.code.length) || 0, 8).join('') + // size of code
-//     codeHex +
-//     intToHexArray((tx.data && tx.data.length) || 0, 8).join('') + // size of data
-//     dataHex
-
-//   return Buffer.from(encoded, 'hex')
-// }
 
 export const encodeTransactionProto = tx => {
   const msg = {
@@ -155,8 +136,9 @@ export const encodeTransactionProto = tx => {
       data: Uint8Array.from(tx.gasPrice.toArrayLike(Buffer, undefined, 16))
     }),
     gaslimit: tx.gasLimit,
-    code: tx.code ? Uint8Array.from([...tx.code].map(c => c.charCodeAt(0))) : null,
-    data: tx.data ? Uint8Array.from([...tx.data].map(c => c.charCodeAt(0))) : null
+    code:
+      tx.code && tx.code.length ? Uint8Array.from([...tx.code].map(c => c.charCodeAt(0))) : null,
+    data: tx.data && tx.data.length ? Uint8Array.from([...tx.data].map(c => c.charCodeAt(0))) : null
   }
 
   const serialised = ZilliqaMessage.ProtoTransactionCoreInfo.create(msg)

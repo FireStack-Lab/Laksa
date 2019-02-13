@@ -1,4 +1,4 @@
-import { Transaction } from 'laksa-core-transaction'
+import { Transaction, TxStatus } from 'laksa-core-transaction'
 import { Long, BN } from 'laksa-utils'
 import { assertObject } from 'laksa-shared'
 
@@ -124,7 +124,8 @@ class Contract {
    */
   @assertObject({
     gasLimit: ['isLong', 'required'],
-    gasPrice: ['isBN', 'required']
+    gasPrice: ['isBN', 'required'],
+    toDS: ['isBoolean', 'optional']
   })
   async deploy({
     gasLimit = Long.fromNumber(2500),
@@ -132,14 +133,15 @@ class Contract {
     account = this.signer.signer,
     password,
     maxAttempts = 20,
-    interval = 1000
+    interval = 1000,
+    toDS = false
   }) {
     if (!this.code || !this.init) {
       throw new Error('Cannot deploy without code or ABI.')
     }
 
     try {
-      this.setDeployPayload({ gasLimit, gasPrice })
+      this.setDeployPayload({ gasLimit, gasPrice, toDS })
       await this.sendContract({ account, password })
       await this.confirmTx(maxAttempts, interval)
       return this
@@ -160,7 +162,8 @@ class Contract {
     params: ['isArray', 'required'],
     amount: ['isBN', 'optional'],
     gasLimit: ['isLong', 'optional'],
-    gasPrice: ['isBN', 'optional']
+    gasPrice: ['isBN', 'optional'],
+    toDS: ['isBoolean', 'optional']
   })
   async call({
     transition,
@@ -171,7 +174,8 @@ class Contract {
     account = this.signer.signer,
     password,
     maxAttempts = 20,
-    interval = 1000
+    interval = 1000,
+    toDS = false
   }) {
     if (!this.ContractAddress) {
       return Promise.reject(Error('Contract has not been deployed!'))
@@ -183,7 +187,8 @@ class Contract {
         params,
         amount,
         gasLimit,
-        gasPrice
+        gasPrice,
+        toDS
       })
       await this.sendContract({ account, password })
       await this.confirmTx(maxAttempts, interval)
@@ -262,16 +267,19 @@ class Contract {
 
   @assertObject({
     gasLimit: ['isLong', 'required'],
-    gasPrice: ['isBN', 'required']
+    gasPrice: ['isBN', 'required'],
+    toDS: ['isBoolean', 'optional']
   })
-  setDeployPayload({ gasPrice, gasLimit }) {
+  setDeployPayload({ gasPrice, gasLimit, toDS }) {
     this.transaction = new Transaction(
       {
         ...this.deployPayload,
         gasPrice,
         gasLimit
       },
-      this.messenger
+      this.messenger,
+      TxStatus.Initialised,
+      toDS
     )
     return this
   }
@@ -281,10 +289,11 @@ class Contract {
     params: ['isArray', 'required'],
     amount: ['isBN', 'required'],
     gasLimit: ['isLong', 'required'],
-    gasPrice: ['isBN', 'required']
+    gasPrice: ['isBN', 'required'],
+    toDS: ['isBoolean', 'optional']
   })
   setCallPayload({
-    transition, params, amount, gasLimit, gasPrice
+    transition, params, amount, gasLimit, gasPrice, toDS
   }) {
     const msg = {
       _tag: transition,
@@ -300,7 +309,9 @@ class Contract {
         gasLimit,
         data: JSON.stringify(msg)
       },
-      this.messenger
+      this.messenger,
+      TxStatus.Initialised,
+      toDS
     )
     return this
   }

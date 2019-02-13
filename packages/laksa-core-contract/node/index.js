@@ -222,22 +222,26 @@
   var _dec, _dec2, _dec3, _dec4, _class;
   let Contract = (_dec = laksaShared.assertObject({
     gasLimit: ['isLong', 'required'],
-    gasPrice: ['isBN', 'required']
+    gasPrice: ['isBN', 'required'],
+    toDS: ['isBoolean', 'optional']
   }), _dec2 = laksaShared.assertObject({
     transition: ['isString', 'required'],
     params: ['isArray', 'required'],
     amount: ['isBN', 'optional'],
     gasLimit: ['isLong', 'optional'],
-    gasPrice: ['isBN', 'optional']
+    gasPrice: ['isBN', 'optional'],
+    toDS: ['isBoolean', 'optional']
   }), _dec3 = laksaShared.assertObject({
     gasLimit: ['isLong', 'required'],
-    gasPrice: ['isBN', 'required']
+    gasPrice: ['isBN', 'required'],
+    toDS: ['isBoolean', 'optional']
   }), _dec4 = laksaShared.assertObject({
     transition: ['isString', 'required'],
     params: ['isArray', 'required'],
     amount: ['isBN', 'required'],
     gasLimit: ['isLong', 'required'],
-    gasPrice: ['isBN', 'required']
+    gasPrice: ['isBN', 'required'],
+    toDS: ['isBoolean', 'optional']
   }), (_class = class Contract {
     constructor(params, factory, status = ContractStatus.INITIALISED) {
       this.code = params.code || '';
@@ -369,7 +373,8 @@
       account = this.signer.signer,
       password,
       maxAttempts = 20,
-      interval = 1000
+      interval = 1000,
+      toDS = false
     }) {
       if (!this.code || !this.init) {
         throw new Error('Cannot deploy without code or ABI.');
@@ -378,7 +383,8 @@
       try {
         this.setDeployPayload({
           gasLimit,
-          gasPrice
+          gasPrice,
+          toDS
         });
         await this.sendContract({
           account,
@@ -408,7 +414,8 @@
       account = this.signer.signer,
       password,
       maxAttempts = 20,
-      interval = 1000
+      interval = 1000,
+      toDS = false
     }) {
       if (!this.ContractAddress) {
         return Promise.reject(Error('Contract has not been deployed!'));
@@ -420,7 +427,8 @@
           params,
           amount,
           gasLimit,
-          gasPrice
+          gasPrice,
+          toDS
         });
         await this.sendContract({
           account,
@@ -521,12 +529,13 @@
 
     setDeployPayload({
       gasPrice,
-      gasLimit
+      gasLimit,
+      toDS
     }) {
       this.transaction = new laksaCoreTransaction.Transaction(_objectSpread({}, this.deployPayload, {
         gasPrice,
         gasLimit
-      }), this.messenger);
+      }), this.messenger, laksaCoreTransaction.TxStatus.Initialised, toDS);
       return this;
     }
 
@@ -535,7 +544,8 @@
       params,
       amount,
       gasLimit,
-      gasPrice
+      gasPrice,
+      toDS
     }) {
       const msg = {
         _tag: transition,
@@ -547,7 +557,7 @@
         gasPrice,
         gasLimit,
         data: JSON.stringify(msg)
-      }), this.messenger);
+      }), this.messenger, laksaCoreTransaction.TxStatus.Initialised, toDS);
       return this;
     }
 
