@@ -127,11 +127,19 @@ class Laksa {
 
   getNetworkSetting() {
     const {
-      TestNet, MainNet, Default, Staging
+      TestNet, MainNet, Default, Staging, DevNet
     } = this.config
     return {
-      TestNet, MainNet, Default, Staging
+      TestNet,
+      MainNet,
+      Default,
+      DevNet,
+      Staging
     }
+  }
+
+  setNetworkID(networkId) {
+    this.messenger.setNetworkID(networkId)
   }
 }
 

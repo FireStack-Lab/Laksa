@@ -38,7 +38,7 @@
     return target;
   }
 
-  var version = "0.0.117";
+  var version = "0.0.118";
 
   var config = {
     version,
@@ -189,14 +189,20 @@
         TestNet,
         MainNet,
         Default,
-        Staging
+        Staging,
+        DevNet
       } = this.config;
       return {
         TestNet,
         MainNet,
         Default,
+        DevNet,
         Staging
       };
+    }
+
+    setNetworkID(networkId) {
+      this.messenger.setNetworkID(networkId);
     }
 
   }

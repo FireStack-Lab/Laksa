@@ -322,7 +322,7 @@
 
     get deployPayload() {
       return {
-        version: this.version < 65535 ? this.messenger.setTransactionVersion(this.version) : this.version,
+        version: this.version < 65535 ? this.messenger.setTransactionVersion(this.version, this.messenger.Network_ID) : this.version,
         amount: new laksaUtils.BN(0),
         toAddr: String(0).repeat(40),
         code: this.code,
@@ -332,7 +332,7 @@
 
     get callPayload() {
       return {
-        version: this.version < 65535 ? this.messenger.setTransactionVersion(this.version) : this.version,
+        version: this.version < 65535 ? this.messenger.setTransactionVersion(this.version, this.messenger.Network_ID) : this.version,
         toAddr: this.ContractAddress
       };
     }

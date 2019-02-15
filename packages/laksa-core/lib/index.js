@@ -20,7 +20,7 @@ var laksaCoreContract = require('laksa-core-contract');
 var laksaBlockchain = require('laksa-blockchain');
 var laksaWallet = require('laksa-wallet');
 
-var version = "0.0.117";
+var version = "0.0.118";
 
 var config = {
   version: version,
@@ -202,13 +202,20 @@ function () {
           TestNet = _this$config.TestNet,
           MainNet = _this$config.MainNet,
           Default = _this$config.Default,
-          Staging = _this$config.Staging;
+          Staging = _this$config.Staging,
+          DevNet = _this$config.DevNet;
       return {
         TestNet: TestNet,
         MainNet: MainNet,
         Default: Default,
+        DevNet: DevNet,
         Staging: Staging
       };
+    }
+  }, {
+    key: "setNetworkID",
+    value: function setNetworkID(networkId) {
+      this.messenger.setNetworkID(networkId);
     }
   }, {
     key: "version",

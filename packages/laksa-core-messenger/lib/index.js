@@ -90,6 +90,34 @@ function getResultForData(data) {
   return data.getRaw;
 }
 
+var defaultConfig = {
+  Default: {
+    CHAIN_ID: 3,
+    Network_ID: 'Default',
+    nodeProviderUrl: 'http://localhost:4200'
+  },
+  Staging: {
+    CHAIN_ID: 63,
+    Network_ID: 'Staging',
+    nodeProviderUrl: 'https://staging-api.aws.z7a.xyz'
+  },
+  DevNet: {
+    CHAIN_ID: 333,
+    Network_ID: 'DevNet',
+    nodeProviderUrl: 'https://dev-api.zilliqa.com'
+  },
+  TestNet: {
+    CHAIN_ID: 2,
+    Network_ID: 'TestNet',
+    nodeProviderUrl: 'https://api.zilliqa.com'
+  },
+  MainNet: {
+    CHAIN_ID: 1,
+    Network_ID: 'MainNet',
+    nodeProviderUrl: 'https://api.zilliqa.com'
+  }
+};
+
 var Messenger =
 /*#__PURE__*/
 function () {
@@ -184,7 +212,8 @@ function () {
 
     this.provider = provider;
     this.scillaProvider = provider;
-    this.config = config;
+    this.config = config || defaultConfig;
+    this.Network_ID = this.setNetworkID(this.config.Default.Network_ID);
     this.JsonRpc = new JsonRpc();
   }
   /**
@@ -250,30 +279,35 @@ function () {
         case this.config.Default.Network_ID:
           {
             chainID = this.config.Default.CHAIN_ID;
+            this.setNetworkID(networkId);
             break;
           }
 
         case this.config.TestNet.Network_ID:
           {
             chainID = this.config.TestNet.CHAIN_ID;
+            this.setNetworkID(networkId);
             break;
           }
 
         case this.config.MainNet.Network_ID:
           {
             chainID = this.config.MainNet.CHAIN_ID;
+            this.setNetworkID(networkId);
             break;
           }
 
         case this.config.Staging.Network_ID:
           {
             chainID = this.config.Staging.CHAIN_ID;
+            this.setNetworkID(networkId);
             break;
           }
 
         case this.config.DevNet.Network_ID:
           {
             chainID = this.config.DevNet.CHAIN_ID;
+            this.setNetworkID(networkId);
             break;
           }
 
@@ -282,6 +316,11 @@ function () {
       }
 
       return laksaUtils.pack(chainID, version);
+    }
+  }, {
+    key: "setNetworkID",
+    value: function setNetworkID(id) {
+      this.Network_ID = id;
     }
   }]);
 
