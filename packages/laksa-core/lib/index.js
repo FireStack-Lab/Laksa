@@ -25,9 +25,9 @@ var version = "0.0.120";
 var config = {
   version: version,
   Default: {
-    CHAIN_ID: 3,
+    CHAIN_ID: 0,
     Network_ID: 'Default',
-    nodeProviderUrl: 'http://localhost:4200'
+    nodeProviderUrl: 'http://localhost:4201'
   },
   Staging: {
     CHAIN_ID: 63,

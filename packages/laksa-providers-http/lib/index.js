@@ -57,7 +57,7 @@ function (_BaseProvider) {
     _classCallCheck(this, HttpProvider);
 
     _this = _possibleConstructorReturn(this, _getPrototypeOf(HttpProvider).call(this));
-    _this.url = url || 'http://localhost:4200';
+    _this.url = url || 'http://localhost:4201';
     _this.fetcher = fetcher || fetchRPC;
 
     if (options) {

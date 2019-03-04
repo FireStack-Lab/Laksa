@@ -39,7 +39,7 @@ describe('test messenger', () => {
     const messenger = new Messenger(local, config)
     // const scillaProvider = new HttpProvider('https://scilla-runer.zilliqa.com')
     messenger.setProvider(local)
-    expect(messenger.setTransactionVersion(1, 'Default')).toEqual(196609)
+    expect(messenger.setTransactionVersion(1, 'Default')).toEqual(1)
     messenger.setProvider(testnet)
     expect(messenger.setTransactionVersion(1, 'TestNet')).toEqual(131073)
     messenger.setProvider(staging)
