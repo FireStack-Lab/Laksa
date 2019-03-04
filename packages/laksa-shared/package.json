@@ -2,7 +2,16 @@
   "name": "laksa-shared",
   "main": "index.js",
   "browser": "lib/index.js",
+  "description": "Shared settings for laksa",
   "version": "0.0.121",
+  "keywords": [
+    "laksa",
+    "webz",
+    "web3",
+    "ethereum"
+  ],
+  "author": "neeboo@fireStack.one",
+  "license": "GPL-3.0",
   "dependencies": {
     "laksa-utils": "^0.0.121"
   }

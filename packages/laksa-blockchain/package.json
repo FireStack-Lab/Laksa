@@ -1,14 +1,20 @@
 {
   "name": "laksa-blockchain",
   "version": "0.0.121",
-  "description": "library access to zilliqa blockchain",
+  "description": "rpc methods to access zilliqa's blockchain",
   "main": "index.js",
   "browser": "lib/index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
-  "author": "neeboo",
-  "license": "ISC",
+  "keywords": [
+    "laksa",
+    "webz",
+    "web3",
+    "ethereum"
+  ],
+  "author": "neeboo@fireStack.one",
+  "license": "GPL-3.0",
   "dependencies": {
     "laksa-core-transaction": "^0.0.121",
     "laksa-shared": "^0.0.121",

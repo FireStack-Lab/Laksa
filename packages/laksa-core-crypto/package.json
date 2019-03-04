@@ -1,11 +1,17 @@
 {
   "name": "laksa-core-crypto",
   "version": "0.0.121",
-  "description": "",
+  "description": "crypto libraries for laksa",
   "main": "index.js",
   "browser": "lib/index.js",
-  "author": "",
-  "license": "ISC",
+  "keywords": [
+    "laksa",
+    "webz",
+    "web3",
+    "ethereum"
+  ],
+  "author": "neeboo@fireStack.one",
+  "license": "GPL-3.0",
   "dependencies": {
     "@zilliqa-js/proto": "^0.5.0",
     "bn.js": "^4.11.8",
