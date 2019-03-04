@@ -1,8 +1,11 @@
 (function (global, factory) {
-  typeof exports === 'object' && typeof module !== 'undefined' ? factory(exports, require('laksa-utils'), require('immutable'), require('laksa-account')) :
-  typeof define === 'function' && define.amd ? define(['exports', 'laksa-utils', 'immutable', 'laksa-account'], factory) :
-  (factory((global.Laksa = {}),global.laksaUtils,global.immutable,global.account));
-}(this, (function (exports,laksaUtils,immutable,account) { 'use strict';
+  typeof exports === 'object' && typeof module !== 'undefined' ? factory(exports, require('laksa-utils'), require('immutable'), require('bip39'), require('hdkey'), require('laksa-account')) :
+  typeof define === 'function' && define.amd ? define(['exports', 'laksa-utils', 'immutable', 'bip39', 'hdkey', 'laksa-account'], factory) :
+  (factory((global.Laksa = {}),global.laksaUtils,global.immutable,global.bip39,global.hdkey,global.account));
+}(this, (function (exports,laksaUtils,immutable,bip39,hdkey,account) { 'use strict';
+
+  bip39 = bip39 && bip39.hasOwnProperty('default') ? bip39['default'] : bip39;
+  hdkey = hdkey && hdkey.hasOwnProperty('default') ? hdkey['default'] : hdkey;
 
   function _defineProperty(obj, key, value) {
     if (key in obj) {
@@ -165,6 +168,30 @@
       if (value !== undefined) {
         throw new Error('you should not set "accounts" directly, use internal functions');
       }
+    }
+
+    generateMnemonic() {
+      return bip39.generateMnemonic();
+    }
+
+    importAccountFromMnemonic(phrase, index) {
+      if (!this.isValidMnemonic(phrase)) {
+        throw new Error(`Invalid mnemonic phrase: ${phrase}`);
+      }
+
+      const seed = bip39.mnemonicToSeed(phrase);
+      const hdKey = hdkey.fromMasterSeed(seed);
+      const childKey = hdKey.derive(`m/44'/313'/0'/0/${index}`);
+      const privateKey = childKey.privateKey.toString('hex');
+      return this.importAccountFromPrivateKey(privateKey);
+    }
+
+    isValidMnemonic(phrase) {
+      if (phrase.trim().split(/\s+/g).length < 12) {
+        return false;
+      }
+
+      return bip39.validateMnemonic(phrase);
     }
 
     defaultSetSigner() {

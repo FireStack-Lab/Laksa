@@ -11,6 +11,8 @@ require('core-js/modules/es6.promise');
 require('core-js/modules/es6.array.sort');
 require('core-js/modules/es6.array.iterator');
 require('core-js/modules/es6.object.keys');
+require('core-js/modules/es6.regexp.split');
+require('core-js/modules/es6.regexp.to-string');
 require('core-js/modules/web.dom.iterable');
 var _regeneratorRuntime = _interopDefault(require('@babel/runtime/regenerator'));
 require('regenerator-runtime/runtime');
@@ -22,6 +24,8 @@ var _classPrivateFieldSet = _interopDefault(require('@babel/runtime/helpers/clas
 var _classPrivateFieldGet = _interopDefault(require('@babel/runtime/helpers/classPrivateFieldGet'));
 var laksaUtils = require('laksa-utils');
 var immutable = require('immutable');
+var bip39 = _interopDefault(require('bip39'));
+var hdkey = _interopDefault(require('hdkey'));
 var account = require('laksa-account');
 
 var ENCRYPTED = 'ENCRYPTED';
@@ -213,6 +217,33 @@ function () {
   }
 
   _createClass(Wallet, [{
+    key: "generateMnemonic",
+    value: function generateMnemonic() {
+      return bip39.generateMnemonic();
+    }
+  }, {
+    key: "importAccountFromMnemonic",
+    value: function importAccountFromMnemonic(phrase, index) {
+      if (!this.isValidMnemonic(phrase)) {
+        throw new Error("Invalid mnemonic phrase: ".concat(phrase));
+      }
+
+      var seed = bip39.mnemonicToSeed(phrase);
+      var hdKey = hdkey.fromMasterSeed(seed);
+      var childKey = hdKey.derive("m/44'/313'/0'/0/".concat(index));
+      var privateKey = childKey.privateKey.toString('hex');
+      return this.importAccountFromPrivateKey(privateKey);
+    }
+  }, {
+    key: "isValidMnemonic",
+    value: function isValidMnemonic(phrase) {
+      if (phrase.trim().split(/\s+/g).length < 12) {
+        return false;
+      }
+
+      return bip39.validateMnemonic(phrase);
+    }
+  }, {
     key: "defaultSetSigner",
     value: function defaultSetSigner() {
       if (this.getWalletAccounts().length === 1 && this.signer === undefined) {

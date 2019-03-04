@@ -16,7 +16,7 @@ const config = {
     // '<rootDir>/packages/laksa-providers-http/__test__/?(*.)+(spec|test).js',
     // '<rootDir>/packages/laksa-shared/__test__/?(*.)+(spec|test).js'
     // '<rootDir>/packages/laksa-utils/__test__/?(*.)+(spec|test).js',
-    // '<rootDir>/packages/laksa-wallet/__test__/?(*.)+(spec|test).js',
+    // '<rootDir>/packages/laksa-wallet/__test__/?(*.)+(spec|test).js'
     // '<rootDir>/packages/laksa/__test__/?(*.)+(spec|test).js'
   ],
   moduleDirectories: ['src', 'node_modules'],

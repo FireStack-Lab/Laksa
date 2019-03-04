@@ -1,6 +1,7 @@
 // import { ENCRYPTED } from 'laksa-wallet'
 import { Messenger } from '../../laksa-core-messenger/src'
 import { HttpProvider } from '../../laksa-providers-http/src'
+import { isPrivateKey } from '../../laksa-utils'
 import { Wallet } from '../src'
 
 const provider = new HttpProvider('https://api.zilliqa.com')
@@ -183,5 +184,33 @@ describe('test Wallet', () => {
     await wallet.decryptAccountByAddress(add, '111')
     const decrypted = wallet.getAccountByAddress(add)
     expect(decrypted.privateKey).toEqual(prv)
+  })
+
+  it('should test generate mnemonic', () => {
+    const mnemonic = wallet.generateMnemonic()
+    expect(mnemonic.split(' ').length).toEqual(12)
+    const acc = wallet.importAccountFromMnemonic(mnemonic, 0)
+    expect(isPrivateKey(acc.privateKey)).toEqual(true)
+    const badMnemonic = 'its a bad word'
+    const isValid = wallet.isValidMnemonic(badMnemonic)
+    expect(isValid).toEqual(false)
+    try {
+      wallet.importAccountFromMnemonic(
+        'this is a totally wrong mnemonic which is also 12 characters long',
+        0
+      )
+    } catch (error) {
+      expect(error.message).toEqual(
+        'Invalid mnemonic phrase: this is a totally wrong mnemonic which is also 12 characters long'
+      )
+    }
+  })
+  it('should display wrong when no signer set', async () => {
+    wallet.cleanAllAccounts()
+    try {
+      await wallet.sign('dumpTxn', { address: undefined })
+    } catch (error) {
+      expect(error.message).toEqual('This signer is not found or address is not defined')
+    }
   })
 })
