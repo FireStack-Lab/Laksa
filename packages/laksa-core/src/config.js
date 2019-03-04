@@ -3,9 +3,9 @@ import { version } from '../package.json'
 export default {
   version,
   Default: {
-    CHAIN_ID: 3,
+    CHAIN_ID: 0,
     Network_ID: 'Default',
-    nodeProviderUrl: 'http://localhost:4200'
+    nodeProviderUrl: 'http://localhost:4201'
   },
   Staging: {
     CHAIN_ID: 63,

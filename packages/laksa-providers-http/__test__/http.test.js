@@ -15,7 +15,7 @@ describe('test HttpProvider', () => {
     }
     const provider = new HttpProvider(undefined, options)
 
-    expect(provider.url).toEqual('http://localhost:4200')
+    expect(provider.url).toEqual('http://localhost:4201')
     expect(provider.optionsHandler({ test: 'test' })).toEqual({
       test: 'test',
       options: {
