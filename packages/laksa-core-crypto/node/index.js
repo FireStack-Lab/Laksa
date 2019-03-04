@@ -1,8 +1,8 @@
 (function (global, factory) {
-  typeof exports === 'object' && typeof module !== 'undefined' ? factory(exports, require('bn.js'), require('elliptic'), require('hash.js'), require('hmac-drbg'), require('@zilliqa-js/proto')) :
-  typeof define === 'function' && define.amd ? define(['exports', 'bn.js', 'elliptic', 'hash.js', 'hmac-drbg', '@zilliqa-js/proto'], factory) :
-  (factory((global.Laksa = {}),global.BN,global.elliptic,global.hashjs,global.DRBG,global.proto));
-}(this, (function (exports,BN,elliptic,hashjs,DRBG,proto) { 'use strict';
+  typeof exports === 'object' && typeof module !== 'undefined' ? factory(exports, require('bn.js'), require('elliptic'), require('hash.js'), require('@zilliqa-js/proto'), require('hmac-drbg')) :
+  typeof define === 'function' && define.amd ? define(['exports', 'bn.js', 'elliptic', 'hash.js', '@zilliqa-js/proto', 'hmac-drbg'], factory) :
+  (factory((global.Laksa = {}),global.BN,global.elliptic,global.hashjs,global.proto,global.DRBG));
+}(this, (function (exports,BN,elliptic,hashjs,proto,DRBG) { 'use strict';
 
   BN = BN && BN.hasOwnProperty('default') ? BN['default'] : BN;
   elliptic = elliptic && elliptic.hasOwnProperty('default') ? elliptic['default'] : elliptic;
@@ -64,10 +64,293 @@
 
   }
 
+  /**
+   * intToHexArray
+   *
+   * @param {number} int - the number to be converted to hex
+   * @param {number)} size - the desired width of the hex value. will pad.
+   *
+   * @returns {string[]}
+   */
+  const intToHexArray = (int, size) => {
+    const hex = [];
+    const hexRep = [];
+    const hexVal = int.toString(16); // TODO: this really needs to be refactored.
+
+    for (let i = 0; i < hexVal.length; i += 1) {
+      hexRep[i] = hexVal[i].toString();
+    }
+
+    for (let i = 0; i < size - hexVal.length; i += 1) {
+      hex.push('0');
+    }
+
+    for (let i = 0; i < hexVal.length; i += 1) {
+      hex.push(hexRep[i]);
+    }
+
+    return hex;
+  };
+  /**
+   * intToByteArray
+   *
+   * Converts a number to Uint8Array
+   *
+   * @param {number} num
+   * @param {number} size
+   *
+   * @returns {Uint8Array}
+   */
+
+  const intToByteArray = (num, size) => {
+    let x = num;
+    const res = [];
+
+    while (x > 0) {
+      res.push(x & 255);
+      x >>= 8;
+    }
+
+    const pad = size - res.length;
+
+    for (let i = 0; i < pad; i += 1) {
+      res.unshift(0);
+    }
+
+    return Uint8Array.from(res);
+  };
+  /**
+   * hexToByteArray
+   *
+   * Convers a hex string to a Uint8Array
+   *
+   * @param {string} hex
+   * @returns {Uint8Array}
+   */
+
+  const hexToByteArray = hex => {
+    const res = new Uint8Array(hex.length / 2);
+
+    for (let i = 0; i < hex.length; i += 2) {
+      res[i / 2] = parseInt(hex.substring(i, i + 2), 16);
+    }
+
+    return res;
+  };
+  /**
+   * hexToIntArray
+   *
+   * @param {string} hex
+   * @returns {number[]}
+   */
+
+  const hexToIntArray = hex => {
+    if (!hex || !isHex(hex)) {
+      return [];
+    }
+
+    const res = [];
+
+    for (let i = 0; i < hex.length; i += 1) {
+      const c = hex.charCodeAt(i);
+      const hi = c >> 8;
+      const lo = c & 0xff;
+
+      if (hi) {
+        res.push(hi, lo);
+      }
+
+      res.push(lo);
+    }
+
+    return res;
+  };
+  /**
+   * compareBytes
+   *
+   * A constant time HMAC comparison function.
+   *
+   * @param {string} a
+   * @param {string} b
+   * @returns {boolean}
+   */
+
+  const isEqual = (a, b) => {
+    const bzA = hexToIntArray(a);
+    const bzB = hexToIntArray(b);
+
+    if (bzA.length !== bzB.length) {
+      return false;
+    }
+
+    let result = 0;
+
+    for (let i = 0; i < bzA.length; i += 1) {
+      result |= bzA[i] ^ bzB[i];
+    }
+
+    return result === 0;
+  };
+  /**
+   * isHex
+   *
+   * @param {string} str - string to be tested
+   * @returns {boolean}
+   */
+
+  const isHex = str => {
+    const plain = str.replace('0x', '');
+    return /[0-9a-f]*$/i.test(plain);
+  };
+
   const secp256k1 = elliptic.ec('secp256k1');
+  /**
+   * getAddressFromPrivateKey
+   *
+   * takes a hex-encoded string (private key) and returns its corresponding
+   * 20-byte hex-encoded address.
+   *
+   * @param {string} Key
+   * @returns {string}
+   */
+
+  const getAddressFromPrivateKey = privateKey => {
+    const keyPair = secp256k1.keyFromPrivate(privateKey, 'hex');
+    const pub = keyPair.getPublic(true, 'hex');
+    return hashjs.sha256().update(pub, 'hex').digest('hex').slice(24);
+  };
+  /**
+   * getPubKeyFromPrivateKey
+   *
+   * takes a hex-encoded string (private key) and returns its corresponding
+   * hex-encoded 33-byte public key.
+   *
+   * @param {string} privateKey
+   * @returns {string}
+   */
+
+  const getPubKeyFromPrivateKey = privateKey => {
+    const keyPair = secp256k1.keyFromPrivate(privateKey, 'hex');
+    return keyPair.getPublic(true, 'hex');
+  };
+  /**
+   * compressPublicKey
+   *
+   * @param {string} publicKey - 65-byte public key, a point (x, y)
+   *
+   * @returns {string}
+   */
+
+  const compressPublicKey = publicKey => {
+    return secp256k1.keyFromPublic(publicKey, 'hex').getPublic(true, 'hex');
+  };
+  /**
+   * getAddressFromPublicKey
+   *
+   * takes hex-encoded string and returns the corresponding address
+   *
+   * @param {string} pubKey
+   * @returns {string}
+   */
+
+  const getAddressFromPublicKey = pubKey => {
+    return hashjs.sha256().update(pubKey, 'hex').digest('hex').slice(24);
+  };
+  /**
+   * verifyPrivateKey
+   *
+   * @param {string|Buffer} privateKey
+   * @returns {boolean}
+   */
+
+  const verifyPrivateKey = privateKey => {
+    const keyPair = secp256k1.keyFromPrivate(privateKey, 'hex');
+    const {
+      result
+    } = keyPair.validate();
+    return result;
+  };
+  const toChecksumAddress = address => {
+    const newAddress = address.toLowerCase().replace('0x', '');
+    const hash = hashjs.sha256().update(newAddress, 'hex').digest('hex');
+    const v = new BN(hash, 'hex', 'be');
+    let ret = '0x';
+
+    for (let i = 0; i < newAddress.length; i += 1) {
+      if ('0123456789'.indexOf(newAddress[i]) !== -1) {
+        ret += newAddress[i];
+      } else {
+        ret += v.and(new BN(2).pow(new BN(255 - 6 * i))).gte(new BN(1)) ? newAddress[i].toUpperCase() : newAddress[i].toLowerCase();
+      }
+    }
+
+    return ret;
+  };
+  /**
+   * isValidChecksumAddress
+   *
+   * takes hex-encoded string and returns boolean if address is checksumed
+   *
+   * @param {string} address
+   * @returns {boolean}
+   */
+
+  const isValidChecksumAddress = address => {
+    const replacedAddress = address.replace('0x', '');
+    return !!replacedAddress.match(/^[0-9a-fA-F]{40}$/) && toChecksumAddress(address) === address;
+  };
+  /**
+   * encodeTransaction
+   *
+   * @param {any} tx
+   * @returns {Buffer}
+   */
+
+  const encodeTransactionProto = tx => {
+    const msg = {
+      version: tx.version,
+      nonce: tx.nonce || 0,
+      toaddr: hexToByteArray(tx.toAddr.toLowerCase()),
+      senderpubkey: proto.ZilliqaMessage.ByteArray.create({
+        data: hexToByteArray(tx.pubKey || '00')
+      }),
+      amount: proto.ZilliqaMessage.ByteArray.create({
+        data: Uint8Array.from(tx.amount.toArrayLike(Buffer, undefined, 16))
+      }),
+      gasprice: proto.ZilliqaMessage.ByteArray.create({
+        data: Uint8Array.from(tx.gasPrice.toArrayLike(Buffer, undefined, 16))
+      }),
+      gaslimit: tx.gasLimit,
+      code: tx.code && tx.code.length ? Uint8Array.from([...tx.code].map(c => c.charCodeAt(0))) : null,
+      data: tx.data && tx.data.length ? Uint8Array.from([...tx.data].map(c => c.charCodeAt(0))) : null
+    };
+    const serialised = proto.ZilliqaMessage.ProtoTransactionCoreInfo.create(msg);
+    return Buffer.from(proto.ZilliqaMessage.ProtoTransactionCoreInfo.encode(serialised).finish());
+  };
+  const getAddressForContract = ({
+    currentNonce,
+    address
+  }) => {
+    // always subtract 1 from the tx nonce, as contract addresses are computed
+    // based on the nonce in the global state.
+    const nonce = currentNonce ? currentNonce - 1 : 0;
+    return hashjs.sha256().update(address, 'hex').update(intToHexArray(nonce, 64).join(''), 'hex').digest('hex').slice(24);
+  };
+  /**
+   * verify if signature is length===128
+   * @function checkValidSignature
+   * @param  {Signature} sig Signature
+   * @return {boolean}
+   */
+
+  const checkValidSignature = sig => {
+    return sig.r.toString('hex').length + sig.s.toString('hex').length === 128;
+  };
+
+  const secp256k1$1 = elliptic.ec('secp256k1');
   const {
     curve
-  } = secp256k1;
+  } = secp256k1$1;
   const PRIVKEY_SIZE_BYTES = 32; // Public key is a point (x, y) on the curve.
   // Each coordinate requires 32 bytes.
   // In its compressed form it suffices to store the x co-ordinate
@@ -89,8 +372,8 @@
    */
 
   const generatePrivateKey = () => {
-    return secp256k1.genKeyPair({
-      entropy: randomBytes(secp256k1.curve.n.byteLength()),
+    return secp256k1$1.genKeyPair({
+      entropy: randomBytes(secp256k1$1.curve.n.byteLength()),
       entropyEnc: HEX_ENC,
       pers: 'zilliqajs+secp256k1+SHA256'
     }).getPrivate().toString(16, PRIVKEY_SIZE_BYTES * 2);
@@ -133,7 +416,8 @@
 
     while (!sig) {
       const k = new BN(drbg.generate(len));
-      sig = trySign(msg, k, prv, pubKey);
+      const trySig = trySign(msg, k, prv, pubKey);
+      sig = checkValidSignature(trySig) ? trySig : null;
     }
 
     return sig;
@@ -277,7 +561,22 @@
       nonce: msg,
       pers
     });
-  };
+  }; // /**
+  //  * a test sign method using string for browser
+  //  * @function signTest
+  //  * @param  {type} msg {description}
+  //  * @param  {type} k   {description}
+  //  * @param  {type} prv {description}
+  //  * @param  {type} pub {description}
+  //  * @return {type} {description}
+  //  */
+  // export const signTest = (msg, k, prv, pub) => {
+  //   const msgBuffer = Buffer.from(msg, 'hex')
+  //   const kBN = new BN(Buffer.from(k, 'hex'))
+  //   const privBN = new BN(Buffer.from(prv, 'hex'))
+  //   const pubBuffer = Buffer.from(pub, 'hex')
+  //   return trySign(msgBuffer, kBN, privBN, pubBuffer)
+  // }
 
   var schnorr = /*#__PURE__*/Object.freeze({
     generatePrivateKey: generatePrivateKey,
@@ -288,279 +587,6 @@
     toSignature: toSignature,
     getDRBG: getDRBG
   });
-
-  /**
-   * intToHexArray
-   *
-   * @param {number} int - the number to be converted to hex
-   * @param {number)} size - the desired width of the hex value. will pad.
-   *
-   * @returns {string[]}
-   */
-  const intToHexArray = (int, size) => {
-    const hex = [];
-    const hexRep = [];
-    const hexVal = int.toString(16); // TODO: this really needs to be refactored.
-
-    for (let i = 0; i < hexVal.length; i += 1) {
-      hexRep[i] = hexVal[i].toString();
-    }
-
-    for (let i = 0; i < size - hexVal.length; i += 1) {
-      hex.push('0');
-    }
-
-    for (let i = 0; i < hexVal.length; i += 1) {
-      hex.push(hexRep[i]);
-    }
-
-    return hex;
-  };
-  /**
-   * intToByteArray
-   *
-   * Converts a number to Uint8Array
-   *
-   * @param {number} num
-   * @param {number} size
-   *
-   * @returns {Uint8Array}
-   */
-
-  const intToByteArray = (num, size) => {
-    let x = num;
-    const res = [];
-
-    while (x > 0) {
-      res.push(x & 255);
-      x >>= 8;
-    }
-
-    const pad = size - res.length;
-
-    for (let i = 0; i < pad; i += 1) {
-      res.unshift(0);
-    }
-
-    return Uint8Array.from(res);
-  };
-  /**
-   * hexToByteArray
-   *
-   * Convers a hex string to a Uint8Array
-   *
-   * @param {string} hex
-   * @returns {Uint8Array}
-   */
-
-  const hexToByteArray = hex => {
-    const res = new Uint8Array(hex.length / 2);
-
-    for (let i = 0; i < hex.length; i += 2) {
-      res[i / 2] = parseInt(hex.substring(i, i + 2), 16);
-    }
-
-    return res;
-  };
-  /**
-   * hexToIntArray
-   *
-   * @param {string} hex
-   * @returns {number[]}
-   */
-
-  const hexToIntArray = hex => {
-    if (!hex || !isHex(hex)) {
-      return [];
-    }
-
-    const res = [];
-
-    for (let i = 0; i < hex.length; i += 1) {
-      const c = hex.charCodeAt(i);
-      const hi = c >> 8;
-      const lo = c & 0xff;
-
-      if (hi) {
-        res.push(hi, lo);
-      }
-
-      res.push(lo);
-    }
-
-    return res;
-  };
-  /**
-   * compareBytes
-   *
-   * A constant time HMAC comparison function.
-   *
-   * @param {string} a
-   * @param {string} b
-   * @returns {boolean}
-   */
-
-  const isEqual = (a, b) => {
-    const bzA = hexToIntArray(a);
-    const bzB = hexToIntArray(b);
-
-    if (bzA.length !== bzB.length) {
-      return false;
-    }
-
-    let result = 0;
-
-    for (let i = 0; i < bzA.length; i += 1) {
-      result |= bzA[i] ^ bzB[i];
-    }
-
-    return result === 0;
-  };
-  /**
-   * isHex
-   *
-   * @param {string} str - string to be tested
-   * @returns {boolean}
-   */
-
-  const isHex = str => {
-    const plain = str.replace('0x', '');
-    return /[0-9a-f]*$/i.test(plain);
-  };
-
-  const secp256k1$1 = elliptic.ec('secp256k1');
-  /**
-   * getAddressFromPrivateKey
-   *
-   * takes a hex-encoded string (private key) and returns its corresponding
-   * 20-byte hex-encoded address.
-   *
-   * @param {string} Key
-   * @returns {string}
-   */
-
-  const getAddressFromPrivateKey = privateKey => {
-    const keyPair = secp256k1$1.keyFromPrivate(privateKey, 'hex');
-    const pub = keyPair.getPublic(true, 'hex');
-    return hashjs.sha256().update(pub, 'hex').digest('hex').slice(24);
-  };
-  /**
-   * getPubKeyFromPrivateKey
-   *
-   * takes a hex-encoded string (private key) and returns its corresponding
-   * hex-encoded 33-byte public key.
-   *
-   * @param {string} privateKey
-   * @returns {string}
-   */
-
-  const getPubKeyFromPrivateKey = privateKey => {
-    const keyPair = secp256k1$1.keyFromPrivate(privateKey, 'hex');
-    return keyPair.getPublic(true, 'hex');
-  };
-  /**
-   * compressPublicKey
-   *
-   * @param {string} publicKey - 65-byte public key, a point (x, y)
-   *
-   * @returns {string}
-   */
-
-  const compressPublicKey = publicKey => {
-    return secp256k1$1.keyFromPublic(publicKey, 'hex').getPublic(true, 'hex');
-  };
-  /**
-   * getAddressFromPublicKey
-   *
-   * takes hex-encoded string and returns the corresponding address
-   *
-   * @param {string} pubKey
-   * @returns {string}
-   */
-
-  const getAddressFromPublicKey = pubKey => {
-    return hashjs.sha256().update(pubKey, 'hex').digest('hex').slice(24);
-  };
-  /**
-   * verifyPrivateKey
-   *
-   * @param {string|Buffer} privateKey
-   * @returns {boolean}
-   */
-
-  const verifyPrivateKey = privateKey => {
-    const keyPair = secp256k1$1.keyFromPrivate(privateKey, 'hex');
-    const {
-      result
-    } = keyPair.validate();
-    return result;
-  };
-  const toChecksumAddress = address => {
-    const newAddress = address.toLowerCase().replace('0x', '');
-    const hash = hashjs.sha256().update(newAddress, 'hex').digest('hex');
-    const v = new BN(hash, 'hex', 'be');
-    let ret = '0x';
-
-    for (let i = 0; i < newAddress.length; i += 1) {
-      if ('0123456789'.indexOf(newAddress[i]) !== -1) {
-        ret += newAddress[i];
-      } else {
-        ret += v.and(new BN(2).pow(new BN(255 - 6 * i))).gte(new BN(1)) ? newAddress[i].toUpperCase() : newAddress[i].toLowerCase();
-      }
-    }
-
-    return ret;
-  };
-  /**
-   * isValidChecksumAddress
-   *
-   * takes hex-encoded string and returns boolean if address is checksumed
-   *
-   * @param {string} address
-   * @returns {boolean}
-   */
-
-  const isValidChecksumAddress = address => {
-    const replacedAddress = address.replace('0x', '');
-    return !!replacedAddress.match(/^[0-9a-fA-F]{40}$/) && toChecksumAddress(address) === address;
-  };
-  /**
-   * encodeTransaction
-   *
-   * @param {any} tx
-   * @returns {Buffer}
-   */
-
-  const encodeTransactionProto = tx => {
-    const msg = {
-      version: tx.version,
-      nonce: tx.nonce || 0,
-      toaddr: hexToByteArray(tx.toAddr.toLowerCase()),
-      senderpubkey: proto.ZilliqaMessage.ByteArray.create({
-        data: hexToByteArray(tx.pubKey || '00')
-      }),
-      amount: proto.ZilliqaMessage.ByteArray.create({
-        data: Uint8Array.from(tx.amount.toArrayLike(Buffer, undefined, 16))
-      }),
-      gasprice: proto.ZilliqaMessage.ByteArray.create({
-        data: Uint8Array.from(tx.gasPrice.toArrayLike(Buffer, undefined, 16))
-      }),
-      gaslimit: tx.gasLimit,
-      code: tx.code && tx.code.length ? Uint8Array.from([...tx.code].map(c => c.charCodeAt(0))) : null,
-      data: tx.data && tx.data.length ? Uint8Array.from([...tx.data].map(c => c.charCodeAt(0))) : null
-    };
-    const serialised = proto.ZilliqaMessage.ProtoTransactionCoreInfo.create(msg);
-    return Buffer.from(proto.ZilliqaMessage.ProtoTransactionCoreInfo.encode(serialised).finish());
-  };
-  const getAddressForContract = ({
-    currentNonce,
-    address
-  }) => {
-    // always subtract 1 from the tx nonce, as contract addresses are computed
-    // based on the nonce in the global state.
-    const nonce = currentNonce ? currentNonce - 1 : 0;
-    return hashjs.sha256().update(address, 'hex').update(intToHexArray(nonce, 64).join(''), 'hex').digest('hex').slice(24);
-  };
 
   const {
     generatePrivateKey: generatePrivateKey$1
@@ -605,6 +631,7 @@
   exports.isValidChecksumAddress = isValidChecksumAddress;
   exports.encodeTransactionProto = encodeTransactionProto;
   exports.getAddressForContract = getAddressForContract;
+  exports.checkValidSignature = checkValidSignature;
   exports.intToHexArray = intToHexArray;
   exports.intToByteArray = intToByteArray;
   exports.hexToByteArray = hexToByteArray;

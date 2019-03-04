@@ -5,6 +5,7 @@ import DRBG from 'hmac-drbg'
 
 import { randomBytes } from './random'
 import { Signature } from './signature'
+import { checkValidSignature } from './util'
 
 const secp256k1 = elliptic.ec('secp256k1')
 const { curve } = secp256k1
@@ -79,7 +80,8 @@ export const sign = (msg, privKey, pubKey) => {
   let sig
   while (!sig) {
     const k = new BN(drbg.generate(len))
-    sig = trySign(msg, k, prv, pubKey)
+    const trySig = trySign(msg, k, prv, pubKey)
+    sig = checkValidSignature(trySig) ? trySig : null
   }
 
   return sig
@@ -223,3 +225,20 @@ export const getDRBG = msg => {
     pers
   })
 }
+
+// /**
+//  * a test sign method using string for browser
+//  * @function signTest
+//  * @param  {type} msg {description}
+//  * @param  {type} k   {description}
+//  * @param  {type} prv {description}
+//  * @param  {type} pub {description}
+//  * @return {type} {description}
+//  */
+// export const signTest = (msg, k, prv, pub) => {
+//   const msgBuffer = Buffer.from(msg, 'hex')
+//   const kBN = new BN(Buffer.from(k, 'hex'))
+//   const privBN = new BN(Buffer.from(prv, 'hex'))
+//   const pubBuffer = Buffer.from(pub, 'hex')
+//   return trySign(msgBuffer, kBN, privBN, pubBuffer)
+// }
