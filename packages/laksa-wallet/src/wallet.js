@@ -2,7 +2,8 @@ import {
   isAddress, isNumber, isObject, isArray, isString
 } from 'laksa-utils'
 import { Map, List } from 'immutable'
-
+import bip39 from 'bip39'
+import hdkey from 'hdkey'
 import * as account from 'laksa-account'
 import { encryptedBy } from './symbols'
 
@@ -27,6 +28,28 @@ class Wallet {
     if (value !== undefined) {
       throw new Error('you should not set "accounts" directly, use internal functions')
     }
+  }
+
+  generateMnemonic() {
+    return bip39.generateMnemonic()
+  }
+
+  importAccountFromMnemonic(phrase, index) {
+    if (!this.isValidMnemonic(phrase)) {
+      throw new Error(`Invalid mnemonic phrase: ${phrase}`)
+    }
+    const seed = bip39.mnemonicToSeed(phrase)
+    const hdKey = hdkey.fromMasterSeed(seed)
+    const childKey = hdKey.derive(`m/44'/313'/0'/0/${index}`)
+    const privateKey = childKey.privateKey.toString('hex')
+    return this.importAccountFromPrivateKey(privateKey)
+  }
+
+  isValidMnemonic(phrase) {
+    if (phrase.trim().split(/\s+/g).length < 12) {
+      return false
+    }
+    return bip39.validateMnemonic(phrase)
   }
 
   defaultSetSigner() {

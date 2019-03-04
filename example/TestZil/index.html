@@ -340,11 +340,11 @@
         gasLimit: laksa.util.Long.fromNumber(1)
       })
 
-      accountA
-        .signTransaction(normalTransaction)
-        .then(d => d.sendTransaction())
-        .then(res => res.transaction.confirm(res.response.TranID, 33, 1000))
-        .then(console.log)
+      // accountA
+      //   .signTransaction(normalTransaction)
+      //   .then(d => d.sendTransaction())
+      //   .then(res => res.transaction.confirm(res.response.TranID, 33, 1000))
+      //   .then(console.log)
 
       /*
         Transaction logic is the core logic to blockchain
