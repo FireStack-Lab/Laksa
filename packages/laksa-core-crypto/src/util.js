@@ -159,4 +159,14 @@ export const getAddressForContract = ({ currentNonce, address }) => {
     .slice(24)
 }
 
+/**
+ * verify if signature is length===128
+ * @function checkValidSignature
+ * @param  {Signature} sig Signature
+ * @return {boolean}
+ */
+export const checkValidSignature = sig => {
+  return sig.r.toString('hex').length + sig.s.toString('hex').length === 128
+}
+
 export { hashjs }
