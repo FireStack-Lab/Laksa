@@ -1,6 +1,7 @@
 # OSX
 #
 .DS_Store
+*.lock
 .vscode/
 # package.json
 
@@ -52,7 +53,7 @@ packages/*/node_modules
 npm-debug.log
 lerna-debug.log
 yarn-error.log
-*.lock
+
 
 # BUCK
 buck-out/

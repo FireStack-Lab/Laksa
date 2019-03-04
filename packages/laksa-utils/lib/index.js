@@ -419,7 +419,7 @@ function validateTypes(arg, validatorArray) {
   });
 
   if (finalReduce === 0) {
-    throw new TypeError("One of [".concat(getValidators.concat(), "] has to pass, but we have your arg to be [").concat(_toConsumableArray(valsKey), "]"));
+    throw new TypeError("One of [".concat([].concat(getValidators), "] has to pass, but we have your arg to be [").concat(_toConsumableArray(valsKey), "]"));
   }
 
   return true;
@@ -443,7 +443,7 @@ function validateTypesMatch(arg, validatorArray) {
   });
 
   if (finalReduce < valLength || finalReduce === 0) {
-    throw new TypeError("All of [".concat(getValidators.concat(), "] has to pass, but we have your arg to be [").concat(_toConsumableArray(valsKey), "]"));
+    throw new TypeError("All of [".concat([].concat(getValidators), "] has to pass, but we have your arg to be [").concat(_toConsumableArray(valsKey), "]"));
   }
 
   return true;

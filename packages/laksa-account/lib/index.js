@@ -127,7 +127,7 @@ function () {
             return _context.stop();
         }
       }
-    }, _callee, this);
+    }, _callee);
   }));
 
   return function encryptAccount(_x, _x2) {
@@ -181,7 +181,7 @@ function () {
             return _context2.stop();
         }
       }
-    }, _callee2, this);
+    }, _callee2);
   }));
 
   return function decryptAccount(_x3, _x4) {
@@ -317,9 +317,11 @@ function (_Core) {
         }, _callee, this);
       }));
 
-      return function encrypt(_x) {
+      function encrypt(_x) {
         return _encrypt.apply(this, arguments);
-      };
+      }
+
+      return encrypt;
     }() // sub object
 
     /**
@@ -356,9 +358,11 @@ function (_Core) {
         }, _callee2, this);
       }));
 
-      return function decrypt(_x2) {
+      function decrypt(_x2) {
         return _decrypt.apply(this, arguments);
-      };
+      }
+
+      return decrypt;
     }()
     /**
      * @function {toFile}
@@ -431,9 +435,11 @@ function (_Core) {
         }, _callee3, this);
       }));
 
-      return function toFile(_x3) {
+      function toFile(_x3) {
         return _toFile.apply(this, arguments);
-      };
+      }
+
+      return toFile;
     }()
     /**
      * @function {fromFile}
@@ -478,9 +484,11 @@ function (_Core) {
         }, _callee4, this);
       }));
 
-      return function fromFile(_x4, _x5) {
+      function fromFile(_x4, _x5) {
         return _fromFile.apply(this, arguments);
-      };
+      }
+
+      return fromFile;
     }()
     /**
      * @function {signTransactionWithPassword} {sign plain object with password}
@@ -544,9 +552,11 @@ function (_Core) {
         }, _callee5, this);
       }));
 
-      return function signTransaction$$1(_x6, _x7) {
+      function signTransaction$$1(_x6, _x7) {
         return _signTransaction2.apply(this, arguments);
-      };
+      }
+
+      return signTransaction$$1;
     }()
   }, {
     key: "getBalance",
@@ -597,9 +607,11 @@ function (_Core) {
         }, _callee6, this, [[0, 12]]);
       }));
 
-      return function getBalance() {
+      function getBalance() {
         return _getBalance.apply(this, arguments);
-      };
+      }
+
+      return getBalance;
     }()
   }, {
     key: "updateBalance",
@@ -638,9 +650,11 @@ function (_Core) {
         }, _callee7, this, [[0, 11]]);
       }));
 
-      return function updateBalance() {
+      function updateBalance() {
         return _updateBalance.apply(this, arguments);
-      };
+      }
+
+      return updateBalance;
     }()
   }]);
 

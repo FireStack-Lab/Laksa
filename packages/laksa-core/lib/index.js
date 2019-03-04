@@ -154,9 +154,11 @@ function () {
         }, _callee, this, [[3, 7]]);
       }));
 
-      return function connection(_x) {
+      function connection(_x) {
         return _connection.apply(this, arguments);
-      };
+      }
+
+      return connection;
     }()
   }, {
     key: "getProvider",

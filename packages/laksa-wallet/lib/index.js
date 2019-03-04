@@ -122,7 +122,7 @@ function () {
                 return _context.stop();
             }
           }
-        }, _callee, this);
+        }, _callee);
       }));
 
       return function (_x, _x2) {
@@ -160,7 +160,7 @@ function () {
                 return _context2.stop();
             }
           }
-        }, _callee2, this);
+        }, _callee2);
       }));
 
       return function (_x3, _x4) {
@@ -572,9 +572,11 @@ function () {
         }, _callee3, this, [[5, 9, 13, 21], [14,, 16, 20]]);
       }));
 
-      return function encryptAllAccounts(_x5, _x6) {
+      function encryptAllAccounts(_x5, _x6) {
         return _encryptAllAccounts.apply(this, arguments);
-      };
+      }
+
+      return encryptAllAccounts;
     }()
     /**
      * @function {decryptAllAccounts}
@@ -660,9 +662,11 @@ function () {
         }, _callee4, this, [[5, 9, 13, 21], [14,, 16, 20]]);
       }));
 
-      return function decryptAllAccounts(_x7) {
+      function decryptAllAccounts(_x7) {
         return _decryptAllAccounts.apply(this, arguments);
-      };
+      }
+
+      return decryptAllAccounts;
     }()
     /**
      * @function {encryptAccountByAddress}
@@ -747,9 +751,11 @@ function () {
         }, _callee5, this);
       }));
 
-      return function encryptAccountByAddress(_x8, _x9, _x10, _x11) {
+      function encryptAccountByAddress(_x8, _x9, _x10, _x11) {
         return _encryptAccountByAddress.apply(this, arguments);
-      };
+      }
+
+      return encryptAccountByAddress;
     }()
     /**
      * @function {decryptAccountByAddress}
@@ -833,9 +839,11 @@ function () {
         }, _callee6, this);
       }));
 
-      return function decryptAccountByAddress(_x12, _x13, _x14) {
+      function decryptAccountByAddress(_x12, _x13, _x14) {
         return _decryptAccountByAddress.apply(this, arguments);
-      };
+      }
+
+      return decryptAccountByAddress;
     }()
     /**
      * @function {setSigner}
@@ -906,9 +914,11 @@ function () {
         }, _callee7, this, [[3, 11]]);
       }));
 
-      return function sign(_x15, _x16) {
+      function sign(_x15, _x16) {
         return _sign.apply(this, arguments);
-      };
+      }
+
+      return sign;
     }()
   }, {
     key: "accounts",

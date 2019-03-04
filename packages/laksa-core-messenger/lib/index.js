@@ -178,7 +178,7 @@ function () {
                 return _context.stop();
             }
           }
-        }, _callee, this, [[1, 10]]);
+        }, _callee, null, [[1, 10]]);
       }));
 
       return function (_x, _x2) {
@@ -217,7 +217,7 @@ function () {
                 return _context2.stop();
             }
           }
-        }, _callee2, this, [[1, 8]]);
+        }, _callee2, null, [[1, 8]]);
       }));
 
       return function (_x3, _x4) {

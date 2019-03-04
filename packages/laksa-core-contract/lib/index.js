@@ -43,8 +43,8 @@ var _toArray = _interopDefault(require('@babel/runtime/helpers/toArray'));
 require('core-js/modules/es6.regexp.to-string');
 var _possibleConstructorReturn = _interopDefault(require('@babel/runtime/helpers/possibleConstructorReturn'));
 var _getPrototypeOf = _interopDefault(require('@babel/runtime/helpers/getPrototypeOf'));
-var _inherits = _interopDefault(require('@babel/runtime/helpers/inherits'));
 var _assertThisInitialized = _interopDefault(require('@babel/runtime/helpers/assertThisInitialized'));
+var _inherits = _interopDefault(require('@babel/runtime/helpers/inherits'));
 var _defineProperty = _interopDefault(require('@babel/runtime/helpers/defineProperty'));
 var laksaCoreCrypto = require('laksa-core-crypto');
 
@@ -447,9 +447,11 @@ function () {
         }, _callee, this, [[3, 12]]);
       }));
 
-      return function deploy(_x) {
+      function deploy(_x) {
         return _deploy.apply(this, arguments);
-      };
+      }
+
+      return deploy;
     }()
     /**
      * call
@@ -516,9 +518,11 @@ function () {
         }, _callee2, this, [[3, 12]]);
       }));
 
-      return function call(_x2) {
+      function call(_x2) {
         return _call.apply(this, arguments);
-      };
+      }
+
+      return call;
     }()
     /**
      * @function {sendContract}
@@ -576,9 +580,11 @@ function () {
         }, _callee3, this, [[1, 15]]);
       }));
 
-      return function sendContract(_x3) {
+      function sendContract(_x3) {
         return _sendContract.apply(this, arguments);
-      };
+      }
+
+      return sendContract;
     }()
     /**
      * @function {signTxn}
@@ -621,9 +627,11 @@ function () {
         }, _callee4, this, [[1, 9]]);
       }));
 
-      return function signTxn(_x4) {
+      function signTxn(_x4) {
         return _signTxn.apply(this, arguments);
-      };
+      }
+
+      return signTxn;
     }()
     /**
      * @function {confirmTx}
@@ -675,9 +683,11 @@ function () {
         }, _callee5, this, [[2, 12]]);
       }));
 
-      return function confirmTx() {
+      function confirmTx() {
         return _confirmTx.apply(this, arguments);
-      };
+      }
+
+      return confirmTx;
     }()
     /**
      * @function {getState}
@@ -718,9 +728,11 @@ function () {
         }, _callee6, this);
       }));
 
-      return function getState() {
+      function getState() {
         return _getState.apply(this, arguments);
-      };
+      }
+
+      return getState;
     }()
   }, {
     key: "setDeployPayload",
@@ -803,7 +815,7 @@ function (_Contract) {
 
     _this = _possibleConstructorReturn(this, (_getPrototypeOf2 = _getPrototypeOf(TestScilla)).call.apply(_getPrototypeOf2, [this].concat(props)));
 
-    _defineProperty(_assertThisInitialized(_assertThisInitialized(_this)), "blockchain", []);
+    _defineProperty(_assertThisInitialized(_this), "blockchain", []);
 
     return _this;
   }
@@ -860,9 +872,11 @@ function (_Contract) {
         }, _callee, this, [[0, 9]]);
       }));
 
-      return function testCall(_x) {
+      function testCall(_x) {
         return _testCall.apply(this, arguments);
-      };
+      }
+
+      return testCall;
     }() //-------------------------------
 
     /**
@@ -916,9 +930,11 @@ function (_Contract) {
         }, _callee2, this, [[1, 9]]);
       }));
 
-      return function getABI(_x2) {
+      function getABI(_x2) {
         return _getABI.apply(this, arguments);
-      };
+      }
+
+      return getABI;
     }()
     /**
      * @function {decodeABI}
@@ -963,9 +979,11 @@ function (_Contract) {
         }, _callee3, this, [[1, 10]]);
       }));
 
-      return function decodeABI(_x3) {
+      function decodeABI(_x3) {
         return _decodeABI.apply(this, arguments);
-      };
+      }
+
+      return decodeABI;
     }()
     /**
      * @function {setBlockNumber}
@@ -1033,9 +1051,11 @@ function (_Contract) {
         }, _callee4, this, [[0, 17]]);
       }));
 
-      return function setBlockNumber(_x4) {
+      function setBlockNumber(_x4) {
         return _setBlockNumber.apply(this, arguments);
-      };
+      }
+
+      return setBlockNumber;
     }() //-------------------------------
 
     /**
@@ -1246,9 +1266,11 @@ function (_Core) {
         }, _callee, this);
       }));
 
-      return function testContract(_x, _x2) {
+      function testContract(_x, _x2) {
         return _testContract.apply(this, arguments);
-      };
+      }
+
+      return testContract;
     }()
   }]);
 
