@@ -1,11 +1,17 @@
 {
   "name": "laksa-providers-http",
   "version": "0.0.121",
-  "description": "",
+  "description": "HttpProvider for laksa",
   "main": "index.js",
   "browser": "lib/index.js",
-  "author": "neeboo",
-  "license": "ISC",
+  "keywords": [
+    "laksa",
+    "webz",
+    "web3",
+    "ethereum"
+  ],
+  "author": "neeboo@fireStack.one",
+  "license": "GPL-3.0",
   "dependencies": {
     "cross-fetch": "^2.2.3",
     "laksa-core-provider": "^0.0.121"

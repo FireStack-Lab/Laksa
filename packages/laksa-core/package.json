@@ -1,11 +1,17 @@
 {
   "name": "laksa-core",
   "version": "0.0.121",
-  "description": "",
+  "description": "laksa-core, main file of laksa",
   "main": "index.js",
   "browser": "lib/index.js",
-  "author": "",
-  "license": "ISC",
+  "keywords": [
+    "laksa",
+    "webz",
+    "web3",
+    "ethereum"
+  ],
+  "author": "neeboo@fireStack.one",
+  "license": "GPL-3.0",
   "dependencies": {
     "laksa-account": "^0.0.121",
     "laksa-blockchain": "^0.0.121",
