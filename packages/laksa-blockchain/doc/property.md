@@ -4,39 +4,82 @@ title: property
 
 # property
 
-## Functions
+<a name="Property"></a>
 
-<dl>
-<dt><a href="#{setMessenger}">{setMessenger}(msg)</a> ⇒ <code>Messenger</code></dt>
-<dd></dd>
-<dt><a href="#{assignToObject}">{assignToObject}(object)</a> ⇒ <code>object</code></dt>
-<dd></dd>
-<dt><a href="#{propertyBuilder}">{propertyBuilder}()</a> ⇒ <code>any</code></dt>
-<dd></dd>
-</dl>
+## Property
+**Kind**: global class  
 
-<a name="{setMessenger}"></a>
+* [Property](#Property)
+    * [new Property(options, messenger)](#new_Property_new)
+    * _instance_
+        * [.setMessenger(msg)](#Property+setMessenger)
+        * [.assignToObject(object)](#Property+assignToObject)
+        * [.propertyBuilder()](#Property+propertyBuilder) ⇒ <code>any</code>
+    * _static_
+        * [.name](#Property.name) : <code>String</code>
+        * [.getter](#Property.getter) : <code>function</code>
+        * [.setter](#Property.setter) : <code>function</code>
+        * [.messenger](#Property.messenger) : <code>Messenger</code>
 
-## {setMessenger}(msg) ⇒ <code>Messenger</code>
-**Kind**: global function  
-**Returns**: <code>Messenger</code> - {messenger setter}  
+<a name="new_Property_new"></a>
 
-| Param | Type | Description |
-| --- | --- | --- |
-| msg | <code>Messenger</code> | {messenger instance} |
+### new Property(options, messenger)
+generate a property for class
 
-<a name="{assignToObject}"></a>
-
-## {assignToObject}(object) ⇒ <code>object</code>
-**Kind**: global function  
-**Returns**: <code>object</code> - {assiged to some object}  
 
 | Param | Type | Description |
 | --- | --- | --- |
-| object | <code>object</code> | {method object} |
+| options | <code>object</code> | property options |
+| messenger | <code>Messenger</code> | Messsenger instance |
 
-<a name="{propertyBuilder}"></a>
+<a name="Property+setMessenger"></a>
 
-## {propertyBuilder}() ⇒ <code>any</code>
-**Kind**: global function  
-**Returns**: <code>any</code> - {property built}  
+### property.setMessenger(msg)
+messenger setter
+
+**Kind**: instance method of [<code>Property</code>](#Property)  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| msg | <code>Messenger</code> | messenger instance |
+
+<a name="Property+assignToObject"></a>
+
+### property.assignToObject(object)
+assign property to class
+
+**Kind**: instance method of [<code>Property</code>](#Property)  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| object | <code>Object</code> | method object |
+
+<a name="Property+propertyBuilder"></a>
+
+### property.propertyBuilder() ⇒ <code>any</code>
+**Kind**: instance method of [<code>Property</code>](#Property)  
+**Returns**: <code>any</code> - - property call  
+<a name="Property.name"></a>
+
+### Property.name : <code>String</code>
+property name
+
+**Kind**: static property of [<code>Property</code>](#Property)  
+<a name="Property.getter"></a>
+
+### Property.getter : <code>function</code>
+property getter
+
+**Kind**: static property of [<code>Property</code>](#Property)  
+<a name="Property.setter"></a>
+
+### Property.setter : <code>function</code>
+property setter
+
+**Kind**: static property of [<code>Property</code>](#Property)  
+<a name="Property.messenger"></a>
+
+### Property.messenger : <code>Messenger</code>
+Messenger instance
+
+**Kind**: static property of [<code>Property</code>](#Property)  

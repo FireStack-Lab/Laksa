@@ -8,8 +8,9 @@ import propertyObjects from './propertyObjects'
 import { toTxParams } from './util'
 /**
  * @function mapObjectToMethods
- * @param  {Zil} main  {assign to Zil class}
- * @return {boolean} {status}
+ * @description Map Method objects to Method instance
+ * @param  {BlockChain} main  - assign to Zil class
+ * @return {Boolean} - status
  */
 const mapObjectToMethods = main => {
   methodObjects.forEach(data => {
@@ -20,8 +21,9 @@ const mapObjectToMethods = main => {
 }
 /**
  * @function mapPropertyToObjects
- * @param  {Zil} main {assign to Zil class}
- * @return {boolean} {status}
+ * @description Map Property objects to Property instance
+ * @param  {BlockChain} main - assign to Zil class
+ * @return {Boolean} - status
  */
 const mapPropertyToObjects = main => {
   propertyObjects.forEach(data => {
@@ -31,7 +33,28 @@ const mapPropertyToObjects = main => {
   })
 }
 
+/**
+ * @class BlockChain
+ * @description Blockchain instance
+ * @param  {Messenger}  messsenger - Messenger instance
+ * @param {Wallet} signer - Wallet instance as signer
+ * @return {BlockChain} - Blockchain instance
+ */
 class BlockChain extends Core {
+  /**
+   * @memberof BlockChain
+   * @type {Messenger} - Messenger Instance
+   * @description Messenger instance from parent
+   */
+  messseger
+
+  /**
+   * @memberof BlockChain
+   * @type {Wallet} - Wallet Instance
+   * @description Wallet instance from parent
+   */
+  signer
+
   constructor(messenger, signer) {
     super()
     this.messenger = messenger
@@ -41,9 +64,10 @@ class BlockChain extends Core {
   }
 
   /**
-   * @function {extendMethod}
-   * @param  {object} object {method object}
-   * @return {boolean} {status}
+   * @function extendMethod
+   * @memberof BlockChain.prototype
+   * @param  {Object} object - method object
+   * @return {Boolean} - status
    */
   extendMethod = object => {
     if (typeof object !== 'object') {
@@ -55,9 +79,10 @@ class BlockChain extends Core {
   }
 
   /**
-   * @function {extendProperty}
-   * @param  {object} object {method object}
-   * @return {boolean} {status}
+   * @function extendProperty
+   * @memberof BlockChain.prototype
+   * @param  {Object} object - method object
+   * @return {Boolean} - status
    */
   extendProperty = object => {
     if (typeof object !== 'object') {
@@ -68,6 +93,14 @@ class BlockChain extends Core {
     zilProperty.assignToObject(this)
   }
 
+  /**
+   * @function completeTransaction
+   * @memberof BlockChain.prototype
+   * @param  {Transaction} tx       - Transaction to send
+   * @param  {?Account} account  - Account for signing if not use Wallet's signer
+   * @param  {?String} password - Password of Account if it is encrypted
+   * @return {any} - confirmation process
+   */
   @assertObject({
     toAddr: ['isAddress', 'required'],
     pubKey: ['isPubkey', 'optional'],
@@ -95,7 +128,12 @@ class BlockChain extends Core {
   }
 
   // FIXME:Transaction as call back should not be implement with this function
-
+  /**
+   * @function confirmTransaction
+   * @memberof BlockChain.prototype
+   * @param  {String} txHash       - Transaction ID
+   * @return {Transaction} - Transaction instance with confirm/reject state
+   */
   @assertObject({ txHash: ['isHash', 'required'] })
   async confirmTransaction({ txHash }) {
     try {

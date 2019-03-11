@@ -2,11 +2,68 @@ import { transformerArray, generateValidateObjects } from 'laksa-shared'
 import { validateArgs } from 'laksa-utils'
 import { isObject } from './util'
 
+/**
+ * @class Method
+ * @param  {Object} options - to constructor
+ * @param {Messenger} messenger - Messenger instance
+ * @return {Method}
+ * @description generate a method
+ */
 class Method {
+  /**
+   * @memberof Method
+   * @description method name
+   * @type {String}
+   */
+  name
+
+  /**
+   * @memberof Method
+   * @description method to call
+   * @type {Function}
+   */
+  call
+
+  /**
+   * @memberof Method
+   * @description Messenger of Method
+   * @type {Messsenger}
+   */
+  messenger
+
+  /**
+   * @memberof Method
+   * @description params send to Method
+   * @type {?Object}
+   */
+  params
+
+  /**
+   * @memberof Method
+   * @description transformer send to Method
+   * @type {?Object}
+   */
+  transformer
+
+  /**
+   * @memberof Method
+   * @description endpoint string to call
+   * @type {?String}
+   */
+  endpoint
+
+  /**
+   * @memberof Method
+   * @description whether send params as json
+   * @type {Boolean}
+   */
+  isSendJson
+
   constructor(options, messenger) {
     const {
       name, call, params, endpoint, transformer, isSendJson
     } = options
+
     this.name = name
     this.call = call
     this.messenger = messenger
@@ -17,20 +74,23 @@ class Method {
   }
 
   /**
-   * @function {setMessenger}
-   * @param  {Messenger} msg {messenger instance}
-   * @return {Messenger} {messenger setter}
+   * @function setMessenger
+   * @param  {Messenger} messenger - messenger instance
+   * @memberof Method.prototype
+   * @description messenger setter
    */
   setMessenger(msg) {
     this.messenger = msg
   }
 
   /**
-   * @function {validateArgs}
-   * @param  {object} args         {args objects}
-   * @param  {object} requiredArgs {requred args object}
-   * @param  {object} optionalArgs {optional args object}
-   * @return {boolean|Error} {validate result}
+   * @function validateArgs
+   * @memberof Method.prototype
+   * @description validate args received
+   * @param  {Object} args         - args objects
+   * @param  {Object} requiredArgs - requred args object
+   * @param  {Object} optionalArgs - optional args object
+   * @return {Boolean|Error} - validate result
    */
   validateArgs(args, requiredArgs, optionalArgs) {
     const reArgs = requiredArgs === undefined ? {} : requiredArgs
@@ -42,9 +102,11 @@ class Method {
   }
 
   /**
-   * @function {extractParams}
-   * @param  {object} args {args object}
-   * @return {Array<object>} {extracted params}
+   * @function extractParams
+   * @memberof Method.prototype
+   * @description extract params sent to Method
+   * @param  {Object} args - args object
+   * @return {Array<Object>} - extracted params
    */
   extractParams(args) {
     const paramsObject = isObject(args) ? args : {}
@@ -67,10 +129,12 @@ class Method {
   }
 
   /**
-   * @function {transformedBeforeSend}
-   * @param  {any} value {value that waited to transform}
-   * @param  {string} key   {key to transform}
-   * @return {any} {value that transformed}
+   * @function transformedBeforeSend
+   * @memberof Method.prototype
+   * @description extract params sent to Method
+   * @param  {any} value - value that waited to transform
+   * @param  {String} key   - key to transform
+   * @return {any}  - value that transformed
    */
   transformedBeforeSend(value, key) {
     const transformMethod = this.transformer[key]
@@ -80,9 +144,11 @@ class Method {
   }
 
   /**
-   * @function {assignToObject} {assign method to some object}
-   * @param  {object} object {method object}
-   * @return {object} {new object}
+   * @function assignToObject
+   * @memberof Method.prototype
+   * @description assign method to class object
+   * @param  {Object} object - method object
+   * @return {Object} - new object
    */
   assignToObject(object) {
     const newObject = {}
@@ -91,8 +157,10 @@ class Method {
   }
 
   /**
-   * @function {methodBuilder}
-   * @return {any} {built method}
+   * @function methodBuilder
+   * @memberof Method.prototype
+   * @description build method when call
+   * @return {any} - call method
    */
   methodBuilder() {
     if (this.messenger !== null && this.endpoint === 'client') {

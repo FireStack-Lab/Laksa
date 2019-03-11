@@ -1,4 +1,39 @@
+/**
+ * @class Property
+ * @description generate a property for class
+ * @param  {object}  options - property options
+ * @param {Messenger} messenger - Messsenger instance
+ * @return {Property}
+ */
 class Property {
+  /**
+   * @memberof Property
+   * @type {String}
+   * @description property name
+   */
+  name
+
+  /**
+   * @memberof Property
+   * @type {Function}
+   * @description property getter
+   */
+  getter
+
+  /**
+   * @memberof Property
+   * @type {Function}
+   * @description property setter
+   */
+  setter
+
+  /**
+   * @memberof Property
+   * @type {Messenger}
+   * @description Messenger instance
+   */
+  messenger
+
   constructor(options, messenger) {
     const { name, getter, setter } = options
     this.name = name
@@ -8,18 +43,20 @@ class Property {
   }
 
   /**
-   * @function {setMessenger}
-   * @param  {Messenger} msg {messenger instance}
-   * @return {Messenger} {messenger setter}
+   * @function setMessenger
+   * @memberof Property.prototype
+   * @description messenger setter
+   * @param  {Messenger} msg - messenger instance
    */
   setMessenger(msg) {
     this.messenger = msg
   }
 
   /**
-   * @function {assignToObject}
-   * @param  {object} object {method object}
-   * @return {object} {assiged to some object}
+   * @function assignToObject
+   * @memberof Property.prototype
+   * @param  {Object} object - method object
+   * @description assign property to class
    */
   assignToObject(object) {
     const zilName = this.name
@@ -37,8 +74,9 @@ class Property {
   }
 
   /**
-   * @function {propertyBuilder}
-   * @return {any} {property built}
+   * @function propertyBuilder
+   * @memberof Property.prototype
+   * @return {any} - property call
    */
   propertyBuilder() {
     if (this.messenger !== undefined) {
