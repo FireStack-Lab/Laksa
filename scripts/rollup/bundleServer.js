@@ -1,6 +1,7 @@
 import babel from 'rollup-plugin-babel'
 import json from 'rollup-plugin-json'
 import license from 'rollup-plugin-license'
+import vuedoc from 'vuepress-jsdoc/cmds/index'
 import packages from '../packages'
 import serverConfig from '../babel/babel.server.config.js'
 import { getKeys } from './getDependencies'
@@ -9,6 +10,12 @@ function bundles() {
   return packages.map(p => {
     const external = getKeys(p)
     const externalSetting = getKeys(p).length > 0 ? { external } : {}
+    vuedoc.generate({
+      source: `packages/${p}/src`,
+      dist: `packages/${p}`,
+      folder: 'doc',
+      readme: `packages/${p}/README.md`
+    })
     const normal = {
       input: `packages/${p}/src/index.js`,
       output: {

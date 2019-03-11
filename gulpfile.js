@@ -31,3 +31,10 @@ task('cleanServer', async () => {
     return del.sync([pathToLib])
   })
 })
+
+task('cleanDocs', async () => {
+  await packages.map(p => {
+    const pathToLib = `packages/${p}/doc`
+    return del.sync([pathToLib])
+  })
+})
