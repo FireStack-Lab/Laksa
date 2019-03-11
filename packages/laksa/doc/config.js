@@ -1,0 +1,1 @@
+exports.fileTree=[];exports.sidebarTree = (title = 'Mainpage') => ({"/doc/":[{"collapsable":false,"children":[["",""+title+""]]}]});

@@ -1,9 +1,11 @@
 import { RPCMethod } from './rpc'
 
-export default [
+const methodArray = [
   /**
-   * isConnected
-   * @params {}
+   * @function isConnected
+   * @description connection status from RPC
+   * @extends BlockChain.prototype
+   * @return {Boolean} - connection status
    */
   {
     name: 'isConnected',
@@ -13,8 +15,12 @@ export default [
   },
 
   /**
-   * getTransaction
-   * @params {txHash:Hash}
+   * @function getTransaction
+   * @description getTransaction from RPC
+   * @param {Object} paramObject
+   * @param {String} paramObject.txHash - Transaction ID
+   * @extends BlockChain.prototype
+   * @return {Object} - RPC Response Object
    */
   {
     name: 'getTransaction',
@@ -24,9 +30,20 @@ export default [
     },
     isSendJson: false
   },
+
   /**
-   * createTransaction
-   * @params {txHash:Hash}
+   * @function createTransaction
+   * @description getTransaction from RPC
+   * @param {Object} txn - Transaction object
+   * @param {String} txn.toAddr - Address
+   * @param {String} txn.pubKey - Public key
+   * @param {BN} txn.amount - Amount to send
+   * @param {BN} txn.gasPrice - GasPrice to send
+   * @param {Long} txn.gasLimit - GasLimit to send
+   * @param {String} txn.signature - Signature string to send
+   * @param {Boolean} txn.priority - Set priority to send to shards
+   * @extends BlockChain.prototype
+   * @return {Object} - RPC Response Object
    */
   {
     name: 'createTransaction',
@@ -48,8 +65,12 @@ export default [
     isSendJson: true
   },
   /**
-   * getDsBlock
-   * @params {blockNumber:Number}
+   * @function getDsBlock
+   * @description getDsBlock info from RPC
+   * @param {Object} paramObject
+   * @param {String} paramObject.blockNumber - blockNumber string
+   * @extends BlockChain.prototype
+   * @return {Object} - RPC Response Object
    */
   {
     name: 'getDsBlock',
@@ -63,8 +84,12 @@ export default [
     isSendJson: false
   },
   /**
-   * getTxBlock
-   * @params {blockNumber:Number}
+   * @function getTxBlock
+   * @description getTxBlock info from RPC
+   * @param {Object} paramObject
+   * @param {String} paramObject.blockNumber - blockNumber string
+   * @extends BlockChain.prototype
+   * @return {Object} - RPC Response Object
    */
   {
     name: 'getTxBlock',
@@ -78,8 +103,10 @@ export default [
     isSendJson: false
   },
   /**
-   * getLatestDsBlock
-   * @params {}
+   * @function getLatestDsBlock
+   * @description get latest DsBlock from RPC
+   * @extends BlockChain.prototype
+   * @return {Object} - RPC Response Object
    */
   {
     name: 'getLatestDsBlock',
@@ -88,8 +115,10 @@ export default [
     isSendJson: false
   },
   /**
-   * getLatestTxBlock
-   * @params {}
+   * @function getLatestTxBlock
+   * @description get latest TxBlock from RPC
+   * @extends BlockChain.prototype
+   * @return {Object} - RPC Response Object
    */
   {
     name: 'getLatestTxBlock',
@@ -98,8 +127,12 @@ export default [
     isSendJson: false
   },
   /**
-   * getBalance
-   * @params {address:Address}
+   * @function getBalance
+   * @description get balance of dedicated address
+   * @param {Object} paramObject
+   * @param {String} paramObject.address - address string
+   * @extends BlockChain.prototype
+   * @return {Object} - RPC Response Object
    */
   {
     name: 'getBalance',
@@ -110,8 +143,10 @@ export default [
     isSendJson: false
   },
   /**
-   * getGasPrice
-   * @params {}
+   * @function getGasPrice
+   * @description get gasprice
+   * @extends BlockChain.prototype
+   * @return {Object} - RPC Response Object
    */
   {
     name: 'getGasPrice',
@@ -120,8 +155,12 @@ export default [
     isSendJson: false
   },
   /**
-   * getSmartContractState
-   * @params {address:Address}
+   * @function getSmartContractState
+   * @description get smart contract state of dedicated contract address
+   * @param {Object} paramObject
+   * @param {String} paramObject.address - smart contract address string
+   * @extends BlockChain.prototype
+   * @return {Object} - RPC Response Object
    */
   {
     name: 'getSmartContractState',
@@ -130,8 +169,12 @@ export default [
     isSendJson: false
   },
   /**
-   * getSmartContractCode
-   * @params {address:Address}
+   * @function getSmartContractCode
+   * @description get smart contract code of dedicated contract address
+   * @param {Object} paramObject
+   * @param {String} paramObject.address - smart contract address string
+   * @extends BlockChain.prototype
+   * @return {Object} - RPC Response Object
    */
   {
     name: 'getSmartContractCode',
@@ -140,8 +183,12 @@ export default [
     isSendJson: false
   },
   /**
-   * getSmartContractInit
-   * @params:{address:Address}
+   * @function getSmartContractInit
+   * @description get smart contract init params of dedicated contract address
+   * @param {Object} paramObject
+   * @param {String} paramObject.address - smart contract address string
+   * @extends BlockChain.prototype
+   * @return {Object} - RPC Response Object
    */
   {
     name: 'getSmartContractInit',
@@ -150,8 +197,12 @@ export default [
     isSendJson: false
   },
   /**
-   * getSmartContracts
-   * @params {address:Address}
+   * @function getSmartContracts
+   * @description get smart contracts deployed by account address
+   * @param {Object} paramObject
+   * @param {String} paramObject.address - smart contract address string
+   * @extends BlockChain.prototype
+   * @return {Object} - RPC Response Object
    */
   {
     name: 'getSmartContracts',
@@ -160,8 +211,12 @@ export default [
     isSendJson: false
   },
   /**
-   * getTransactionHistory
-   * @params {address:Address}
+   * @function getTransactionHistory
+   * @description get transaction history of dedicated account address
+   * @param {Object} paramObject
+   * @param {String} paramObject.address - smart contract address string
+   * @extends BlockChain.prototype
+   * @return {Object} - RPC Response Object
    */
   {
     name: 'getTransactionHistory',
@@ -171,8 +226,10 @@ export default [
   },
 
   /**
-   * getRecentTransactions
-   * @params {}
+   * @function getTransactionHistory
+   * @description get recent transactions from RPC Method
+   * @extends BlockChain.prototype
+   * @return {Object} - RPC Response Object
    */
   {
     name: 'getRecentTransactions',
@@ -181,8 +238,12 @@ export default [
     isSendJson: false
   },
   /**
-   * getBlockTransactionCount
-   * @params {blockNumber:Number}
+   * @function getBlockTransactionCount
+   * @description get transaction count of dedicated blockNumber
+   * @param {Object} paramObject
+   * @param {String} paramObject.blockNumber - blockNumber string
+   * @extends BlockChain.prototype
+   * @return {Object} - RPC Response Object
    */
   {
     name: 'getBlockTransactionCount',
@@ -194,55 +255,12 @@ export default [
     isSendJson: false
   },
   /**
-   * getCode
-   * @params {address:Address}
-   */
-  {
-    name: 'getCode',
-    call: RPCMethod.GetCode,
-    params: { address: ['isAddress', 'required'] },
-    isSendJson: false
-  },
-  /**
-   * createMessage
-   * @params {to:Address,from:Address,gas:Number,gasPrice:Number}
-   */
-  {
-    name: 'createMessage',
-    call: RPCMethod.CreateMessage,
-    params: {
-      to: ['isAddress', 'required'],
-      from: ['isAddress', 'optional'],
-      gas: ['isNumber', 'optional'],
-      gasPrice: ['isNumber', 'optional']
-    },
-    isSendJson: true
-  },
-  /**
-     * getGasEstimate
-     * @params {
-       to: Address,
-       from: Address,
-       gas: Number,
-       gasPrice: Number,
-       gasLimit: Number
-     }
-     */
-  {
-    name: 'getGasEstimate',
-    call: RPCMethod.GetGasEstimate,
-    params: {
-      to: ['isAddress', 'optional'],
-      from: ['isAddress', 'optional'],
-      gas: ['isNumber', 'optional'],
-      gasPrice: ['isNumber', 'optional'],
-      gasLimit: ['isNumber', 'optional']
-    },
-    isSendJson: true
-  },
-  /**
-   * getTransactionReceipt
-   * @params {txHash:Hash}
+   * @function getTransactionReceipt
+   * @description get transaction receipt of dedicated transaction
+   * @param {Object} paramObject
+   * @param {String} paramObject.txHash - transaction ID string
+   * @extends BlockChain.prototype
+   * @return {Object} - RPC Response Object
    */
   {
     name: 'getTransactionReceipt',
@@ -252,20 +270,14 @@ export default [
     },
     isSendJson: false
   },
+
   /**
-   * compileCode
-   * @params {code:String}
-   */
-  {
-    name: 'compileCode',
-    call: RPCMethod.CompileCode,
-    params: {
-      code: ['isString', 'required']
-    },
-    isSendJson: true
-  },
-  /**
-   * checkCode
+   * @function checkCode
+   * @description check code from scilla runner endpoint
+   * @param {Object} paramObject
+   * @param {String} paramObject.code - code string
+   * @extends BlockChain.prototype
+   * @return {Object} - RPC Response Object
    */
   {
     name: 'checkCode',
@@ -275,7 +287,12 @@ export default [
     endpoint: '/contract/check'
   },
   /**
-   * checkCodeTest
+   * @function checkCodeTest
+   * @description call code from scilla runner endpoint
+   * @param {Object} paramObject
+   * @param {String} paramObject.code - code string
+   * @extends BlockChain.prototype
+   * @return {Object} - RPC Response Object
    */
   {
     name: 'checkCodeTest',
@@ -285,8 +302,10 @@ export default [
     endpoint: '/contract/call'
   },
   /**
-   * getBlockchainInfo
-   * @params {}
+   * @function getBlockchainInfo
+   * @description get blockchain info from RPC Methods
+   * @extends BlockChain.prototype
+   * @return {Object} - RPC Response Object
    */
   {
     name: 'getBlockchainInfo',
@@ -295,8 +314,12 @@ export default [
     isSendJson: false
   },
   /**
-   * getDSBlockListing
-   * @params {page:Number}
+   * @function getDSBlockListing
+   * @description get Ds Block list
+   * @param {Object} paramObject
+   * @param {Number} paramObject.page - page number
+   * @extends BlockChain.prototype
+   * @return {Object} - RPC Response Object
    */
   {
     name: 'getDSBlockListing',
@@ -307,8 +330,12 @@ export default [
     isSendJson: false
   },
   /**
-   * getTxBlockListing
-   * @params {page:Number}
+   * @function getTxBlockListing
+   * @description get Tx Block list
+   * @param {Object} paramObject
+   * @param {Number} paramObject.page - page number
+   * @extends BlockChain.prototype
+   * @return {Object} - RPC Response Object
    */
   {
     name: 'getTxBlockListing',
@@ -319,8 +346,10 @@ export default [
     isSendJson: false
   },
   /**
-   * getNumTxnsTxEpoch
-   * @params {}
+   * @function getNumTxnsTxEpoch
+   * @description get transaction epoch transaction numbers
+   * @extends BlockChain.prototype
+   * @return {Object} - RPC Response Object
    */
   {
     name: 'getNumTxnsTxEpoch',
@@ -329,8 +358,10 @@ export default [
     isSendJson: false
   },
   /**
-   * getNumTxnsDSEpoch
-   * @params {}
+   * @function getNumTxnsTxEpoch
+   * @description get DS epoch transaction numbers
+   * @extends BlockChain.prototype
+   * @return {Object} - RPC Response Object
    */
   {
     name: 'getNumTxnsDSEpoch',
@@ -339,8 +370,10 @@ export default [
     isSendJson: false
   },
   /**
-   * getTransactionListing
-   * @params {}
+   * @function getTransactionListing
+   * @description get transaction list
+   * @extends BlockChain.prototype
+   * @return {Object} - RPC Response Object
    */
   {
     name: 'getTransactionListing',
@@ -349,8 +382,10 @@ export default [
     isSendJson: false
   },
   /**
-   * getMinimumGasPrice
-   * @params {}
+   * @function getMinimumGasPrice
+   * @description get minimum gas price
+   * @extends BlockChain.prototype
+   * @return {Object} - RPC Response Object
    */
   {
     name: 'getMinimumGasPrice',
@@ -359,8 +394,10 @@ export default [
     isSendJson: false
   },
   /**
-   * getPrevDifficulty
-   * @params {}
+   * @function getPrevDifficulty
+   * @description get previous difficuty
+   * @extends BlockChain.prototype
+   * @return {Object} - RPC Response Object
    */
   {
     name: 'getPrevDifficulty',
@@ -369,8 +406,10 @@ export default [
     isSendJson: false
   },
   /**
-   * getPrevDSDifficulty
-   * @params {}
+   * @function getPrevDSDifficulty
+   * @description get previous Ds difficulty
+   * @extends BlockChain.prototype
+   * @return {Object} - RPC Response Object
    */
   {
     name: 'getPrevDSDifficulty',
@@ -379,8 +418,12 @@ export default [
     isSendJson: false
   },
   /**
-   * getPrevDSDifficulty
-   * @params {txBlock:number}
+   * @function getTransactionsForTxBlock
+   * @description get transactions for dedicated TxBlock
+   * @param {Object} paramObject
+   * @param {Number} paramObject.txBlock - block number
+   * @extends BlockChain.prototype
+   * @return {Object} - RPC Response Object
    */
   {
     name: 'getTransactionsForTxBlock',
@@ -391,8 +434,10 @@ export default [
     isSendJson: false
   },
   /**
-   * getShardingStructure
-   * @params {txBlock:number}
+   * @function getShardingStructure
+   * @description get sharding structure from RPC method
+   * @extends BlockChain.prototype
+   * @return {Object} - RPC Response Object
    */
   {
     name: 'getShardingStructure',
@@ -401,3 +446,5 @@ export default [
     isSendJson: false
   }
 ]
+
+export default methodArray

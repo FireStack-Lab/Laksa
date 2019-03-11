@@ -2,6 +2,12 @@ import {
   isObject, strip0x, BN, Long
 } from 'laksa-utils'
 
+/**
+ * @function toTxParams
+ * @description Map RPC response to TxParams
+ * @param  {Object} response - Response received from RPC method
+ * @return {Object} - to Transaction params object
+ */
 export function toTxParams(response) {
   const {
     ID,
