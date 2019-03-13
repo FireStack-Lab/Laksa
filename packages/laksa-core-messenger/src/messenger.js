@@ -32,19 +32,53 @@ const defaultConfig = {
   }
 }
 
+/**
+ * @class Messenger
+ * @description Messenger instance
+ * @param  {HttpProvider} provider HttpProvider
+ * @param  {Object}  config config object
+ * @return {Messenger} Messenger instance
+ */
 class Messenger {
   constructor(provider, config) {
+    /**
+     * @var {Provider} provider
+     * @memberof Messenger.prototype
+     * @description Provider instance
+     */
     this.provider = provider
+    /**
+     * @var {Provider} scillaProvider
+     * @memberof Messenger.prototype
+     * @description scilla Provider instance
+     */
     this.scillaProvider = provider
+    /**
+     * @var {Object} config
+     * @memberof Messenger.prototype
+     * @description Messenger config
+     */
     this.config = config || defaultConfig
+    /**
+     * @var {Number} Network_ID
+     * @memberof Messenger.prototype
+     * @description Network ID for current provider
+     */
     this.Network_ID = this.setNetworkID(this.config.Default.Network_ID)
+    /**
+     * @var {JsonRpc} JsonRpc
+     * @memberof Messenger.prototype
+     * @description JsonRpc instance
+     */
     this.JsonRpc = new JsonRpc()
   }
 
   /**
-   * @function {send}
-   * @param  {object} data {data object with method and params}
-   * @return {object|Error} {result from provider}
+   * @function send
+   * @memberof Messenger.prototype
+   * @param  {String} method - RPC method
+   * @param  {Object} params - RPC method params
+   * @return {Object} RPC result
    */
   send = async (method, params) => {
     this.providerCheck()
@@ -59,10 +93,11 @@ class Messenger {
   }
 
   /**
-   * @function {sendServer}
-   * @param  {string} endpoint {endpoint that point to server}
-   * @param  {object} data     {data object with method and params}
-   * @return {object|Error} {result from provider}
+   * @function sendServer
+   * @description send data to scilla runner endpoint
+   * @param  {String} endpoint - endpoint that point to server
+   * @param  {Object} data     - data object with method and params
+   * @return {Object} RPC result
    */
   sendServer = async (endpoint, data) => {
     this.providerCheck()
@@ -75,26 +110,30 @@ class Messenger {
   }
 
   /**
-   * @function {setProvider}
-   * @param  {Provider} provider {provider instance}
-   * @return {Provider} {provider setter}
+   * @function setProvider
+   * @memberof Messenger
+   * @description provider setter
+   * @param  {Provider} provider - provider instance
    */
   setProvider(provider) {
     this.provider = provider
   }
 
   /**
-   * @function {setScillaProvider}
-   * @param  {Provider} provider {provider instance}
-   * @return {Provider} {provider setter}
+   * @function setScillaProvider
+   * @memberof Messenger
+   * @description scilla provider setter
+   * @param  {Provider} provider - provider instance
    */
   setScillaProvider(provider) {
     this.scillaProvider = provider
   }
 
   /**
-   * @function {providerCheck}
-   * @return {Error|null} {provider validator}
+   * @function providerCheck
+   * @memberof Messenger
+   * @description provider checker
+   * @return {Error|null} provider validator
    */
   providerCheck() {
     if (!this.provider) {
@@ -103,14 +142,34 @@ class Messenger {
     }
   }
 
+  /**
+   * @function setReqMiddleware
+   * @description set request middleware
+   * @memberof Messenger
+   * @param  {any} middleware - middle ware for req
+   * @param  {String} method  - method name
+   */
   setReqMiddleware(middleware, method = '*') {
     return this.provider.middleware.request.use(middleware, method)
   }
 
+  /**
+   * @function setResMiddleware
+   * @description set response middleware
+   * @memberof Messenger
+   * @param  {any} middleware - middle ware for req
+   * @param  {String} method  - method name
+   */
   setResMiddleware(middleware, method = '*') {
     return this.provider.middleware.response.use(middleware, method)
   }
 
+  /**
+   * @function {function name}
+   * @memberof Messenger
+   * @param  {Number} version   - version number
+   * @param  {String} networkId - network id
+   */
   setTransactionVersion(version, networkId) {
     let chainID = 1
     switch (networkId) {
@@ -145,6 +204,11 @@ class Messenger {
     return pack(chainID, version)
   }
 
+  /**
+   * @function setNetworkID
+   * @memberof Messenger
+   * @param  {String} id network id string
+   */
   setNetworkID(id) {
     this.Network_ID = id
   }

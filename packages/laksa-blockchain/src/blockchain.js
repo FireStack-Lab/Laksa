@@ -10,7 +10,7 @@ import { toTxParams } from './util'
  * @function mapObjectToMethods
  * @description Map Method objects to Method instance
  * @param  {BlockChain} main  - assign to Zil class
- * @return {Boolean} - status
+ * @return {Boolean} status
  */
 const mapObjectToMethods = main => {
   methodObjects.forEach(data => {
@@ -23,7 +23,7 @@ const mapObjectToMethods = main => {
  * @function mapPropertyToObjects
  * @description Map Property objects to Property instance
  * @param  {BlockChain} main - assign to Zil class
- * @return {Boolean} - status
+ * @return {Boolean} status
  */
 const mapPropertyToObjects = main => {
   propertyObjects.forEach(data => {
@@ -81,7 +81,7 @@ class BlockChain extends Core {
    * @function extendMethod
    * @memberof BlockChain.prototype
    * @param  {Object} object - method object
-   * @return {Boolean} - status
+   * @return {Boolean} status
    */
   extendMethod = object => {
     if (typeof object !== 'object') {
@@ -96,7 +96,7 @@ class BlockChain extends Core {
    * @function extendProperty
    * @memberof BlockChain.prototype
    * @param  {Object} object - method object
-   * @return {Boolean} - status
+   * @return {Boolean} status
    */
   extendProperty = object => {
     if (typeof object !== 'object') {
@@ -113,7 +113,7 @@ class BlockChain extends Core {
    * @param  {Transaction} tx       - Transaction to send
    * @param  {?Account} account  - Account for signing if not use Wallet's signer
    * @param  {?String} password - Password of Account if it is encrypted
-   * @return {any} - confirmation process
+   * @return {any} confirmation process
    */
   @assertObject({
     toAddr: ['isAddress', 'required'],
@@ -146,7 +146,7 @@ class BlockChain extends Core {
    * @function confirmTransaction
    * @memberof BlockChain
    * @param  {String} txHash       - Transaction ID
-   * @return {Transaction} - Transaction instance with confirm/reject state
+   * @return {Transaction} Transaction instance with confirm/reject state
    */
   @assertObject({ txHash: ['isHash', 'required'] })
   async _confirmTransaction({ txHash }) {

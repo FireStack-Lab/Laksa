@@ -59,7 +59,7 @@
    * @function generateAccountObject
    * @description generate Account object
    * @param  {String} privateKey - privateKey String
-   * @return {Object} - Account object
+   * @return {Object} Account object
    */
 
   function generateAccountObject(privateKey) {
@@ -78,7 +78,7 @@
   /**
    * @function createAccount
    * @description create an account
-   * @return {Object} - account object
+   * @return {Object} account object
    */
 
 
@@ -90,7 +90,7 @@
    * @function importAccount
    * @description import privatekey and generate an account object
    * @param  {String} privateKey - privatekey string
-   * @return {Object} - account object
+   * @return {Object} account object
    */
 
   const importAccount = privateKey => {
@@ -102,7 +102,7 @@
    * @param  {Account} accountObject - account instance
    * @param  {String} password      - password string
    * @param  {Object} options       - encryption options
-   * @return {Object} - encrypted account object
+   * @return {Object} encrypted account object
    */
 
   const encryptAccount = async (accountObject, password, options = {
@@ -129,7 +129,7 @@
    * @description decrypt an account object
    * @param  {Account} accountObject - encrypted account object
    * @param  {String} password      -password string
-   * @return {Object} - decrypted account object
+   * @return {Object} decrypted account object
    */
 
   const decryptAccount = async (accountObject, password) => {
@@ -156,7 +156,7 @@
    * @description sign a transaction providing privatekey and transaction object
    * @param  {String} privateKey        - privatekey String
    * @param  {Transaction} txnDetails  - transaction object
-   * @return {Transaction} - signed transaction
+   * @return {Transaction} signed transaction
    */
 
   const signTransaction = (privateKey, txnDetails) => {
@@ -186,9 +186,9 @@
   };
 
   /**
-   * @class
+   * @class Account
    * @param  {Messenger}  messenger - messsenger instance
-   * @return {Account} {description}
+   * @return {Account} Account instance
    */
 
   class Account extends laksaShared.Core {
@@ -235,7 +235,7 @@
      * @function createAccount
      * @description create new Account instance
      * @memberof Account
-     * @return {Account} - create a new Account
+     * @return {Account} create a new Account
      */
 
 
@@ -256,7 +256,7 @@
      * @description import private key string and return an Account instance
      * @memberof Account
      * @param  {String} privateKey - privatekey string
-     * @return {Account} - create a new Account
+     * @return {Account} create a new Account
      */
 
 
@@ -279,7 +279,7 @@
      * @description encrypt an account providing password and encrypt options
      * @param  {String} password - password string
      * @param  {Object} options  - options object for encryption
-     * @return {Promise<Account>} - encrypt an account
+     * @return {Promise<Account>} encrypt an account
      */
 
 
@@ -295,7 +295,7 @@
      * @memberof Account
      * @description decrypt an account providing password
      * @param  {String} password - password string
-     * @return {Promise<Object>} - account object
+     * @return {Promise<Object>} account object
      */
 
 
@@ -311,7 +311,7 @@
      * @description encrypt an account and return as jsonString
      * @param  {String} password - password string
      * @param  {Object} options  - encryption options
-     * @return {Promise<String>} - encrypted jsonString
+     * @return {Promise<String>} encrypted jsonString
      */
 
 
@@ -357,7 +357,7 @@
      * @description Decrypt a keystore jsonString and generate an account.
      * @param  {String} keyStore - keystore jsonString
      * @param  {String} password - password string
-     * @return {Promise<Account>} - Account
+     * @return {Promise<Account>} Account
      */
 
 
@@ -375,7 +375,7 @@
      * @description  sign transaction object with password
      * @param  {Transaction} txnObj - transaction object
      * @param  {String} password  - password string
-     * @return {Promise<Object>} - signed transaction object
+     * @return {Promise<Object>} signed transaction object
      */
 
 
@@ -404,7 +404,7 @@
      * @function getBalance
      * @memberof Account
      * @description  get balance of current Account
-     * @return {Promise<Object>} - signed transaction object
+     * @return {Promise<Object>} signed transaction object
      */
 
 
@@ -432,7 +432,7 @@
      * @function updateBalance
      * @memberof Account
      * @description  update balance and nonce of current account
-     * @return {Promise<Account>} - return current Account instance
+     * @return {Promise<Account>} return current Account instance
      */
 
 

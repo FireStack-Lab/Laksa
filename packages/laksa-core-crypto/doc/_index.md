@@ -6,13 +6,15 @@ title: _index
 
 <a name="sign"></a>
 
-## sign ⇒ <code>string</code>
-sign
+## sign(msg, privateKey, pubKey) ⇒ <code>string</code>
+sign method using prviteKey and pubKey
 
-**Kind**: global constant  
+**Kind**: global function  
 **Returns**: <code>string</code> - the signature  
 
 | Param | Type | Description |
 | --- | --- | --- |
-| hash | <code>string</code> | hex-encoded hash of the data to be signed |
+| msg | <code>Buffer</code> | message buffer |
+| privateKey | <code>String</code> | private key string |
+| pubKey | <code>String</code> | public key string |
 

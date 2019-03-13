@@ -97,7 +97,7 @@ messenger setter
 validate args received
 
 **Kind**: static method of [<code>Method</code>](#Method)  
-**Returns**: <code>Boolean</code> \| <code>Error</code> - - validate result  
+**Returns**: <code>Boolean</code> \| <code>Error</code> - validate result  
 
 | Param | Type | Description |
 | --- | --- | --- |
@@ -111,7 +111,7 @@ validate args received
 extract params sent to Method
 
 **Kind**: static method of [<code>Method</code>](#Method)  
-**Returns**: <code>Array.&lt;Object&gt;</code> - - extracted params  
+**Returns**: <code>Array.&lt;Object&gt;</code> - extracted params  
 
 | Param | Type | Description |
 | --- | --- | --- |
@@ -123,7 +123,7 @@ extract params sent to Method
 extract params sent to Method
 
 **Kind**: static method of [<code>Method</code>](#Method)  
-**Returns**: <code>any</code> - - value that transformed  
+**Returns**: <code>any</code> - value that transformed  
 
 | Param | Type | Description |
 | --- | --- | --- |
@@ -136,7 +136,7 @@ extract params sent to Method
 assign method to class object
 
 **Kind**: static method of [<code>Method</code>](#Method)  
-**Returns**: <code>Object</code> - - new object  
+**Returns**: <code>Object</code> - new object  
 
 | Param | Type | Description |
 | --- | --- | --- |
@@ -148,4 +148,4 @@ assign method to class object
 build method when call
 
 **Kind**: static method of [<code>Method</code>](#Method)  
-**Returns**: <code>any</code> - - call method  
+**Returns**: <code>any</code> - call method  

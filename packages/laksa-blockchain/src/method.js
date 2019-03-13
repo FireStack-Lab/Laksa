@@ -90,7 +90,7 @@ class Method {
    * @param  {Object} args         - args objects
    * @param  {Object} requiredArgs - requred args object
    * @param  {Object} optionalArgs - optional args object
-   * @return {Boolean|Error} - validate result
+   * @return {Boolean|Error} validate result
    */
   validateArgs(args, requiredArgs, optionalArgs) {
     const reArgs = requiredArgs === undefined ? {} : requiredArgs
@@ -106,7 +106,7 @@ class Method {
    * @memberof Method
    * @description extract params sent to Method
    * @param  {Object} args - args object
-   * @return {Array<Object>} - extracted params
+   * @return {Array<Object>} extracted params
    */
   extractParams(args) {
     const paramsObject = isObject(args) ? args : {}
@@ -134,7 +134,7 @@ class Method {
    * @description extract params sent to Method
    * @param  {any} value - value that waited to transform
    * @param  {String} key   - key to transform
-   * @return {any}  - value that transformed
+   * @return {any} value that transformed
    */
   transformedBeforeSend(value, key) {
     const transformMethod = this.transformer[key]
@@ -148,7 +148,7 @@ class Method {
    * @memberof Method
    * @description assign method to class object
    * @param  {Object} object - method object
-   * @return {Object} - new object
+   * @return {Object} new object
    */
   assignToObject(object) {
     const newObject = {}
@@ -160,7 +160,7 @@ class Method {
    * @function methodBuilder
    * @memberof Method
    * @description build method when call
-   * @return {any} - call method
+   * @return {any} call method
    */
   methodBuilder() {
     if (this.messenger !== null && this.endpoint === 'client') {

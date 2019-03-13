@@ -1,5 +1,9 @@
 import { validate } from './validate'
 
+/**
+ * @var {Object} ContractStatus
+ * @description  immutable contract status
+ */
 export const ContractStatus = Object.freeze({
   INITIALISED: 'initialised',
   TESTED: 'tested',
@@ -12,9 +16,10 @@ export const ContractStatus = Object.freeze({
 
 /**
  * @function setParamValues
- * @param  {Array<object>} rawParams {init params get from ABI}
- * @param  {Array<object>} newValues {init params set for ABI}
- * @return {Array<object>} {new array of params objects}
+ * @description set param values
+ * @param  {Array<Object>} rawParams - init params get from ABI
+ * @param  {Array<Object>} newValues - init params set for ABI
+ * @return {Array<objObjectect>} new array of params objects
  */
 export const setParamValues = (rawParams, newValues) => {
   const newParams = []

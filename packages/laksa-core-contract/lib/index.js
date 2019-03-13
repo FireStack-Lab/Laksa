@@ -48,12 +48,22 @@ var _inherits = _interopDefault(require('@babel/runtime/helpers/inherits'));
 var _defineProperty = _interopDefault(require('@babel/runtime/helpers/defineProperty'));
 var laksaCoreCrypto = require('laksa-core-crypto');
 
+/**
+ * @var {Object<String>} Matchers
+ * @description Matchers object with multiple patterns
+ */
+
 var Matchers = {
   ByStrX: /^ByStr[0-9]+$/,
   String: /^String$/,
   Uint: /^Uint(32|64|128|256)$/,
   Int: /^Int(32|64|128|256)$/,
   BNum: /^BNum$/
+  /**
+   * @var {Array<Object>} validators
+   * @description valitador objects
+   */
+
 };
 var validators = [{
   type: 'ByStrX',
@@ -111,11 +121,27 @@ var validators = [{
     return String(value);
   }
 }];
+/**
+ * @function validate
+ * @description validate param type and it's value
+ * @param  {String} type  - param type
+ * @param  {any} value - param value to validate
+ * @return {Boolean} validate result
+ */
+
 var validate = function validate(type, value) {
   return validators.some(function (val) {
     return val.match(type) && val.validatorFn(value);
   });
 };
+/**
+ * @function transform
+ * @description transform a value to it's validator format
+ * @param  {String} type  - param type
+ * @param  {any} value - param value to validate
+ * @return {any} transform result
+ */
+
 var transform = function transform(type, value) {
   if (validate(type, value)) {
     var found = validators.find(function (d) {
@@ -308,6 +334,11 @@ function () {
   return ABI;
 }();
 
+/**
+ * @var {Object} ContractStatus
+ * @description  immutable contract status
+ */
+
 var ContractStatus = Object.freeze({
   INITIALISED: 'initialised',
   TESTED: 'tested',
@@ -319,9 +350,10 @@ var ContractStatus = Object.freeze({
 });
 /**
  * @function setParamValues
- * @param  {Array<object>} rawParams {init params get from ABI}
- * @param  {Array<object>} newValues {init params set for ABI}
- * @return {Array<object>} {new array of params objects}
+ * @description set param values
+ * @param  {Array<Object>} rawParams - init params get from ABI
+ * @param  {Array<Object>} newValues - init params set for ABI
+ * @return {Array<objObjectect>} new array of params objects
  */
 
 var setParamValues = function setParamValues(rawParams, newValues) {
@@ -388,55 +420,55 @@ function () {
 
     /**
      * @var {String} code
-     * @memberof Contract
+     * @memberof Contract.prototype
      * @description code
      */
     this.code = params.code || '';
     /**
      * @var {Array<Object>} init
-     * @memberof Contract
+     * @memberof Contract.prototype
      * @description init
      */
 
     this.init = params.init || [];
     /**
      * @var {Number} version
-     * @memberof Contract
+     * @memberof Contract.prototype
      * @description version
      */
 
     this.version = params.version || 0;
     /**
      * @var {String} ContractAddress
-     * @memberof Contract
+     * @memberof Contract.prototype
      * @description ContractAddress
      */
 
     this.ContractAddress = params.ContractAddress || undefined;
     /**
      * @var {Messenger} messenger
-     * @memberof Contract
+     * @memberof Contract.prototype
      * @description messenger
      */
 
     this.messenger = factory.messenger;
     /**
      * @var {Wallet} signer
-     * @memberof Contract
+     * @memberof Contract.prototype
      * @description signer
      */
 
     this.signer = factory.signer;
     /**
      * @var {String} status
-     * @memberof Contract
+     * @memberof Contract.prototype
      * @description status
      */
 
     this.status = status;
     /**
      * @var {Transaction|Object} transaction
-     * @memberof Contract
+     * @memberof Contract.prototype
      * @description transaction
      */
 
@@ -507,7 +539,7 @@ function () {
      * @function deployPayload
      * @description return deploy payload
      * @memberof Contract
-     * @return {Object} - Deploy payload
+     * @return {Object} Deploy payload
      */
 
   }, {
@@ -517,7 +549,7 @@ function () {
      * @function setStatus
      * @description set Contract status
      * @memberof Contract
-     * @param  {String} status contract status during all life-time
+     * @param  {String} status - contract status during all life-time
      */
     value: function setStatus(status) {
       this.status = status;
@@ -526,9 +558,9 @@ function () {
      * @function setInitParamsValues
      * @memberof Contract
      * @description set init params value and return Contract
-     * @param  {Array<Object>} initParams    init params get from ABI
-     * @param  {Array<Object>} arrayOfValues init params set for ABI
-     * @return {Contract} Contract instance
+     * @param  {Array<Object>} initParams    - init params get from ABI
+     * @param  {Array<Object>} arrayOfValues - init params set for ABI
+     * @return {Contract} - Contract instance
      */
 
   }, {
@@ -873,7 +905,7 @@ function () {
      * @function getState
      * @memberof Contract
      * @description get smart contract state
-     * @return {Object} RPC response
+     * @return {Object} - RPC response
      */
 
   }, {
@@ -990,7 +1022,7 @@ function () {
      * @function callPayload
      * @description return deploy payload
      * @memberof Contract
-     * @return {Object} - call payload
+     * @return {Object} call payload
      */
 
   }, {
@@ -1016,6 +1048,11 @@ var TestScilla = (_dec$1 = laksaShared.assertObject({
 function (_Contract) {
   _inherits(TestScilla, _Contract);
 
+  /**
+   * @var {Array<Object>}blockchain
+   * @memberof TestScilla.prototype
+   * @description Create a Contract
+   */
   function TestScilla() {
     var _getPrototypeOf2;
 
@@ -1034,9 +1071,11 @@ function (_Contract) {
     return _this;
   }
   /**
-   * @function {testCall}
-   * @param  {Int} gasLimit {gasLimit for test call to scilla-runner}
-   * @return {Contract} {raw Contract object}
+   * @function testCall
+   * @memberof TestScilla
+   * @description a Test Contract instance
+   * @param  {BN} gasLimit - gasLimit for test call to scilla-runner
+   * @return {TestScilla} raw Contract object
    */
 
 
@@ -1091,12 +1130,14 @@ function (_Contract) {
       }
 
       return testCall;
-    }() //-------------------------------
-
+    }()
     /**
-     * @function {getABI}
-     * @param  {string} { code {scilla code string}
-     * @return {ABI} {ABI object}
+     * @function getABI
+     * @memberof TestScilla
+     * @description get ABI from scilla runner
+     * @param  {Object} params
+     * @param  {String} params.code - code string
+     * @return {Object} RPC result
      */
 
   }, {
@@ -1151,9 +1192,11 @@ function (_Contract) {
       return getABI;
     }()
     /**
-     * @function {decodeABI}
-     * @param  {string} { code {scilla code string}
-     * @return {Contract} {raw contract}
+     * @function decodeABI
+     * @description decode ABI from scilla runner
+     * @param  {Object} paramObject
+     * @param  {String} paramObject.code - scilla code string
+     * @return {TestScilla} test contract
      */
 
   }, {
@@ -1200,9 +1243,11 @@ function (_Contract) {
       return decodeABI;
     }()
     /**
-     * @function {setBlockNumber}
-     * @param  {Int} number {block number setted to blockchain}
-     * @return {Contract|false} {raw contract}
+     * @function setBlockNumber
+     * @memberof TestScilla
+     * @description set block number for TestScilla
+     * @param  {Number} number - block number setted to blockchain
+     * @return {TestScilla|false} test contract
      */
 
   }, {
@@ -1270,29 +1315,32 @@ function (_Contract) {
       }
 
       return setBlockNumber;
-    }() //-------------------------------
-
+    }()
     /**
-     * @function {generateNewContractJson}
-     * @return {Contract} {raw contract with code and init params}
+     * @function testPayload
+     * @memberof TestScilla.prototype
+     * @description construct payload for TestScilla
+     * @return {Object} payload object
      */
 
   }, {
     key: "setABI",
 
     /**
-     * @function {setABIe}
-     * @param  {ABI} abi {ABI object}
-     * @return {Contract} {raw contract}
+     * @function setABI
+     * @memberof TestScilla
+     * @description set abi for TestScilla
+     * @return {TestScilla} TestScilla instance
      */
     value: function setABI(abi) {
       this.abi = new ABI(abi) || {};
       return this;
     }
     /**
-     * @function {setCode}
-     * @param  {string} code {scilla code string}
-     * @return {Contract} {raw contract with code}
+     * @function setCode
+     * @memberof TestScilla
+     * @description set code for TestScilla
+     * @return {TestScilla} test contract
      */
 
   }, {
@@ -1302,10 +1350,12 @@ function (_Contract) {
       return this;
     }
     /**
-     * @function {setInitParamsValues}
-     * @param  {Array<Object>} initParams    {init params get from ABI}
-     * @param  {Array<Object>} arrayOfValues {init params set for ABI}
-     * @return {Contract} {raw contract object}
+     * @function setInitParamsValues
+     * @memberof TestScilla
+     * @description set init param values for TestScilla
+     * @param  {Array<Object>} initParams    - init params get from ABI
+     * @param  {Array<Object>} arrayOfValues - init params set for ABI
+     * @return {TestScilla} test contract
      */
 
   }, {
@@ -1316,9 +1366,11 @@ function (_Contract) {
       return this;
     }
     /**
-     * @function {setCreationBlock}
-     * @param  {Int} blockNumber {block number for blockchain}
-     * @return {Contract} {raw contract object}
+     * @function setCreationBlock
+     * @memberof TestScilla
+     * @description set creation Block for TestScilla
+     * @param  {Number} blockNumber - block number for blockchain
+     * @return {TestScilla} test contract
      */
 
   }, {
@@ -1341,9 +1393,11 @@ function (_Contract) {
       return this;
     }
     /**
-     * @function {setBlockchain}
-     * @param  {Int} blockNumber {block number for blockchain}
-     * @return {Contract} {raw contract object}
+     * @function setBlockchain
+     * @memberof TestScilla
+     * @description set blockchain object for TestScilla
+     * @param  {Number} blockNumber - block number for blockchain
+     * @return {TestScilla} test contract
      */
 
   }, {
@@ -1379,6 +1433,13 @@ function (_Contract) {
 }(Contract), (_applyDecoratedDescriptor(_class$1.prototype, "getABI", [_dec$1], Object.getOwnPropertyDescriptor(_class$1.prototype, "getABI"), _class$1.prototype), _applyDecoratedDescriptor(_class$1.prototype, "decodeABI", [_dec2$1], Object.getOwnPropertyDescriptor(_class$1.prototype, "decodeABI"), _class$1.prototype)), _class$1));
 
 var _dec$2, _class$2;
+/**
+ * @class Contracts
+ * @param  {Messenger}  messenger - Messenger instance
+ * @param  {Wallet} signer - Wallet instance
+ * @return {Contracts} Contract factory
+ */
+
 var Contracts = (_dec$2 = laksaShared.assertObject({
   ContractAddress: ['isAddress', 'optional'],
   code: ['isString', 'optional'],
@@ -1395,10 +1456,30 @@ function (_Core) {
     _classCallCheck(this, Contracts);
 
     _this = _possibleConstructorReturn(this, _getPrototypeOf(Contracts).call(this));
+    /**
+     * @var {Messeger} messenger
+     * @memberof Contracts.prototype
+     * @description Messenger instance
+     */
+
     _this.messenger = messenger;
+    /**
+     * @var {Wallet} signer
+     * @memberof Contracts.prototype
+     * @description Wallet instance
+     */
+
     _this.signer = signer;
     return _this;
   }
+  /**
+   * @function getAddressForContract
+   * @memberof Contracts
+   * @description get Contract address from Transaction
+   * @param  {Transaction} tx - Transaction instance
+   * @return {String} Contract address
+   */
+
 
   _createClass(Contracts, [{
     key: "getAddressForContract",
@@ -1408,6 +1489,15 @@ function (_Core) {
       var nonce = tx.txParams.nonce ? tx.txParams.nonce - 1 : 0;
       return laksaCoreCrypto.hashjs.sha256().update(tx.senderAddress, 'hex').update(laksaCoreCrypto.intToHexArray(nonce, 64).join(''), 'hex').digest('hex').slice(24);
     }
+    /**
+     * @function new
+     * @memberof Contracts
+     * @description Create a Contract
+     * @param  {String} code - Code string
+     * @param  {Array<Object>} init - init params
+     * @return {Contract} Contract instance
+     */
+
   }, {
     key: "new",
     value: function _new(code, init) {
@@ -1420,6 +1510,14 @@ function (_Core) {
       }, ContractStatus.INITIALISED);
       return newContract;
     }
+    /**
+     * @function at
+     * @memberof Contracts
+     * @description get a Contract from factory and give it Messenger and Wallet as members
+     * @param  {Contract} contract - Contract instance
+     * @return {Contract} Contract instance
+     */
+
   }, {
     key: "at",
     value: function at(contract) {
@@ -1428,6 +1526,15 @@ function (_Core) {
         signer: this.signer
       }, contract.status);
     }
+    /**
+     * @function testContract
+     * @memberof Contracts
+     * @description test Contract code and init params, usable before deploying
+     * @param  {String} code - Code string
+     * @param  {Array<Object>} init - init params
+     * @return {Boolean} test result boolean
+     */
+
   }, {
     key: "testContract",
     value: function () {

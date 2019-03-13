@@ -6,6 +6,11 @@ import { isInt } from './validate'
 import { ABI } from './abi'
 
 class TestScilla extends Contract {
+  /**
+   * @var {Array<Object>}blockchain
+   * @memberof TestScilla.prototype
+   * @description Create a Contract
+   */
   blockchain = []
 
   constructor(...props) {
@@ -13,9 +18,11 @@ class TestScilla extends Contract {
   }
 
   /**
-   * @function {testCall}
-   * @param  {Int} gasLimit {gasLimit for test call to scilla-runner}
-   * @return {Contract} {raw Contract object}
+   * @function testCall
+   * @memberof TestScilla
+   * @description a Test Contract instance
+   * @param  {BN} gasLimit - gasLimit for test call to scilla-runner
+   * @return {TestScilla} raw Contract object
    */
   async testCall(gasLimit) {
     try {
@@ -39,11 +46,13 @@ class TestScilla extends Contract {
     }
   }
 
-  //-------------------------------
   /**
-   * @function {getABI}
-   * @param  {string} { code {scilla code string}
-   * @return {ABI} {ABI object}
+   * @function getABI
+   * @memberof TestScilla
+   * @description get ABI from scilla runner
+   * @param  {Object} params
+   * @param  {String} params.code - code string
+   * @return {Object} RPC result
    */
   @assertObject({
     code: ['isString', 'required']
@@ -61,9 +70,11 @@ class TestScilla extends Contract {
   }
 
   /**
-   * @function {decodeABI}
-   * @param  {string} { code {scilla code string}
-   * @return {Contract} {raw contract}
+   * @function decodeABI
+   * @description decode ABI from scilla runner
+   * @param  {Object} paramObject
+   * @param  {String} paramObject.code - scilla code string
+   * @return {TestScilla} test contract
    */
   @assertObject({
     code: ['isString', 'required']
@@ -80,9 +91,11 @@ class TestScilla extends Contract {
   }
 
   /**
-   * @function {setBlockNumber}
-   * @param  {Int} number {block number setted to blockchain}
-   * @return {Contract|false} {raw contract}
+   * @function setBlockNumber
+   * @memberof TestScilla
+   * @description set block number for TestScilla
+   * @param  {Number} number - block number setted to blockchain
+   * @return {TestScilla|false} test contract
    */
   async setBlockNumber(number) {
     try {
@@ -104,11 +117,11 @@ class TestScilla extends Contract {
     }
   }
 
-  //-------------------------------
-
   /**
-   * @function {generateNewContractJson}
-   * @return {Contract} {raw contract with code and init params}
+   * @function testPayload
+   * @memberof TestScilla.prototype
+   * @description construct payload for TestScilla
+   * @return {Object} payload object
    */
   get testPayload() {
     return {
@@ -119,9 +132,10 @@ class TestScilla extends Contract {
   }
 
   /**
-   * @function {setABIe}
-   * @param  {ABI} abi {ABI object}
-   * @return {Contract} {raw contract}
+   * @function setABI
+   * @memberof TestScilla
+   * @description set abi for TestScilla
+   * @return {TestScilla} TestScilla instance
    */
   setABI(abi) {
     this.abi = new ABI(abi) || {}
@@ -129,9 +143,10 @@ class TestScilla extends Contract {
   }
 
   /**
-   * @function {setCode}
-   * @param  {string} code {scilla code string}
-   * @return {Contract} {raw contract with code}
+   * @function setCode
+   * @memberof TestScilla
+   * @description set code for TestScilla
+   * @return {TestScilla} test contract
    */
   setCode(code) {
     this.code = code || ''
@@ -139,10 +154,12 @@ class TestScilla extends Contract {
   }
 
   /**
-   * @function {setInitParamsValues}
-   * @param  {Array<Object>} initParams    {init params get from ABI}
-   * @param  {Array<Object>} arrayOfValues {init params set for ABI}
-   * @return {Contract} {raw contract object}
+   * @function setInitParamsValues
+   * @memberof TestScilla
+   * @description set init param values for TestScilla
+   * @param  {Array<Object>} initParams    - init params get from ABI
+   * @param  {Array<Object>} arrayOfValues - init params set for ABI
+   * @return {TestScilla} test contract
    */
   setInitParamsValues(initParams, arrayOfValues) {
     const result = setParamValues(initParams, arrayOfValues)
@@ -151,9 +168,11 @@ class TestScilla extends Contract {
   }
 
   /**
-   * @function {setCreationBlock}
-   * @param  {Int} blockNumber {block number for blockchain}
-   * @return {Contract} {raw contract object}
+   * @function setCreationBlock
+   * @memberof TestScilla
+   * @description set creation Block for TestScilla
+   * @param  {Number} blockNumber - block number for blockchain
+   * @return {TestScilla} test contract
    */
   setCreationBlock(blockNumber) {
     const result = setParamValues(
@@ -168,9 +187,11 @@ class TestScilla extends Contract {
   }
 
   /**
-   * @function {setBlockchain}
-   * @param  {Int} blockNumber {block number for blockchain}
-   * @return {Contract} {raw contract object}
+   * @function setBlockchain
+   * @memberof TestScilla
+   * @description set blockchain object for TestScilla
+   * @param  {Number} blockNumber - block number for blockchain
+   * @return {TestScilla} test contract
    */
   setBlockchain(blockNumber) {
     const result = setParamValues(

@@ -1,3 +1,9 @@
+/**
+ * @class ResponseMiddleware
+ * @description Response middleware of RPC
+ * @param  {Object}  ResponseBody - response from rpc
+ * @return {ResponseMiddleware} response middleware instance
+ */
 class ResponseMiddleware {
   constructor(ResponseBody) {
     this.result = ResponseBody.result

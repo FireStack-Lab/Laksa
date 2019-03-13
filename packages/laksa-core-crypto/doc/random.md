@@ -6,15 +6,14 @@ title: random
 
 <a name="randomBytes"></a>
 
-## randomBytes ⇒ <code>string</code>
-randomBytes
-
+## randomBytes(bytes) ⇒ <code>String</code>
 Uses JS-native CSPRNG to generate a specified number of bytes.
 NOTE: this method throws if no PRNG is available.
 
-**Kind**: global constant  
+**Kind**: global function  
+**Returns**: <code>String</code> - ramdom hex string  
 
-| Param | Type |
-| --- | --- |
-| bytes | <code>number</code> | 
+| Param | Type | Description |
+| --- | --- | --- |
+| bytes | <code>Number</code> | bytes number to generate |
 

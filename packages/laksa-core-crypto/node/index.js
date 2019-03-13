@@ -25,13 +25,11 @@
   DRBG = DRBG && DRBG.hasOwnProperty('default') ? DRBG['default'] : DRBG;
 
   /**
-   * randomBytes
-   *
-   * Uses JS-native CSPRNG to generate a specified number of bytes.
+   * @function randomBytes
+   * @description Uses JS-native CSPRNG to generate a specified number of bytes.
    * NOTE: this method throws if no PRNG is available.
-   *
-   * @param {number} bytes
-   * @returns {string}
+   * @param {Number} bytes bytes number to generate
+   * @returns {String} ramdom hex string
    */
   const randomBytes = bytes => {
     let randBz;
@@ -51,20 +49,12 @@
     }
 
     return randStr;
-  }; // import RB from 'randombytes'
-  // export const randomBytes = bytes => {
-  //   const randBz = RB(bytes)
-  //   let randStr = ''
-  //   for (let i = 0; i < bytes; i += 1) {
-  //     randStr += `00${randBz[i].toString(16)}`.slice(-2)
-  //   }
-  //   return randStr
-  // }
+  };
 
   /**
-   * Signature
+   * @class Signature
    *
-   * This replaces `elliptic/lib/elliptic/ec/signature`. This is to avoid
+   * @description This replaces `elliptic/lib/elliptic/ec/signature`. This is to avoid
    * duplicate code in the final bundle, caused by having to bundle elliptic
    * twice due to its circular dependencies. This can be removed once
    * https://github.com/indutny/elliptic/pull/157 is resolved, or we find the
@@ -73,19 +63,27 @@
 
   class Signature {
     constructor(options) {
+      /**
+       * @var {BN} r
+       * @memberof Signature.prototype
+       */
       this.r = typeof options.r === 'string' ? new BN(options.r, 16) : options.r;
+      /**
+       * @var {BN} s
+       * @memberof Signature.prototype
+       */
+
       this.s = typeof options.s === 'string' ? new BN(options.s, 16) : options.s;
     }
 
   }
 
   /**
-   * intToHexArray
-   *
-   * @param {number} int - the number to be converted to hex
-   * @param {number)} size - the desired width of the hex value. will pad.
-   *
-   * @returns {string[]}
+   * @function intToHexArray
+   * @description transform a int to hex array
+   * @param {Number} int - the number to be converted to hex
+   * @param {Number} size - the desired width of the hex value. will pad.
+   * @return {Array<String>} the hex array result
    */
   const intToHexArray = (int, size) => {
     const hex = [];
@@ -107,14 +105,11 @@
     return hex;
   };
   /**
-   * intToByteArray
-   *
-   * Converts a number to Uint8Array
-   *
-   * @param {number} num
-   * @param {number} size
-   *
-   * @returns {Uint8Array}
+   * @function intToByteArray
+   * @description Converts a number to Uint8Array
+   * @param {Number} num - input number
+   * @param {Number} size - size of bytes array
+   * @returns {Uint8Array} Byte Array result
    */
 
   const intToByteArray = (num, size) => {
@@ -135,12 +130,10 @@
     return Uint8Array.from(res);
   };
   /**
-   * hexToByteArray
-   *
-   * Convers a hex string to a Uint8Array
-   *
-   * @param {string} hex
-   * @returns {Uint8Array}
+   * @function hexToByteArray
+   * @description Convers a hex string to a Uint8Array
+   * @param {string} hex - hex string to convert
+   * @return {Uint8Array} the ByteArray result
    */
 
   const hexToByteArray = hex => {
@@ -153,10 +146,10 @@
     return res;
   };
   /**
-   * hexToIntArray
-   *
-   * @param {string} hex
-   * @returns {number[]}
+   * @function hexToIntArray
+   * @description convert a hex string to int array
+   * @param {string} hex - hex string to convert
+   * @return {Array<Number>} the int array
    */
 
   const hexToIntArray = hex => {
@@ -181,13 +174,11 @@
     return res;
   };
   /**
-   * compareBytes
-   *
-   * A constant time HMAC comparison function.
-   *
-   * @param {string} a
-   * @param {string} b
-   * @returns {boolean}
+   * @function compareBytes
+   * @description A constant time HMAC comparison function.
+   * @param {String} a - hex string
+   * @param {String} b - hex string
+   * @return {Boolean} test result
    */
 
   const isEqual = (a, b) => {
@@ -207,10 +198,10 @@
     return result === 0;
   };
   /**
-   * isHex
-   *
-   * @param {string} str - string to be tested
-   * @returns {boolean}
+   * @function isHex
+   * @description test string if it is hex string
+   * @param {String} str - string to be tested
+   * @return {Boolean} test result
    */
 
   const isHex = str => {
@@ -220,13 +211,12 @@
 
   const secp256k1 = elliptic.ec('secp256k1');
   /**
-   * getAddressFromPrivateKey
+   * @function getAddressFromPrivateKey
    *
-   * takes a hex-encoded string (private key) and returns its corresponding
+   * @description takes a hex-encoded string (private key) and return its corresponding
    * 20-byte hex-encoded address.
-   *
-   * @param {string} Key
-   * @returns {string}
+   * @param {String} Key
+   * @return {String}
    */
 
   const getAddressFromPrivateKey = privateKey => {
@@ -235,13 +225,12 @@
     return hashjs.sha256().update(pub, 'hex').digest('hex').slice(24);
   };
   /**
-   * getPubKeyFromPrivateKey
-   *
-   * takes a hex-encoded string (private key) and returns its corresponding
+   * @function getPubKeyFromPrivateKey
+   * @description takes a hex-encoded string (private key) and return its corresponding
    * hex-encoded 33-byte public key.
    *
-   * @param {string} privateKey
-   * @returns {string}
+   * @param {String} privateKey
+   * @return {String}
    */
 
   const getPubKeyFromPrivateKey = privateKey => {
@@ -249,33 +238,31 @@
     return keyPair.getPublic(true, 'hex');
   };
   /**
-   * compressPublicKey
-   *
-   * @param {string} publicKey - 65-byte public key, a point (x, y)
-   *
-   * @returns {string}
+   * @function compressPublicKey
+   * @description comporess public key
+   * @param {String} publicKey - 65-byte public key, a point (x, y)
+   * @return {String}
    */
 
   const compressPublicKey = publicKey => {
     return secp256k1.keyFromPublic(publicKey, 'hex').getPublic(true, 'hex');
   };
   /**
-   * getAddressFromPublicKey
+   * @function getAddressFromPublicKey
    *
-   * takes hex-encoded string and returns the corresponding address
-   *
-   * @param {string} pubKey
-   * @returns {string}
+   * @description takes hex-encoded string and return the corresponding address
+   * @param {String} pubKey
+   * @return {String}
    */
 
   const getAddressFromPublicKey = pubKey => {
     return hashjs.sha256().update(pubKey, 'hex').digest('hex').slice(24);
   };
   /**
-   * verifyPrivateKey
-   *
-   * @param {string|Buffer} privateKey
-   * @returns {boolean}
+   * @function verifyPrivateKey
+   * @description verify private key
+   * @param {String|Buffer} privateKey
+   * @return {Boolean}
    */
 
   const verifyPrivateKey = privateKey => {
@@ -285,6 +272,13 @@
     } = keyPair.validate();
     return result;
   };
+  /**
+   * @function toChecksumAddress
+   * @description convert address to checksum
+   * @param  {String} address - address string
+   * @return {String} checksumed address
+   */
+
   const toChecksumAddress = address => {
     const newAddress = address.toLowerCase().replace('0x', '');
     const hash = hashjs.sha256().update(newAddress, 'hex').digest('hex');
@@ -302,12 +296,11 @@
     return ret;
   };
   /**
-   * isValidChecksumAddress
+   * @function isValidChecksumAddress
    *
-   * takes hex-encoded string and returns boolean if address is checksumed
-   *
-   * @param {string} address
-   * @returns {boolean}
+   * @description takes hex-encoded string and return boolean if address is checksumed
+   * @param {String} address
+   * @return {Boolean}
    */
 
   const isValidChecksumAddress = address => {
@@ -315,10 +308,10 @@
     return !!replacedAddress.match(/^[0-9a-fA-F]{40}$/) && toChecksumAddress(address) === address;
   };
   /**
-   * encodeTransaction
-   *
-   * @param {any} tx
-   * @returns {Buffer}
+   * @function encodeTransaction
+   * @description encode transaction to protobuff standard
+   * @param {Transaction|any} tx  - transaction object or Transaction instance
+   * @return {Buffer}
    */
 
   const encodeTransactionProto = tx => {
@@ -342,6 +335,14 @@
     const serialised = proto.ZilliqaMessage.ProtoTransactionCoreInfo.create(msg);
     return Buffer.from(proto.ZilliqaMessage.ProtoTransactionCoreInfo.encode(serialised).finish());
   };
+  /**
+   * @function getAddressForContract
+   * @param  {Object} param
+   * @param  {Number} param.currentNonce - current nonce number
+   * @param  {String} param.address      - deployer's address
+   * @return {String} Contract address
+   */
+
   const getAddressForContract = ({
     currentNonce,
     address
@@ -352,10 +353,10 @@
     return hashjs.sha256().update(address, 'hex').update(intToHexArray(nonce, 64).join(''), 'hex').digest('hex').slice(24);
   };
   /**
-   * verify if signature is length===128
    * @function checkValidSignature
-   * @param  {Signature} sig Signature
-   * @return {boolean}
+   * @description verify if signature is length===128
+   * @param  {Signature} sig - Signature
+   * @return {Boolean}
    */
 
   const checkValidSignature = sig => {
@@ -381,9 +382,9 @@
   const ENT_LEN = 32;
   const HEX_ENC = 'hex';
   /**
-   * generatePrivateKey
-   *
-   * @returns {string} - the hex-encoded private key
+   * @function generatePrivateKey
+   * @description generate a private key
+   * @return {String} the hex-encoded private key
    */
 
   const generatePrivateKey = () => {
@@ -394,11 +395,12 @@
     }).getPrivate().toString(16, PRIVKEY_SIZE_BYTES * 2);
   };
   /**
-   * Hash (r | M).
+   * @function hash
+   * @description hash message Hash (r | M).
+   * @param {Buffer} q
    * @param {Buffer} msg
    * @param {BN} r
-   *
-   * @returns {Buffer}
+   * @return {Buffer}
    */
 
   const hash = (q, pubkey, msg) => {
@@ -414,13 +416,12 @@
     return new BN(sha256.update(B).digest('hex'), 16);
   };
   /**
-   * sign
-   *
+   * @function sign
+   * @description sign method
    * @param {Buffer} msg
    * @param {Buffer} key
    * @param {Buffer} pubkey
-   *
-   * @returns {Signature}
+   * @return {Signature}
    */
 
   const sign = (msg, privKey, pubKey) => {
@@ -438,14 +439,13 @@
     return sig;
   };
   /**
-   * trySign
-   *
+   * @function trySign
+   * @description try sign message with random k
    * @param {Buffer} msg - the message to sign over
    * @param {BN} k - output of the HMAC-DRBG
    * @param {BN} privateKey - the private key
    * @param {Buffer} pubKey - the public key
-   *
-   * @returns {Signature | null =>}
+   * @return {Signature | null}
    */
 
   const trySign = (msg, k, privKey, pubKey) => {
@@ -496,19 +496,18 @@
     });
   };
   /**
-   * Verify signature.
-   *
-   * @param {Buffer} msg
-   * @param {Buffer} signature
-   * @param {Buffer} key
-   *
-   * @returns {boolean}
-   *
+   * @function verify
+   * @description Verify signature.
    * 1. Check if r,s is in [1, ..., order-1]
    * 2. Compute Q = sG + r*kpub
    * 3. If Q = O (the neutral point), return 0;
    * 4. r' = H(Q, kpub, m)
    * 5. return r' == r
+   * @param {Buffer} msg
+   * @param {Buffer} signature
+   * @param {Buffer} key
+   * @return {Boolean}
+   *
    */
 
   const verify = (msg, signature, key) => {
@@ -549,6 +548,12 @@
 
     return r1.eq(sig.r);
   };
+  /**
+   * @function toSignature
+   * @param  {String} serialised serialised Signature string, length == 128
+   * @return {Signature} Signature instance
+   */
+
   const toSignature = serialised => {
     const r = serialised.slice(0, 64);
     const s = serialised.slice(64);
@@ -558,11 +563,10 @@
     });
   };
   /**
-   * Instantiate an HMAC-DRBG.
-   *
+   * @function getDRBG
+   * @descriptionInstantiate an HMAC-DRBG.
    * @param {Buffer} entropy
-   *
-   * @returns {DRBG}
+   * @return {DRBG}
    */
 
   const getDRBG = msg => {
@@ -576,22 +580,24 @@
       nonce: msg,
       pers
     });
-  }; // /**
-  //  * a test sign method using string for browser
-  //  * @function signTest
-  //  * @param  {type} msg {description}
-  //  * @param  {type} k   {description}
-  //  * @param  {type} prv {description}
-  //  * @param  {type} pub {description}
-  //  * @return {type} {description}
-  //  */
-  // export const signTest = (msg, k, prv, pub) => {
-  //   const msgBuffer = Buffer.from(msg, 'hex')
-  //   const kBN = new BN(Buffer.from(k, 'hex'))
-  //   const privBN = new BN(Buffer.from(prv, 'hex'))
-  //   const pubBuffer = Buffer.from(pub, 'hex')
-  //   return trySign(msgBuffer, kBN, privBN, pubBuffer)
-  // }
+  };
+  /**
+   * @function signTest
+   * @description a test sign method using string for browser
+   * @param  {String} msg - message string
+   * @param  {String} k   - random k string
+   * @param  {String} prv - private key string
+   * @param  {String} pub - public key string
+   * @return {Signature | null} Signature result
+   */
+
+  const signTest = (msg, k, prv, pub) => {
+    const msgBuffer = Buffer.from(msg, 'hex');
+    const kBN = new BN(Buffer.from(k, 'hex'));
+    const privBN = new BN(Buffer.from(prv, 'hex'));
+    const pubBuffer = Buffer.from(pub, 'hex');
+    return trySign(msgBuffer, kBN, privBN, pubBuffer);
+  };
 
   var schnorr = /*#__PURE__*/Object.freeze({
     generatePrivateKey: generatePrivateKey,
@@ -600,17 +606,19 @@
     trySign: trySign,
     verify: verify,
     toSignature: toSignature,
-    getDRBG: getDRBG
+    getDRBG: getDRBG,
+    signTest: signTest
   });
 
   const {
     generatePrivateKey: generatePrivateKey$1
   } = schnorr;
   /**
-   * sign
-   *
-   * @param {string} hash - hex-encoded hash of the data to be signed
-   *
+   * @function sign
+   * @description sign method using prviteKey and pubKey
+   * @param {Buffer} msg message buffer
+   * @param {String} privateKey private key string
+   * @param {String} pubKey public key string
    * @returns {string} the signature
    */
 

@@ -11,31 +11,33 @@ title: contract
 
 * [Contract](#Contract)
     * [new Contract(params, factory, status)](#new_Contract_new)
-    * [.code](#Contract.code) : <code>String</code>
-    * [.init](#Contract.init) : <code>Array.&lt;Object&gt;</code>
-    * [.version](#Contract.version) : <code>Number</code>
-    * [.ContractAddress](#Contract.ContractAddress) : <code>String</code>
-    * [.messenger](#Contract.messenger) : <code>Messenger</code>
-    * [.signer](#Contract.signer) : <code>Wallet</code>
-    * [.status](#Contract.status) : <code>String</code>
-    * [.transaction](#Contract.transaction) : <code>Transaction</code> \| <code>Object</code>
-    * [.isInitialised()](#Contract.isInitialised) ⇒ <code>Boolean</code>
-    * [.isSigned()](#Contract.isSigned) ⇒ <code>Boolean</code>
-    * [.isSent()](#Contract.isSent) ⇒ <code>Boolean</code>
-    * [.isDeployed()](#Contract.isDeployed) ⇒ <code>Boolean</code>
-    * [.isRejected()](#Contract.isRejected) ⇒ <code>Boolean</code>
-    * [.deployPayload()](#Contract.deployPayload) ⇒ <code>Object</code>
-    * [.callPayload()](#Contract.callPayload) ⇒ <code>Object</code>
-    * [.setStatus(status)](#Contract.setStatus)
-    * [.setInitParamsValues(initParams, arrayOfValues)](#Contract.setInitParamsValues) ⇒ [<code>Contract</code>](#Contract)
-    * [.deploy(deployObject)](#Contract.deploy) ⇒ [<code>Promise.&lt;Contract&gt;</code>](#Contract)
-    * [.call(callObject)](#Contract.call) ⇒ [<code>Promise.&lt;Contract&gt;</code>](#Contract)
-    * [.sendContract(paramObject)](#Contract.sendContract) ⇒ [<code>Promise.&lt;Contract&gt;</code>](#Contract)
-    * [.signTxn(paramObject)](#Contract.signTxn) ⇒ [<code>Promise.&lt;Contract&gt;</code>](#Contract)
-    * [.confirmTx(maxAttempts, interval)](#Contract.confirmTx) ⇒ [<code>Promise.&lt;Contract&gt;</code>](#Contract)
-    * [.getState()](#Contract.getState) ⇒ <code>Object</code>
-    * [.setDeployPayload(deployObject)](#Contract.setDeployPayload) ⇒ [<code>Contract</code>](#Contract)
-    * [.setCallPayload(callObject)](#Contract.setCallPayload) ⇒ [<code>Contract</code>](#Contract)
+    * _instance_
+        * [.code](#Contract+code) : <code>String</code>
+        * [.init](#Contract+init) : <code>Array.&lt;Object&gt;</code>
+        * [.version](#Contract+version) : <code>Number</code>
+        * [.ContractAddress](#Contract+ContractAddress) : <code>String</code>
+        * [.messenger](#Contract+messenger) : <code>Messenger</code>
+        * [.signer](#Contract+signer) : <code>Wallet</code>
+        * [.status](#Contract+status) : <code>String</code>
+        * [.transaction](#Contract+transaction) : <code>Transaction</code> \| <code>Object</code>
+    * _static_
+        * [.isInitialised()](#Contract.isInitialised) ⇒ <code>Boolean</code>
+        * [.isSigned()](#Contract.isSigned) ⇒ <code>Boolean</code>
+        * [.isSent()](#Contract.isSent) ⇒ <code>Boolean</code>
+        * [.isDeployed()](#Contract.isDeployed) ⇒ <code>Boolean</code>
+        * [.isRejected()](#Contract.isRejected) ⇒ <code>Boolean</code>
+        * [.deployPayload()](#Contract.deployPayload) ⇒ <code>Object</code>
+        * [.callPayload()](#Contract.callPayload) ⇒ <code>Object</code>
+        * [.setStatus(status)](#Contract.setStatus)
+        * [.setInitParamsValues(initParams, arrayOfValues)](#Contract.setInitParamsValues) ⇒ [<code>Contract</code>](#Contract)
+        * [.deploy(deployObject)](#Contract.deploy) ⇒ [<code>Promise.&lt;Contract&gt;</code>](#Contract)
+        * [.call(callObject)](#Contract.call) ⇒ [<code>Promise.&lt;Contract&gt;</code>](#Contract)
+        * [.sendContract(paramObject)](#Contract.sendContract) ⇒ [<code>Promise.&lt;Contract&gt;</code>](#Contract)
+        * [.signTxn(paramObject)](#Contract.signTxn) ⇒ [<code>Promise.&lt;Contract&gt;</code>](#Contract)
+        * [.confirmTx(maxAttempts, interval)](#Contract.confirmTx) ⇒ [<code>Promise.&lt;Contract&gt;</code>](#Contract)
+        * [.getState()](#Contract.getState) ⇒ <code>Object</code>
+        * [.setDeployPayload(deployObject)](#Contract.setDeployPayload) ⇒ [<code>Contract</code>](#Contract)
+        * [.setCallPayload(callObject)](#Contract.setCallPayload) ⇒ [<code>Contract</code>](#Contract)
 
 <a name="new_Contract_new"></a>
 
@@ -48,54 +50,54 @@ title: contract
 | factory | <code>Contracts</code> | contract factory |
 | status | <code>String</code> | Contract status |
 
-<a name="Contract.code"></a>
+<a name="Contract+code"></a>
 
-### Contract.code : <code>String</code>
+### contract.code : <code>String</code>
 code
 
-**Kind**: static property of [<code>Contract</code>](#Contract)  
-<a name="Contract.init"></a>
+**Kind**: instance property of [<code>Contract</code>](#Contract)  
+<a name="Contract+init"></a>
 
-### Contract.init : <code>Array.&lt;Object&gt;</code>
+### contract.init : <code>Array.&lt;Object&gt;</code>
 init
 
-**Kind**: static property of [<code>Contract</code>](#Contract)  
-<a name="Contract.version"></a>
+**Kind**: instance property of [<code>Contract</code>](#Contract)  
+<a name="Contract+version"></a>
 
-### Contract.version : <code>Number</code>
+### contract.version : <code>Number</code>
 version
 
-**Kind**: static property of [<code>Contract</code>](#Contract)  
-<a name="Contract.ContractAddress"></a>
+**Kind**: instance property of [<code>Contract</code>](#Contract)  
+<a name="Contract+ContractAddress"></a>
 
-### Contract.ContractAddress : <code>String</code>
+### contract.ContractAddress : <code>String</code>
 ContractAddress
 
-**Kind**: static property of [<code>Contract</code>](#Contract)  
-<a name="Contract.messenger"></a>
+**Kind**: instance property of [<code>Contract</code>](#Contract)  
+<a name="Contract+messenger"></a>
 
-### Contract.messenger : <code>Messenger</code>
+### contract.messenger : <code>Messenger</code>
 messenger
 
-**Kind**: static property of [<code>Contract</code>](#Contract)  
-<a name="Contract.signer"></a>
+**Kind**: instance property of [<code>Contract</code>](#Contract)  
+<a name="Contract+signer"></a>
 
-### Contract.signer : <code>Wallet</code>
+### contract.signer : <code>Wallet</code>
 signer
 
-**Kind**: static property of [<code>Contract</code>](#Contract)  
-<a name="Contract.status"></a>
+**Kind**: instance property of [<code>Contract</code>](#Contract)  
+<a name="Contract+status"></a>
 
-### Contract.status : <code>String</code>
+### contract.status : <code>String</code>
 status
 
-**Kind**: static property of [<code>Contract</code>](#Contract)  
-<a name="Contract.transaction"></a>
+**Kind**: instance property of [<code>Contract</code>](#Contract)  
+<a name="Contract+transaction"></a>
 
-### Contract.transaction : <code>Transaction</code> \| <code>Object</code>
+### contract.transaction : <code>Transaction</code> \| <code>Object</code>
 transaction
 
-**Kind**: static property of [<code>Contract</code>](#Contract)  
+**Kind**: instance property of [<code>Contract</code>](#Contract)  
 <a name="Contract.isInitialised"></a>
 
 ### Contract.isInitialised() ⇒ <code>Boolean</code>
@@ -132,14 +134,14 @@ return true if the contract has been rejected
 return deploy payload
 
 **Kind**: static method of [<code>Contract</code>](#Contract)  
-**Returns**: <code>Object</code> - - Deploy payload  
+**Returns**: <code>Object</code> - Deploy payload  
 <a name="Contract.callPayload"></a>
 
 ### Contract.callPayload() ⇒ <code>Object</code>
 return deploy payload
 
 **Kind**: static method of [<code>Contract</code>](#Contract)  
-**Returns**: <code>Object</code> - - call payload  
+**Returns**: <code>Object</code> - call payload  
 <a name="Contract.setStatus"></a>
 
 ### Contract.setStatus(status)
@@ -157,7 +159,7 @@ set Contract status
 set init params value and return Contract
 
 **Kind**: static method of [<code>Contract</code>](#Contract)  
-**Returns**: [<code>Contract</code>](#Contract) - Contract instance  
+**Returns**: [<code>Contract</code>](#Contract) - - Contract instance  
 
 | Param | Type | Description |
 | --- | --- | --- |
@@ -249,7 +251,7 @@ confirm transaction with maxAttempts and intervel
 get smart contract state
 
 **Kind**: static method of [<code>Contract</code>](#Contract)  
-**Returns**: <code>Object</code> - RPC response  
+**Returns**: <code>Object</code> - - RPC response  
 <a name="Contract.setDeployPayload"></a>
 
 ### Contract.setDeployPayload(deployObject) ⇒ [<code>Contract</code>](#Contract)

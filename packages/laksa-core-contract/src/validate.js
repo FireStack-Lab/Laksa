@@ -2,6 +2,10 @@ import {
   isByStrX, isUint, isInt, isString, isBN, BN, isHash
 } from 'laksa-utils'
 
+/**
+ * @var {Object<String>} Matchers
+ * @description Matchers object with multiple patterns
+ */
 export const Matchers = {
   ByStrX: /^ByStr[0-9]+$/,
   String: /^String$/,
@@ -9,6 +13,11 @@ export const Matchers = {
   Int: /^Int(32|64|128|256)$/,
   BNum: /^BNum$/
 }
+
+/**
+ * @var {Array<Object>} validators
+ * @description valitador objects
+ */
 export const validators = [
   {
     type: 'ByStrX',
@@ -42,10 +51,24 @@ export const validators = [
   }
 ]
 
+/**
+ * @function validate
+ * @description validate param type and it's value
+ * @param  {String} type  - param type
+ * @param  {any} value - param value to validate
+ * @return {Boolean} validate result
+ */
 export const validate = (type, value) => {
   return validators.some(val => val.match(type) && val.validatorFn(value))
 }
 
+/**
+ * @function transform
+ * @description transform a value to it's validator format
+ * @param  {String} type  - param type
+ * @param  {any} value - param value to validate
+ * @return {any} transform result
+ */
 export const transform = (type, value) => {
   if (validate(type, value)) {
     const found = validators.find(d => d.match(type))

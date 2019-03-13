@@ -106,7 +106,7 @@ connection status from RPC
 
 **Kind**: global function  
 **Extends**: <code>BlockChain.prototype</code>  
-**Returns**: <code>Boolean</code> - - connection status  
+**Returns**: <code>Boolean</code> - connection status  
 <a name="getTransaction"></a>
 
 ## getTransaction(paramObject) ⇒ <code>Object</code>
@@ -114,7 +114,7 @@ getTransaction from RPC
 
 **Kind**: global function  
 **Extends**: <code>BlockChain.prototype</code>  
-**Returns**: <code>Object</code> - - RPC Response Object  
+**Returns**: <code>Object</code> - RPC Response Object  
 
 | Param | Type | Description |
 | --- | --- | --- |
@@ -128,7 +128,7 @@ getTransaction from RPC
 
 **Kind**: global function  
 **Extends**: <code>BlockChain.prototype</code>  
-**Returns**: <code>Object</code> - - RPC Response Object  
+**Returns**: <code>Object</code> - RPC Response Object  
 
 | Param | Type | Description |
 | --- | --- | --- |
@@ -148,7 +148,7 @@ getDsBlock info from RPC
 
 **Kind**: global function  
 **Extends**: <code>BlockChain.prototype</code>  
-**Returns**: <code>Object</code> - - RPC Response Object  
+**Returns**: <code>Object</code> - RPC Response Object  
 
 | Param | Type | Description |
 | --- | --- | --- |
@@ -162,7 +162,7 @@ getTxBlock info from RPC
 
 **Kind**: global function  
 **Extends**: <code>BlockChain.prototype</code>  
-**Returns**: <code>Object</code> - - RPC Response Object  
+**Returns**: <code>Object</code> - RPC Response Object  
 
 | Param | Type | Description |
 | --- | --- | --- |
@@ -176,7 +176,7 @@ get latest DsBlock from RPC
 
 **Kind**: global function  
 **Extends**: <code>BlockChain.prototype</code>  
-**Returns**: <code>Object</code> - - RPC Response Object  
+**Returns**: <code>Object</code> - RPC Response Object  
 <a name="getLatestTxBlock"></a>
 
 ## getLatestTxBlock() ⇒ <code>Object</code>
@@ -184,7 +184,7 @@ get latest TxBlock from RPC
 
 **Kind**: global function  
 **Extends**: <code>BlockChain.prototype</code>  
-**Returns**: <code>Object</code> - - RPC Response Object  
+**Returns**: <code>Object</code> - RPC Response Object  
 <a name="getBalance"></a>
 
 ## getBalance(paramObject) ⇒ <code>Object</code>
@@ -192,7 +192,7 @@ get balance of dedicated address
 
 **Kind**: global function  
 **Extends**: <code>BlockChain.prototype</code>  
-**Returns**: <code>Object</code> - - RPC Response Object  
+**Returns**: <code>Object</code> - RPC Response Object  
 
 | Param | Type | Description |
 | --- | --- | --- |
@@ -206,7 +206,7 @@ get gasprice
 
 **Kind**: global function  
 **Extends**: <code>BlockChain.prototype</code>  
-**Returns**: <code>Object</code> - - RPC Response Object  
+**Returns**: <code>Object</code> - RPC Response Object  
 <a name="getSmartContractState"></a>
 
 ## getSmartContractState(paramObject) ⇒ <code>Object</code>
@@ -214,7 +214,7 @@ get smart contract state of dedicated contract address
 
 **Kind**: global function  
 **Extends**: <code>BlockChain.prototype</code>  
-**Returns**: <code>Object</code> - - RPC Response Object  
+**Returns**: <code>Object</code> - RPC Response Object  
 
 | Param | Type | Description |
 | --- | --- | --- |
@@ -228,7 +228,7 @@ get smart contract code of dedicated contract address
 
 **Kind**: global function  
 **Extends**: <code>BlockChain.prototype</code>  
-**Returns**: <code>Object</code> - - RPC Response Object  
+**Returns**: <code>Object</code> - RPC Response Object  
 
 | Param | Type | Description |
 | --- | --- | --- |
@@ -242,7 +242,7 @@ get smart contract init params of dedicated contract address
 
 **Kind**: global function  
 **Extends**: <code>BlockChain.prototype</code>  
-**Returns**: <code>Object</code> - - RPC Response Object  
+**Returns**: <code>Object</code> - RPC Response Object  
 
 | Param | Type | Description |
 | --- | --- | --- |
@@ -256,7 +256,7 @@ get smart contracts deployed by account address
 
 **Kind**: global function  
 **Extends**: <code>BlockChain.prototype</code>  
-**Returns**: <code>Object</code> - - RPC Response Object  
+**Returns**: <code>Object</code> - RPC Response Object  
 
 | Param | Type | Description |
 | --- | --- | --- |
@@ -270,7 +270,7 @@ get transaction history of dedicated account address
 
 **Kind**: global function  
 **Extends**: <code>BlockChain.prototype</code>  
-**Returns**: <code>Object</code> - - RPC Response Object  
+**Returns**: <code>Object</code> - RPC Response Object  
 
 | Param | Type | Description |
 | --- | --- | --- |
@@ -284,7 +284,7 @@ get recent transactions from RPC Method
 
 **Kind**: global function  
 **Extends**: <code>BlockChain.prototype</code>  
-**Returns**: <code>Object</code> - - RPC Response Object  
+**Returns**: <code>Object</code> - RPC Response Object  
 <a name="getBlockTransactionCount"></a>
 
 ## getBlockTransactionCount(paramObject) ⇒ <code>Object</code>
@@ -292,7 +292,7 @@ get transaction count of dedicated blockNumber
 
 **Kind**: global function  
 **Extends**: <code>BlockChain.prototype</code>  
-**Returns**: <code>Object</code> - - RPC Response Object  
+**Returns**: <code>Object</code> - RPC Response Object  
 
 | Param | Type | Description |
 | --- | --- | --- |
@@ -306,7 +306,7 @@ get transaction receipt of dedicated transaction
 
 **Kind**: global function  
 **Extends**: <code>BlockChain.prototype</code>  
-**Returns**: <code>Object</code> - - RPC Response Object  
+**Returns**: <code>Object</code> - RPC Response Object  
 
 | Param | Type | Description |
 | --- | --- | --- |
@@ -320,7 +320,7 @@ check code from scilla runner endpoint
 
 **Kind**: global function  
 **Extends**: <code>BlockChain.prototype</code>  
-**Returns**: <code>Object</code> - - RPC Response Object  
+**Returns**: <code>Object</code> - RPC Response Object  
 
 | Param | Type | Description |
 | --- | --- | --- |
@@ -334,7 +334,7 @@ call code from scilla runner endpoint
 
 **Kind**: global function  
 **Extends**: <code>BlockChain.prototype</code>  
-**Returns**: <code>Object</code> - - RPC Response Object  
+**Returns**: <code>Object</code> - RPC Response Object  
 
 | Param | Type | Description |
 | --- | --- | --- |
@@ -348,7 +348,7 @@ get blockchain info from RPC Methods
 
 **Kind**: global function  
 **Extends**: <code>BlockChain.prototype</code>  
-**Returns**: <code>Object</code> - - RPC Response Object  
+**Returns**: <code>Object</code> - RPC Response Object  
 <a name="getDSBlockListing"></a>
 
 ## getDSBlockListing(paramObject) ⇒ <code>Object</code>
@@ -356,7 +356,7 @@ get Ds Block list
 
 **Kind**: global function  
 **Extends**: <code>BlockChain.prototype</code>  
-**Returns**: <code>Object</code> - - RPC Response Object  
+**Returns**: <code>Object</code> - RPC Response Object  
 
 | Param | Type | Description |
 | --- | --- | --- |
@@ -370,7 +370,7 @@ get Tx Block list
 
 **Kind**: global function  
 **Extends**: <code>BlockChain.prototype</code>  
-**Returns**: <code>Object</code> - - RPC Response Object  
+**Returns**: <code>Object</code> - RPC Response Object  
 
 | Param | Type | Description |
 | --- | --- | --- |
@@ -384,7 +384,7 @@ get transaction epoch transaction numbers
 
 **Kind**: global function  
 **Extends**: <code>BlockChain.prototype</code>  
-**Returns**: <code>Object</code> - - RPC Response Object  
+**Returns**: <code>Object</code> - RPC Response Object  
 <a name="getNumTxnsTxEpoch"></a>
 
 ## getNumTxnsTxEpoch() ⇒ <code>Object</code>
@@ -392,7 +392,7 @@ get DS epoch transaction numbers
 
 **Kind**: global function  
 **Extends**: <code>BlockChain.prototype</code>  
-**Returns**: <code>Object</code> - - RPC Response Object  
+**Returns**: <code>Object</code> - RPC Response Object  
 <a name="getTransactionListing"></a>
 
 ## getTransactionListing() ⇒ <code>Object</code>
@@ -400,7 +400,7 @@ get transaction list
 
 **Kind**: global function  
 **Extends**: <code>BlockChain.prototype</code>  
-**Returns**: <code>Object</code> - - RPC Response Object  
+**Returns**: <code>Object</code> - RPC Response Object  
 <a name="getMinimumGasPrice"></a>
 
 ## getMinimumGasPrice() ⇒ <code>Object</code>
@@ -408,7 +408,7 @@ get minimum gas price
 
 **Kind**: global function  
 **Extends**: <code>BlockChain.prototype</code>  
-**Returns**: <code>Object</code> - - RPC Response Object  
+**Returns**: <code>Object</code> - RPC Response Object  
 <a name="getPrevDifficulty"></a>
 
 ## getPrevDifficulty() ⇒ <code>Object</code>
@@ -416,7 +416,7 @@ get previous difficuty
 
 **Kind**: global function  
 **Extends**: <code>BlockChain.prototype</code>  
-**Returns**: <code>Object</code> - - RPC Response Object  
+**Returns**: <code>Object</code> - RPC Response Object  
 <a name="getPrevDSDifficulty"></a>
 
 ## getPrevDSDifficulty() ⇒ <code>Object</code>
@@ -424,7 +424,7 @@ get previous Ds difficulty
 
 **Kind**: global function  
 **Extends**: <code>BlockChain.prototype</code>  
-**Returns**: <code>Object</code> - - RPC Response Object  
+**Returns**: <code>Object</code> - RPC Response Object  
 <a name="getTransactionsForTxBlock"></a>
 
 ## getTransactionsForTxBlock(paramObject) ⇒ <code>Object</code>
@@ -432,7 +432,7 @@ get transactions for dedicated TxBlock
 
 **Kind**: global function  
 **Extends**: <code>BlockChain.prototype</code>  
-**Returns**: <code>Object</code> - - RPC Response Object  
+**Returns**: <code>Object</code> - RPC Response Object  
 
 | Param | Type | Description |
 | --- | --- | --- |
@@ -446,4 +446,4 @@ get sharding structure from RPC method
 
 **Kind**: global function  
 **Extends**: <code>BlockChain.prototype</code>  
-**Returns**: <code>Object</code> - - RPC Response Object  
+**Returns**: <code>Object</code> - RPC Response Object  

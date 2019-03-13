@@ -1,10 +1,9 @@
 /**
- * intToHexArray
- *
- * @param {number} int - the number to be converted to hex
- * @param {number)} size - the desired width of the hex value. will pad.
- *
- * @returns {string[]}
+ * @function intToHexArray
+ * @description transform a int to hex array
+ * @param {Number} int - the number to be converted to hex
+ * @param {Number} size - the desired width of the hex value. will pad.
+ * @return {Array<String>} the hex array result
  */
 export const intToHexArray = (int, size) => {
   const hex = []
@@ -28,14 +27,11 @@ export const intToHexArray = (int, size) => {
 }
 
 /**
- * intToByteArray
- *
- * Converts a number to Uint8Array
- *
- * @param {number} num
- * @param {number} size
- *
- * @returns {Uint8Array}
+ * @function intToByteArray
+ * @description Converts a number to Uint8Array
+ * @param {Number} num - input number
+ * @param {Number} size - size of bytes array
+ * @returns {Uint8Array} Byte Array result
  */
 export const intToByteArray = (num, size) => {
   let x = num
@@ -56,12 +52,10 @@ export const intToByteArray = (num, size) => {
 }
 
 /**
- * hexToByteArray
- *
- * Convers a hex string to a Uint8Array
- *
- * @param {string} hex
- * @returns {Uint8Array}
+ * @function hexToByteArray
+ * @description Convers a hex string to a Uint8Array
+ * @param {string} hex - hex string to convert
+ * @return {Uint8Array} the ByteArray result
  */
 export const hexToByteArray = hex => {
   const res = new Uint8Array(hex.length / 2)
@@ -74,10 +68,10 @@ export const hexToByteArray = hex => {
 }
 
 /**
- * hexToIntArray
- *
- * @param {string} hex
- * @returns {number[]}
+ * @function hexToIntArray
+ * @description convert a hex string to int array
+ * @param {string} hex - hex string to convert
+ * @return {Array<Number>} the int array
  */
 export const hexToIntArray = hex => {
   if (!hex || !isHex(hex)) {
@@ -101,13 +95,11 @@ export const hexToIntArray = hex => {
 }
 
 /**
- * compareBytes
- *
- * A constant time HMAC comparison function.
- *
- * @param {string} a
- * @param {string} b
- * @returns {boolean}
+ * @function compareBytes
+ * @description A constant time HMAC comparison function.
+ * @param {String} a - hex string
+ * @param {String} b - hex string
+ * @return {Boolean} test result
  */
 export const isEqual = (a, b) => {
   const bzA = hexToIntArray(a)
@@ -126,10 +118,10 @@ export const isEqual = (a, b) => {
 }
 
 /**
- * isHex
- *
- * @param {string} str - string to be tested
- * @returns {boolean}
+ * @function isHex
+ * @description test string if it is hex string
+ * @param {String} str - string to be tested
+ * @return {Boolean} test result
  */
 export const isHex = str => {
   const plain = str.replace('0x', '')

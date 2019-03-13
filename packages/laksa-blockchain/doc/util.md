@@ -10,7 +10,7 @@ title: util
 Map RPC response to TxParams
 
 **Kind**: global function  
-**Returns**: <code>Object</code> - - to Transaction params object  
+**Returns**: <code>Object</code> - to Transaction params object  
 
 | Param | Type | Description |
 | --- | --- | --- |

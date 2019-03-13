@@ -26,9 +26,9 @@ const ENT_LEN = 32
 const HEX_ENC = 'hex'
 
 /**
- * generatePrivateKey
- *
- * @returns {string} - the hex-encoded private key
+ * @function generatePrivateKey
+ * @description generate a private key
+ * @return {String} the hex-encoded private key
  */
 export const generatePrivateKey = () => {
   return secp256k1
@@ -42,11 +42,12 @@ export const generatePrivateKey = () => {
 }
 
 /**
- * Hash (r | M).
+ * @function hash
+ * @description hash message Hash (r | M).
+ * @param {Buffer} q
  * @param {Buffer} msg
  * @param {BN} r
- *
- * @returns {Buffer}
+ * @return {Buffer}
  */
 
 export const hash = (q, pubkey, msg) => {
@@ -64,13 +65,12 @@ export const hash = (q, pubkey, msg) => {
 }
 
 /**
- * sign
- *
+ * @function sign
+ * @description sign method
  * @param {Buffer} msg
  * @param {Buffer} key
  * @param {Buffer} pubkey
- *
- * @returns {Signature}
+ * @return {Signature}
  */
 export const sign = (msg, privKey, pubKey) => {
   const prv = new BN(privKey)
@@ -88,14 +88,13 @@ export const sign = (msg, privKey, pubKey) => {
 }
 
 /**
- * trySign
- *
+ * @function trySign
+ * @description try sign message with random k
  * @param {Buffer} msg - the message to sign over
  * @param {BN} k - output of the HMAC-DRBG
  * @param {BN} privateKey - the private key
  * @param {Buffer} pubKey - the public key
- *
- * @returns {Signature | null =>}
+ * @return {Signature | null}
  */
 export const trySign = (msg, k, privKey, pubKey) => {
   if (privKey.isZero()) {
@@ -143,19 +142,18 @@ export const trySign = (msg, k, privKey, pubKey) => {
 }
 
 /**
- * Verify signature.
- *
- * @param {Buffer} msg
- * @param {Buffer} signature
- * @param {Buffer} key
- *
- * @returns {boolean}
- *
+ * @function verify
+ * @description Verify signature.
  * 1. Check if r,s is in [1, ..., order-1]
  * 2. Compute Q = sG + r*kpub
  * 3. If Q = O (the neutral point), return 0;
  * 4. r' = H(Q, kpub, m)
  * 5. return r' == r
+ * @param {Buffer} msg
+ * @param {Buffer} signature
+ * @param {Buffer} key
+ * @return {Boolean}
+ *
  */
 export const verify = (msg, signature, key) => {
   const sig = new Signature(signature)
@@ -197,6 +195,11 @@ export const verify = (msg, signature, key) => {
   return r1.eq(sig.r)
 }
 
+/**
+ * @function toSignature
+ * @param  {String} serialised serialised Signature string, length == 128
+ * @return {Signature} Signature instance
+ */
 export const toSignature = serialised => {
   const r = serialised.slice(0, 64)
   const s = serialised.slice(64)
@@ -205,11 +208,10 @@ export const toSignature = serialised => {
 }
 
 /**
- * Instantiate an HMAC-DRBG.
- *
+ * @function getDRBG
+ * @descriptionInstantiate an HMAC-DRBG.
  * @param {Buffer} entropy
- *
- * @returns {DRBG}
+ * @return {DRBG}
  */
 export const getDRBG = msg => {
   const entropy = randomBytes(ENT_LEN)
@@ -226,19 +228,19 @@ export const getDRBG = msg => {
   })
 }
 
-// /**
-//  * a test sign method using string for browser
-//  * @function signTest
-//  * @param  {type} msg {description}
-//  * @param  {type} k   {description}
-//  * @param  {type} prv {description}
-//  * @param  {type} pub {description}
-//  * @return {type} {description}
-//  */
-// export const signTest = (msg, k, prv, pub) => {
-//   const msgBuffer = Buffer.from(msg, 'hex')
-//   const kBN = new BN(Buffer.from(k, 'hex'))
-//   const privBN = new BN(Buffer.from(prv, 'hex'))
-//   const pubBuffer = Buffer.from(pub, 'hex')
-//   return trySign(msgBuffer, kBN, privBN, pubBuffer)
-// }
+/**
+ * @function signTest
+ * @description a test sign method using string for browser
+ * @param  {String} msg - message string
+ * @param  {String} k   - random k string
+ * @param  {String} prv - private key string
+ * @param  {String} pub - public key string
+ * @return {Signature | null} Signature result
+ */
+export const signTest = (msg, k, prv, pub) => {
+  const msgBuffer = Buffer.from(msg, 'hex')
+  const kBN = new BN(Buffer.from(k, 'hex'))
+  const privBN = new BN(Buffer.from(prv, 'hex'))
+  const pubBuffer = Buffer.from(pub, 'hex')
+  return trySign(msgBuffer, kBN, privBN, pubBuffer)
+}

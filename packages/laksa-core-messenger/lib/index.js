@@ -29,6 +29,11 @@ var _asyncToGenerator = _interopDefault(require('@babel/runtime/helpers/asyncToG
 var laksaShared = require('laksa-shared');
 var laksaUtils = require('laksa-utils');
 
+/**
+ * @class JsonRpc
+ * @description json rpc instance
+ * @return {JsonRpc} Json RPC instance
+ */
 var JsonRpc = function JsonRpc() {
   var _this = this;
 
@@ -47,16 +52,29 @@ var JsonRpc = function JsonRpc() {
     };
   });
 
+  /**
+   * @var {Number} messageId
+   * @memberof JsonRpc.prototype
+   * @description message id, default 0
+   */
   this.messageId = 0;
 }
 /**
- * @function {toPayload}
- * @param  {string} method {RPC method}
- * @param  {Array<object>} params {params that send to RPC}
- * @return {object} {payload object}
+ * @function toPayload
+ * @memberof JsonRpc.prototype
+ * @description convert method and params to payload object
+ * @param  {String} method - RPC method
+ * @param  {Array<object>} params - params that send to RPC
+ * @return {Object} payload object
  */
 ;
 
+/**
+ * @class ResponseMiddleware
+ * @description Response middleware of RPC
+ * @param  {Object}  ResponseBody - response from rpc
+ * @return {ResponseMiddleware} response middleware instance
+ */
 var ResponseMiddleware =
 /*#__PURE__*/
 function () {
@@ -96,8 +114,9 @@ function () {
 
 /**
  * @function getResultForData
- * @param  {object} data {object get from provider}
- * @return {object} {data result or data}
+ * @description get result for data by default
+ * @param  {Object} data - object get from provider
+ * @return {Object} data result or data
  */
 function getResultForData(data) {
   if (data.result) return data.getResult;
@@ -131,6 +150,14 @@ var defaultConfig = {
     Network_ID: 'MainNet',
     nodeProviderUrl: 'https://api.zilliqa.com'
   }
+  /**
+   * @class Messenger
+   * @description Messenger instance
+   * @param  {HttpProvider} provider HttpProvider
+   * @param  {Object}  config config object
+   * @return {Messenger} Messenger instance
+   */
+
 };
 
 var Messenger =
@@ -225,16 +252,47 @@ function () {
       };
     }());
 
+    /**
+     * @var {Provider} provider
+     * @memberof Messenger.prototype
+     * @description Provider instance
+     */
     this.provider = provider;
+    /**
+     * @var {Provider} scillaProvider
+     * @memberof Messenger.prototype
+     * @description scilla Provider instance
+     */
+
     this.scillaProvider = provider;
+    /**
+     * @var {Object} config
+     * @memberof Messenger.prototype
+     * @description Messenger config
+     */
+
     this.config = config || defaultConfig;
+    /**
+     * @var {Number} Network_ID
+     * @memberof Messenger.prototype
+     * @description Network ID for current provider
+     */
+
     this.Network_ID = this.setNetworkID(this.config.Default.Network_ID);
+    /**
+     * @var {JsonRpc} JsonRpc
+     * @memberof Messenger.prototype
+     * @description JsonRpc instance
+     */
+
     this.JsonRpc = new JsonRpc();
   }
   /**
-   * @function {send}
-   * @param  {object} data {data object with method and params}
-   * @return {object|Error} {result from provider}
+   * @function send
+   * @memberof Messenger.prototype
+   * @param  {String} method - RPC method
+   * @param  {Object} params - RPC method params
+   * @return {Object} RPC result
    */
 
 
@@ -242,17 +300,19 @@ function () {
     key: "setProvider",
 
     /**
-     * @function {setProvider}
-     * @param  {Provider} provider {provider instance}
-     * @return {Provider} {provider setter}
+     * @function setProvider
+     * @memberof Messenger
+     * @description provider setter
+     * @param  {Provider} provider - provider instance
      */
     value: function setProvider(provider) {
       this.provider = provider;
     }
     /**
-     * @function {setScillaProvider}
-     * @param  {Provider} provider {provider instance}
-     * @return {Provider} {provider setter}
+     * @function setScillaProvider
+     * @memberof Messenger
+     * @description scilla provider setter
+     * @param  {Provider} provider - provider instance
      */
 
   }, {
@@ -261,8 +321,10 @@ function () {
       this.scillaProvider = provider;
     }
     /**
-     * @function {providerCheck}
-     * @return {Error|null} {provider validator}
+     * @function providerCheck
+     * @memberof Messenger
+     * @description provider checker
+     * @return {Error|null} provider validator
      */
 
   }, {
@@ -273,18 +335,41 @@ function () {
         return null;
       }
     }
+    /**
+     * @function setReqMiddleware
+     * @description set request middleware
+     * @memberof Messenger
+     * @param  {any} middleware - middle ware for req
+     * @param  {String} method  - method name
+     */
+
   }, {
     key: "setReqMiddleware",
     value: function setReqMiddleware(middleware) {
       var method = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : '*';
       return this.provider.middleware.request.use(middleware, method);
     }
+    /**
+     * @function setResMiddleware
+     * @description set response middleware
+     * @memberof Messenger
+     * @param  {any} middleware - middle ware for req
+     * @param  {String} method  - method name
+     */
+
   }, {
     key: "setResMiddleware",
     value: function setResMiddleware(middleware) {
       var method = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : '*';
       return this.provider.middleware.response.use(middleware, method);
     }
+    /**
+     * @function {function name}
+     * @memberof Messenger
+     * @param  {Number} version   - version number
+     * @param  {String} networkId - network id
+     */
+
   }, {
     key: "setTransactionVersion",
     value: function setTransactionVersion(version, networkId) {
@@ -332,6 +417,12 @@ function () {
 
       return laksaUtils.pack(chainID, version);
     }
+    /**
+     * @function setNetworkID
+     * @memberof Messenger
+     * @param  {String} id network id string
+     */
+
   }, {
     key: "setNetworkID",
     value: function setNetworkID(id) {

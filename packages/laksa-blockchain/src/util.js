@@ -6,7 +6,7 @@ import {
  * @function toTxParams
  * @description Map RPC response to TxParams
  * @param  {Object} response - Response received from RPC method
- * @return {Object} - to Transaction params object
+ * @return {Object} to Transaction params object
  */
 export function toTxParams(response) {
   const {
