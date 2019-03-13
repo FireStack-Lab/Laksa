@@ -59,6 +59,10 @@ var defaultOptions = {
   headers: laksaCoreProvider.DEFAULT_HEADERS,
   user: null,
   password: null
+  /**
+   * @class
+   */
+
 };
 
 var HttpProvider =
@@ -90,10 +94,11 @@ function (_BaseProvider) {
     return _this;
   }
   /**
-   * @function {send}
-   * @param  {object} payload  {payload object}
-   * @param  {function} callback {callback function}
-   * @return {function} {to requestFunc}
+   * @function send
+   * @memberof HttpProvider.prototype
+   * @param  {Object} payload  - payload object
+   * @param  {Function} callback - callback function
+   * @return {any} - RPC Response
    */
 
 
@@ -106,11 +111,12 @@ function (_BaseProvider) {
       });
     }
     /**
-     * @function {sendServer}
-     * @param  {string} endpoint {endpoint to the server}
-     * @param  {object} payload  {payload object}
-     * @param  {function} callback {callback function}
-     * @return {function} {to requestFunc}
+     * @function sendServer
+     * @memberof HttpProvider.prototype
+     * @param  {String} endpoint - endpoint to server
+     * @param  {Object} payload  - payload object
+     * @param  {Function} callback - callback function
+     * @return {Function} - RPC Response
      */
 
   }, {
@@ -123,11 +129,12 @@ function (_BaseProvider) {
       });
     }
     /**
-     * @function {requestFunc}
-     * @param  {string} endpoint {endpoint to the server}
-     * @param  {object} payload  {payload object}
-     * @param  {function} callback {callback function}
-     * @return {function} {performRPC call from laksa-core-provider}
+     * @function requestFunc
+     * @memberof HttpProvider.prototype
+     * @param  {String} endpoint - endpoint to the server
+     * @param  {Object} payload  - payload object
+     * @param  {Function} callback - callback function
+     * @return {Function} - performRPC call from laksa-core-provider
      */
 
   }, {
@@ -156,9 +163,10 @@ function (_BaseProvider) {
       return laksaCoreProvider.performRPC(req, resMiddleware, this.fetcher);
     }
     /**
-     * @function {payloadHandler}
-     * @param  {object} payload {payload object}
-     * @return {object} {to payload object}
+     * @function payloadHandler
+     * @memberof HttpProvider.prototype
+     * @param  {Object} payload - payload object
+     * @return {Object} - to payload object
      */
 
   }, {
@@ -169,10 +177,11 @@ function (_BaseProvider) {
       };
     }
     /**
-     * @function {endpointHandler}
-     * @param  {object} obj      {payload object}
-     * @param  {string} endpoint {add the endpoint to payload object}
-     * @return {object} {assign a new object}
+     * @function endpointHandler
+     * @memberof HttpProvider.prototype
+     * @param  {Object} obj      - payload object
+     * @param  {String} endpoint - add the endpoint to payload object
+     * @return {Object} - assign a new object
      */
 
   }, {
@@ -183,9 +192,10 @@ function (_BaseProvider) {
       });
     }
     /**
-     * @function {optionsHandler}
-     * @param  {object} obj {options object}
-     * @return {object} {assign a new option object}
+     * @function optionsHandler
+     * @memberof HttpProvider.prototype
+     * @param  {Object} obj - options object
+     * @return {Object} - assign a new option object
      */
 
   }, {
@@ -201,10 +211,11 @@ function (_BaseProvider) {
       });
     }
     /**
-     * @function {callbackHandler}
-     * @param  {object} data {from server}
-     * @param  {function} cb   {callback function}
-     * @return {object|function} {return object or callback function}
+     * @function callbackHandler
+     * @memberof HttpProvider.prototype
+     * @param  {Object} data - from server
+     * @param  {Function} cb   - callback function
+     * @return {Object|Function} - return object or callback function
      */
 
   }, {

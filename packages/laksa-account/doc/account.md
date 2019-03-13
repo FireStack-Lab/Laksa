@@ -4,91 +4,163 @@ title: account
 
 # account
 
-## Functions
+<a name="Account"></a>
 
-<dl>
-<dt><a href="#{createAccount}">{createAccount}()</a> ⇒ <code>Account</code></dt>
-<dd></dd>
-<dt><a href="#{importAccount}">{importAccount}(privateKey)</a> ⇒ <code>Account</code></dt>
-<dd></dd>
-<dt><a href="#{encrypt}">{encrypt}(password, options)</a> ⇒ <code>Account</code></dt>
-<dd></dd>
-<dt><a href="#{decrypt}">{decrypt}(password)</a> ⇒ <code>object</code></dt>
-<dd></dd>
-<dt><a href="#{toFile}">{toFile}(password, options)</a> ⇒ <code>string</code></dt>
-<dd></dd>
-<dt><a href="#{fromFile}">{fromFile}(keyStore, password)</a> ⇒ <code>Account</code></dt>
-<dd></dd>
-<dt><a href="#{signTransactionWithPassword} {sign plain object with password}">{signTransactionWithPassword} {sign plain object with password}(txnObj, password)</a> ⇒ <code>object</code></dt>
-<dd></dd>
-</dl>
+## Account
+**Kind**: global class  
 
-<a name="{createAccount}"></a>
+* [Account](#Account)
+    * [new Account(messenger)](#new_Account_new)
+    * _instance_
+        * [.privateKey](#Account+privateKey) : <code>String</code>
+        * [.publicKey](#Account+publicKey) : <code>String</code>
+        * [.address](#Account+address) : <code>String</code>
+        * [.balance](#Account+balance) : <code>String</code>
+        * [.privateKey](#Account+privateKey) : <code>Number</code>
+    * _static_
+        * [.createAccount()](#Account.createAccount) ⇒ [<code>Account</code>](#Account)
+        * [.importAccount(privateKey)](#Account.importAccount) ⇒ [<code>Account</code>](#Account)
+        * [.encrypt(password, options)](#Account.encrypt) ⇒ [<code>Promise.&lt;Account&gt;</code>](#Account)
+        * [.decrypt(password)](#Account.decrypt) ⇒ <code>Promise.&lt;Object&gt;</code>
+        * [.toFile(password, options)](#Account.toFile) ⇒ <code>Promise.&lt;String&gt;</code>
+        * [.fromFile(keyStore, password)](#Account.fromFile) ⇒ [<code>Promise.&lt;Account&gt;</code>](#Account)
+        * [.signTransactionWithPassword(txnObj, password)](#Account.signTransactionWithPassword) ⇒ <code>Promise.&lt;Object&gt;</code>
+        * [.getBalance()](#Account.getBalance) ⇒ <code>Promise.&lt;Object&gt;</code>
+        * [.updateBalance()](#Account.updateBalance) ⇒ [<code>Promise.&lt;Account&gt;</code>](#Account)
 
-## {createAccount}() ⇒ <code>Account</code>
-**Kind**: global function  
-**Returns**: <code>Account</code> - {account object}  
-<a name="{importAccount}"></a>
+<a name="new_Account_new"></a>
 
-## {importAccount}(privateKey) ⇒ <code>Account</code>
-**Kind**: global function  
-**Returns**: <code>Account</code> - {account object}  
-
-| Param | Type | Description |
-| --- | --- | --- |
-| privateKey | <code>PrivateKey</code> | {privatekey string} |
-
-<a name="{encrypt}"></a>
-
-## {encrypt}(password, options) ⇒ <code>Account</code>
-**Kind**: global function  
-**Returns**: <code>Account</code> - {account object}  
+### new Account(messenger)
+**Returns**: [<code>Account</code>](#Account) - {description}  
 
 | Param | Type | Description |
 | --- | --- | --- |
-| password | <code>string</code> | {password string} |
-| options | <code>object</code> | {options object for encryption} |
+| messenger | <code>Messenger</code> | messsenger instance |
 
-<a name="{decrypt}"></a>
+<a name="Account+privateKey"></a>
 
-## {decrypt}(password) ⇒ <code>object</code>
-**Kind**: global function  
-**Returns**: <code>object</code> - {account object}  
+### account.privateKey : <code>String</code>
+privateKey of Account
+
+**Kind**: instance property of [<code>Account</code>](#Account)  
+<a name="Account+publicKey"></a>
+
+### account.publicKey : <code>String</code>
+publicKey of Account
+
+**Kind**: instance property of [<code>Account</code>](#Account)  
+<a name="Account+address"></a>
+
+### account.address : <code>String</code>
+address of Account
+
+**Kind**: instance property of [<code>Account</code>](#Account)  
+<a name="Account+balance"></a>
+
+### account.balance : <code>String</code>
+balance of Account
+
+**Kind**: instance property of [<code>Account</code>](#Account)  
+<a name="Account+privateKey"></a>
+
+### account.privateKey : <code>Number</code>
+nonce of Account
+
+**Kind**: instance property of [<code>Account</code>](#Account)  
+<a name="Account.createAccount"></a>
+
+### Account.createAccount() ⇒ [<code>Account</code>](#Account)
+create new Account instance
+
+**Kind**: static method of [<code>Account</code>](#Account)  
+**Returns**: [<code>Account</code>](#Account) - - create a new Account  
+<a name="Account.importAccount"></a>
+
+### Account.importAccount(privateKey) ⇒ [<code>Account</code>](#Account)
+import private key string and return an Account instance
+
+**Kind**: static method of [<code>Account</code>](#Account)  
+**Returns**: [<code>Account</code>](#Account) - - create a new Account  
 
 | Param | Type | Description |
 | --- | --- | --- |
-| password | <code>string</code> | {password string} |
+| privateKey | <code>String</code> | privatekey string |
 
-<a name="{toFile}"></a>
+<a name="Account.encrypt"></a>
 
-## {toFile}(password, options) ⇒ <code>string</code>
-**Kind**: global function  
-**Returns**: <code>string</code> - {description}  
+### Account.encrypt(password, options) ⇒ [<code>Promise.&lt;Account&gt;</code>](#Account)
+encrypt an account providing password and encrypt options
 
-| Param | Type | Description |
-| --- | --- | --- |
-| password | <code>string</code> | {description} |
-| options | <code>object</code> | {description} |
-
-<a name="{fromFile}"></a>
-
-## {fromFile}(keyStore, password) ⇒ <code>Account</code>
-**Kind**: global function  
-**Returns**: <code>Account</code> - {description}  
+**Kind**: static method of [<code>Account</code>](#Account)  
+**Returns**: [<code>Promise.&lt;Account&gt;</code>](#Account) - - encrypt an account  
 
 | Param | Type | Description |
 | --- | --- | --- |
-| keyStore | <code>object</code> | {description} |
-| password | <code>string</code> | {description} |
+| password | <code>String</code> | password string |
+| options | <code>Object</code> | options object for encryption |
 
-<a name="{signTransactionWithPassword} {sign plain object with password}"></a>
+<a name="Account.decrypt"></a>
 
-## {signTransactionWithPassword} {sign plain object with password}(txnObj, password) ⇒ <code>object</code>
-**Kind**: global function  
-**Returns**: <code>object</code> - {signed transaction object}  
+### Account.decrypt(password) ⇒ <code>Promise.&lt;Object&gt;</code>
+decrypt an account providing password
+
+**Kind**: static method of [<code>Account</code>](#Account)  
+**Returns**: <code>Promise.&lt;Object&gt;</code> - - account object  
 
 | Param | Type | Description |
 | --- | --- | --- |
-| txnObj | <code>Transaction</code> | {transaction object} |
-| password | <code>string</code> | {password string} |
+| password | <code>String</code> | password string |
 
+<a name="Account.toFile"></a>
+
+### Account.toFile(password, options) ⇒ <code>Promise.&lt;String&gt;</code>
+encrypt an account and return as jsonString
+
+**Kind**: static method of [<code>Account</code>](#Account)  
+**Returns**: <code>Promise.&lt;String&gt;</code> - - encrypted jsonString  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| password | <code>String</code> | password string |
+| options | <code>Object</code> | encryption options |
+
+<a name="Account.fromFile"></a>
+
+### Account.fromFile(keyStore, password) ⇒ [<code>Promise.&lt;Account&gt;</code>](#Account)
+Decrypt a keystore jsonString and generate an account.
+
+**Kind**: static method of [<code>Account</code>](#Account)  
+**Returns**: [<code>Promise.&lt;Account&gt;</code>](#Account) - - Account  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| keyStore | <code>String</code> | keystore jsonString |
+| password | <code>String</code> | password string |
+
+<a name="Account.signTransactionWithPassword"></a>
+
+### Account.signTransactionWithPassword(txnObj, password) ⇒ <code>Promise.&lt;Object&gt;</code>
+sign transaction object with password
+
+**Kind**: static method of [<code>Account</code>](#Account)  
+**Returns**: <code>Promise.&lt;Object&gt;</code> - - signed transaction object  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| txnObj | <code>Transaction</code> | transaction object |
+| password | <code>String</code> | password string |
+
+<a name="Account.getBalance"></a>
+
+### Account.getBalance() ⇒ <code>Promise.&lt;Object&gt;</code>
+get balance of current Account
+
+**Kind**: static method of [<code>Account</code>](#Account)  
+**Returns**: <code>Promise.&lt;Object&gt;</code> - - signed transaction object  
+<a name="Account.updateBalance"></a>
+
+### Account.updateBalance() ⇒ [<code>Promise.&lt;Account&gt;</code>](#Account)
+update balance and nonce of current account
+
+**Kind**: static method of [<code>Account</code>](#Account)  
+**Returns**: [<code>Promise.&lt;Account&gt;</code>](#Account) - - return current Account instance  

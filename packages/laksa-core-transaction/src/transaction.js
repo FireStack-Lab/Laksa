@@ -5,6 +5,15 @@ import {
 } from 'laksa-core-crypto'
 import { sleep, TxStatus } from './util'
 
+/**
+ * @class Transaction
+ * @description Createa a Transaction instance
+ * @param {Object} params - params object
+ * @param {Messenger} messenger - messenger instance
+ * @param {String} status - txstatus
+ * @param {Boolean} toDs - send to Shard
+ * @return {Transaction} = Transaction instance
+ */
 class Transaction {
   constructor(params, messenger, status = TxStatus.Initialised, toDS = false) {
     // params
@@ -27,11 +36,8 @@ class Transaction {
   }
 
   /**
-   * confirmed
-   *
-   * constructs an already-confirmed transaction.
-   *
-   * @static
+   * @function confirm
+   * @memberof Transaction
    * @param {BaseTx} params
    */
   static confirm(params, messenger) {
@@ -39,11 +45,8 @@ class Transaction {
   }
 
   /**
-   * reject
-   *
-   * constructs an already-rejected transaction.
-   *
-   * @static
+   *@function reject
+   * @memberof Transaction
    * @param {BaseTx} params
    */
   static reject(params, messenger) {
@@ -55,10 +58,6 @@ class Transaction {
   }
 
   /**
-   * setStatus
-   *
-   * Escape hatch to imperatively set the state of the transaction.
-   *
    * @param {TxStatus} status
    * @returns {undefined}
    */
@@ -98,7 +97,7 @@ class Transaction {
   }
 
   /**
-   * isPending
+   * @function isPending
    *
    * @returns {boolean}
    */
@@ -107,7 +106,7 @@ class Transaction {
   }
 
   /**
-   * isInitialised
+   * @function isInitialised
    *
    * @returns {boolean}
    */
@@ -116,7 +115,7 @@ class Transaction {
   }
 
   /**
-   * isRejected
+   * @function isRejected
    *
    * @returns {boolean}
    */
@@ -125,7 +124,7 @@ class Transaction {
   }
 
   /**
-   * isConfirmed
+   * @function isConfirmed
    *
    * @returns {boolean}
    */
@@ -134,7 +133,7 @@ class Transaction {
   }
 
   /**
-   * isRejected
+   * @function isRejected
    *
    * @returns {boolean}
    */
@@ -142,12 +141,6 @@ class Transaction {
     return this.status === TxStatus.Rejected
   }
 
-  /**
-   * If a transaction is sigend , can be sent and get TranID,
-   * We set the This.TranID = TranID and return Transaction Object and response
-   * @function {sendTxn}
-   * @return {transaction:Promise<Transaction|Error>,response:Promise<Response>} {Transaction}
-   */
   async sendTransaction() {
     if (!this.signature) {
       throw new Error('The Transaction has not been signed')
@@ -175,19 +168,22 @@ class Transaction {
     }
   }
 
-  /**
-   * confirmReceipt
-   *
-   * Similar to the Promise API. This sets the Transaction instance to a state
-   * of pending. Calling this function kicks off a passive loop that polls the
-   * lookup node for confirmation on the txHash.
-   *
-   * The polls are performed with a linear backoff:
-   *
-   * `const delay = interval * attempt`
-   *
-   * This is a low-level method that you should generally not have to use
-   * directly.
+  // /**
+  //  * confirmReceipt
+  //  *
+  //  * Similar to the Promise API. This sets the Transaction instance to a state
+  //  * of pending. Calling this function kicks off a passive loop that polls the
+  //  * lookup node for confirmation on the txHash.
+  //  *
+  //  * The polls are performed with a linear backoff:
+  //  *
+  //  * `const delay = interval * attempt`
+  //  *
+  //  * This is a low-level method that you should generally not have to use
+  //  * directly.
+  //  */
+
+  /*
    *
    * @param {string} txHash
    * @param {number} maxAttempts
@@ -213,14 +209,6 @@ class Transaction {
     throw new Error(`The transaction is still not confirmed after ${maxAttempts} attempts.`)
   }
 
-  /**
-   * map
-   *
-   * maps over the transaction, allowing for manipulation.
-   *
-   * @param {(prev: TxParams) => TxParams} fn - mapper
-   * @returns {Transaction}
-   */
   map(fn) {
     const newParams = fn(this.txParams)
     this.setParams(newParams)

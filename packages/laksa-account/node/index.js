@@ -56,10 +56,10 @@
   const ENCRYPTED = 'ENCRYPTED';
 
   /**
-   * gernerate account object
    * @function generateAccountObject
-   * @param  {string} privateKey {description}
-   * @return {Account} {Account object}
+   * @description generate Account object
+   * @param  {String} privateKey - privateKey String
+   * @return {Object} - Account object
    */
 
   function generateAccountObject(privateKey) {
@@ -77,7 +77,8 @@
   }
   /**
    * @function createAccount
-   * @return {Account} {account object}
+   * @description create an account
+   * @return {Object} - account object
    */
 
 
@@ -87,8 +88,9 @@
   };
   /**
    * @function importAccount
-   * @param  {PrivateKey} privateKey {privatekey string}
-   * @return {Account} {account object}
+   * @description import privatekey and generate an account object
+   * @param  {String} privateKey - privatekey string
+   * @return {Object} - account object
    */
 
   const importAccount = privateKey => {
@@ -96,10 +98,11 @@
   };
   /**
    * @function encryptAccount
-   * @param  {Account} accountObject {account object}
-   * @param  {string} password      {password string}
-   * @param  {object} options       {encryption options}
-   * @return {Account} {encrypted account object}
+   * @description encrypt Account
+   * @param  {Account} accountObject - account instance
+   * @param  {String} password      - password string
+   * @param  {Object} options       - encryption options
+   * @return {Object} - encrypted account object
    */
 
   const encryptAccount = async (accountObject, password, options = {
@@ -123,9 +126,10 @@
   };
   /**
    * @function decryptAccount
-   * @param  {Account} accountObject {encrypted account object}
-   * @param  {string} password      {password string}
-   * @return {Account} {decrypted account object}
+   * @description decrypt an account object
+   * @param  {Account} accountObject - encrypted account object
+   * @param  {String} password      -password string
+   * @return {Object} - decrypted account object
    */
 
   const decryptAccount = async (accountObject, password) => {
@@ -149,9 +153,10 @@
   };
   /**
    * @function signTransaction
-   * @param  {PrivateKey} privateKey        {privatekey}
-   * @param  {Transaction} transactionObject {transaction object}
-   * @return {Transaction} {signed transaction}
+   * @description sign a transaction providing privatekey and transaction object
+   * @param  {String} privateKey        - privatekey String
+   * @param  {Transaction} txnDetails  - transaction object
+   * @return {Transaction} - signed transaction
    */
 
   const signTransaction = (privateKey, txnDetails) => {
@@ -180,19 +185,57 @@
     }
   };
 
+  /**
+   * @class
+   * @param  {Messenger}  messenger - messsenger instance
+   * @return {Account} {description}
+   */
+
   class Account extends laksaShared.Core {
     constructor(messenger) {
       super(messenger);
       delete this.signer;
+      /**
+       * @var {String} privateKey
+       * @memberof Account.prototype
+       * @description privateKey of Account
+       */
+
       this.privateKey = '';
+      /**
+       * @var {String} publicKey
+       * @memberof Account.prototype
+       * @description publicKey of Account
+       */
+
       this.publicKey = '';
+      /**
+       * @var {String} address
+       * @memberof Account.prototype
+       * @description address of Account
+       */
+
       this.address = '';
+      /**
+       * @var {String} balance
+       * @memberof Account.prototype
+       * @description balance of Account
+       */
+
       this.balance = '0';
+      /**
+       * @var {Number} privateKey
+       * @memberof Account.prototype
+       * @description nonce of Account
+       */
+
       this.nonce = 0;
     }
     /**
-     * @function {createAccount}
-     * @return {Account} {account object}
+     * @function createAccount
+     * @description create new Account instance
+     * @memberof Account
+     * @return {Account} - create a new Account
      */
 
 
@@ -209,9 +252,11 @@
       return this;
     }
     /**
-     * @function {importAccount}
-     * @param  {PrivateKey} privateKey {privatekey string}
-     * @return {Account} {account object}
+     * @function importAccount
+     * @description import private key string and return an Account instance
+     * @memberof Account
+     * @param  {String} privateKey - privatekey string
+     * @return {Account} - create a new Account
      */
 
 
@@ -229,10 +274,12 @@
     } // sub object
 
     /**
-     * @function {encrypt}
-     * @param  {string} password {password string}
-     * @param  {object} options  {options object for encryption}
-     * @return {Account} {account object}
+     * @function encrypt
+     * @memberof Account
+     * @description encrypt an account providing password and encrypt options
+     * @param  {String} password - password string
+     * @param  {Object} options  - options object for encryption
+     * @return {Promise<Account>} - encrypt an account
      */
 
 
@@ -244,9 +291,11 @@
     } // sub object
 
     /**
-     * @function {decrypt}
-     * @param  {string} password {password string}
-     * @return {object} {account object}
+     * @function decrypt
+     * @memberof Account
+     * @description decrypt an account providing password
+     * @param  {String} password - password string
+     * @return {Promise<Object>} - account object
      */
 
 
@@ -257,10 +306,12 @@
       return Object.assign(this, decrypted);
     }
     /**
-     * @function {toFile}
-     * @param  {string} password {description}
-     * @param  {object} options  {description}
-     * @return {string} {description}
+     * @function toFile
+     * @memberof Account
+     * @description encrypt an account and return as jsonString
+     * @param  {String} password - password string
+     * @param  {Object} options  - encryption options
+     * @return {Promise<String>} - encrypted jsonString
      */
 
 
@@ -301,10 +352,12 @@
       });
     }
     /**
-     * @function {fromFile}
-     * @param  {object} keyStore {description}
-     * @param  {string} password {description}
-     * @return {Account} {description}
+     * @function fromFile
+     * @memberof Account
+     * @description Decrypt a keystore jsonString and generate an account.
+     * @param  {String} keyStore - keystore jsonString
+     * @param  {String} password - password string
+     * @return {Promise<Account>} - Account
      */
 
 
@@ -317,10 +370,12 @@
       } else throw new Error('cannot import file');
     }
     /**
-     * @function {signTransactionWithPassword} {sign plain object with password}
-     * @param  {Transaction} txnObj {transaction object}
-     * @param  {string} password          {password string}
-     * @return {object} {signed transaction object}
+     * @function signTransactionWithPassword
+     * @memberof Account
+     * @description  sign transaction object with password
+     * @param  {Transaction} txnObj - transaction object
+     * @param  {String} password  - password string
+     * @return {Promise<Object>} - signed transaction object
      */
 
 
@@ -345,6 +400,13 @@
         });
       }
     }
+    /**
+     * @function getBalance
+     * @memberof Account
+     * @description  get balance of current Account
+     * @return {Promise<Object>} - signed transaction object
+     */
+
 
     async getBalance() {
       try {
@@ -366,6 +428,13 @@
         throw error;
       }
     }
+    /**
+     * @function updateBalance
+     * @memberof Account
+     * @description  update balance and nonce of current account
+     * @return {Promise<Account>} - return current Account instance
+     */
+
 
     async updateBalance() {
       try {

@@ -1,3 +1,8 @@
+/**
+ * @function sleep
+ * @param  {Number} ms - miliSeconds
+ * @return {Promise<Function>} {description}
+ */
 export const sleep = async ms =>
   new Promise(resolve => {
     setTimeout(() => resolve(), ms)

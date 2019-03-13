@@ -2,6 +2,9 @@ import { Core } from 'laksa-shared'
 import { Transaction } from './transaction'
 import { TxStatus } from './util'
 
+/**
+ * @class Transactions
+ */
 class Transactions extends Core {
   constructor(messenger, signer) {
     super()

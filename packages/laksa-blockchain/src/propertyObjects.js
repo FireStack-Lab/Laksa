@@ -2,24 +2,30 @@ import { RPCMethod } from './rpc'
 
 export default [
   /**
-   * getHashrate
-   * @params {}
+   * @function hashrate
+   * @description connection status from RPC
+   * @extends BlockChain.prototype
+   * @return {Object} - RPC response Object
    */
   {
     name: 'hashrate',
     getter: RPCMethod.GetHashrate
   },
   /**
-   * networkId
-   * @params {}
+   * @function networkId
+   * @description network ID for current provider
+   * @extends BlockChain.prototype
+   * @return {Object} - RPC response Object
    */
   {
     name: 'networkId',
     getter: RPCMethod.GetNetworkId
   },
   /**
-   * getClientVersion
-   * @params {}
+   * @function clientVersion
+   * @description client version for current provider
+   * @extends BlockChain.prototype
+   * @return {Object} - RPC response Object
    */
   {
     name: 'clientVersion',
@@ -27,16 +33,20 @@ export default [
   },
 
   /**
-   * getProtocolVersion
-   * @params {}
+   * @function  protocalVersion
+   * @description get protocal version for current provider
+   * @extends BlockChain.prototype
+   * @return {Object} - RPC response Object
    */
   {
     name: 'protocolVersion',
     getter: RPCMethod.GetProtocolVersion
   },
   /**
-   * getNodeMining
-   * @params {}
+   * @function nodeMining
+   * @description is node mining
+   * @extends BlockChain.prototype
+   * @return {Object} - RPC response Object
    */
   {
     name: 'nodeMining',

@@ -84,6 +84,12 @@
     }
   };
 
+  /**
+   * @class Laksa
+   * @param  {String}  url - Url string to initializing Laksa
+   * @return {Laksa} - Laksa instance
+   */
+
   class Laksa {
     constructor(args) {
       _defineProperty(this, "Modules", {
@@ -96,6 +102,13 @@
         Transaction: laksaCoreTransaction.Transaction,
         Transactions: laksaCoreTransaction.Transactions,
         Wallet: laksaWallet.Wallet
+        /**
+         * @function version
+         * @memberof Laksa
+         * @description get library version
+         * @return {String} - library version
+         */
+
       });
 
       _defineProperty(this, "setProvider", provider => {
@@ -134,10 +147,24 @@
     get version() {
       return config.version;
     }
+    /**
+     * @function isConnected
+     * @memberof Laksa
+     * @description check connection status
+     * @return {any} - connection status
+     */
+
 
     get isConnected() {
       return this.connection;
-    } // library method
+    }
+    /**
+     * @function connection
+     * @memberof Laksa
+     * @param {?Function} callback - callback function
+     * @description check connection status
+     * @return {Promise<any>} - connection status
+     */
 
 
     async connection(callback) {
@@ -149,14 +176,42 @@
         return false;
       }
     }
+    /**
+     * @function setProvider
+     * @memberof Laksa.prototype
+     * @param {HttpProvider} provider - HttpProvider
+     * @description provider setter
+     * @return {Boolean} - if provider is set, return true
+     */
 
+
+    /**
+     * @function getProvider
+     * @memberof Laksa
+     * @description provider getter
+     * @return {Object} - currentProvider with nodeProvider and scillaProvider
+     */
     getProvider() {
       return this.currentProvider;
     }
+    /**
+     * @function getLibraryVersion
+     * @memberof Laksa
+     * @description version getter
+     * @return {String} - version string
+     */
+
 
     getLibraryVersion() {
       return this.version;
     }
+    /**
+     * @function getDefaultAccount
+     * @memberof Laksa
+     * @description get wallet's default Account or config default Account
+     * @return {Account} - Account instance
+     */
+
 
     getDefaultAccount() {
       if (this.wallet.defaultAccount) {
@@ -165,6 +220,15 @@
 
       return this.config.defaultAccount;
     }
+    /**
+     * @function setNodeProvider
+     * @memberof Laksa
+     * @description set provider to nodeProvider
+     * @param {Object} providerObject
+     * @param {String} providerObject.url - url String
+     * @param {Object} providerObject.options - provider options
+     */
+
 
     setNodeProvider({
       url,
@@ -176,6 +240,15 @@
       });
       this.messenger.setProvider(newProvider);
     }
+    /**
+     * @function setScillaProvider
+     * @memberof Laksa
+     * @description set provider to scillaProvider
+     * @param {Object} providerObject
+     * @param {String} providerObject.url - url String
+     * @param {Object} providerObject.options - provider options
+     */
+
 
     setScillaProvider({
       url,
@@ -187,6 +260,15 @@
       });
       this.messenger.setScillaProvider(newProvider);
     }
+    /**
+     * @function register
+     * @memberof Laksa
+     * @description register a Module attach to Laksa
+     * @param {Object} moduleObject
+     * @param {String} moduleObject.name - Module name
+     * @param {any} moduleObject.pkg - Module instance
+     */
+
 
     register({
       name,
@@ -198,6 +280,13 @@
       };
       Object.defineProperty(this, name, pkgObject);
     }
+    /**
+     * @function getNetworkSetting
+     * @memberof Laksa
+     * @description get config's network settings
+     * @return {Object}
+     */
+
 
     getNetworkSetting() {
       const {
@@ -215,6 +304,14 @@
         Staging
       };
     }
+    /**
+     * @function setNetworkID
+     * @memberof Laksa
+     * @description set network Id to messenger
+     * @param {String} networkId
+     * @return {Object}
+     */
+
 
     setNetworkID(networkId) {
       this.messenger.setNetworkID(networkId);

@@ -42,18 +42,32 @@ const mapPropertyToObjects = main => {
  */
 class BlockChain extends Core {
   /**
-   * @memberof BlockChain
+   * @memberof BlockChain.prototype
    * @type {Messenger} - Messenger Instance
    * @description Messenger instance from parent
    */
   messseger
 
   /**
-   * @memberof BlockChain
+   * @memberof BlockChain.prototype
    * @type {Wallet} - Wallet Instance
    * @description Wallet instance from parent
    */
   signer
+
+  /**
+   * @memberof BlockChain.prototype
+   * @type {Function} - _completeTransaction
+   * @description to make transaction and confirm
+   */
+  completeTransaction = this._completeTransaction
+
+  /**
+   * @memberof BlockChain.prototype
+   * @type {Function} - _confirmTransaction
+   * @description to make a confirm to a exist transaction
+   */
+  confirmTransaction = this._confirmTransaction
 
   constructor(messenger, signer) {
     super()
@@ -95,7 +109,7 @@ class BlockChain extends Core {
 
   /**
    * @function completeTransaction
-   * @memberof BlockChain.prototype
+   * @memberof BlockChain
    * @param  {Transaction} tx       - Transaction to send
    * @param  {?Account} account  - Account for signing if not use Wallet's signer
    * @param  {?String} password - Password of Account if it is encrypted
@@ -109,7 +123,7 @@ class BlockChain extends Core {
     gasLimit: ['isLong', 'required'],
     signature: ['isString', 'optional']
   })
-  async completeTransaction(tx, account, password) {
+  async _completeTransaction(tx, account, password) {
     try {
       const accountSigning = account || this.signer.signer
       const passwordSigning = password
@@ -130,12 +144,12 @@ class BlockChain extends Core {
   // FIXME:Transaction as call back should not be implement with this function
   /**
    * @function confirmTransaction
-   * @memberof BlockChain.prototype
+   * @memberof BlockChain
    * @param  {String} txHash       - Transaction ID
    * @return {Transaction} - Transaction instance with confirm/reject state
    */
   @assertObject({ txHash: ['isHash', 'required'] })
-  async confirmTransaction({ txHash }) {
+  async _confirmTransaction({ txHash }) {
     try {
       const response = await this.messenger.send(RPCMethod.GetTransaction, txHash)
 

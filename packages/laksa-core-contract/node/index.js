@@ -64,6 +64,12 @@
     }
   };
 
+  /**
+   * @function getParamTypes
+   * @description extract param types for abi object
+   * @param  {Array<Object>} list {description}
+   * @return {Array<Object>} {description}
+   */
   function getParamTypes(list) {
     const result = [];
     list.map((obj, index) => {
@@ -72,47 +78,132 @@
     });
     return result;
   }
+  /**
+   * @class ABI
+   * @description ABI instance
+   * @param  {Object} abi abi object
+   * @return {ABI} ABI instance
+   */
+
 
   class ABI {
     constructor(abi) {
+      /**
+       * @var {Array} events
+       * @memberof ABI
+       * @description events
+       */
       this.events = abi !== undefined ? abi.events : []; // Array<object>
+
+      /**
+       * @var {Array} fields
+       * @memberof ABI
+       * @description fields
+       */
 
       this.fields = abi !== undefined ? abi.fields : []; // Array<object>
 
+      /**
+       * @var {String} name
+       * @memberof ABI
+       * @description name
+       */
+
       this.name = abi !== undefined ? abi.name : ''; // string
+
+      /**
+       * @var {Array} params
+       * @memberof ABI
+       * @description params
+       */
 
       this.params = abi !== undefined ? abi.params : []; // Array<object>
 
+      /**
+       * @var {Array} transitions
+       * @memberof ABI
+       * @description transitions
+       */
+
       this.transitions = abi !== undefined ? abi.transitions : []; // Array<object>
     }
+    /**
+     * @function getName
+     * @memberof ABI
+     * @description name getter
+     * @return {String} ABI.name
+     */
+
 
     getName() {
       return this.name;
     }
+    /**
+     * @function getInitParams
+     * @memberof ABI
+     * @description params getter
+     * @return {String} ABI.params
+     */
+
 
     getInitParams() {
       return this.params;
     }
+    /**
+     * @function getInitParamTypes
+     * @memberof ABI
+     * @description get param types array
+     * @return {Array<Object>} param types
+     */
+
 
     getInitParamTypes() {
       if (this.params.length > 0) {
         return getParamTypes(this.params);
       } else return [];
     }
+    /**
+     * @function getFields
+     * @memberof ABI
+     * @description fields getter
+     * @return {Array} ABI.fields
+     */
+
 
     getFields() {
       return this.fields;
     }
+    /**
+     * @function getFieldsTypes
+     * @memberof ABI
+     * @description get fields types array
+     * @return {Array<Object>} fields types
+     */
+
 
     getFieldsTypes() {
       if (this.fields.length > 0) {
         return getParamTypes(this.fields);
       } else return [];
     }
+    /**
+     * @function getTransitions
+     * @memberof ABI
+     * @description transitions getter
+     * @return {Array<Object>} ABI.transitions
+     */
+
 
     getTransitions() {
       return this.transitions;
     }
+    /**
+     * @function getTransitionsParamTypes
+     * @memberof ABI
+     * @description get transitions types array
+     * @return {Array<Object>} transitions types
+     */
+
 
     getTransitionsParamTypes() {
       const returnArray = [];
@@ -125,6 +216,13 @@
 
       return returnArray;
     }
+    /**
+     * @function getEvents
+     * @memberof ABI
+     * @description events getter
+     * @return {Array<Object>} ABI.events
+     */
+
 
     getEvents() {
       return this.events;
@@ -235,6 +333,14 @@
   };
 
   var _dec, _dec2, _dec3, _dec4, _class;
+  /**
+   * @class Contract
+   * @param  {Object}  params - contract params
+   * @param  {Contracts} factory - contract factory
+   * @param  {String} status -Contract status
+   * @return {Contract} Contract instance
+   */
+
   let Contract = (_dec = laksaShared.assertObject({
     gasLimit: ['isLong', 'required'],
     gasPrice: ['isBN', 'required'],
@@ -259,21 +365,67 @@
     toDS: ['isBoolean', 'optional']
   }), (_class = class Contract {
     constructor(params, factory, status = ContractStatus.INITIALISED) {
+      /**
+       * @var {String} code
+       * @memberof Contract
+       * @description code
+       */
       this.code = params.code || '';
+      /**
+       * @var {Array<Object>} init
+       * @memberof Contract
+       * @description init
+       */
+
       this.init = params.init || [];
+      /**
+       * @var {Number} version
+       * @memberof Contract
+       * @description version
+       */
+
       this.version = params.version || 0;
+      /**
+       * @var {String} ContractAddress
+       * @memberof Contract
+       * @description ContractAddress
+       */
+
       this.ContractAddress = params.ContractAddress || undefined;
+      /**
+       * @var {Messenger} messenger
+       * @memberof Contract
+       * @description messenger
+       */
+
       this.messenger = factory.messenger;
+      /**
+       * @var {Wallet} signer
+       * @memberof Contract
+       * @description signer
+       */
+
       this.signer = factory.signer;
+      /**
+       * @var {String} status
+       * @memberof Contract
+       * @description status
+       */
+
       this.status = status;
+      /**
+       * @var {Transaction|Object} transaction
+       * @memberof Contract
+       * @description transaction
+       */
+
       this.transaction = {};
     }
     /**
-     * isInitialised
-     *
-     * Returns true if the contract has not been deployed
-     *
-     * @returns {boolean}
+     * @function isInitialised
+     * @description return true if the contract has been initialised
+     * @memberof Contract
+     * @return {Boolean}
      */
 
 
@@ -281,11 +433,10 @@
       return this.status === ContractStatus.INITIALISED;
     }
     /**
-     * isSigned
-     *
-     * Returns true if the contract is signed
-     *
-     * @returns {boolean}
+     * @function isSigned
+     * @description return true if the contract has been signed
+     * @memberof Contract
+     * @return {Boolean}
      */
 
 
@@ -293,11 +444,10 @@
       return this.status === ContractStatus.SIGNED;
     }
     /**
-     * isSent
-     *
-     * Returns true if the contract is sent
-     *
-     * @returns {boolean}
+     * @function isSent
+     * @description return true if the contract has been sent
+     * @memberof Contract
+     * @return {Boolean}
      */
 
 
@@ -305,11 +455,10 @@
       return this.status === ContractStatus.SENT;
     }
     /**
-     * isDeployed
-     *
-     * Returns true if the contract is deployed
-     *
-     * @returns {boolean}
+     * @function isDeployed
+     * @description return true if the contract has been deployed
+     * @memberof Contract
+     * @return {Boolean}
      */
 
 
@@ -317,12 +466,10 @@
       return this.status === ContractStatus.DEPLOYED;
     }
     /**
-     * isRejected
-     *
-     * Returns true if an attempt to deploy the contract was made, but the
-     * underlying transaction was unsuccessful.
-     *
-     * @returns {boolean}
+     * @function isRejected
+     * @description return true if the contract has been rejected
+     * @memberof Contract
+     * @return {Boolean}
      */
 
 
@@ -330,8 +477,10 @@
       return this.status === ContractStatus.REJECTED;
     }
     /**
-     * @function {payload}
-     * @return {object} {default deployment payload}
+     * @function deployPayload
+     * @description return deploy payload
+     * @memberof Contract
+     * @return {Object} - Deploy payload
      */
 
 
@@ -344,6 +493,13 @@
         data: JSON.stringify(this.init).replace(/\\"/g, '"')
       };
     }
+    /**
+     * @function callPayload
+     * @description return deploy payload
+     * @memberof Contract
+     * @return {Object} - call payload
+     */
+
 
     get callPayload() {
       return {
@@ -352,9 +508,10 @@
       };
     }
     /**
-     * @function {setStatus}
-     * @param  {string} status {contract status during all life-time}
-     * @return {type} {set this.status}
+     * @function setStatus
+     * @description set Contract status
+     * @memberof Contract
+     * @param  {String} status contract status during all life-time
      */
 
 
@@ -362,10 +519,12 @@
       this.status = status;
     }
     /**
-     * @function {setInitParamsValues}
-     * @param  {Array<Object>} initParams    {init params get from ABI}
-     * @param  {Array<Object>} arrayOfValues {init params set for ABI}
-     * @return {Contract} {raw contract object}
+     * @function setInitParamsValues
+     * @memberof Contract
+     * @description set init params value and return Contract
+     * @param  {Array<Object>} initParams    init params get from ABI
+     * @param  {Array<Object>} arrayOfValues init params set for ABI
+     * @return {Contract} Contract instance
      */
 
 
@@ -375,10 +534,18 @@
       return this;
     }
     /**
-     * @function {deploy}
-     * @param  {Object<{gasLimit:Long,gasPrice:BN}>} transactionParams { gasLimit and gasPrice}
-     * @param  {Object<{account:Account,password?:String}>} accountParams {account and password}
-     * @return {Contract} {Contract with finalty}
+     * @function deploy
+     * @memberof Contract
+     * @description deploy Contract with a few parameters
+     * @param {Object} deployObject
+     * @param {Long} deployObject.gasLimit - gasLimit
+     * @param {BN} deployObject.gasPrice -gasPrice
+     * @param {?Boolean} deployObject.toDS - toDS
+     * @param {?Account} deployObject.account - account to sign
+     * @param {?String} deployObject.password - account's password if it's encrypted
+     * @param {Number} deployObject.maxAttempts - max try when confirming transaction
+     * @param {Number} deployObject.interval - retry interval
+     * @return {Promise<Contract>} Contract with Contract Status
      */
 
 
@@ -412,11 +579,19 @@
       }
     }
     /**
-     * call
-     *
-     * @param {string} transition
-     * @param {any} params
-     * @returns {Promise<Transaction>}
+     * @function call
+     * @memberof Contract
+     * @description call a deployed contract with a set of parameters
+     * @param {Object} callObject
+     * @param {String} callObject.transition - transition name defined by smart contract
+     * @param {Array<Object>} callObject.params -array of params send to transition
+     * @param {?BN} callObject.amount - call amount
+     * @param {?Boolean} callObject.toDS - toDS
+     * @param {?Account} callObject.account - account to sign
+     * @param {?String} callObject.password - account's password if it's encrypted
+     * @param {Number} callObject.maxAttempts - max try when confirming transaction
+     * @param {Number} callObject.interval - retry interval
+     * @return {Promise<Contract>}
      */
 
 
@@ -456,9 +631,13 @@
       }
     }
     /**
-     * @function {sendContract}
-     * @param  {Object<{account:Account,password?:String}>} accountParams {account and password}
-     * @return {Contract} {Contract Sent}
+     * @function sendContract
+     * @memberof Contract
+     * @description send contract with account and password
+     * @param {Object} paramObject
+     * @param {Account} paramObject.account - Account to sign
+     * @param {String} paramObject.password - Account's password if it is encrypted
+     * @return {Promise<Contract>} Contract instance
      */
 
 
@@ -488,9 +667,13 @@
       }
     }
     /**
-     * @function {signTxn}
-     * @param  {Object<{account:Account,password?:String}>} accountParams {account and password}
-     * @return {Contract} {Contract Signed}
+     * @function signTxn
+     * @memberof Contract
+     * @description sign contract with account and password
+     * @param {Object} paramObject
+     * @param {Account} paramObject.account - Account to sign
+     * @param {String} paramObject.password - Account's password if it is encrypted
+     * @return {Promise<Contract>} Contract instance
      */
 
 
@@ -507,8 +690,12 @@
       }
     }
     /**
-     * @function {confirmTx}
-     * @return {Contract} {Contract confirm with finalty}
+     * @function confirmTx
+     * @memberof Contract
+     * @description confirm transaction with maxAttempts and intervel
+     * @param {Number} maxAttempts - max tries
+     * @param {Number} interval - try confirm intervally
+     * @return {Promise<Contract>} Contract instance
      */
 
 
@@ -528,8 +715,10 @@
       }
     }
     /**
-     * @function {getState}
-     * @return {type} {description}
+     * @function getState
+     * @memberof Contract
+     * @description get smart contract state
+     * @return {Object} RPC response
      */
 
 
@@ -541,6 +730,17 @@
       const response = await this.messenger.send('GetSmartContractState', this.ContractAddress);
       return response;
     }
+    /**
+     * @function setDeployPayload
+     * @memberof Contract
+     * @description set deploy payload
+     * @param {Object} deployObject
+     * @param {Long} deployObject.gasLimit - gas limit
+     * @param {BN} deployObject.gasPrice - gas price
+     * @param {Boolean} deployObject.toDS - if send to shard
+     * @return {Contract} Contract instance
+     */
+
 
     setDeployPayload({
       gasPrice,
@@ -553,6 +753,20 @@
       }), this.messenger, laksaCoreTransaction.TxStatus.Initialised, toDS);
       return this;
     }
+    /**
+     * @function setCallPayload
+     * @memberof Contract
+     * @description set call contract payload
+     * @param {Object} callObject
+     * @param {String} callObject.transition - transition name defined by smart contract
+     * @param {Array<Object>} callObject.params -array of params send to transition
+     * @param {?BN} callObject.amount - call amount
+     * @param {Long} callObject.gasLimit - gas limit
+     * @param {BN} callObject.gasPrice - gas price
+     * @param {Boolean} callObject.toDS - if send to shard
+     * @return {Contract} Contract instance
+     */
+
 
     setCallPayload({
       transition,

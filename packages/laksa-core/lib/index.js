@@ -66,6 +66,12 @@ var config = {
   }
 };
 
+/**
+ * @class Laksa
+ * @param  {String}  url - Url string to initializing Laksa
+ * @return {Laksa} - Laksa instance
+ */
+
 var Laksa =
 /*#__PURE__*/
 function () {
@@ -84,6 +90,13 @@ function () {
       Transaction: laksaCoreTransaction.Transaction,
       Transactions: laksaCoreTransaction.Transactions,
       Wallet: laksaWallet.Wallet
+      /**
+       * @function version
+       * @memberof Laksa
+       * @description get library version
+       * @return {String} - library version
+       */
+
     });
 
     _defineProperty(this, "setProvider", function (provider) {
@@ -123,7 +136,14 @@ function () {
 
   _createClass(Laksa, [{
     key: "connection",
-    // library method
+
+    /**
+     * @function connection
+     * @memberof Laksa
+     * @param {?Function} callback - callback function
+     * @description check connection status
+     * @return {Promise<any>} - connection status
+     */
     value: function () {
       var _connection = _asyncToGenerator(
       /*#__PURE__*/
@@ -160,16 +180,45 @@ function () {
 
       return connection;
     }()
+    /**
+     * @function setProvider
+     * @memberof Laksa.prototype
+     * @param {HttpProvider} provider - HttpProvider
+     * @description provider setter
+     * @return {Boolean} - if provider is set, return true
+     */
+
   }, {
     key: "getProvider",
+
+    /**
+     * @function getProvider
+     * @memberof Laksa
+     * @description provider getter
+     * @return {Object} - currentProvider with nodeProvider and scillaProvider
+     */
     value: function getProvider() {
       return this.currentProvider;
     }
+    /**
+     * @function getLibraryVersion
+     * @memberof Laksa
+     * @description version getter
+     * @return {String} - version string
+     */
+
   }, {
     key: "getLibraryVersion",
     value: function getLibraryVersion() {
       return this.version;
     }
+    /**
+     * @function getDefaultAccount
+     * @memberof Laksa
+     * @description get wallet's default Account or config default Account
+     * @return {Account} - Account instance
+     */
+
   }, {
     key: "getDefaultAccount",
     value: function getDefaultAccount() {
@@ -179,6 +228,15 @@ function () {
 
       return this.config.defaultAccount;
     }
+    /**
+     * @function setNodeProvider
+     * @memberof Laksa
+     * @description set provider to nodeProvider
+     * @param {Object} providerObject
+     * @param {String} providerObject.url - url String
+     * @param {Object} providerObject.options - provider options
+     */
+
   }, {
     key: "setNodeProvider",
     value: function setNodeProvider(_ref) {
@@ -190,6 +248,15 @@ function () {
       });
       this.messenger.setProvider(newProvider);
     }
+    /**
+     * @function setScillaProvider
+     * @memberof Laksa
+     * @description set provider to scillaProvider
+     * @param {Object} providerObject
+     * @param {String} providerObject.url - url String
+     * @param {Object} providerObject.options - provider options
+     */
+
   }, {
     key: "setScillaProvider",
     value: function setScillaProvider(_ref2) {
@@ -201,6 +268,15 @@ function () {
       });
       this.messenger.setScillaProvider(newProvider);
     }
+    /**
+     * @function register
+     * @memberof Laksa
+     * @description register a Module attach to Laksa
+     * @param {Object} moduleObject
+     * @param {String} moduleObject.name - Module name
+     * @param {any} moduleObject.pkg - Module instance
+     */
+
   }, {
     key: "register",
     value: function register(_ref3) {
@@ -212,6 +288,13 @@ function () {
       };
       Object.defineProperty(this, name, pkgObject);
     }
+    /**
+     * @function getNetworkSetting
+     * @memberof Laksa
+     * @description get config's network settings
+     * @return {Object}
+     */
+
   }, {
     key: "getNetworkSetting",
     value: function getNetworkSetting() {
@@ -229,6 +312,14 @@ function () {
         Staging: Staging
       };
     }
+    /**
+     * @function setNetworkID
+     * @memberof Laksa
+     * @description set network Id to messenger
+     * @param {String} networkId
+     * @return {Object}
+     */
+
   }, {
     key: "setNetworkID",
     value: function setNetworkID(networkId) {
@@ -239,6 +330,13 @@ function () {
     get: function get() {
       return config.version;
     }
+    /**
+     * @function isConnected
+     * @memberof Laksa
+     * @description check connection status
+     * @return {any} - connection status
+     */
+
   }, {
     key: "isConnected",
     get: function get() {
