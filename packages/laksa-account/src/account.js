@@ -9,20 +9,52 @@ import {
   signTransaction
 } from './utils'
 
+/**
+ * @class
+ * @param  {Messenger}  messenger - messsenger instance
+ * @return {Account} {description}
+ */
 class Account extends Core {
   constructor(messenger) {
     super(messenger)
     delete this.signer
+    /**
+     * @var {String} privateKey
+     * @memberof Account.prototype
+     * @description privateKey of Account
+     */
     this.privateKey = ''
+    /**
+     * @var {String} publicKey
+     * @memberof Account.prototype
+     * @description publicKey of Account
+     */
     this.publicKey = ''
+    /**
+     * @var {String} address
+     * @memberof Account.prototype
+     * @description address of Account
+     */
     this.address = ''
+    /**
+     * @var {String} balance
+     * @memberof Account.prototype
+     * @description balance of Account
+     */
     this.balance = '0'
+    /**
+     * @var {Number} privateKey
+     * @memberof Account.prototype
+     * @description nonce of Account
+     */
     this.nonce = 0
   }
 
   /**
-   * @function {createAccount}
-   * @return {Account} {account object}
+   * @function createAccount
+   * @description create new Account instance
+   * @memberof Account
+   * @return {Account} - create a new Account
    */
   createAccount() {
     const accountObject = createAccount()
@@ -34,9 +66,11 @@ class Account extends Core {
   }
 
   /**
-   * @function {importAccount}
-   * @param  {PrivateKey} privateKey {privatekey string}
-   * @return {Account} {account object}
+   * @function importAccount
+   * @description import private key string and return an Account instance
+   * @memberof Account
+   * @param  {String} privateKey - privatekey string
+   * @return {Account} - create a new Account
    */
   importAccount(privateKey) {
     const accountObject = importAccount(privateKey)
@@ -50,10 +84,12 @@ class Account extends Core {
 
   // sub object
   /**
-   * @function {encrypt}
-   * @param  {string} password {password string}
-   * @param  {object} options  {options object for encryption}
-   * @return {Account} {account object}
+   * @function encrypt
+   * @memberof Account
+   * @description encrypt an account providing password and encrypt options
+   * @param  {String} password - password string
+   * @param  {Object} options  - options object for encryption
+   * @return {Promise<Account>} - encrypt an account
    */
   async encrypt(password, options = { level: 1024 }) {
     const encryptedAccount = await encryptAccount(this, password, options)
@@ -62,9 +98,11 @@ class Account extends Core {
 
   // sub object
   /**
-   * @function {decrypt}
-   * @param  {string} password {password string}
-   * @return {object} {account object}
+   * @function decrypt
+   * @memberof Account
+   * @description decrypt an account providing password
+   * @param  {String} password - password string
+   * @return {Promise<Object>} - account object
    */
   async decrypt(password) {
     const that = this
@@ -74,10 +112,12 @@ class Account extends Core {
   }
 
   /**
-   * @function {toFile}
-   * @param  {string} password {description}
-   * @param  {object} options  {description}
-   * @return {string} {description}
+   * @function toFile
+   * @memberof Account
+   * @description encrypt an account and return as jsonString
+   * @param  {String} password - password string
+   * @param  {Object} options  - encryption options
+   * @return {Promise<String>} - encrypted jsonString
    */
   async toFile(password, options = { level: 1024 }) {
     const {
@@ -107,10 +147,12 @@ class Account extends Core {
   }
 
   /**
-   * @function {fromFile}
-   * @param  {object} keyStore {description}
-   * @param  {string} password {description}
-   * @return {Account} {description}
+   * @function fromFile
+   * @memberof Account
+   * @description Decrypt a keystore jsonString and generate an account.
+   * @param  {String} keyStore - keystore jsonString
+   * @param  {String} password - password string
+   * @return {Promise<Account>} - Account
    */
   async fromFile(keyStore, password) {
     const keyStoreObject = JSON.parse(keyStore)
@@ -121,10 +163,12 @@ class Account extends Core {
   }
 
   /**
-   * @function {signTransactionWithPassword} {sign plain object with password}
-   * @param  {Transaction} txnObj {transaction object}
-   * @param  {string} password          {password string}
-   * @return {object} {signed transaction object}
+   * @function signTransactionWithPassword
+   * @memberof Account
+   * @description  sign transaction object with password
+   * @param  {Transaction} txnObj - transaction object
+   * @param  {String} password  - password string
+   * @return {Promise<Object>} - signed transaction object
    */
   async signTransaction(txnObj, password) {
     if (this.privateKey === ENCRYPTED) {
@@ -150,6 +194,12 @@ class Account extends Core {
     }
   }
 
+  /**
+   * @function getBalance
+   * @memberof Account
+   * @description  get balance of current Account
+   * @return {Promise<Object>} - signed transaction object
+   */
   async getBalance() {
     try {
       const balanceObject = await this.messenger.send('GetBalance', this.address)
@@ -164,6 +214,12 @@ class Account extends Core {
     }
   }
 
+  /**
+   * @function updateBalance
+   * @memberof Account
+   * @description  update balance and nonce of current account
+   * @return {Promise<Account>} - return current Account instance
+   */
   async updateBalance() {
     try {
       const { balance, nonce } = await this.getBalance()

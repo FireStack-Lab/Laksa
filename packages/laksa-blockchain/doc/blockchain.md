@@ -30,13 +30,15 @@ title: blockchain
 * [BlockChain](#BlockChain)
     * [new BlockChain(messsenger, signer)](#new_BlockChain_new)
     * _instance_
+        * [.messseger](#BlockChain+messseger) : <code>Messenger</code>
+        * [.signer](#BlockChain+signer) : <code>Wallet</code>
+        * [.completeTransaction](#BlockChain+completeTransaction) : <code>function</code>
+        * [.confirmTransaction](#BlockChain+confirmTransaction) : <code>function</code>
         * [.extendMethod(object)](#BlockChain+extendMethod) ⇒ <code>Boolean</code>
         * [.extendProperty(object)](#BlockChain+extendProperty) ⇒ <code>Boolean</code>
-        * [.completeTransaction(tx, account, password)](#BlockChain+completeTransaction) ⇒ <code>any</code>
-        * [.confirmTransaction(txHash)](#BlockChain+confirmTransaction) ⇒ <code>Transaction</code>
     * _static_
-        * [.messseger](#BlockChain.messseger) : <code>Messenger</code>
-        * [.signer](#BlockChain.signer) : <code>Wallet</code>
+        * [.completeTransaction(tx, account, password)](#BlockChain.completeTransaction) ⇒ <code>any</code>
+        * [.confirmTransaction(txHash)](#BlockChain.confirmTransaction) ⇒ <code>Transaction</code>
 
 <a name="new_BlockChain_new"></a>
 
@@ -50,6 +52,30 @@ Blockchain instance
 | messsenger | <code>Messenger</code> | Messenger instance |
 | signer | <code>Wallet</code> | Wallet instance as signer |
 
+<a name="BlockChain+messseger"></a>
+
+### blockChain.messseger : <code>Messenger</code>
+Messenger instance from parent
+
+**Kind**: instance property of [<code>BlockChain</code>](#BlockChain)  
+<a name="BlockChain+signer"></a>
+
+### blockChain.signer : <code>Wallet</code>
+Wallet instance from parent
+
+**Kind**: instance property of [<code>BlockChain</code>](#BlockChain)  
+<a name="BlockChain+completeTransaction"></a>
+
+### blockChain.completeTransaction : <code>function</code>
+to make transaction and confirm
+
+**Kind**: instance property of [<code>BlockChain</code>](#BlockChain)  
+<a name="BlockChain+confirmTransaction"></a>
+
+### blockChain.confirmTransaction : <code>function</code>
+to make a confirm to a exist transaction
+
+**Kind**: instance property of [<code>BlockChain</code>](#BlockChain)  
 <a name="BlockChain+extendMethod"></a>
 
 ### blockChain.extendMethod(object) ⇒ <code>Boolean</code>
@@ -70,10 +96,10 @@ Blockchain instance
 | --- | --- | --- |
 | object | <code>Object</code> | method object |
 
-<a name="BlockChain+completeTransaction"></a>
+<a name="BlockChain.completeTransaction"></a>
 
-### blockChain.completeTransaction(tx, account, password) ⇒ <code>any</code>
-**Kind**: instance method of [<code>BlockChain</code>](#BlockChain)  
+### BlockChain.completeTransaction(tx, account, password) ⇒ <code>any</code>
+**Kind**: static method of [<code>BlockChain</code>](#BlockChain)  
 **Returns**: <code>any</code> - - confirmation process  
 
 | Param | Type | Description |
@@ -82,28 +108,16 @@ Blockchain instance
 | account | <code>Account</code> | Account for signing if not use Wallet's signer |
 | password | <code>String</code> | Password of Account if it is encrypted |
 
-<a name="BlockChain+confirmTransaction"></a>
+<a name="BlockChain.confirmTransaction"></a>
 
-### blockChain.confirmTransaction(txHash) ⇒ <code>Transaction</code>
-**Kind**: instance method of [<code>BlockChain</code>](#BlockChain)  
+### BlockChain.confirmTransaction(txHash) ⇒ <code>Transaction</code>
+**Kind**: static method of [<code>BlockChain</code>](#BlockChain)  
 **Returns**: <code>Transaction</code> - - Transaction instance with confirm/reject state  
 
 | Param | Type | Description |
 | --- | --- | --- |
 | txHash | <code>String</code> | Transaction ID |
 
-<a name="BlockChain.messseger"></a>
-
-### BlockChain.messseger : <code>Messenger</code>
-Messenger instance from parent
-
-**Kind**: static property of [<code>BlockChain</code>](#BlockChain)  
-<a name="BlockChain.signer"></a>
-
-### BlockChain.signer : <code>Wallet</code>
-Wallet instance from parent
-
-**Kind**: static property of [<code>BlockChain</code>](#BlockChain)  
 <a name="mapObjectToMethods"></a>
 
 ## mapObjectToMethods(main) ⇒ <code>Boolean</code>

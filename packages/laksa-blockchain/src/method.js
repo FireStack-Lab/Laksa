@@ -11,49 +11,49 @@ import { isObject } from './util'
  */
 class Method {
   /**
-   * @memberof Method
+   * @memberof Method.prototype
    * @description method name
    * @type {String}
    */
   name
 
   /**
-   * @memberof Method
+   * @memberof Method.prototype
    * @description method to call
    * @type {Function}
    */
   call
 
   /**
-   * @memberof Method
+   * @memberof Method.prototype
    * @description Messenger of Method
    * @type {Messsenger}
    */
   messenger
 
   /**
-   * @memberof Method
+   * @memberof Method.prototype
    * @description params send to Method
    * @type {?Object}
    */
   params
 
   /**
-   * @memberof Method
+   * @memberof Method.prototype
    * @description transformer send to Method
    * @type {?Object}
    */
   transformer
 
   /**
-   * @memberof Method
+   * @memberof Method.prototype
    * @description endpoint string to call
    * @type {?String}
    */
   endpoint
 
   /**
-   * @memberof Method
+   * @memberof Method.prototype
    * @description whether send params as json
    * @type {Boolean}
    */
@@ -76,7 +76,7 @@ class Method {
   /**
    * @function setMessenger
    * @param  {Messenger} messenger - messenger instance
-   * @memberof Method.prototype
+   * @memberof Method
    * @description messenger setter
    */
   setMessenger(msg) {
@@ -85,7 +85,7 @@ class Method {
 
   /**
    * @function validateArgs
-   * @memberof Method.prototype
+   * @memberof Method
    * @description validate args received
    * @param  {Object} args         - args objects
    * @param  {Object} requiredArgs - requred args object
@@ -103,7 +103,7 @@ class Method {
 
   /**
    * @function extractParams
-   * @memberof Method.prototype
+   * @memberof Method
    * @description extract params sent to Method
    * @param  {Object} args - args object
    * @return {Array<Object>} - extracted params
@@ -130,7 +130,7 @@ class Method {
 
   /**
    * @function transformedBeforeSend
-   * @memberof Method.prototype
+   * @memberof Method
    * @description extract params sent to Method
    * @param  {any} value - value that waited to transform
    * @param  {String} key   - key to transform
@@ -145,7 +145,7 @@ class Method {
 
   /**
    * @function assignToObject
-   * @memberof Method.prototype
+   * @memberof Method
    * @description assign method to class object
    * @param  {Object} object - method object
    * @return {Object} - new object
@@ -158,7 +158,7 @@ class Method {
 
   /**
    * @function methodBuilder
-   * @memberof Method.prototype
+   * @memberof Method
    * @description build method when call
    * @return {any} - call method
    */

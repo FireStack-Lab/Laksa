@@ -15,10 +15,10 @@ import { encrypt, decrypt } from 'laksa-extend-keystore'
 import { ENCRYPTED } from './symbols'
 
 /**
- * gernerate account object
  * @function generateAccountObject
- * @param  {string} privateKey {description}
- * @return {Account} {Account object}
+ * @description generate Account object
+ * @param  {String} privateKey - privateKey String
+ * @return {Object} - Account object
  */
 
 function generateAccountObject(privateKey) {
@@ -36,7 +36,8 @@ function generateAccountObject(privateKey) {
 
 /**
  * @function createAccount
- * @return {Account} {account object}
+ * @description create an account
+ * @return {Object} - account object
  */
 export const createAccount = () => {
   const privateKey = generatePrivateKey()
@@ -45,8 +46,9 @@ export const createAccount = () => {
 
 /**
  * @function importAccount
- * @param  {PrivateKey} privateKey {privatekey string}
- * @return {Account} {account object}
+ * @description import privatekey and generate an account object
+ * @param  {String} privateKey - privatekey string
+ * @return {Object} - account object
  */
 export const importAccount = privateKey => {
   return generateAccountObject(privateKey)
@@ -54,10 +56,11 @@ export const importAccount = privateKey => {
 
 /**
  * @function encryptAccount
- * @param  {Account} accountObject {account object}
- * @param  {string} password      {password string}
- * @param  {object} options       {encryption options}
- * @return {Account} {encrypted account object}
+ * @description encrypt Account
+ * @param  {Account} accountObject - account instance
+ * @param  {String} password      - password string
+ * @param  {Object} options       - encryption options
+ * @return {Object} - encrypted account object
  */
 export const encryptAccount = async (accountObject, password, options = { level: 1024 }) => {
   validateArgs(accountObject, {
@@ -77,9 +80,10 @@ export const encryptAccount = async (accountObject, password, options = { level:
 
 /**
  * @function decryptAccount
- * @param  {Account} accountObject {encrypted account object}
- * @param  {string} password      {password string}
- * @return {Account} {decrypted account object}
+ * @description decrypt an account object
+ * @param  {Account} accountObject - encrypted account object
+ * @param  {String} password      -password string
+ * @return {Object} - decrypted account object
  */
 export const decryptAccount = async (accountObject, password) => {
   validateArgs(accountObject, {
@@ -100,9 +104,10 @@ export const decryptAccount = async (accountObject, password) => {
 
 /**
  * @function signTransaction
- * @param  {PrivateKey} privateKey        {privatekey}
- * @param  {Transaction} transactionObject {transaction object}
- * @return {Transaction} {signed transaction}
+ * @description sign a transaction providing privatekey and transaction object
+ * @param  {String} privateKey        - privatekey String
+ * @param  {Transaction} txnDetails  - transaction object
+ * @return {Transaction} - signed transaction
  */
 export const signTransaction = (privateKey, txnDetails) => {
   const pubKey = getPubKeyFromPrivateKey(privateKey)

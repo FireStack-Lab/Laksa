@@ -1,3 +1,3 @@
 export * from './transaction'
-export * from './factory'
+export * from './transactionFactory'
 export * from './util'

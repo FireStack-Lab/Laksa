@@ -7,28 +7,28 @@
  */
 class Property {
   /**
-   * @memberof Property
+   * @memberof Property.prototype
    * @type {String}
    * @description property name
    */
   name
 
   /**
-   * @memberof Property
+   * @memberof Property.prototype
    * @type {Function}
    * @description property getter
    */
   getter
 
   /**
-   * @memberof Property
+   * @memberof Property.prototype
    * @type {Function}
    * @description property setter
    */
   setter
 
   /**
-   * @memberof Property
+   * @memberof Property.prototype
    * @type {Messenger}
    * @description Messenger instance
    */
@@ -44,7 +44,7 @@ class Property {
 
   /**
    * @function setMessenger
-   * @memberof Property.prototype
+   * @memberof Property
    * @description messenger setter
    * @param  {Messenger} msg - messenger instance
    */
@@ -54,7 +54,7 @@ class Property {
 
   /**
    * @function assignToObject
-   * @memberof Property.prototype
+   * @memberof Property
    * @param  {Object} object - method object
    * @description assign property to class
    */
@@ -75,7 +75,7 @@ class Property {
 
   /**
    * @function propertyBuilder
-   * @memberof Property.prototype
+   * @memberof Property
    * @return {any} - property call
    */
   propertyBuilder() {

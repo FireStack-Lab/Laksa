@@ -4,99 +4,94 @@ title: HttpProvider
 
 # HttpProvider
 
-## Functions
+<a name="HttpProvider"></a>
 
-<dl>
-<dt><a href="#{send}">{send}(payload, callback)</a> ⇒ <code>function</code></dt>
-<dd></dd>
-<dt><a href="#{sendServer}">{sendServer}(endpoint, payload, callback)</a> ⇒ <code>function</code></dt>
-<dd></dd>
-<dt><a href="#{requestFunc}">{requestFunc}(endpoint, payload, callback)</a> ⇒ <code>function</code></dt>
-<dd></dd>
-<dt><a href="#{payloadHandler}">{payloadHandler}(payload)</a> ⇒ <code>object</code></dt>
-<dd></dd>
-<dt><a href="#{endpointHandler}">{endpointHandler}(obj, endpoint)</a> ⇒ <code>object</code></dt>
-<dd></dd>
-<dt><a href="#{optionsHandler}">{optionsHandler}(obj)</a> ⇒ <code>object</code></dt>
-<dd></dd>
-<dt><a href="#{callbackHandler}">{callbackHandler}(data, cb)</a> ⇒ <code>object</code> | <code>function</code></dt>
-<dd></dd>
-</dl>
+## HttpProvider
+**Kind**: global class  
 
-<a name="{send}"></a>
+* [HttpProvider](#HttpProvider)
+    * [.send(payload, callback)](#HttpProvider+send) ⇒ <code>any</code>
+    * [.sendServer(endpoint, payload, callback)](#HttpProvider+sendServer) ⇒ <code>function</code>
+    * [.requestFunc(endpoint, payload, callback)](#HttpProvider+requestFunc) ⇒ <code>function</code>
+    * [.payloadHandler(payload)](#HttpProvider+payloadHandler) ⇒ <code>Object</code>
+    * [.endpointHandler(obj, endpoint)](#HttpProvider+endpointHandler) ⇒ <code>Object</code>
+    * [.optionsHandler(obj)](#HttpProvider+optionsHandler) ⇒ <code>Object</code>
+    * [.callbackHandler(data, cb)](#HttpProvider+callbackHandler) ⇒ <code>Object</code> \| <code>function</code>
 
-## {send}(payload, callback) ⇒ <code>function</code>
-**Kind**: global function  
-**Returns**: <code>function</code> - {to requestFunc}  
+<a name="HttpProvider+send"></a>
+
+### httpProvider.send(payload, callback) ⇒ <code>any</code>
+**Kind**: instance method of [<code>HttpProvider</code>](#HttpProvider)  
+**Returns**: <code>any</code> - - RPC Response  
 
 | Param | Type | Description |
 | --- | --- | --- |
-| payload | <code>object</code> | {payload object} |
-| callback | <code>function</code> | {callback function} |
+| payload | <code>Object</code> | payload object |
+| callback | <code>function</code> | callback function |
 
-<a name="{sendServer}"></a>
+<a name="HttpProvider+sendServer"></a>
 
-## {sendServer}(endpoint, payload, callback) ⇒ <code>function</code>
-**Kind**: global function  
-**Returns**: <code>function</code> - {to requestFunc}  
-
-| Param | Type | Description |
-| --- | --- | --- |
-| endpoint | <code>string</code> | {endpoint to the server} |
-| payload | <code>object</code> | {payload object} |
-| callback | <code>function</code> | {callback function} |
-
-<a name="{requestFunc}"></a>
-
-## {requestFunc}(endpoint, payload, callback) ⇒ <code>function</code>
-**Kind**: global function  
-**Returns**: <code>function</code> - {performRPC call from laksa-core-provider}  
+### httpProvider.sendServer(endpoint, payload, callback) ⇒ <code>function</code>
+**Kind**: instance method of [<code>HttpProvider</code>](#HttpProvider)  
+**Returns**: <code>function</code> - - RPC Response  
 
 | Param | Type | Description |
 | --- | --- | --- |
-| endpoint | <code>string</code> | {endpoint to the server} |
-| payload | <code>object</code> | {payload object} |
-| callback | <code>function</code> | {callback function} |
+| endpoint | <code>String</code> | endpoint to server |
+| payload | <code>Object</code> | payload object |
+| callback | <code>function</code> | callback function |
 
-<a name="{payloadHandler}"></a>
+<a name="HttpProvider+requestFunc"></a>
 
-## {payloadHandler}(payload) ⇒ <code>object</code>
-**Kind**: global function  
-**Returns**: <code>object</code> - {to payload object}  
-
-| Param | Type | Description |
-| --- | --- | --- |
-| payload | <code>object</code> | {payload object} |
-
-<a name="{endpointHandler}"></a>
-
-## {endpointHandler}(obj, endpoint) ⇒ <code>object</code>
-**Kind**: global function  
-**Returns**: <code>object</code> - {assign a new object}  
+### httpProvider.requestFunc(endpoint, payload, callback) ⇒ <code>function</code>
+**Kind**: instance method of [<code>HttpProvider</code>](#HttpProvider)  
+**Returns**: <code>function</code> - - performRPC call from laksa-core-provider  
 
 | Param | Type | Description |
 | --- | --- | --- |
-| obj | <code>object</code> | {payload object} |
-| endpoint | <code>string</code> | {add the endpoint to payload object} |
+| endpoint | <code>String</code> | endpoint to the server |
+| payload | <code>Object</code> | payload object |
+| callback | <code>function</code> | callback function |
 
-<a name="{optionsHandler}"></a>
+<a name="HttpProvider+payloadHandler"></a>
 
-## {optionsHandler}(obj) ⇒ <code>object</code>
-**Kind**: global function  
-**Returns**: <code>object</code> - {assign a new option object}  
-
-| Param | Type | Description |
-| --- | --- | --- |
-| obj | <code>object</code> | {options object} |
-
-<a name="{callbackHandler}"></a>
-
-## {callbackHandler}(data, cb) ⇒ <code>object</code> \| <code>function</code>
-**Kind**: global function  
-**Returns**: <code>object</code> \| <code>function</code> - {return object or callback function}  
+### httpProvider.payloadHandler(payload) ⇒ <code>Object</code>
+**Kind**: instance method of [<code>HttpProvider</code>](#HttpProvider)  
+**Returns**: <code>Object</code> - - to payload object  
 
 | Param | Type | Description |
 | --- | --- | --- |
-| data | <code>object</code> | {from server} |
-| cb | <code>function</code> | {callback function} |
+| payload | <code>Object</code> | payload object |
+
+<a name="HttpProvider+endpointHandler"></a>
+
+### httpProvider.endpointHandler(obj, endpoint) ⇒ <code>Object</code>
+**Kind**: instance method of [<code>HttpProvider</code>](#HttpProvider)  
+**Returns**: <code>Object</code> - - assign a new object  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| obj | <code>Object</code> | payload object |
+| endpoint | <code>String</code> | add the endpoint to payload object |
+
+<a name="HttpProvider+optionsHandler"></a>
+
+### httpProvider.optionsHandler(obj) ⇒ <code>Object</code>
+**Kind**: instance method of [<code>HttpProvider</code>](#HttpProvider)  
+**Returns**: <code>Object</code> - - assign a new option object  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| obj | <code>Object</code> | options object |
+
+<a name="HttpProvider+callbackHandler"></a>
+
+### httpProvider.callbackHandler(data, cb) ⇒ <code>Object</code> \| <code>function</code>
+**Kind**: instance method of [<code>HttpProvider</code>](#HttpProvider)  
+**Returns**: <code>Object</code> \| <code>function</code> - - return object or callback function  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| data | <code>Object</code> | from server |
+| cb | <code>function</code> | callback function |
 
