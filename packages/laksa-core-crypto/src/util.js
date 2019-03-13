@@ -8,13 +8,12 @@ import { intToHexArray, hexToByteArray } from './bytes'
 const secp256k1 = elliptic.ec('secp256k1')
 
 /**
- * getAddressFromPrivateKey
+ * @function getAddressFromPrivateKey
  *
- * takes a hex-encoded string (private key) and returns its corresponding
+ * @description takes a hex-encoded string (private key) and return its corresponding
  * 20-byte hex-encoded address.
- *
- * @param {string} Key
- * @returns {string}
+ * @param {String} Key
+ * @return {String}
  */
 export const getAddressFromPrivateKey = privateKey => {
   const keyPair = secp256k1.keyFromPrivate(privateKey, 'hex')
@@ -28,13 +27,12 @@ export const getAddressFromPrivateKey = privateKey => {
 }
 
 /**
- * getPubKeyFromPrivateKey
- *
- * takes a hex-encoded string (private key) and returns its corresponding
+ * @function getPubKeyFromPrivateKey
+ * @description takes a hex-encoded string (private key) and return its corresponding
  * hex-encoded 33-byte public key.
  *
- * @param {string} privateKey
- * @returns {string}
+ * @param {String} privateKey
+ * @return {String}
  */
 export const getPubKeyFromPrivateKey = privateKey => {
   const keyPair = secp256k1.keyFromPrivate(privateKey, 'hex')
@@ -42,23 +40,21 @@ export const getPubKeyFromPrivateKey = privateKey => {
 }
 
 /**
- * compressPublicKey
- *
- * @param {string} publicKey - 65-byte public key, a point (x, y)
- *
- * @returns {string}
+ * @function compressPublicKey
+ * @description comporess public key
+ * @param {String} publicKey - 65-byte public key, a point (x, y)
+ * @return {String}
  */
 export const compressPublicKey = publicKey => {
   return secp256k1.keyFromPublic(publicKey, 'hex').getPublic(true, 'hex')
 }
 
 /**
- * getAddressFromPublicKey
+ * @function getAddressFromPublicKey
  *
- * takes hex-encoded string and returns the corresponding address
- *
- * @param {string} pubKey
- * @returns {string}
+ * @description takes hex-encoded string and return the corresponding address
+ * @param {String} pubKey
+ * @return {String}
  */
 export const getAddressFromPublicKey = pubKey => {
   return hashjs
@@ -69,17 +65,22 @@ export const getAddressFromPublicKey = pubKey => {
 }
 
 /**
- * verifyPrivateKey
- *
- * @param {string|Buffer} privateKey
- * @returns {boolean}
+ * @function verifyPrivateKey
+ * @description verify private key
+ * @param {String|Buffer} privateKey
+ * @return {Boolean}
  */
 export const verifyPrivateKey = privateKey => {
   const keyPair = secp256k1.keyFromPrivate(privateKey, 'hex')
   const { result } = keyPair.validate()
   return result
 }
-
+/**
+ * @function toChecksumAddress
+ * @description convert address to checksum
+ * @param  {String} address - address string
+ * @return {String} checksumed address
+ */
 export const toChecksumAddress = address => {
   const newAddress = address.toLowerCase().replace('0x', '')
   const hash = hashjs
@@ -102,12 +103,11 @@ export const toChecksumAddress = address => {
 }
 
 /**
- * isValidChecksumAddress
+ * @function isValidChecksumAddress
  *
- * takes hex-encoded string and returns boolean if address is checksumed
- *
- * @param {string} address
- * @returns {boolean}
+ * @description takes hex-encoded string and return boolean if address is checksumed
+ * @param {String} address
+ * @return {Boolean}
  */
 export const isValidChecksumAddress = address => {
   const replacedAddress = address.replace('0x', '')
@@ -115,10 +115,10 @@ export const isValidChecksumAddress = address => {
 }
 
 /**
- * encodeTransaction
- *
- * @param {any} tx
- * @returns {Buffer}
+ * @function encodeTransaction
+ * @description encode transaction to protobuff standard
+ * @param {Transaction|any} tx  - transaction object or Transaction instance
+ * @return {Buffer}
  */
 
 export const encodeTransactionProto = tx => {
@@ -146,6 +146,13 @@ export const encodeTransactionProto = tx => {
   return Buffer.from(ZilliqaMessage.ProtoTransactionCoreInfo.encode(serialised).finish())
 }
 
+/**
+ * @function getAddressForContract
+ * @param  {Object} param
+ * @param  {Number} param.currentNonce - current nonce number
+ * @param  {String} param.address      - deployer's address
+ * @return {String} Contract address
+ */
 export const getAddressForContract = ({ currentNonce, address }) => {
   // always subtract 1 from the tx nonce, as contract addresses are computed
   // based on the nonce in the global state.
@@ -160,10 +167,10 @@ export const getAddressForContract = ({ currentNonce, address }) => {
 }
 
 /**
- * verify if signature is length===128
  * @function checkValidSignature
- * @param  {Signature} sig Signature
- * @return {boolean}
+ * @description verify if signature is length===128
+ * @param  {Signature} sig - Signature
+ * @return {Boolean}
  */
 export const checkValidSignature = sig => {
   return sig.r.toString('hex').length + sig.s.toString('hex').length === 128

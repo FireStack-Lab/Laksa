@@ -4,11 +4,13 @@ import { randomBytes } from './random'
 import * as schnorr from './schnorr'
 
 export const { generatePrivateKey } = schnorr
+
 /**
- * sign
- *
- * @param {string} hash - hex-encoded hash of the data to be signed
- *
+ * @function sign
+ * @description sign method using prviteKey and pubKey
+ * @param {Buffer} msg message buffer
+ * @param {String} privateKey private key string
+ * @param {String} pubKey public key string
  * @returns {string} the signature
  */
 export const sign = (msg, privateKey, pubKey) => {

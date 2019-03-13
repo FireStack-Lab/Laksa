@@ -33,7 +33,7 @@ title: utils
 generate Account object
 
 **Kind**: global function  
-**Returns**: <code>Object</code> - - Account object  
+**Returns**: <code>Object</code> - Account object  
 
 | Param | Type | Description |
 | --- | --- | --- |
@@ -45,14 +45,14 @@ generate Account object
 create an account
 
 **Kind**: global function  
-**Returns**: <code>Object</code> - - account object  
+**Returns**: <code>Object</code> - account object  
 <a name="importAccount"></a>
 
 ## importAccount(privateKey) ⇒ <code>Object</code>
 import privatekey and generate an account object
 
 **Kind**: global function  
-**Returns**: <code>Object</code> - - account object  
+**Returns**: <code>Object</code> - account object  
 
 | Param | Type | Description |
 | --- | --- | --- |
@@ -64,7 +64,7 @@ import privatekey and generate an account object
 encrypt Account
 
 **Kind**: global function  
-**Returns**: <code>Object</code> - - encrypted account object  
+**Returns**: <code>Object</code> - encrypted account object  
 
 | Param | Type | Description |
 | --- | --- | --- |
@@ -78,7 +78,7 @@ encrypt Account
 decrypt an account object
 
 **Kind**: global function  
-**Returns**: <code>Object</code> - - decrypted account object  
+**Returns**: <code>Object</code> - decrypted account object  
 
 | Param | Type | Description |
 | --- | --- | --- |
@@ -91,7 +91,7 @@ decrypt an account object
 sign a transaction providing privatekey and transaction object
 
 **Kind**: global function  
-**Returns**: <code>Transaction</code> - - signed transaction  
+**Returns**: <code>Transaction</code> - signed transaction  
 
 | Param | Type | Description |
 | --- | --- | --- |

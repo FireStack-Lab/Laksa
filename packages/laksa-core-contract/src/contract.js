@@ -15,49 +15,49 @@ class Contract {
   constructor(params, factory, status = ContractStatus.INITIALISED) {
     /**
      * @var {String} code
-     * @memberof Contract
+     * @memberof Contract.prototype
      * @description code
      */
     this.code = params.code || ''
     /**
      * @var {Array<Object>} init
-     * @memberof Contract
+     * @memberof Contract.prototype
      * @description init
      */
     this.init = params.init || []
     /**
      * @var {Number} version
-     * @memberof Contract
+     * @memberof Contract.prototype
      * @description version
      */
     this.version = params.version || 0
     /**
      * @var {String} ContractAddress
-     * @memberof Contract
+     * @memberof Contract.prototype
      * @description ContractAddress
      */
     this.ContractAddress = params.ContractAddress || undefined
     /**
      * @var {Messenger} messenger
-     * @memberof Contract
+     * @memberof Contract.prototype
      * @description messenger
      */
     this.messenger = factory.messenger
     /**
      * @var {Wallet} signer
-     * @memberof Contract
+     * @memberof Contract.prototype
      * @description signer
      */
     this.signer = factory.signer
     /**
      * @var {String} status
-     * @memberof Contract
+     * @memberof Contract.prototype
      * @description status
      */
     this.status = status
     /**
      * @var {Transaction|Object} transaction
-     * @memberof Contract
+     * @memberof Contract.prototype
      * @description transaction
      */
     this.transaction = {}
@@ -117,7 +117,7 @@ class Contract {
    * @function deployPayload
    * @description return deploy payload
    * @memberof Contract
-   * @return {Object} - Deploy payload
+   * @return {Object} Deploy payload
    */
   get deployPayload() {
     return {
@@ -136,7 +136,7 @@ class Contract {
    * @function callPayload
    * @description return deploy payload
    * @memberof Contract
-   * @return {Object} - call payload
+   * @return {Object} call payload
    */
   get callPayload() {
     return {
@@ -152,7 +152,7 @@ class Contract {
    * @function setStatus
    * @description set Contract status
    * @memberof Contract
-   * @param  {String} status contract status during all life-time
+   * @param  {String} status - contract status during all life-time
    */
   setStatus(status) {
     this.status = status
@@ -162,9 +162,9 @@ class Contract {
    * @function setInitParamsValues
    * @memberof Contract
    * @description set init params value and return Contract
-   * @param  {Array<Object>} initParams    init params get from ABI
-   * @param  {Array<Object>} arrayOfValues init params set for ABI
-   * @return {Contract} Contract instance
+   * @param  {Array<Object>} initParams    - init params get from ABI
+   * @param  {Array<Object>} arrayOfValues - init params set for ABI
+   * @return {Contract} - Contract instance
    */
   setInitParamsValues(initParams, arrayOfValues) {
     const result = setParamValues(initParams, arrayOfValues)
@@ -339,7 +339,7 @@ class Contract {
    * @function getState
    * @memberof Contract
    * @description get smart contract state
-   * @return {Object} RPC response
+   * @return {Object} - RPC response
    */
   async getState() {
     if (this.status !== ContractStatus.DEPLOYED) {

@@ -4,13 +4,36 @@ import { Contract } from './contract'
 import { TestScilla } from './testScilla'
 import { ContractStatus } from './util'
 
+/**
+ * @class Contracts
+ * @param  {Messenger}  messenger - Messenger instance
+ * @param  {Wallet} signer - Wallet instance
+ * @return {Contracts} Contract factory
+ */
 class Contracts extends Core {
   constructor(messenger, signer) {
     super()
+    /**
+     * @var {Messeger} messenger
+     * @memberof Contracts.prototype
+     * @description Messenger instance
+     */
     this.messenger = messenger
+    /**
+     * @var {Wallet} signer
+     * @memberof Contracts.prototype
+     * @description Wallet instance
+     */
     this.signer = signer
   }
 
+  /**
+   * @function getAddressForContract
+   * @memberof Contracts
+   * @description get Contract address from Transaction
+   * @param  {Transaction} tx - Transaction instance
+   * @return {String} Contract address
+   */
   getAddressForContract(tx) {
     // always subtract 1 from the tx nonce, as contract addresses are computed
     // based on the nonce in the global state.
@@ -24,6 +47,14 @@ class Contracts extends Core {
       .slice(24)
   }
 
+  /**
+   * @function new
+   * @memberof Contracts
+   * @description Create a Contract
+   * @param  {String} code - Code string
+   * @param  {Array<Object>} init - init params
+   * @return {Contract} Contract instance
+   */
   new(code, init) {
     const newContract = new Contract(
       { code, init },
@@ -33,6 +64,13 @@ class Contracts extends Core {
     return newContract
   }
 
+  /**
+   * @function at
+   * @memberof Contracts
+   * @description get a Contract from factory and give it Messenger and Wallet as members
+   * @param  {Contract} contract - Contract instance
+   * @return {Contract} Contract instance
+   */
   @assertObject({
     ContractAddress: ['isAddress', 'optional'],
     code: ['isString', 'optional'],
@@ -47,6 +85,14 @@ class Contracts extends Core {
     )
   }
 
+  /**
+   * @function testContract
+   * @memberof Contracts
+   * @description test Contract code and init params, usable before deploying
+   * @param  {String} code - Code string
+   * @param  {Array<Object>} init - init params
+   * @return {Boolean} test result boolean
+   */
   async testContract(code, init) {
     const contract = new TestScilla(
       { code, init },

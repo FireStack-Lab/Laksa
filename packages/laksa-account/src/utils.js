@@ -18,7 +18,7 @@ import { ENCRYPTED } from './symbols'
  * @function generateAccountObject
  * @description generate Account object
  * @param  {String} privateKey - privateKey String
- * @return {Object} - Account object
+ * @return {Object} Account object
  */
 
 function generateAccountObject(privateKey) {
@@ -37,7 +37,7 @@ function generateAccountObject(privateKey) {
 /**
  * @function createAccount
  * @description create an account
- * @return {Object} - account object
+ * @return {Object} account object
  */
 export const createAccount = () => {
   const privateKey = generatePrivateKey()
@@ -48,7 +48,7 @@ export const createAccount = () => {
  * @function importAccount
  * @description import privatekey and generate an account object
  * @param  {String} privateKey - privatekey string
- * @return {Object} - account object
+ * @return {Object} account object
  */
 export const importAccount = privateKey => {
   return generateAccountObject(privateKey)
@@ -60,7 +60,7 @@ export const importAccount = privateKey => {
  * @param  {Account} accountObject - account instance
  * @param  {String} password      - password string
  * @param  {Object} options       - encryption options
- * @return {Object} - encrypted account object
+ * @return {Object} encrypted account object
  */
 export const encryptAccount = async (accountObject, password, options = { level: 1024 }) => {
   validateArgs(accountObject, {
@@ -83,7 +83,7 @@ export const encryptAccount = async (accountObject, password, options = { level:
  * @description decrypt an account object
  * @param  {Account} accountObject - encrypted account object
  * @param  {String} password      -password string
- * @return {Object} - decrypted account object
+ * @return {Object} decrypted account object
  */
 export const decryptAccount = async (accountObject, password) => {
   validateArgs(accountObject, {
@@ -107,7 +107,7 @@ export const decryptAccount = async (accountObject, password) => {
  * @description sign a transaction providing privatekey and transaction object
  * @param  {String} privateKey        - privatekey String
  * @param  {Transaction} txnDetails  - transaction object
- * @return {Transaction} - signed transaction
+ * @return {Transaction} signed transaction
  */
 export const signTransaction = (privateKey, txnDetails) => {
   const pubKey = getPubKeyFromPrivateKey(privateKey)

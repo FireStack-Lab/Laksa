@@ -5,7 +5,7 @@ const methodArray = [
    * @function isConnected
    * @description connection status from RPC
    * @extends BlockChain.prototype
-   * @return {Boolean} - connection status
+   * @return {Boolean} connection status
    */
   {
     name: 'isConnected',
@@ -20,7 +20,7 @@ const methodArray = [
    * @param {Object} paramObject
    * @param {String} paramObject.txHash - Transaction ID
    * @extends BlockChain.prototype
-   * @return {Object} - RPC Response Object
+   * @return {Object} RPC Response Object
    */
   {
     name: 'getTransaction',
@@ -43,7 +43,7 @@ const methodArray = [
    * @param {String} txn.signature - Signature string to send
    * @param {Boolean} txn.priority - Set priority to send to shards
    * @extends BlockChain.prototype
-   * @return {Object} - RPC Response Object
+   * @return {Object} RPC Response Object
    */
   {
     name: 'createTransaction',
@@ -70,7 +70,7 @@ const methodArray = [
    * @param {Object} paramObject
    * @param {String} paramObject.blockNumber - blockNumber string
    * @extends BlockChain.prototype
-   * @return {Object} - RPC Response Object
+   * @return {Object} RPC Response Object
    */
   {
     name: 'getDsBlock',
@@ -89,7 +89,7 @@ const methodArray = [
    * @param {Object} paramObject
    * @param {String} paramObject.blockNumber - blockNumber string
    * @extends BlockChain.prototype
-   * @return {Object} - RPC Response Object
+   * @return {Object} RPC Response Object
    */
   {
     name: 'getTxBlock',
@@ -106,7 +106,7 @@ const methodArray = [
    * @function getLatestDsBlock
    * @description get latest DsBlock from RPC
    * @extends BlockChain.prototype
-   * @return {Object} - RPC Response Object
+   * @return {Object} RPC Response Object
    */
   {
     name: 'getLatestDsBlock',
@@ -118,7 +118,7 @@ const methodArray = [
    * @function getLatestTxBlock
    * @description get latest TxBlock from RPC
    * @extends BlockChain.prototype
-   * @return {Object} - RPC Response Object
+   * @return {Object} RPC Response Object
    */
   {
     name: 'getLatestTxBlock',
@@ -132,7 +132,7 @@ const methodArray = [
    * @param {Object} paramObject
    * @param {String} paramObject.address - address string
    * @extends BlockChain.prototype
-   * @return {Object} - RPC Response Object
+   * @return {Object} RPC Response Object
    */
   {
     name: 'getBalance',
@@ -146,7 +146,7 @@ const methodArray = [
    * @function getGasPrice
    * @description get gasprice
    * @extends BlockChain.prototype
-   * @return {Object} - RPC Response Object
+   * @return {Object} RPC Response Object
    */
   {
     name: 'getGasPrice',
@@ -160,7 +160,7 @@ const methodArray = [
    * @param {Object} paramObject
    * @param {String} paramObject.address - smart contract address string
    * @extends BlockChain.prototype
-   * @return {Object} - RPC Response Object
+   * @return {Object} RPC Response Object
    */
   {
     name: 'getSmartContractState',
@@ -174,7 +174,7 @@ const methodArray = [
    * @param {Object} paramObject
    * @param {String} paramObject.address - smart contract address string
    * @extends BlockChain.prototype
-   * @return {Object} - RPC Response Object
+   * @return {Object} RPC Response Object
    */
   {
     name: 'getSmartContractCode',
@@ -188,7 +188,7 @@ const methodArray = [
    * @param {Object} paramObject
    * @param {String} paramObject.address - smart contract address string
    * @extends BlockChain.prototype
-   * @return {Object} - RPC Response Object
+   * @return {Object} RPC Response Object
    */
   {
     name: 'getSmartContractInit',
@@ -202,7 +202,7 @@ const methodArray = [
    * @param {Object} paramObject
    * @param {String} paramObject.address - smart contract address string
    * @extends BlockChain.prototype
-   * @return {Object} - RPC Response Object
+   * @return {Object} RPC Response Object
    */
   {
     name: 'getSmartContracts',
@@ -216,7 +216,7 @@ const methodArray = [
    * @param {Object} paramObject
    * @param {String} paramObject.address - smart contract address string
    * @extends BlockChain.prototype
-   * @return {Object} - RPC Response Object
+   * @return {Object} RPC Response Object
    */
   {
     name: 'getTransactionHistory',
@@ -229,7 +229,7 @@ const methodArray = [
    * @function getTransactionHistory
    * @description get recent transactions from RPC Method
    * @extends BlockChain.prototype
-   * @return {Object} - RPC Response Object
+   * @return {Object} RPC Response Object
    */
   {
     name: 'getRecentTransactions',
@@ -243,7 +243,7 @@ const methodArray = [
    * @param {Object} paramObject
    * @param {String} paramObject.blockNumber - blockNumber string
    * @extends BlockChain.prototype
-   * @return {Object} - RPC Response Object
+   * @return {Object} RPC Response Object
    */
   {
     name: 'getBlockTransactionCount',
@@ -260,7 +260,7 @@ const methodArray = [
    * @param {Object} paramObject
    * @param {String} paramObject.txHash - transaction ID string
    * @extends BlockChain.prototype
-   * @return {Object} - RPC Response Object
+   * @return {Object} RPC Response Object
    */
   {
     name: 'getTransactionReceipt',
@@ -277,7 +277,7 @@ const methodArray = [
    * @param {Object} paramObject
    * @param {String} paramObject.code - code string
    * @extends BlockChain.prototype
-   * @return {Object} - RPC Response Object
+   * @return {Object} RPC Response Object
    */
   {
     name: 'checkCode',
@@ -292,7 +292,7 @@ const methodArray = [
    * @param {Object} paramObject
    * @param {String} paramObject.code - code string
    * @extends BlockChain.prototype
-   * @return {Object} - RPC Response Object
+   * @return {Object} RPC Response Object
    */
   {
     name: 'checkCodeTest',
@@ -305,7 +305,7 @@ const methodArray = [
    * @function getBlockchainInfo
    * @description get blockchain info from RPC Methods
    * @extends BlockChain.prototype
-   * @return {Object} - RPC Response Object
+   * @return {Object} RPC Response Object
    */
   {
     name: 'getBlockchainInfo',
@@ -319,7 +319,7 @@ const methodArray = [
    * @param {Object} paramObject
    * @param {Number} paramObject.page - page number
    * @extends BlockChain.prototype
-   * @return {Object} - RPC Response Object
+   * @return {Object} RPC Response Object
    */
   {
     name: 'getDSBlockListing',
@@ -335,7 +335,7 @@ const methodArray = [
    * @param {Object} paramObject
    * @param {Number} paramObject.page - page number
    * @extends BlockChain.prototype
-   * @return {Object} - RPC Response Object
+   * @return {Object} RPC Response Object
    */
   {
     name: 'getTxBlockListing',
@@ -349,7 +349,7 @@ const methodArray = [
    * @function getNumTxnsTxEpoch
    * @description get transaction epoch transaction numbers
    * @extends BlockChain.prototype
-   * @return {Object} - RPC Response Object
+   * @return {Object} RPC Response Object
    */
   {
     name: 'getNumTxnsTxEpoch',
@@ -361,7 +361,7 @@ const methodArray = [
    * @function getNumTxnsTxEpoch
    * @description get DS epoch transaction numbers
    * @extends BlockChain.prototype
-   * @return {Object} - RPC Response Object
+   * @return {Object} RPC Response Object
    */
   {
     name: 'getNumTxnsDSEpoch',
@@ -373,7 +373,7 @@ const methodArray = [
    * @function getTransactionListing
    * @description get transaction list
    * @extends BlockChain.prototype
-   * @return {Object} - RPC Response Object
+   * @return {Object} RPC Response Object
    */
   {
     name: 'getTransactionListing',
@@ -385,7 +385,7 @@ const methodArray = [
    * @function getMinimumGasPrice
    * @description get minimum gas price
    * @extends BlockChain.prototype
-   * @return {Object} - RPC Response Object
+   * @return {Object} RPC Response Object
    */
   {
     name: 'getMinimumGasPrice',
@@ -397,7 +397,7 @@ const methodArray = [
    * @function getPrevDifficulty
    * @description get previous difficuty
    * @extends BlockChain.prototype
-   * @return {Object} - RPC Response Object
+   * @return {Object} RPC Response Object
    */
   {
     name: 'getPrevDifficulty',
@@ -409,7 +409,7 @@ const methodArray = [
    * @function getPrevDSDifficulty
    * @description get previous Ds difficulty
    * @extends BlockChain.prototype
-   * @return {Object} - RPC Response Object
+   * @return {Object} RPC Response Object
    */
   {
     name: 'getPrevDSDifficulty',
@@ -423,7 +423,7 @@ const methodArray = [
    * @param {Object} paramObject
    * @param {Number} paramObject.txBlock - block number
    * @extends BlockChain.prototype
-   * @return {Object} - RPC Response Object
+   * @return {Object} RPC Response Object
    */
   {
     name: 'getTransactionsForTxBlock',
@@ -437,7 +437,7 @@ const methodArray = [
    * @function getShardingStructure
    * @description get sharding structure from RPC method
    * @extends BlockChain.prototype
-   * @return {Object} - RPC Response Object
+   * @return {Object} RPC Response Object
    */
   {
     name: 'getShardingStructure',

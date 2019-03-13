@@ -80,7 +80,7 @@ to make a confirm to a exist transaction
 
 ### blockChain.extendMethod(object) ⇒ <code>Boolean</code>
 **Kind**: instance method of [<code>BlockChain</code>](#BlockChain)  
-**Returns**: <code>Boolean</code> - - status  
+**Returns**: <code>Boolean</code> - status  
 
 | Param | Type | Description |
 | --- | --- | --- |
@@ -90,7 +90,7 @@ to make a confirm to a exist transaction
 
 ### blockChain.extendProperty(object) ⇒ <code>Boolean</code>
 **Kind**: instance method of [<code>BlockChain</code>](#BlockChain)  
-**Returns**: <code>Boolean</code> - - status  
+**Returns**: <code>Boolean</code> - status  
 
 | Param | Type | Description |
 | --- | --- | --- |
@@ -100,7 +100,7 @@ to make a confirm to a exist transaction
 
 ### BlockChain.completeTransaction(tx, account, password) ⇒ <code>any</code>
 **Kind**: static method of [<code>BlockChain</code>](#BlockChain)  
-**Returns**: <code>any</code> - - confirmation process  
+**Returns**: <code>any</code> - confirmation process  
 
 | Param | Type | Description |
 | --- | --- | --- |
@@ -112,7 +112,7 @@ to make a confirm to a exist transaction
 
 ### BlockChain.confirmTransaction(txHash) ⇒ <code>Transaction</code>
 **Kind**: static method of [<code>BlockChain</code>](#BlockChain)  
-**Returns**: <code>Transaction</code> - - Transaction instance with confirm/reject state  
+**Returns**: <code>Transaction</code> - Transaction instance with confirm/reject state  
 
 | Param | Type | Description |
 | --- | --- | --- |
@@ -124,7 +124,7 @@ to make a confirm to a exist transaction
 Map Method objects to Method instance
 
 **Kind**: global function  
-**Returns**: <code>Boolean</code> - - status  
+**Returns**: <code>Boolean</code> - status  
 
 | Param | Type | Description |
 | --- | --- | --- |
@@ -136,7 +136,7 @@ Map Method objects to Method instance
 Map Property objects to Property instance
 
 **Kind**: global function  
-**Returns**: <code>Boolean</code> - - status  
+**Returns**: <code>Boolean</code> - status  
 
 | Param | Type | Description |
 | --- | --- | --- |

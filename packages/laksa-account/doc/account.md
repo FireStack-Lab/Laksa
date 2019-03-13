@@ -31,7 +31,7 @@ title: account
 <a name="new_Account_new"></a>
 
 ### new Account(messenger)
-**Returns**: [<code>Account</code>](#Account) - {description}  
+**Returns**: [<code>Account</code>](#Account) - Account instance  
 
 | Param | Type | Description |
 | --- | --- | --- |
@@ -73,14 +73,14 @@ nonce of Account
 create new Account instance
 
 **Kind**: static method of [<code>Account</code>](#Account)  
-**Returns**: [<code>Account</code>](#Account) - - create a new Account  
+**Returns**: [<code>Account</code>](#Account) - create a new Account  
 <a name="Account.importAccount"></a>
 
 ### Account.importAccount(privateKey) ⇒ [<code>Account</code>](#Account)
 import private key string and return an Account instance
 
 **Kind**: static method of [<code>Account</code>](#Account)  
-**Returns**: [<code>Account</code>](#Account) - - create a new Account  
+**Returns**: [<code>Account</code>](#Account) - create a new Account  
 
 | Param | Type | Description |
 | --- | --- | --- |
@@ -92,7 +92,7 @@ import private key string and return an Account instance
 encrypt an account providing password and encrypt options
 
 **Kind**: static method of [<code>Account</code>](#Account)  
-**Returns**: [<code>Promise.&lt;Account&gt;</code>](#Account) - - encrypt an account  
+**Returns**: [<code>Promise.&lt;Account&gt;</code>](#Account) - encrypt an account  
 
 | Param | Type | Description |
 | --- | --- | --- |
@@ -105,7 +105,7 @@ encrypt an account providing password and encrypt options
 decrypt an account providing password
 
 **Kind**: static method of [<code>Account</code>](#Account)  
-**Returns**: <code>Promise.&lt;Object&gt;</code> - - account object  
+**Returns**: <code>Promise.&lt;Object&gt;</code> - account object  
 
 | Param | Type | Description |
 | --- | --- | --- |
@@ -117,7 +117,7 @@ decrypt an account providing password
 encrypt an account and return as jsonString
 
 **Kind**: static method of [<code>Account</code>](#Account)  
-**Returns**: <code>Promise.&lt;String&gt;</code> - - encrypted jsonString  
+**Returns**: <code>Promise.&lt;String&gt;</code> - encrypted jsonString  
 
 | Param | Type | Description |
 | --- | --- | --- |
@@ -130,7 +130,7 @@ encrypt an account and return as jsonString
 Decrypt a keystore jsonString and generate an account.
 
 **Kind**: static method of [<code>Account</code>](#Account)  
-**Returns**: [<code>Promise.&lt;Account&gt;</code>](#Account) - - Account  
+**Returns**: [<code>Promise.&lt;Account&gt;</code>](#Account) - Account  
 
 | Param | Type | Description |
 | --- | --- | --- |
@@ -143,7 +143,7 @@ Decrypt a keystore jsonString and generate an account.
 sign transaction object with password
 
 **Kind**: static method of [<code>Account</code>](#Account)  
-**Returns**: <code>Promise.&lt;Object&gt;</code> - - signed transaction object  
+**Returns**: <code>Promise.&lt;Object&gt;</code> - signed transaction object  
 
 | Param | Type | Description |
 | --- | --- | --- |
@@ -156,11 +156,11 @@ sign transaction object with password
 get balance of current Account
 
 **Kind**: static method of [<code>Account</code>](#Account)  
-**Returns**: <code>Promise.&lt;Object&gt;</code> - - signed transaction object  
+**Returns**: <code>Promise.&lt;Object&gt;</code> - signed transaction object  
 <a name="Account.updateBalance"></a>
 
 ### Account.updateBalance() ⇒ [<code>Promise.&lt;Account&gt;</code>](#Account)
 update balance and nonce of current account
 
 **Kind**: static method of [<code>Account</code>](#Account)  
-**Returns**: [<code>Promise.&lt;Account&gt;</code>](#Account) - - return current Account instance  
+**Returns**: [<code>Promise.&lt;Account&gt;</code>](#Account) - return current Account instance  

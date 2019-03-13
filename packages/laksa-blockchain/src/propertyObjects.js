@@ -5,7 +5,7 @@ export default [
    * @function hashrate
    * @description connection status from RPC
    * @extends BlockChain.prototype
-   * @return {Object} - RPC response Object
+   * @return {Object} RPC response Object
    */
   {
     name: 'hashrate',
@@ -15,7 +15,7 @@ export default [
    * @function networkId
    * @description network ID for current provider
    * @extends BlockChain.prototype
-   * @return {Object} - RPC response Object
+   * @return {Object} RPC response Object
    */
   {
     name: 'networkId',
@@ -25,7 +25,7 @@ export default [
    * @function clientVersion
    * @description client version for current provider
    * @extends BlockChain.prototype
-   * @return {Object} - RPC response Object
+   * @return {Object} RPC response Object
    */
   {
     name: 'clientVersion',
@@ -36,7 +36,7 @@ export default [
    * @function  protocalVersion
    * @description get protocal version for current provider
    * @extends BlockChain.prototype
-   * @return {Object} - RPC response Object
+   * @return {Object} RPC response Object
    */
   {
     name: 'protocolVersion',
@@ -46,7 +46,7 @@ export default [
    * @function nodeMining
    * @description is node mining
    * @extends BlockChain.prototype
-   * @return {Object} - RPC response Object
+   * @return {Object} RPC response Object
    */
   {
     name: 'nodeMining',

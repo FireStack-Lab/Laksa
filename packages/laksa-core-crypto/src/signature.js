@@ -1,9 +1,9 @@
 import BN from 'bn.js'
 
 /**
- * Signature
+ * @class Signature
  *
- * This replaces `elliptic/lib/elliptic/ec/signature`. This is to avoid
+ * @description This replaces `elliptic/lib/elliptic/ec/signature`. This is to avoid
  * duplicate code in the final bundle, caused by having to bundle elliptic
  * twice due to its circular dependencies. This can be removed once
  * https://github.com/indutny/elliptic/pull/157 is resolved, or we find the
@@ -12,7 +12,15 @@ import BN from 'bn.js'
 
 export class Signature {
   constructor(options) {
+    /**
+     * @var {BN} r
+     * @memberof Signature.prototype
+     */
     this.r = typeof options.r === 'string' ? new BN(options.r, 16) : options.r
+    /**
+     * @var {BN} s
+     * @memberof Signature.prototype
+     */
     this.s = typeof options.s === 'string' ? new BN(options.s, 16) : options.s
   }
 }

@@ -13,27 +13,72 @@ import config from './config'
 /**
  * @class Laksa
  * @param  {String}  url - Url string to initializing Laksa
- * @return {Laksa} - Laksa instance
+ * @return {Laksa} Laksa instance
  */
 class Laksa {
   constructor(args) {
     const url = (args && util.isUrl(args) ? args : undefined) || config.Default.nodeProviderUrl
+    /**
+     * @var {Object} util
+     * @memberof Laksa.prototype
+     * @description util
+     */
     this.util = {
       ...util,
       ...core
     }
+    /**
+     * @var {Object} currentProvider
+     * @memberof Laksa.prototype
+     * @description signer
+     */
     this.currentProvider = {
       node: new HttpProvider(url),
       scilla: new HttpProvider(url)
     }
+    /**
+     * @var {Object} config
+     * @memberof Laksa.prototype
+     * @description config
+     */
     this.config = config
+    /**
+     * @var {Messenger} messenger
+     * @memberof Laksa.prototype
+     * @description messenger
+     */
     this.messenger = new Messenger(this.currentProvider.node, this.config)
+    /**
+     * @var {Wallet} wallet
+     * @memberof Laksa.prototype
+     * @description wallet
+     */
     this.wallet = new Wallet(this.messenger)
+    /**
+     * @var {Transactions} transactions
+     * @memberof Laksa.prototype
+     * @description transactions
+     */
     this.transactions = new Transactions(this.messenger, this.wallet)
+    /**
+     * @var {Contracts} contracts
+     * @memberof Laksa.prototype
+     * @description contracts
+     */
     this.contracts = new Contracts(this.messenger, this.wallet)
+    /**
+     * @var {BlockChain} zil
+     * @memberof Laksa.prototype
+     * @description zil
+     */
     this.zil = new BlockChain(this.messenger, this.wallet)
   }
 
+  /**
+   * @var {Object} Modules
+   * @memberof Laksa.prototype
+   * @description Modules
+   */
   Modules = {
     Account,
     BlockChain,
@@ -50,7 +95,7 @@ class Laksa {
    * @function version
    * @memberof Laksa
    * @description get library version
-   * @return {String} - library version
+   * @return {String} library version
    */
   get version() {
     return config.version
@@ -60,7 +105,7 @@ class Laksa {
    * @function isConnected
    * @memberof Laksa
    * @description check connection status
-   * @return {any} - connection status
+   * @return {any} connection status
    */
   get isConnected() {
     return this.connection
@@ -71,7 +116,7 @@ class Laksa {
    * @memberof Laksa
    * @param {?Function} callback - callback function
    * @description check connection status
-   * @return {Promise<any>} - connection status
+   * @return {Promise<any>} connection status
    */
   async connection(callback) {
     const result = await this.zil.isConnected()
@@ -87,7 +132,7 @@ class Laksa {
    * @memberof Laksa.prototype
    * @param {HttpProvider} provider - HttpProvider
    * @description provider setter
-   * @return {Boolean} - if provider is set, return true
+   * @return {Boolean} if provider is set, return true
    */
   setProvider = provider => {
     let providerSetter = {}
@@ -110,7 +155,7 @@ class Laksa {
    * @function getProvider
    * @memberof Laksa
    * @description provider getter
-   * @return {Object} - currentProvider with nodeProvider and scillaProvider
+   * @return {Object} currentProvider with nodeProvider and scillaProvider
    */
   getProvider() {
     return this.currentProvider
@@ -120,7 +165,7 @@ class Laksa {
    * @function getLibraryVersion
    * @memberof Laksa
    * @description version getter
-   * @return {String} - version string
+   * @return {String} version string
    */
   getLibraryVersion() {
     return this.version
@@ -130,7 +175,7 @@ class Laksa {
    * @function getDefaultAccount
    * @memberof Laksa
    * @description get wallet's default Account or config default Account
-   * @return {Account} - Account instance
+   * @return {Account} Account instance
    */
   getDefaultAccount() {
     if (this.wallet.defaultAccount) {

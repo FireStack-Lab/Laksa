@@ -1,11 +1,9 @@
 /**
- * randomBytes
- *
- * Uses JS-native CSPRNG to generate a specified number of bytes.
+ * @function randomBytes
+ * @description Uses JS-native CSPRNG to generate a specified number of bytes.
  * NOTE: this method throws if no PRNG is available.
- *
- * @param {number} bytes
- * @returns {string}
+ * @param {Number} bytes bytes number to generate
+ * @returns {String} ramdom hex string
  */
 export const randomBytes = bytes => {
   let randBz
@@ -25,16 +23,3 @@ export const randomBytes = bytes => {
 
   return randStr
 }
-
-// import RB from 'randombytes'
-
-// export const randomBytes = bytes => {
-//   const randBz = RB(bytes)
-
-//   let randStr = ''
-//   for (let i = 0; i < bytes; i += 1) {
-//     randStr += `00${randBz[i].toString(16)}`.slice(-2)
-//   }
-
-//   return randStr
-// }
