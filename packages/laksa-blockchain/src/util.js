@@ -25,7 +25,7 @@ export function toTxParams(response) {
   return {
     ...rest,
     TranID: ID,
-    nonce,
+    nonce: parseInt(nonce, 10),
     pubKey: strip0x(senderPubKey),
     version: parseInt(version, 10),
     toAddr,

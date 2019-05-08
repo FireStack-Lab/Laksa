@@ -1,8 +1,12 @@
 import {
+  decodeBase58,
   encodeTransactionProto,
   getAddressFromPublicKey,
   toChecksumAddress
 } from 'laksa-core-crypto'
+
+import { isBase58 } from 'laksa-utils'
+import { isAddress } from 'laksa-utils/node'
 import { sleep, TxStatus } from './util'
 
 /**
@@ -19,7 +23,7 @@ class Transaction {
     // params
     this.version = params.version
     this.TranID = params.TranID
-    this.toAddr = params.toAddr.toLowerCase()
+    this.toAddr = this.getToAddr(params.toAddr)
     this.nonce = params.nonce
     this.pubKey = params.pubKey
     this.amount = params.amount
@@ -71,22 +75,36 @@ class Transaction {
   }
 
   get txParams() {
-    return {
-      version: this.version,
-      // this.messenger.setTransactionVersion(this.version),
-      TranID: this.TranID,
-      toAddr: toChecksumAddress(this.toAddr).slice(2),
-      // after updated to the core, it will not slice
-      nonce: this.nonce,
-      pubKey: this.pubKey,
-      amount: this.amount,
-      gasPrice: this.gasPrice,
-      gasLimit: this.gasLimit,
-      code: this.code,
-      data: this.data,
-      signature: this.signature,
-      receipt: this.receipt
+    try {
+      return {
+        version: this.version,
+        // this.messenger.setTransactionVersion(this.version),
+        TranID: this.TranID,
+        toAddr: toChecksumAddress(this.getToAddr(this.toAddr)).slice(2),
+        // after updated to the core, it will not slice
+        nonce: this.nonce,
+        pubKey: this.pubKey,
+        amount: this.amount,
+        gasPrice: this.gasPrice,
+        gasLimit: this.gasLimit,
+        code: this.code,
+        data: this.data,
+        signature: this.signature,
+        receipt: this.receipt
+      }
+    } catch (error) {
+      throw error
     }
+  }
+
+  getToAddr(addr) {
+    let result = addr
+    if (isAddress(addr)) {
+      result = addr.toLowerCase()
+    } else if (isBase58(addr)) {
+      result = decodeBase58(addr)
+    }
+    return result
   }
 
   get senderAddress() {

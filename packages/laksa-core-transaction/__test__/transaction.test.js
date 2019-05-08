@@ -1,9 +1,15 @@
 import fetch from 'jest-fetch-mock'
 
+import { decodeBase58 } from 'laksa-core-crypto/lib'
 import { Transaction } from '../src/transaction'
 import { TxStatus } from '../src/util'
 import { BN, Long } from '../../laksa-utils/src'
-import { randomBytes, isValidChecksumAddress } from '../../laksa-core-crypto/src'
+import {
+  randomBytes,
+  isValidChecksumAddress,
+  encodeBase58,
+  toChecksumAddress
+} from '../../laksa-core-crypto/src'
 import { Wallet } from '../../laksa-wallet/src'
 import { HttpProvider } from '../../laksa-providers-http/src'
 import { Messenger } from '../../laksa-core-messenger/src'
@@ -282,5 +288,22 @@ describe('Transaction', () => {
 
     pending.setStatus(TxStatus.Initialised)
     expect(pending.isInitialised()).toBeTruthy()
+  })
+  it('should accept base58 address', () => {
+    const b16 = toChecksumAddress(randomBytes(20))
+    const b58 = encodeBase58(b16)
+    const txn = new Transaction(
+      {
+        version: 0,
+        toAddr: b58,
+        amount: new BN(0),
+        gasPrice: new BN(1000),
+        gasLimit: Long.fromNumber(1000)
+      },
+      messenger
+    )
+    expect(decodeBase58(b58)).toEqual(b16.toLowerCase().substring(2))
+    expect(isValidChecksumAddress(`0x${txn.txParams.toAddr}`)).toBe(true)
+    expect(`0x${txn.txParams.toAddr}`).toEqual(b16)
   })
 })

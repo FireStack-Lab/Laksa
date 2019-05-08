@@ -294,4 +294,65 @@ describe('test contract', () => {
       })
     )
   })
+  it('should typecheck for ADTs', async () => {
+    const init = [
+      {
+        vname: 'contractOwner',
+        type: 'ByStr20',
+        value: '0x124567890124567890124567890124567890'
+      },
+      { vname: 'name', type: 'String', value: 'NonFungibleToken' },
+      { vname: 'symbol', type: 'String', value: 'NFT' },
+      {
+        vname: 'dummy_optional_value',
+        type: 'Option (Uint32)',
+        value: { constructor: 'None', argtypes: ['Uint32'], arguments: [] }
+      }
+    ]
+    const contract = new Contract(
+      { code: testContract, init, version: 1 },
+      { messenger, signer: wallet },
+      ContractStatus.INITIALISED
+    )
+
+    const responses = [
+      {
+        id: 1,
+        jsonrpc: '2.0',
+        result: {
+          balance: 888,
+          nonce: 1
+        }
+      },
+      {
+        id: 1,
+        jsonrpc: '2.0',
+        result: {
+          TranID: 'some_hash',
+          Info: 'Non-contract txn, sent to shard'
+          // ContractAddress: '0000000000000000000000000000000000000000'
+        }
+      },
+      {
+        id: 1,
+        jsonrpc: '2.0',
+        result: {
+          ID: 'some_hash',
+          receipt: { success: true, cumulative_gas: '1000' }
+        }
+      }
+    ].map(res => [JSON.stringify(res)])
+
+    fetch.mockResponses(...responses)
+
+    const deployed = await contract.deploy({
+      gasPrice: new BN(1000),
+      gasLimit: Long.fromNumber(1000)
+    })
+
+    expect(deployed.transaction.isConfirmed()).toBeTruthy()
+    expect(deployed.isDeployed()).toBeTruthy()
+    expect(deployed.status).toEqual(ContractStatus.DEPLOYED)
+    expect(deployed.ContractAddress).toMatch(/[A-F0-9]+/)
+  })
 })

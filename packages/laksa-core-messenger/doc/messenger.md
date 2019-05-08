@@ -39,7 +39,7 @@ title: messenger
         * [.providerCheck()](#Messenger.providerCheck) ⇒ <code>Error</code> \| <code>null</code>
         * [.setReqMiddleware(middleware, method)](#Messenger.setReqMiddleware)
         * [.setResMiddleware(middleware, method)](#Messenger.setResMiddleware)
-        * [.{function name}(version, networkId)](#Messenger.{function name})
+        * [.setTransactionVersion(version, networkId)](#Messenger.setTransactionVersion)
         * [.setNetworkID(id)](#Messenger.setNetworkID)
 
 <a name="new_Messenger_new"></a>
@@ -148,9 +148,11 @@ set response middleware
 | middleware | <code>any</code> | middle ware for req |
 | method | <code>String</code> | method name |
 
-<a name="Messenger.{function name}"></a>
+<a name="Messenger.setTransactionVersion"></a>
 
-### Messenger.{function name}(version, networkId)
+### Messenger.setTransactionVersion(version, networkId)
+set transasction version
+
 **Kind**: static method of [<code>Messenger</code>](#Messenger)  
 
 | Param | Type | Description |
@@ -161,6 +163,8 @@ set response middleware
 <a name="Messenger.setNetworkID"></a>
 
 ### Messenger.setNetworkID(id)
+set network id
+
 **Kind**: static method of [<code>Messenger</code>](#Messenger)  
 
 | Param | Type | Description |

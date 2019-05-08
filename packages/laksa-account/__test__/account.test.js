@@ -175,7 +175,7 @@ describe('test createAccount', () => {
     const tx = transactions.new(rawTx, messenger)
     await account.encrypt('EncrypMyAssest')
     const signedTxn = await account.signTransaction(tx, 'EncrypMyAssest')
-
+    // expect(signedTxn.signature).toEqual('111')
     const lgtm = schnorr.verify(
       tx.bytes,
       new Signature({
