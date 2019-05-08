@@ -364,7 +364,8 @@ function () {
       return this.provider.middleware.response.use(middleware, method);
     }
     /**
-     * @function {function name}
+     * @function setTransactionVersion
+     * @description set transasction version
      * @memberof Messenger
      * @param  {Number} version   - version number
      * @param  {String} networkId - network id
@@ -419,6 +420,7 @@ function () {
     }
     /**
      * @function setNetworkID
+     * @description set network id
      * @memberof Messenger
      * @param  {String} id network id string
      */

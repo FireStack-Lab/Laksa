@@ -209,7 +209,7 @@ export const toSignature = serialised => {
 
 /**
  * @function getDRBG
- * @descriptionInstantiate an HMAC-DRBG.
+ * @description generate an HMAC-DRBG.
  * @param {Buffer} entropy
  * @return {DRBG}
  */

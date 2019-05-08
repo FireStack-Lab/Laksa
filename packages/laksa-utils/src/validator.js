@@ -176,11 +176,19 @@ const isByStrX = obj => {
   return /^0x[A-F0-9]{20,65}$/i.test(obj)
 }
 
+const isBase58 = raw => {
+  if (!isString(raw)) {
+    return false
+  }
+  return !!raw.match(/^[1-9ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz]+$/)
+}
+
 export {
   isNumber,
   isInt,
   isString,
   isBoolean,
+  isBase58,
   isArray,
   isJsonString,
   isObject,

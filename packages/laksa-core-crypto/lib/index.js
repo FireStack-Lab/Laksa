@@ -372,6 +372,74 @@ var getAddressForContract = function getAddressForContract(_ref) {
 var checkValidSignature = function checkValidSignature(sig) {
   return sig.r.toString('hex').length + sig.s.toString('hex').length === 128;
 };
+var encodeBase58 = function encodeBase58(hex) {
+  var clean = hex.toLowerCase().replace('0x', '');
+  var tbl = '123456789ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz';
+  var base = new BN(58);
+  var zero = new BN(0);
+  var x = new BN(clean, 16);
+  var res = '';
+
+  while (x.gt(zero)) {
+    var rem = x.mod(base).toNumber(); // safe, always < 58
+    // big endian
+
+    res = tbl[rem] + res; // quotient, remainders thrown away in integer division
+
+    x = x.div(base);
+  } // convert to big endian in case the input hex is little endian
+
+
+  var hexBE = x.toString('hex', clean.length);
+
+  for (var i = 0; i < hexBE.length; i += 2) {
+    if (hex[i] === '0' && hex[i + 1] === '0') {
+      res = tbl[0] + res;
+    } else {
+      break;
+    }
+  }
+
+  return res;
+};
+var decodeBase58 = function decodeBase58(raw) {
+  var tbl = '123456789ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz';
+  var base = new BN(58);
+  var zero = new BN(0);
+  var isBreak = false;
+  var n = new BN(0);
+  var leader = '';
+
+  for (var i = 0; i < raw.length; i += 1) {
+    var char = raw.charAt(i);
+    var weight = new BN(tbl.indexOf(char));
+    n = n.mul(base).add(weight); // check if padding required
+
+    if (!isBreak) {
+      if (i - 1 > 0 && raw[i - 1] !== '1') {
+        isBreak = true; // eslint-disable-next-line no-continue
+
+        continue;
+      }
+
+      if (char === '1') {
+        leader += '00';
+      }
+    }
+  }
+
+  if (n.eq(zero)) {
+    return leader;
+  }
+
+  var res = leader + n.toString('hex');
+
+  if (res.length % 2 !== 0) {
+    res = "0".concat(res);
+  }
+
+  return res;
+};
 
 var secp256k1$1 = elliptic.ec('secp256k1');
 var curve = secp256k1$1.curve;
@@ -572,7 +640,7 @@ var toSignature = function toSignature(serialised) {
 };
 /**
  * @function getDRBG
- * @descriptionInstantiate an HMAC-DRBG.
+ * @description generate an HMAC-DRBG.
  * @param {Buffer} entropy
  * @return {DRBG}
  */
@@ -652,6 +720,8 @@ exports.isValidChecksumAddress = isValidChecksumAddress;
 exports.encodeTransactionProto = encodeTransactionProto;
 exports.getAddressForContract = getAddressForContract;
 exports.checkValidSignature = checkValidSignature;
+exports.encodeBase58 = encodeBase58;
+exports.decodeBase58 = decodeBase58;
 exports.intToHexArray = intToHexArray;
 exports.intToByteArray = intToByteArray;
 exports.hexToByteArray = hexToByteArray;

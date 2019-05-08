@@ -2,7 +2,7 @@ import { Transaction, TxStatus } from 'laksa-core-transaction'
 import { Long, BN } from 'laksa-utils'
 import { assertObject } from 'laksa-shared'
 
-import { ContractStatus, setParamValues } from './util'
+import { ContractStatus, setParamValues, getAddressForContract } from './util'
 
 /**
  * @class Contract
@@ -283,7 +283,8 @@ class Contract {
     try {
       await this.signTxn({ account, password })
       const { transaction, response } = await this.transaction.sendTransaction()
-      this.ContractAddress = this.ContractAddress || response.ContractAddress
+      this.ContractAddress =
+        this.ContractAddress || response.ContractAddress || getAddressForContract(transaction)
       this.transaction = transaction.map(obj => {
         return { ...obj, TranID: response.TranID }
       })
@@ -328,6 +329,7 @@ class Contract {
         this.setStatus(ContractStatus.REJECTED)
         return this
       }
+
       this.setStatus(ContractStatus.DEPLOYED)
       return this
     } catch (error) {
@@ -349,6 +351,16 @@ class Contract {
     const response = await this.messenger.send('GetSmartContractState', this.ContractAddress)
 
     return response
+  }
+
+  async getInit() {
+    if (this.status !== ContractStatus.DEPLOYED) {
+      return Promise.resolve([])
+    }
+
+    const response = await this.messenger.send('GetSmartContractInit', this.ContractAddress)
+
+    return response.result
   }
 
   /**

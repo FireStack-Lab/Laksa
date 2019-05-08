@@ -84,6 +84,7 @@
     isNumber: [laksaUtils.isNumber],
     isString: [laksaUtils.isString],
     isBoolean: [laksaUtils.isBoolean],
+    isBase58: [laksaUtils.isBase58],
     isArray: [laksaUtils.isArray],
     isJson: [laksaUtils.isJson],
     isObject: [laksaUtils.isObject],

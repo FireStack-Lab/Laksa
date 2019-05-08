@@ -1,3 +1,4 @@
+import { hashjs, intToHexArray } from 'laksa-core-crypto'
 import { validate } from './validate'
 
 /**
@@ -39,4 +40,17 @@ export const setParamValues = (rawParams, newValues) => {
     newParams.push(newObj)
   })
   return newParams
+}
+
+export function getAddressForContract(tx) {
+  // always subtract 1 from the tx nonce, as contract addresses are computed
+  // based on the nonce in the global state.
+  const nonce = tx.txParams.nonce ? tx.txParams.nonce - 1 : 0
+
+  return hashjs
+    .sha256()
+    .update(tx.senderAddress, 'hex')
+    .update(intToHexArray(nonce, 64).join(''), 'hex')
+    .digest('hex')
+    .slice(24)
 }

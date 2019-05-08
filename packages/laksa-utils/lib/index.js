@@ -232,11 +232,20 @@ var isByStrX = function isByStrX(obj) {
   return /^0x[A-F0-9]{20,65}$/i.test(obj);
 };
 
+var isBase58 = function isBase58(raw) {
+  if (!isString(raw)) {
+    return false;
+  }
+
+  return !!raw.match(/^[1-9ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz]+$/);
+};
+
 var validators = /*#__PURE__*/Object.freeze({
   isNumber: isNumber,
   isInt: isInt,
   isString: isString,
   isBoolean: isBoolean,
+  isBase58: isBase58,
   isArray: isArray,
   isJsonString: isJsonString,
   isObject: isObject,
@@ -300,6 +309,7 @@ var isNumber$1 = valArray.isNumber,
     isInt$1 = valArray.isInt,
     isString$1 = valArray.isString,
     isBoolean$1 = valArray.isBoolean,
+    isBase58$1 = valArray.isBase58,
     isArray$1 = valArray.isArray,
     isJsonString$1 = valArray.isJsonString,
     isObject$1 = valArray.isObject,
@@ -720,6 +730,7 @@ exports.isNumber = isNumber$1;
 exports.isInt = isInt$1;
 exports.isString = isString$1;
 exports.isBoolean = isBoolean$1;
+exports.isBase58 = isBase58$1;
 exports.isArray = isArray$1;
 exports.isJsonString = isJsonString$1;
 exports.isObject = isObject$1;

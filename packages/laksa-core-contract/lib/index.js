@@ -29,6 +29,7 @@ var _createClass = _interopDefault(require('@babel/runtime/helpers/createClass')
 require('core-js/modules/es6.object.assign');
 require('core-js/modules/web.dom.iterable');
 require('core-js/modules/es6.object.freeze');
+var laksaCoreCrypto = require('laksa-core-crypto');
 require('core-js/modules/es6.regexp.replace');
 require('core-js/modules/es6.string.repeat');
 var _objectSpread = _interopDefault(require('@babel/runtime/helpers/objectSpread'));
@@ -46,7 +47,6 @@ var _getPrototypeOf = _interopDefault(require('@babel/runtime/helpers/getPrototy
 var _assertThisInitialized = _interopDefault(require('@babel/runtime/helpers/assertThisInitialized'));
 var _inherits = _interopDefault(require('@babel/runtime/helpers/inherits'));
 var _defineProperty = _interopDefault(require('@babel/runtime/helpers/defineProperty'));
-var laksaCoreCrypto = require('laksa-core-crypto');
 
 /**
  * @var {Object<String>} Matchers
@@ -378,6 +378,12 @@ var setParamValues = function setParamValues(rawParams, newValues) {
   });
   return newParams;
 };
+function getAddressForContract(tx) {
+  // always subtract 1 from the tx nonce, as contract addresses are computed
+  // based on the nonce in the global state.
+  var nonce = tx.txParams.nonce ? tx.txParams.nonce - 1 : 0;
+  return laksaCoreCrypto.hashjs.sha256().update(tx.senderAddress, 'hex').update(laksaCoreCrypto.intToHexArray(nonce, 64).join(''), 'hex').digest('hex').slice(24);
+}
 
 var _dec, _dec2, _dec3, _dec4, _class;
 /**
@@ -762,7 +768,7 @@ function () {
                 _ref4 = _context3.sent;
                 transaction = _ref4.transaction;
                 response = _ref4.response;
-                this.ContractAddress = this.ContractAddress || response.ContractAddress;
+                this.ContractAddress = this.ContractAddress || response.ContractAddress || getAddressForContract(transaction);
                 this.transaction = transaction.map(function (obj) {
                   return _objectSpread({}, obj, {
                     TranID: response.TranID
@@ -947,6 +953,46 @@ function () {
       }
 
       return getState;
+    }()
+  }, {
+    key: "getInit",
+    value: function () {
+      var _getInit = _asyncToGenerator(
+      /*#__PURE__*/
+      _regeneratorRuntime.mark(function _callee7() {
+        var response;
+        return _regeneratorRuntime.wrap(function _callee7$(_context7) {
+          while (1) {
+            switch (_context7.prev = _context7.next) {
+              case 0:
+                if (!(this.status !== ContractStatus.DEPLOYED)) {
+                  _context7.next = 2;
+                  break;
+                }
+
+                return _context7.abrupt("return", Promise.resolve([]));
+
+              case 2:
+                _context7.next = 4;
+                return this.messenger.send('GetSmartContractInit', this.ContractAddress);
+
+              case 4:
+                response = _context7.sent;
+                return _context7.abrupt("return", response.result);
+
+              case 6:
+              case "end":
+                return _context7.stop();
+            }
+          }
+        }, _callee7, this);
+      }));
+
+      function getInit() {
+        return _getInit.apply(this, arguments);
+      }
+
+      return getInit;
     }()
     /**
      * @function setDeployPayload
@@ -1483,11 +1529,10 @@ function (_Core) {
 
   _createClass(Contracts, [{
     key: "getAddressForContract",
-    value: function getAddressForContract(tx) {
+    value: function getAddressForContract$$1(tx) {
       // always subtract 1 from the tx nonce, as contract addresses are computed
       // based on the nonce in the global state.
-      var nonce = tx.txParams.nonce ? tx.txParams.nonce - 1 : 0;
-      return laksaCoreCrypto.hashjs.sha256().update(tx.senderAddress, 'hex').update(laksaCoreCrypto.intToHexArray(nonce, 64).join(''), 'hex').digest('hex').slice(24);
+      return getAddressForContract(tx);
     }
     /**
      * @function new
@@ -1610,3 +1655,4 @@ exports.Contract = Contract;
 exports.TestScilla = TestScilla;
 exports.ContractStatus = ContractStatus;
 exports.setParamValues = setParamValues;
+exports.getAddressForContract = getAddressForContract;

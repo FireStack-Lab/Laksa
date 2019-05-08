@@ -32,7 +32,8 @@ title: schnorr
 <dt><a href="#toSignature">toSignature(serialised)</a> ⇒ <code>Signature</code></dt>
 <dd></dd>
 <dt><a href="#getDRBG">getDRBG(entropy)</a> ⇒ <code>DRBG</code></dt>
-<dd></dd>
+<dd><p>generate an HMAC-DRBG.</p>
+</dd>
 <dt><a href="#signTest">signTest(msg, k, prv, pub)</a> ⇒ <code>Signature</code> | <code>null</code></dt>
 <dd><p>a test sign method using string for browser</p>
 </dd>
@@ -116,8 +117,9 @@ Verify signature.
 <a name="getDRBG"></a>
 
 ## getDRBG(entropy) ⇒ <code>DRBG</code>
+generate an HMAC-DRBG.
+
 **Kind**: global function  
-**Descriptioninstantiate**: an HMAC-DRBG.  
 
 | Param | Type |
 | --- | --- |

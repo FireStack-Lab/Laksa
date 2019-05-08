@@ -14,10 +14,10 @@
  */
 
 (function (global, factory) {
-  typeof exports === 'object' && typeof module !== 'undefined' ? factory(exports, require('laksa-utils'), require('laksa-core-transaction'), require('laksa-shared'), require('laksa-core-crypto')) :
-  typeof define === 'function' && define.amd ? define(['exports', 'laksa-utils', 'laksa-core-transaction', 'laksa-shared', 'laksa-core-crypto'], factory) :
-  (factory((global.Laksa = {}),global.laksaUtils,global.laksaCoreTransaction,global.laksaShared,global.laksaCoreCrypto));
-}(this, (function (exports,laksaUtils,laksaCoreTransaction,laksaShared,laksaCoreCrypto) { 'use strict';
+  typeof exports === 'object' && typeof module !== 'undefined' ? factory(exports, require('laksa-utils'), require('laksa-core-crypto'), require('laksa-core-transaction'), require('laksa-shared')) :
+  typeof define === 'function' && define.amd ? define(['exports', 'laksa-utils', 'laksa-core-crypto', 'laksa-core-transaction', 'laksa-shared'], factory) :
+  (factory((global.Laksa = {}),global.laksaUtils,global.laksaCoreCrypto,global.laksaCoreTransaction,global.laksaShared));
+}(this, (function (exports,laksaUtils,laksaCoreCrypto,laksaCoreTransaction,laksaShared) { 'use strict';
 
   /**
    * @var {Object<String>} Matchers
@@ -292,7 +292,7 @@
 
   function _applyDecoratedDescriptor(target, property, decorators, descriptor, context) {
     var desc = {};
-    Object['ke' + 'ys'](descriptor).forEach(function (key) {
+    Object.keys(descriptor).forEach(function (key) {
       desc[key] = descriptor[key];
     });
     desc.enumerable = !!desc.enumerable;
@@ -312,7 +312,7 @@
     }
 
     if (desc.initializer === void 0) {
-      Object['define' + 'Property'](target, property, desc);
+      Object.defineProperty(target, property, desc);
       desc = null;
     }
 
@@ -363,6 +363,12 @@
     });
     return newParams;
   };
+  function getAddressForContract(tx) {
+    // always subtract 1 from the tx nonce, as contract addresses are computed
+    // based on the nonce in the global state.
+    const nonce = tx.txParams.nonce ? tx.txParams.nonce - 1 : 0;
+    return laksaCoreCrypto.hashjs.sha256().update(tx.senderAddress, 'hex').update(laksaCoreCrypto.intToHexArray(nonce, 64).join(''), 'hex').digest('hex').slice(24);
+  }
 
   var _dec, _dec2, _dec3, _dec4, _class;
   /**
@@ -686,7 +692,7 @@
           transaction,
           response
         } = await this.transaction.sendTransaction();
-        this.ContractAddress = this.ContractAddress || response.ContractAddress;
+        this.ContractAddress = this.ContractAddress || response.ContractAddress || getAddressForContract(transaction);
         this.transaction = transaction.map(obj => {
           return _objectSpread({}, obj, {
             TranID: response.TranID
@@ -761,6 +767,15 @@
 
       const response = await this.messenger.send('GetSmartContractState', this.ContractAddress);
       return response;
+    }
+
+    async getInit() {
+      if (this.status !== ContractStatus.DEPLOYED) {
+        return Promise.resolve([]);
+      }
+
+      const response = await this.messenger.send('GetSmartContractInit', this.ContractAddress);
+      return response.result;
     }
     /**
      * @function setDeployPayload
@@ -1093,8 +1108,7 @@
     getAddressForContract(tx) {
       // always subtract 1 from the tx nonce, as contract addresses are computed
       // based on the nonce in the global state.
-      const nonce = tx.txParams.nonce ? tx.txParams.nonce - 1 : 0;
-      return laksaCoreCrypto.hashjs.sha256().update(tx.senderAddress, 'hex').update(laksaCoreCrypto.intToHexArray(nonce, 64).join(''), 'hex').digest('hex').slice(24);
+      return getAddressForContract(tx);
     }
     /**
      * @function new
@@ -1180,6 +1194,7 @@
   exports.TestScilla = TestScilla;
   exports.ContractStatus = ContractStatus;
   exports.setParamValues = setParamValues;
+  exports.getAddressForContract = getAddressForContract;
 
   Object.defineProperty(exports, '__esModule', { value: true });
 

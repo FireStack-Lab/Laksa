@@ -165,7 +165,8 @@ class Messenger {
   }
 
   /**
-   * @function {function name}
+   * @function setTransactionVersion
+   * @description set transasction version
    * @memberof Messenger
    * @param  {Number} version   - version number
    * @param  {String} networkId - network id
@@ -206,6 +207,7 @@ class Messenger {
 
   /**
    * @function setNetworkID
+   * @description set network id
    * @memberof Messenger
    * @param  {String} id network id string
    */

@@ -362,6 +362,74 @@
   const checkValidSignature = sig => {
     return sig.r.toString('hex').length + sig.s.toString('hex').length === 128;
   };
+  const encodeBase58 = hex => {
+    const clean = hex.toLowerCase().replace('0x', '');
+    const tbl = '123456789ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz';
+    const base = new BN(58);
+    const zero = new BN(0);
+    let x = new BN(clean, 16);
+    let res = '';
+
+    while (x.gt(zero)) {
+      const rem = x.mod(base).toNumber(); // safe, always < 58
+      // big endian
+
+      res = tbl[rem] + res; // quotient, remainders thrown away in integer division
+
+      x = x.div(base);
+    } // convert to big endian in case the input hex is little endian
+
+
+    const hexBE = x.toString('hex', clean.length);
+
+    for (let i = 0; i < hexBE.length; i += 2) {
+      if (hex[i] === '0' && hex[i + 1] === '0') {
+        res = tbl[0] + res;
+      } else {
+        break;
+      }
+    }
+
+    return res;
+  };
+  const decodeBase58 = raw => {
+    const tbl = '123456789ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz';
+    const base = new BN(58);
+    const zero = new BN(0);
+    let isBreak = false;
+    let n = new BN(0);
+    let leader = '';
+
+    for (let i = 0; i < raw.length; i += 1) {
+      const char = raw.charAt(i);
+      const weight = new BN(tbl.indexOf(char));
+      n = n.mul(base).add(weight); // check if padding required
+
+      if (!isBreak) {
+        if (i - 1 > 0 && raw[i - 1] !== '1') {
+          isBreak = true; // eslint-disable-next-line no-continue
+
+          continue;
+        }
+
+        if (char === '1') {
+          leader += '00';
+        }
+      }
+    }
+
+    if (n.eq(zero)) {
+      return leader;
+    }
+
+    let res = leader + n.toString('hex');
+
+    if (res.length % 2 !== 0) {
+      res = `0${res}`;
+    }
+
+    return res;
+  };
 
   const secp256k1$1 = elliptic.ec('secp256k1');
   const {
@@ -564,7 +632,7 @@
   };
   /**
    * @function getDRBG
-   * @descriptionInstantiate an HMAC-DRBG.
+   * @description generate an HMAC-DRBG.
    * @param {Buffer} entropy
    * @return {DRBG}
    */
@@ -655,6 +723,8 @@
   exports.encodeTransactionProto = encodeTransactionProto;
   exports.getAddressForContract = getAddressForContract;
   exports.checkValidSignature = checkValidSignature;
+  exports.encodeBase58 = encodeBase58;
+  exports.decodeBase58 = decodeBase58;
   exports.intToHexArray = intToHexArray;
   exports.intToByteArray = intToByteArray;
   exports.hexToByteArray = hexToByteArray;

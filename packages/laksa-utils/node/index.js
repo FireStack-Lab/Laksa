@@ -212,11 +212,20 @@
     return /^0x[A-F0-9]{20,65}$/i.test(obj);
   };
 
+  const isBase58 = raw => {
+    if (!isString(raw)) {
+      return false;
+    }
+
+    return !!raw.match(/^[1-9ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz]+$/);
+  };
+
   var validators = /*#__PURE__*/Object.freeze({
     isNumber: isNumber,
     isInt: isInt,
     isString: isString,
     isBoolean: isBoolean,
+    isBase58: isBase58,
     isArray: isArray,
     isJsonString: isJsonString,
     isObject: isObject,
@@ -277,6 +286,7 @@
     isInt: isInt$1,
     isString: isString$1,
     isBoolean: isBoolean$1,
+    isBase58: isBase58$1,
     isArray: isArray$1,
     isJsonString: isJsonString$1,
     isObject: isObject$1,
@@ -672,6 +682,7 @@
   exports.isInt = isInt$1;
   exports.isString = isString$1;
   exports.isBoolean = isBoolean$1;
+  exports.isBase58 = isBase58$1;
   exports.isArray = isArray$1;
   exports.isJsonString = isJsonString$1;
   exports.isObject = isObject$1;

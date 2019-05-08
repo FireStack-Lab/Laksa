@@ -59,7 +59,7 @@ function () {
 
     _defineProperty(this, "defaultAccount", void 0);
 
-    _accounts2.set(this, {
+    _accounts.set(this, {
       writable: true,
       value: immutable.Map({
         accounts: immutable.List([])
@@ -174,7 +174,7 @@ function () {
       var addressRef = _this.getAccountByAddress(address);
 
       if (addressRef !== undefined) {
-        var currentArray = _classPrivateFieldGet(_this, _accounts2).get('accounts').toArray();
+        var currentArray = _classPrivateFieldGet(_this, _accounts).get('accounts').toArray();
 
         delete currentArray[addressRef.index];
 
@@ -183,9 +183,9 @@ function () {
           _this.defaultAccount = undefined;
         }
 
-        _classPrivateFieldSet(_this, _accounts2, _classPrivateFieldGet(_this, _accounts2).set('accounts', immutable.List(currentArray)));
+        _classPrivateFieldSet(_this, _accounts, _classPrivateFieldGet(_this, _accounts).set('accounts', immutable.List(currentArray)));
 
-        _classPrivateFieldSet(_this, _accounts2, _classPrivateFieldGet(_this, _accounts2).delete(address));
+        _classPrivateFieldSet(_this, _accounts, _classPrivateFieldGet(_this, _accounts).delete(address));
 
         _this.updateLength();
       }
@@ -195,13 +195,13 @@ function () {
 
     _defineProperty(this, "getAccountByAddress", function (address) {
       if (!laksaUtils.isAddress(address)) throw new Error('address is not correct');
-      return _classPrivateFieldGet(_this, _accounts2).get(address);
+      return _classPrivateFieldGet(_this, _accounts).get(address);
     });
 
     _defineProperty(this, "getAccountByIndex", function (index) {
       if (!laksaUtils.isNumber(index)) throw new Error('index is not correct');
 
-      var address = _classPrivateFieldGet(_this, _accounts2).get('accounts').get(index);
+      var address = _classPrivateFieldGet(_this, _accounts).get('accounts').get(index);
 
       if (address !== undefined) {
         return _this.getAccountByAddress(address);
@@ -287,7 +287,7 @@ function () {
         return /^\d+$/i.test(n) && parseInt(n, 10) <= 9e20;
       };
 
-      var arrays = _classPrivateFieldGet(this, _accounts2).get('accounts').toArray();
+      var arrays = _classPrivateFieldGet(this, _accounts).get('accounts').toArray();
 
       return Object.keys(arrays).filter(isCorrectKeys);
     }
@@ -324,13 +324,13 @@ function () {
       var objectKey = newAccountObject.address;
       var newIndex = newAccountObject.index;
 
-      var newArrays = _classPrivateFieldGet(this, _accounts2).get('accounts');
+      var newArrays = _classPrivateFieldGet(this, _accounts).get('accounts');
 
       newArrays = newArrays.set(newIndex, objectKey);
 
-      _classPrivateFieldSet(this, _accounts2, _classPrivateFieldGet(this, _accounts2).set(objectKey, newAccountObject));
+      _classPrivateFieldSet(this, _accounts, _classPrivateFieldGet(this, _accounts).set(objectKey, newAccountObject));
 
-      _classPrivateFieldSet(this, _accounts2, _classPrivateFieldGet(this, _accounts2).set('accounts', immutable.List(newArrays))); // this.#_accounts = this.#_accounts.concat(newArrays)
+      _classPrivateFieldSet(this, _accounts, _classPrivateFieldGet(this, _accounts).set('accounts', immutable.List(newArrays))); // this.#_accounts = this.#_accounts.concat(newArrays)
 
 
       this.updateLength();
@@ -477,7 +477,7 @@ function () {
       var newAccountObject = newObject;
       newAccountObject.updateTime = new Date();
 
-      _classPrivateFieldSet(this, _accounts2, _classPrivateFieldGet(this, _accounts2).update(address, function () {
+      _classPrivateFieldSet(this, _accounts, _classPrivateFieldGet(this, _accounts).update(address, function () {
         return newAccountObject;
       }));
 
@@ -923,7 +923,7 @@ function () {
   }, {
     key: "accounts",
     get: function get() {
-      return _classPrivateFieldGet(this, _accounts2).get('accounts').toArray();
+      return _classPrivateFieldGet(this, _accounts).get('accounts').toArray();
     },
     set: function set(value) {
       if (value !== undefined) {
@@ -935,7 +935,7 @@ function () {
   return Wallet;
 }();
 
-var _accounts2 = new WeakMap();
+var _accounts = new WeakMap();
 
 exports.Wallet = Wallet;
 exports.ENCRYPTED = ENCRYPTED;
