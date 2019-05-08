@@ -1,6 +1,6 @@
 {
   "name": "laksa-core-contract",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "Contract instance for laksa",
   "main": "index.js",
   "browser": "lib/index.js",
@@ -16,8 +16,8 @@
   "author": "neeboo@fireStack.one",
   "license": "GPL-3.0",
   "dependencies": {
-    "laksa-core-crypto": "^0.1.0",
-    "laksa-shared": "^0.1.0",
-    "laksa-utils": "^0.1.0"
+    "laksa-core-crypto": "^0.1.1",
+    "laksa-shared": "^0.1.1",
+    "laksa-utils": "^0.1.1"
   }
 }
