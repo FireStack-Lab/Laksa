@@ -725,6 +725,26 @@ function (_Core) {
 
       return updateBalance;
     }()
+  }, {
+    key: "checksumAddress",
+    get: function get() {
+      return laksaCoreCrypto.getAddress(this.address, undefined, laksaCoreCrypto.AddressType.checkSum);
+    }
+  }, {
+    key: "bech32",
+    get: function get() {
+      return laksaCoreCrypto.getAddress(this.address, undefined, laksaCoreCrypto.AddressType.bech32);
+    }
+  }, {
+    key: "base58",
+    get: function get() {
+      return laksaCoreCrypto.getAddress(this.address, undefined, laksaCoreCrypto.AddressType.base58);
+    }
+  }, {
+    key: "bytes20Hex",
+    get: function get() {
+      return laksaCoreCrypto.getAddress(this.address, undefined, laksaCoreCrypto.AddressType.bytes20Hex);
+    }
   }]);
 
   return Account;

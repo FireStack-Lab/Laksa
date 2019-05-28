@@ -450,6 +450,22 @@
       }
     }
 
+    get checksumAddress() {
+      return laksaCoreCrypto.getAddress(this.address, undefined, laksaCoreCrypto.AddressType.checkSum);
+    }
+
+    get bech32() {
+      return laksaCoreCrypto.getAddress(this.address, undefined, laksaCoreCrypto.AddressType.bech32);
+    }
+
+    get base58() {
+      return laksaCoreCrypto.getAddress(this.address, undefined, laksaCoreCrypto.AddressType.base58);
+    }
+
+    get bytes20Hex() {
+      return laksaCoreCrypto.getAddress(this.address, undefined, laksaCoreCrypto.AddressType.bytes20Hex);
+    }
+
   }
 
   exports.Account = Account;
