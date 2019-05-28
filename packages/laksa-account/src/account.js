@@ -1,5 +1,6 @@
 import { Core } from 'laksa-shared'
 import { isInt } from 'laksa-utils'
+import { getAddress, AddressType } from 'laksa-core-crypto'
 import { ENCRYPTED } from './symbols'
 import {
   createAccount,
@@ -229,6 +230,22 @@ class Account extends Core {
     } catch (error) {
       throw error
     }
+  }
+
+  get checksumAddress() {
+    return getAddress(this.address, undefined, AddressType.checkSum)
+  }
+
+  get bech32() {
+    return getAddress(this.address, undefined, AddressType.bech32)
+  }
+
+  get base58() {
+    return getAddress(this.address, undefined, AddressType.base58)
+  }
+
+  get bytes20Hex() {
+    return getAddress(this.address, undefined, AddressType.bytes20Hex)
   }
 }
 
