@@ -1,6 +1,6 @@
 {
   "name": "laksa-providers-http",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "description": "HttpProvider for laksa",
   "main": "index.js",
   "browser": "lib/index.js",
@@ -14,7 +14,7 @@
   "license": "GPL-3.0",
   "dependencies": {
     "cross-fetch": "^2.2.3",
-    "laksa-core-provider": "^0.1.1"
+    "laksa-core-provider": "^0.1.2"
   },
   "gitHead": "66afd1af6021a21adedff7aec6f09f76d5bdd121"
 }

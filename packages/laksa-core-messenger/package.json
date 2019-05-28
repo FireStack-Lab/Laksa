@@ -1,6 +1,6 @@
 {
   "name": "laksa-core-messenger",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "description": "Messenger instance for laksa",
   "main": "index.js",
   "browser": "lib/index.js",
@@ -16,7 +16,7 @@
   "author": "neeboo@fireStack.one",
   "license": "GPL-3.0",
   "dependencies": {
-    "laksa-shared": "^0.1.1"
+    "laksa-shared": "^0.1.2"
   },
   "gitHead": "66afd1af6021a21adedff7aec6f09f76d5bdd121"
 }

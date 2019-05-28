@@ -1,6 +1,6 @@
 {
   "name": "laksa-core",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "description": "laksa-core, main file of laksa",
   "main": "index.js",
   "browser": "lib/index.js",
@@ -13,15 +13,15 @@
   "author": "neeboo@fireStack.one",
   "license": "GPL-3.0",
   "dependencies": {
-    "laksa-account": "^0.1.1",
-    "laksa-blockchain": "^0.1.1",
-    "laksa-core-contract": "^0.1.1",
-    "laksa-core-crypto": "^0.1.1",
-    "laksa-core-messenger": "^0.1.1",
-    "laksa-core-transaction": "^0.1.1",
-    "laksa-providers-http": "^0.1.1",
-    "laksa-utils": "^0.1.1",
-    "laksa-wallet": "^0.1.1"
+    "laksa-account": "^0.1.2",
+    "laksa-blockchain": "^0.1.2",
+    "laksa-core-contract": "^0.1.2",
+    "laksa-core-crypto": "^0.1.2",
+    "laksa-core-messenger": "^0.1.2",
+    "laksa-core-transaction": "^0.1.2",
+    "laksa-providers-http": "^0.1.2",
+    "laksa-utils": "^0.1.2",
+    "laksa-wallet": "^0.1.2"
   },
   "gitHead": "66afd1af6021a21adedff7aec6f09f76d5bdd121"
 }
