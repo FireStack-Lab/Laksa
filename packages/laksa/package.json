@@ -12,7 +12,7 @@
   ],
   "author": "neeboo@fireStack.one",
   "license": "GPL-3.0",
-  "gitHead": "437d52fc2ede7a3294d22cc177e1076c6cacb9a0",
+  "gitHead": "66afd1af6021a21adedff7aec6f09f76d5bdd121",
   "dependencies": {
     "laksa-core": "^0.1.1"
   }

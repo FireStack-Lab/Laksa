@@ -1,14 +1,14 @@
 import fetch from 'jest-fetch-mock'
 
-import { decodeBase58 } from 'laksa-core-crypto/lib'
 import { Transaction } from '../src/transaction'
 import { TxStatus } from '../src/util'
 import { BN, Long } from '../../laksa-utils/src'
 import {
   randomBytes,
   isValidChecksumAddress,
-  encodeBase58,
-  toChecksumAddress
+  toChecksumAddress,
+  getAddress,
+  AddressType
 } from '../../laksa-core-crypto/src'
 import { Wallet } from '../../laksa-wallet/src'
 import { HttpProvider } from '../../laksa-providers-http/src'
@@ -32,7 +32,7 @@ describe('Transaction', () => {
     const tx = new Transaction(
       {
         version: 0,
-        toAddr: `0x${randomBytes(20)}`,
+        toAddr: getAddress(`0x${randomBytes(20)}`, undefined, AddressType.checkSum),
         amount: new BN(0),
         gasPrice: new BN(1000),
         gasLimit: Long.fromNumber(1000)
@@ -41,7 +41,7 @@ describe('Transaction', () => {
     )
 
     // FIXME: remove 0x when this is fixed on the core side
-    expect(isValidChecksumAddress(`0x${tx.txParams.toAddr}`)).toBe(true)
+    expect(isValidChecksumAddress(tx.txParams.toAddr)).toBe(true)
   })
   it('should poll and call queued handlers on confirmation', async () => {
     const responses = [
@@ -74,6 +74,22 @@ describe('Transaction', () => {
     fetch.mockResponses(...responses)
     wallet.setSigner(wallet.getAccountByIndex(0))
 
+    try {
+      // eslint-disable-next-line no-unused-vars
+      const wrongTxn = new Transaction(
+        {
+          version: 0,
+          toAddr: '1234567890123456789012345678901234567890',
+          amount: new BN(0),
+          gasPrice: new BN(1000),
+          gasLimit: Long.fromNumber(1000)
+        },
+        messenger
+      )
+    } catch (error) {
+      expect(error.message).toEqual('Address format is invalid')
+    }
+
     const newTxn = new Transaction(
       {
         version: 0,
@@ -84,6 +100,7 @@ describe('Transaction', () => {
       },
       messenger
     )
+
     const pending = await wallet.signer.signTransaction(newTxn)
 
     await messenger.send('CreateTransaction', pending.txParams)
@@ -111,7 +128,11 @@ describe('Transaction', () => {
       new Transaction(
         {
           version: 0,
-          toAddr: '0x1234567890123456789012345678901234567890',
+          toAddr: getAddress(
+            '0x1234567890123456789012345678901234567890',
+            undefined,
+            AddressType.checkSum
+          ),
           amount: new BN(0),
           gasPrice: new BN(1000),
           gasLimit: Long.fromNumber(1000)
@@ -156,7 +177,11 @@ describe('Transaction', () => {
       new Transaction(
         {
           version: 0,
-          toAddr: '0x1234567890123456789012345678901234567890',
+          toAddr: getAddress(
+            '0x1234567890123456789012345678901234567890',
+            undefined,
+            AddressType.checkSum
+          ),
           amount: new BN(0),
           gasPrice: new BN(1000),
           gasLimit: Long.fromNumber(1000)
@@ -224,7 +249,11 @@ describe('Transaction', () => {
     const txn = new Transaction(
       {
         version: 0,
-        toAddr: '0x1234567890123456789012345678901234567890',
+        toAddr: getAddress(
+          '0x1234567890123456789012345678901234567890',
+          undefined,
+          AddressType.checkSum
+        ),
         amount: new BN(0),
         gasPrice: new BN(1000),
         gasLimit: Long.fromNumber(1000)
@@ -268,7 +297,11 @@ describe('Transaction', () => {
     const txn = new Transaction(
       {
         version: 0,
-        toAddr: '0x1234567890123456789012345678901234567890',
+        toAddr: getAddress(
+          '0x1234567890123456789012345678901234567890',
+          undefined,
+          AddressType.checkSum
+        ),
         amount: new BN(0),
         gasPrice: new BN(1000),
         gasLimit: Long.fromNumber(1000)
@@ -289,21 +322,21 @@ describe('Transaction', () => {
     pending.setStatus(TxStatus.Initialised)
     expect(pending.isInitialised()).toBeTruthy()
   })
-  it('should accept base58 address', () => {
-    const b16 = toChecksumAddress(randomBytes(20))
-    const b58 = encodeBase58(b16)
+  it('should accept bech32 address', () => {
+    const checkSum = toChecksumAddress(randomBytes(20))
+    const b32 = getAddress(checkSum, undefined, AddressType.bech32)
     const txn = new Transaction(
       {
         version: 0,
-        toAddr: b58,
+        toAddr: b32,
         amount: new BN(0),
         gasPrice: new BN(1000),
         gasLimit: Long.fromNumber(1000)
       },
       messenger
     )
-    expect(decodeBase58(b58)).toEqual(b16.toLowerCase().substring(2))
-    expect(isValidChecksumAddress(`0x${txn.txParams.toAddr}`)).toBe(true)
-    expect(`0x${txn.txParams.toAddr}`).toEqual(b16)
+    expect(getAddress(b32, undefined, AddressType.checkSum)).toEqual(checkSum)
+    expect(isValidChecksumAddress(txn.txParams.toAddr)).toBe(true)
+    expect(txn.txParams.toAddr).toEqual(checkSum)
   })
 })

@@ -19,7 +19,7 @@ describe('TransactionFactory', () => {
       amount: new BN(0),
       gasPrice: new BN(1),
       gasLimit: Long.fromNumber(100),
-      toAddr: '0x88888888888888888888'
+      toAddr: '0x8888888888888888888888888888888888888888'
     })
 
     expect(tx).toBeInstanceOf(Transaction)

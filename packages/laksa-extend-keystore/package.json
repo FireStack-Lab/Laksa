@@ -21,5 +21,6 @@
     "pbkdf2": "^3.0.17",
     "scrypt.js": "^0.2.0",
     "uuid": "^3.3.2"
-  }
+  },
+  "gitHead": "66afd1af6021a21adedff7aec6f09f76d5bdd121"
 }

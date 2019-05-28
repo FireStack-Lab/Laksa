@@ -173,6 +173,7 @@
         console.log(result)
       }
 
+      
       // // we create a acontract with code and init params.
       const newContract = laksa.contracts.new(code, init)
 
@@ -191,30 +192,30 @@
           const { ContractAddress } = deployed
           console.log({ ContractAddress })
 
-          // const calledSet = await deployed.call({
-          //   transition: 'setHello',
-          //   params: [
-          //     {
-          //       vname: 'msg',
-          //       type: 'String',
-          //       value: 'Yo Man!'
-          //     }
-          //   ],
-          //   amount: new laksa.util.BN(0),
-          //   gasLimit: laksa.util.Long.fromNumber(25000000),
-          //   gasPrice: new laksa.util.BN(1000000000),
-          //   account: accountA
-          // })
-          // console.log(calledSet)
+          const calledSet = await deployed.call({
+            transition: 'setHello',
+            params: [
+              {
+                vname: 'msg',
+                type: 'String',
+                value: 'Yo Man!'
+              }
+            ],
+            amount: new laksa.util.BN(0),
+            gasLimit: laksa.util.Long.fromNumber(25000000),
+            gasPrice: new laksa.util.BN(1000000000),
+            account: accountA
+          })
+          console.log(calledSet)
 
-          // const calledGet= await deployed.call({
-          //   transition:'getHello',
-          //   params:[],
-          //   amount: new laksa.util.BN(0),
-          //   gasLimit: laksa.util.Long.fromNumber(25000000),
-          //   gasPrice: new laksa.util.BN(1000000000),
-          //   account: accountA
-          // })
+          const calledGet= await deployed.call({
+            transition:'getHello',
+            params:[],
+            amount: new laksa.util.BN(0),
+            gasLimit: laksa.util.Long.fromNumber(25000000),
+            gasPrice: new laksa.util.BN(1000000000),
+            account: accountA
+          })
         } catch (e) {
           console.log(e)
         }
@@ -334,7 +335,11 @@
       // )
       const normalTransaction = laksa.transactions.new({
         version: laksa.messenger.setTransactionVersion(1, 'DevNet'),
-        toAddr: '2E3C9B415B19AE4035503A06192A0FAD76E04243',
+        toAddr: laksa.util.getAddress(
+          '0x2E3C9B415B19AE4035503A06192A0FAD76E04243',
+          undefined,
+          laksa.util.AddressType.checkSum
+        ),
         amount: laksa.util.Unit.Zil(1).toQa(),
         gasPrice: laksa.util.Unit.Li(1000).toQa(),
         gasLimit: laksa.util.Long.fromNumber(1)

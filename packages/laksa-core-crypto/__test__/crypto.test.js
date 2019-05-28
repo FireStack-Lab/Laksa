@@ -328,6 +328,12 @@ describe('utils', () => {
 
     expect(txn.signature.length).toEqual(128)
   })
+
+  it('should run getAddress', () => {
+    const b16 = '9bfec715a6bd658fcb62b0f8cc9bfa2ade71434a'
+    const b32 = util.getAddress(b16, undefined, util.AddressType.bech32)
+    expect(b32).toEqual('zil1n0lvw9dxh4jcljmzkruvexl69t08zs62ds9ats')
+  })
 })
 
 // TODO: schnorr verify test when failure

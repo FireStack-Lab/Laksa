@@ -14,5 +14,6 @@
     "ethereum"
   ],
   "author": "neeboo@fireStack.one",
-  "license": "GPL-3.0"
+  "license": "GPL-3.0",
+  "gitHead": "66afd1af6021a21adedff7aec6f09f76d5bdd121"
 }
