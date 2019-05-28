@@ -3,7 +3,7 @@
   "main": "index.js",
   "browser": "lib/index.js",
   "description": "Shared settings for laksa",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "keywords": [
     "laksa",
     "webz",
@@ -13,7 +13,7 @@
   "author": "neeboo@fireStack.one",
   "license": "GPL-3.0",
   "dependencies": {
-    "laksa-utils": "^0.1.1"
+    "laksa-utils": "^0.1.2"
   },
   "gitHead": "66afd1af6021a21adedff7aec6f09f76d5bdd121"
 }

@@ -1,6 +1,6 @@
 {
   "name": "laksa-wallet",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "description": "Wallet instance for laksa",
   "main": "index.js",
   "browser": "lib/index.js",
@@ -19,8 +19,8 @@
     "bip39": "^2.5.0",
     "hdkey": "^1.1.1",
     "immutable": "^3.8.2",
-    "laksa-account": "^0.1.1",
-    "laksa-utils": "^0.1.1"
+    "laksa-account": "^0.1.2",
+    "laksa-utils": "^0.1.2"
   },
   "gitHead": "66afd1af6021a21adedff7aec6f09f76d5bdd121"
 }
