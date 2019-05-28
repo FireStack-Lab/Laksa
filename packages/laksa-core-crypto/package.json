@@ -19,6 +19,8 @@
     "elliptic": "^6.4.1",
     "hash.js": "^1.1.5",
     "hmac-drbg": "^1.0.1",
+    "laksa-utils": "^0.1.1",
     "randombytes": "^2.0.6"
-  }
+  },
+  "gitHead": "66afd1af6021a21adedff7aec6f09f76d5bdd121"
 }

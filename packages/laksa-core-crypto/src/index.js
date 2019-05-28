@@ -34,3 +34,6 @@ export {
 export * from './util'
 export * from './bytes'
 export * from './signature'
+
+export * from './zilAddress'
+export * from './bech32'

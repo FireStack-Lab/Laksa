@@ -1,12 +1,10 @@
 import {
-  decodeBase58,
   encodeTransactionProto,
   getAddressFromPublicKey,
-  toChecksumAddress
+  getAddress,
+  AddressType
 } from 'laksa-core-crypto'
 
-import { isBase58 } from 'laksa-utils'
-import { isAddress } from 'laksa-utils/node'
 import { sleep, TxStatus } from './util'
 
 /**
@@ -23,7 +21,11 @@ class Transaction {
     // params
     this.version = params.version
     this.TranID = params.TranID
-    this.toAddr = this.getToAddr(params.toAddr)
+    this.toAddr = getAddress(
+      params.toAddr,
+      [AddressType.bech32, AddressType.checkSum],
+      AddressType.checkSum
+    )
     this.nonce = params.nonce
     this.pubKey = params.pubKey
     this.amount = params.amount
@@ -80,7 +82,11 @@ class Transaction {
         version: this.version,
         // this.messenger.setTransactionVersion(this.version),
         TranID: this.TranID,
-        toAddr: toChecksumAddress(this.getToAddr(this.toAddr)).slice(2),
+        toAddr: getAddress(
+          this.toAddr,
+          [AddressType.bech32, AddressType.checkSum],
+          AddressType.checkSum
+        ),
         // after updated to the core, it will not slice
         nonce: this.nonce,
         pubKey: this.pubKey,
@@ -95,16 +101,6 @@ class Transaction {
     } catch (error) {
       throw error
     }
-  }
-
-  getToAddr(addr) {
-    let result = addr
-    if (isAddress(addr)) {
-      result = addr.toLowerCase()
-    } else if (isBase58(addr)) {
-      result = decodeBase58(addr)
-    }
-    return result
   }
 
   get senderAddress() {
@@ -237,7 +233,11 @@ class Transaction {
   setParams(params) {
     this.version = params.version
     this.TranID = params.TranID
-    this.toAddr = params.toAddr
+    this.toAddr = getAddress(
+      params.toAddr,
+      [AddressType.bech32, AddressType.checkSum],
+      AddressType.checkSum
+    )
     this.nonce = params.nonce
     this.pubKey = params.pubKey
     this.amount = params.amount

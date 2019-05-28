@@ -14,10 +14,10 @@
  */
 
 (function (global, factory) {
-  typeof exports === 'object' && typeof module !== 'undefined' ? factory(exports, require('bn.js'), require('elliptic'), require('hash.js'), require('@zilliqa-js/proto'), require('hmac-drbg')) :
-  typeof define === 'function' && define.amd ? define(['exports', 'bn.js', 'elliptic', 'hash.js', '@zilliqa-js/proto', 'hmac-drbg'], factory) :
-  (factory((global.Laksa = {}),global.BN,global.elliptic,global.hashjs,global.proto,global.DRBG));
-}(this, (function (exports,BN,elliptic,hashjs,proto,DRBG) { 'use strict';
+  typeof exports === 'object' && typeof module !== 'undefined' ? factory(exports, require('bn.js'), require('laksa-utils'), require('elliptic'), require('hash.js'), require('@zilliqa-js/proto'), require('hmac-drbg')) :
+  typeof define === 'function' && define.amd ? define(['exports', 'bn.js', 'laksa-utils', 'elliptic', 'hash.js', '@zilliqa-js/proto', 'hmac-drbg'], factory) :
+  (factory((global.Laksa = {}),global.BN,global.laksaUtils,global.elliptic,global.hashjs,global.proto,global.DRBG));
+}(this, (function (exports,BN,laksaUtils,elliptic,hashjs,proto,DRBG) { 'use strict';
 
   BN = BN && BN.hasOwnProperty('default') ? BN['default'] : BN;
   elliptic = elliptic && elliptic.hasOwnProperty('default') ? elliptic['default'] : elliptic;
@@ -209,6 +209,309 @@
     return /[0-9a-f]*$/i.test(plain);
   };
 
+  function _defineProperty(obj, key, value) {
+    if (key in obj) {
+      Object.defineProperty(obj, key, {
+        value: value,
+        enumerable: true,
+        configurable: true,
+        writable: true
+      });
+    } else {
+      obj[key] = value;
+    }
+
+    return obj;
+  }
+
+  /* eslint-disable no-param-reassign */
+
+  const CHARSET = 'qpzry9x8gf2tvdw0s3jn54khce6mua7l';
+  const GENERATOR = [0x3b6a57b2, 0x26508e6d, 0x1ea119fa, 0x3d4233dd, 0x2a1462b3];
+
+  const polymod = values => {
+    let chk = 1; // tslint:disable-next-line
+
+    for (let p = 0; p < values.length; p += 1) {
+      const top = chk >> 25;
+      chk = (chk & 0x1ffffff) << 5 ^ values[p];
+
+      for (let i = 0; i < 5; i += 1) {
+        if (top >> i & 1) {
+          chk ^= GENERATOR[i];
+        }
+      }
+    }
+
+    return chk;
+  };
+
+  const hrpExpand = hrp => {
+    const ret = [];
+    let p;
+
+    for (p = 0; p < hrp.length; p += 1) {
+      ret.push(hrp.charCodeAt(p) >> 5);
+    }
+
+    ret.push(0);
+
+    for (p = 0; p < hrp.length; p += 1) {
+      ret.push(hrp.charCodeAt(p) & 31);
+    }
+
+    return Buffer.from(ret);
+  };
+
+  function verifyChecksum(hrp, data) {
+    return polymod(Buffer.concat([hrpExpand(hrp), data])) === 1;
+  }
+
+  function createChecksum(hrp, data) {
+    const values = Buffer.concat([Buffer.from(hrpExpand(hrp)), data, Buffer.from([0, 0, 0, 0, 0, 0])]); // var values = hrpExpand(hrp).concat(data).concat([0, 0, 0, 0, 0, 0]);
+
+    const mod = polymod(values) ^ 1;
+    const ret = [];
+
+    for (let p = 0; p < 6; p += 1) {
+      ret.push(mod >> 5 * (5 - p) & 31);
+    }
+
+    return Buffer.from(ret);
+  }
+
+  const encode = (hrp, data) => {
+    const combined = Buffer.concat([data, createChecksum(hrp, data)]);
+    let ret = `${hrp}1`; // tslint:disable-next-line
+
+    for (let p = 0; p < combined.length; p += 1) {
+      ret += CHARSET.charAt(combined[p]);
+    }
+
+    return ret;
+  };
+  const decode = bechString => {
+    let p;
+    let hasLower = false;
+    let hasUpper = false;
+
+    for (p = 0; p < bechString.length; p += 1) {
+      if (bechString.charCodeAt(p) < 33 || bechString.charCodeAt(p) > 126) {
+        return null;
+      }
+
+      if (bechString.charCodeAt(p) >= 97 && bechString.charCodeAt(p) <= 122) {
+        hasLower = true;
+      }
+
+      if (bechString.charCodeAt(p) >= 65 && bechString.charCodeAt(p) <= 90) {
+        hasUpper = true;
+      }
+    }
+
+    if (hasLower && hasUpper) {
+      return null;
+    }
+
+    bechString = bechString.toLowerCase();
+    const pos = bechString.lastIndexOf('1');
+
+    if (pos < 1 || pos + 7 > bechString.length || bechString.length > 90) {
+      return null;
+    }
+
+    const hrp = bechString.substring(0, pos);
+    const data = [];
+
+    for (p = pos + 1; p < bechString.length; p += 1) {
+      const d = CHARSET.indexOf(bechString.charAt(p));
+
+      if (d === -1) {
+        return null;
+      }
+
+      data.push(d);
+    }
+
+    if (!verifyChecksum(hrp, Buffer.from(data))) {
+      return null;
+    }
+
+    return {
+      hrp,
+      data: Buffer.from(data.slice(0, data.length - 6))
+    };
+  }; // HRP is the human-readable part of zilliqa bech32 addresses
+
+  const HRP = 'zil';
+  /**
+   * convertBits
+   *
+   * groups buffers of a certain width to buffers of the desired width.
+   *
+   * For example, converts byte buffers to buffers of maximum 5 bit numbers,
+   * padding those numbers as necessary. Necessary for encoding Ethereum-style
+   * addresses as bech32 ones.
+   *
+   * @param {Buffer} data
+   * @param {number} fromWidth
+   * @param {number} toWidth
+   * @param {boolean} pad
+   * @returns {Buffer|null}
+   */
+
+  const convertBits = (data, fromWidth, toWidth, pad = true) => {
+    let acc = 0;
+    let bits = 0;
+    const ret = [];
+    const maxv = (1 << toWidth) - 1; // tslint:disable-next-line
+
+    for (let p = 0; p < data.length; p += 1) {
+      const value = data[p];
+
+      if (value < 0 || value >> fromWidth !== 0) {
+        return null;
+      }
+
+      acc = acc << fromWidth | value;
+      bits += fromWidth;
+
+      while (bits >= toWidth) {
+        bits -= toWidth;
+        ret.push(acc >> bits & maxv);
+      }
+    }
+
+    if (pad) {
+      if (bits > 0) {
+        ret.push(acc << toWidth - bits & maxv);
+      }
+    } else if (bits >= fromWidth || acc << toWidth - bits & maxv) {
+      return null;
+    }
+
+    return Buffer.from(ret);
+  };
+  /**
+   * toBech32Address
+   *
+   * Encodes a canonical 20-byte Ethereum-style address as a bech32 zilliqa
+   * address.
+   *
+   * The expected format is zil1<address><checksum> where address and checksum
+   * are the result of bech32 encoding a Buffer containing the address bytes.
+   *
+   * @param {string} 20 byte canonical address
+   * @returns {string} 38 char bech32 encoded zilliqa address
+   */
+
+  const toBech32Address = address => {
+    if (!laksaUtils.isAddress(address)) {
+      throw new Error('Invalid address format.');
+    }
+
+    const addrBz = convertBits(Buffer.from(address.replace('0x', ''), 'hex'), 8, 5);
+
+    if (addrBz === null) {
+      throw new Error('Could not convert byte Buffer to 5-bit Buffer');
+    }
+
+    return encode(HRP, addrBz);
+  };
+  /**
+   * fromBech32Address
+   *
+   * @param {string} address - a valid Zilliqa bech32 address
+   * @returns {string} a canonical 20-byte Ethereum-style address
+   */
+
+  const fromBech32Address = address => {
+    const res = decode(address);
+
+    if (res === null) {
+      throw new Error('Invalid bech32 address');
+    }
+
+    const {
+      hrp,
+      data
+    } = res;
+
+    if (hrp !== HRP) {
+      throw new Error(`Expected hrp to be ${HRP} but got ${hrp}`);
+    }
+
+    const buf = convertBits(data, 5, 8, false);
+
+    if (buf === null) {
+      throw new Error('Could not convert buffer to bytes');
+    }
+
+    return toChecksumAddress(buf.toString('hex'));
+  };
+
+  const AddressType = Object.freeze({
+    bytes20: 'bytes20',
+    bytes20Hex: 'bytes20Hex',
+    checkSum: 'checkSum',
+    base58: 'base58',
+    bech32: 'bech32'
+  });
+
+  class ZilAddress {
+    constructor(raw) {
+      _defineProperty(this, "addressType", void 0);
+
+      _defineProperty(this, "bytes20", void 0);
+
+      _defineProperty(this, "checkSum", void 0);
+
+      _defineProperty(this, "bech32", void 0);
+
+      _defineProperty(this, "base58", void 0);
+
+      this.raw = raw;
+      this.getAddressType();
+    }
+
+    getAddressType() {
+      const addrBool = laksaUtils.isAddress(this.raw);
+      const base58Bool = laksaUtils.isBase58(this.raw);
+      const bech32Bool = laksaUtils.isBech32(this.raw);
+      const checksumBool = isValidChecksumAddress(this.raw);
+
+      if (addrBool === true && checksumBool === false) {
+        this.addressType = AddressType.bytes20;
+        this.bytes20 = this.raw.startsWith('0x') ? this.raw.substring(2) : this.raw;
+        this.normalize();
+      } else if (addrBool === true && checksumBool === true) {
+        this.addressType = AddressType.checkSum;
+        this.bytes20 = this.raw.toLowerCase().substring(2);
+        this.normalize();
+      } else if (bech32Bool === true && laksaUtils.isAddress(fromBech32Address(this.raw))) {
+        this.addressType = AddressType.bech32;
+        const decoded = fromBech32Address(this.raw).toLowerCase();
+        this.bytes20 = decoded.startsWith('0x') ? decoded.substring(2) : decoded;
+        this.normalize();
+      } else if (base58Bool === true && laksaUtils.isAddress(decodeBase58(this.raw))) {
+        this.addressType = AddressType.base58;
+        const decoded = decodeBase58(this.raw).toLowerCase();
+        this.bytes20 = decoded.startsWith('0x') ? decoded.substring(2) : decoded;
+        this.normalize();
+      } else {
+        throw new Error('unknown address');
+      }
+    }
+
+    normalize() {
+      this.bytes20Hex = `0x${this.bytes20}`;
+      this.checkSum = toChecksumAddress(this.bytes20);
+      this.base58 = encodeBase58(this.checkSum);
+      this.bech32 = toBech32Address(this.checkSum);
+    }
+
+  }
+
   const secp256k1 = elliptic.ec('secp256k1');
   /**
    * @function getAddressFromPrivateKey
@@ -318,7 +621,7 @@
     const msg = {
       version: tx.version,
       nonce: tx.nonce || 0,
-      toaddr: hexToByteArray(tx.toAddr.toLowerCase()),
+      toaddr: hexToByteArray(tx.toAddr.replace('0x', '').toLowerCase()),
       senderpubkey: proto.ZilliqaMessage.ByteArray.create({
         data: hexToByteArray(tx.pubKey || '00')
       }),
@@ -429,6 +732,75 @@
     }
 
     return res;
+  };
+  const getAddress = (address, fromType, toType) => {
+    if (!laksaUtils.isString(address)) {
+      throw new Error(`${address} is not string`);
+    }
+
+    const zilAddr = new ZilAddress(address);
+    const validateType = fromType === undefined || fromType.length === 0 ? [] : fromType;
+    let total = 0;
+    total = validateType.length > 0 ? validateType.map(type => {
+      const value = zilAddr.addressType === type ? 1 : 0;
+      return value;
+    }).reduce((pre, cur) => {
+      return pre + cur;
+    }) : 0;
+
+    if (total === 0 && validateType.length > 0) {
+      throw new Error('Address format is invalid');
+    }
+
+    switch (toType) {
+      case AddressType.bytes20:
+        {
+          if (!zilAddr.bytes20) {
+            throw new Error(`can not convert to ${toType}`);
+          } else {
+            return zilAddr.bytes20;
+          }
+        }
+
+      case AddressType.bytes20Hex:
+        {
+          if (!zilAddr.bytes20Hex) {
+            throw new Error(`can not convert to ${toType}`);
+          } else {
+            return zilAddr.bytes20Hex;
+          }
+        }
+
+      case AddressType.base58:
+        {
+          if (!zilAddr.base58) {
+            throw new Error(`can not convert to ${toType}`);
+          } else {
+            return zilAddr.base58;
+          }
+        }
+
+      case AddressType.bech32:
+        {
+          if (!zilAddr.bech32) {
+            throw new Error(`can not convert to ${toType}`);
+          } else {
+            return zilAddr.bech32;
+          }
+        }
+
+      case AddressType.checkSum:
+        {
+          if (!zilAddr.checkSum) {
+            throw new Error(`can not convert to ${toType}`);
+          } else {
+            return zilAddr.checkSum;
+          }
+        }
+
+      default:
+        return zilAddr.raw;
+    }
   };
 
   const secp256k1$1 = elliptic.ec('secp256k1');
@@ -725,6 +1097,7 @@
   exports.checkValidSignature = checkValidSignature;
   exports.encodeBase58 = encodeBase58;
   exports.decodeBase58 = decodeBase58;
+  exports.getAddress = getAddress;
   exports.intToHexArray = intToHexArray;
   exports.intToByteArray = intToByteArray;
   exports.hexToByteArray = hexToByteArray;
@@ -732,6 +1105,13 @@
   exports.isEqual = isEqual;
   exports.isHex = isHex;
   exports.Signature = Signature;
+  exports.ZilAddress = ZilAddress;
+  exports.AddressType = AddressType;
+  exports.encode = encode;
+  exports.decode = decode;
+  exports.convertBits = convertBits;
+  exports.toBech32Address = toBech32Address;
+  exports.fromBech32Address = fromBech32Address;
 
   Object.defineProperty(exports, '__esModule', { value: true });
 

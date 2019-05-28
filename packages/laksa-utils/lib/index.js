@@ -240,12 +240,21 @@ var isBase58 = function isBase58(raw) {
   return !!raw.match(/^[1-9ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz]+$/);
 };
 
+var isBech32 = function isBech32(raw) {
+  if (!isString(raw)) {
+    return false;
+  }
+
+  return !!raw.match(/^zil1[qpzry9x8gf2tvdw0s3jn54khce6mua7l]{38}/);
+};
+
 var validators = /*#__PURE__*/Object.freeze({
   isNumber: isNumber,
   isInt: isInt,
   isString: isString,
   isBoolean: isBoolean,
   isBase58: isBase58,
+  isBech32: isBech32,
   isArray: isArray,
   isJsonString: isJsonString,
   isObject: isObject,
@@ -310,6 +319,7 @@ var isNumber$1 = valArray.isNumber,
     isString$1 = valArray.isString,
     isBoolean$1 = valArray.isBoolean,
     isBase58$1 = valArray.isBase58,
+    isBech32$1 = valArray.isBech32,
     isArray$1 = valArray.isArray,
     isJsonString$1 = valArray.isJsonString,
     isObject$1 = valArray.isObject,
@@ -732,6 +742,7 @@ exports.isString = isString$1;
 exports.isBoolean = isBoolean$1;
 exports.isBase58 = isBase58$1;
 exports.isArray = isArray$1;
+exports.isBech32 = isBech32$1;
 exports.isJsonString = isJsonString$1;
 exports.isObject = isObject$1;
 exports.isUint = isUint$1;

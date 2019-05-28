@@ -2,8 +2,9 @@ import elliptic from 'elliptic'
 import hashjs from 'hash.js'
 import BN from 'bn.js'
 import { ZilliqaMessage } from '@zilliqa-js/proto'
+import { isString } from 'laksa-utils'
 import { intToHexArray, hexToByteArray } from './bytes'
-
+import { ZilAddress, AddressType } from './zilAddress'
 // const HEX_PREFIX = '0x';
 const secp256k1 = elliptic.ec('secp256k1')
 
@@ -125,7 +126,7 @@ export const encodeTransactionProto = tx => {
   const msg = {
     version: tx.version,
     nonce: tx.nonce || 0,
-    toaddr: hexToByteArray(tx.toAddr.toLowerCase()),
+    toaddr: hexToByteArray(tx.toAddr.replace('0x', '').toLowerCase()),
     senderpubkey: ZilliqaMessage.ByteArray.create({
       data: hexToByteArray(tx.pubKey || '00')
     }),
@@ -240,6 +241,72 @@ export const decodeBase58 = raw => {
   }
 
   return res
+}
+
+export const getAddress = (address, fromType, toType) => {
+  if (!isString(address)) {
+    throw new Error(`${address} is not string`)
+  }
+  const zilAddr = new ZilAddress(address)
+
+  const validateType = fromType === undefined || fromType.length === 0 ? [] : fromType
+  let total = 0
+
+  total =
+    validateType.length > 0
+      ? validateType
+        .map(type => {
+          const value = zilAddr.addressType === type ? 1 : 0
+          return value
+        })
+        .reduce((pre, cur) => {
+          return pre + cur
+        })
+      : 0
+
+  if (total === 0 && validateType.length > 0) {
+    throw new Error('Address format is invalid')
+  }
+
+  switch (toType) {
+  case AddressType.bytes20: {
+    if (!zilAddr.bytes20) {
+      throw new Error(`can not convert to ${toType}`)
+    } else {
+      return zilAddr.bytes20
+    }
+  }
+  case AddressType.bytes20Hex: {
+    if (!zilAddr.bytes20Hex) {
+      throw new Error(`can not convert to ${toType}`)
+    } else {
+      return zilAddr.bytes20Hex
+    }
+  }
+  case AddressType.base58: {
+    if (!zilAddr.base58) {
+      throw new Error(`can not convert to ${toType}`)
+    } else {
+      return zilAddr.base58
+    }
+  }
+  case AddressType.bech32: {
+    if (!zilAddr.bech32) {
+      throw new Error(`can not convert to ${toType}`)
+    } else {
+      return zilAddr.bech32
+    }
+  }
+  case AddressType.checkSum: {
+    if (!zilAddr.checkSum) {
+      throw new Error(`can not convert to ${toType}`)
+    } else {
+      return zilAddr.checkSum
+    }
+  }
+  default:
+    return zilAddr.raw
+  }
 }
 
 export { hashjs }

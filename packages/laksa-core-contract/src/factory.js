@@ -1,3 +1,4 @@
+import { getAddress, AddressType } from 'laksa-core-crypto'
 import { Core, assertObject } from 'laksa-shared'
 import { Contract } from './contract'
 import { TestScilla } from './testScilla'
@@ -36,7 +37,7 @@ class Contracts extends Core {
   getAddressForContract(tx) {
     // always subtract 1 from the tx nonce, as contract addresses are computed
     // based on the nonce in the global state.
-    return getAddressForContract(tx)
+    return getAddress(getAddressForContract(tx), undefined, AddressType.checkSum)
   }
 
   /**

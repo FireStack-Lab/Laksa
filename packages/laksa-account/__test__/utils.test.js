@@ -1,4 +1,4 @@
-import { generatePrivateKey } from '../../laksa-core-crypto/src'
+import { generatePrivateKey, getAddress, AddressType } from '../../laksa-core-crypto/src'
 import { Unit, Long } from '../../laksa-utils/src'
 import {
   createAccount,
@@ -158,7 +158,11 @@ describe('test createAccount', () => {
 
     const rawTx = {
       version: 1,
-      toAddr: '2E3C9B415B19AE4035503A06192A0FAD76E04243',
+      toAddr: getAddress(
+        '2E3C9B415B19AE4035503A06192A0FAD76E04243',
+        undefined,
+        AddressType.checkSum
+      ),
       amount: Unit.Zil(1000).toQa(),
       gasPrice: Unit.Li(10000).toQa(),
       gasLimit: Long.fromNumber(250000000)

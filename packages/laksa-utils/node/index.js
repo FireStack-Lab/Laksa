@@ -220,12 +220,21 @@
     return !!raw.match(/^[1-9ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz]+$/);
   };
 
+  const isBech32 = raw => {
+    if (!isString(raw)) {
+      return false;
+    }
+
+    return !!raw.match(/^zil1[qpzry9x8gf2tvdw0s3jn54khce6mua7l]{38}/);
+  };
+
   var validators = /*#__PURE__*/Object.freeze({
     isNumber: isNumber,
     isInt: isInt,
     isString: isString,
     isBoolean: isBoolean,
     isBase58: isBase58,
+    isBech32: isBech32,
     isArray: isArray,
     isJsonString: isJsonString,
     isObject: isObject,
@@ -287,6 +296,7 @@
     isString: isString$1,
     isBoolean: isBoolean$1,
     isBase58: isBase58$1,
+    isBech32: isBech32$1,
     isArray: isArray$1,
     isJsonString: isJsonString$1,
     isObject: isObject$1,
@@ -684,6 +694,7 @@
   exports.isBoolean = isBoolean$1;
   exports.isBase58 = isBase58$1;
   exports.isArray = isArray$1;
+  exports.isBech32 = isBech32$1;
   exports.isJsonString = isJsonString$1;
   exports.isObject = isObject$1;
   exports.isUint = isUint$1;

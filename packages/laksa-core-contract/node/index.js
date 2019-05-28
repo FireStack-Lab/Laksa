@@ -526,7 +526,7 @@
       return {
         version: this.version < 65535 ? this.messenger.setTransactionVersion(this.version, this.messenger.Network_ID) : this.version,
         amount: new laksaUtils.BN(0),
-        toAddr: String(0).repeat(40),
+        toAddr: laksaCoreCrypto.getAddress(String(0).repeat(40), undefined, laksaCoreCrypto.AddressType.checkSum),
         code: this.code,
         data: JSON.stringify(this.init).replace(/\\"/g, '"')
       };
@@ -542,7 +542,7 @@
     get callPayload() {
       return {
         version: this.version < 65535 ? this.messenger.setTransactionVersion(this.version, this.messenger.Network_ID) : this.version,
-        toAddr: this.ContractAddress
+        toAddr: laksaCoreCrypto.getAddress(this.ContractAddress, undefined, laksaCoreCrypto.AddressType.checkSum)
       };
     }
     /**
@@ -692,7 +692,7 @@
           transaction,
           response
         } = await this.transaction.sendTransaction();
-        this.ContractAddress = this.ContractAddress || response.ContractAddress || getAddressForContract(transaction);
+        this.ContractAddress = laksaCoreCrypto.getAddress(this.ContractAddress || response.ContractAddress || getAddressForContract(transaction), undefined, laksaCoreCrypto.AddressType.checkSum);
         this.transaction = transaction.map(obj => {
           return _objectSpread({}, obj, {
             TranID: response.TranID
@@ -1108,7 +1108,7 @@
     getAddressForContract(tx) {
       // always subtract 1 from the tx nonce, as contract addresses are computed
       // based on the nonce in the global state.
-      return getAddressForContract(tx);
+      return laksaCoreCrypto.getAddress(getAddressForContract(tx), undefined, laksaCoreCrypto.AddressType.checkSum);
     }
     /**
      * @function new

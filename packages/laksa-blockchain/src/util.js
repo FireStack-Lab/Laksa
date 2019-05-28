@@ -1,3 +1,4 @@
+import { getAddress, AddressType } from 'laksa-core-crypto'
 import {
   isObject, strip0x, BN, Long
 } from 'laksa-utils'
@@ -28,7 +29,7 @@ export function toTxParams(response) {
     nonce: parseInt(nonce, 10),
     pubKey: strip0x(senderPubKey),
     version: parseInt(version, 10),
-    toAddr,
+    toAddr: getAddress(toAddr, undefined, AddressType.checkSum),
     gasPrice: new BN(gasPrice),
     gasLimit: Long.fromString(gasLimit, 10),
     amount: new BN(amount),

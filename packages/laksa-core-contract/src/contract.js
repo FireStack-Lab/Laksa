@@ -1,3 +1,4 @@
+import { getAddress, AddressType } from 'laksa-core-crypto'
 import { Transaction, TxStatus } from 'laksa-core-transaction'
 import { Long, BN } from 'laksa-utils'
 import { assertObject } from 'laksa-shared'
@@ -126,7 +127,7 @@ class Contract {
           ? this.messenger.setTransactionVersion(this.version, this.messenger.Network_ID)
           : this.version,
       amount: new BN(0),
-      toAddr: String(0).repeat(40),
+      toAddr: getAddress(String(0).repeat(40), undefined, AddressType.checkSum),
       code: this.code,
       data: JSON.stringify(this.init).replace(/\\"/g, '"')
     }
@@ -144,7 +145,7 @@ class Contract {
         this.version < 65535
           ? this.messenger.setTransactionVersion(this.version, this.messenger.Network_ID)
           : this.version,
-      toAddr: this.ContractAddress
+      toAddr: getAddress(this.ContractAddress, undefined, AddressType.checkSum)
     }
   }
 
@@ -283,8 +284,11 @@ class Contract {
     try {
       await this.signTxn({ account, password })
       const { transaction, response } = await this.transaction.sendTransaction()
-      this.ContractAddress =
-        this.ContractAddress || response.ContractAddress || getAddressForContract(transaction)
+      this.ContractAddress = getAddress(
+        this.ContractAddress || response.ContractAddress || getAddressForContract(transaction),
+        undefined,
+        AddressType.checkSum
+      )
       this.transaction = transaction.map(obj => {
         return { ...obj, TranID: response.TranID }
       })

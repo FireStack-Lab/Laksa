@@ -182,6 +182,12 @@ const isBase58 = raw => {
   }
   return !!raw.match(/^[1-9ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz]+$/)
 }
+const isBech32 = raw => {
+  if (!isString(raw)) {
+    return false
+  }
+  return !!raw.match(/^zil1[qpzry9x8gf2tvdw0s3jn54khce6mua7l]{38}/)
+}
 
 export {
   isNumber,
@@ -189,6 +195,7 @@ export {
   isString,
   isBoolean,
   isBase58,
+  isBech32,
   isArray,
   isJsonString,
   isObject,
